@@ -17,3 +17,15 @@ print()
 
 diag = sm.Succession.build_succession_diagram(primes)
 diag.summary()
+
+print()
+print()
+print()
+print("============")
+print("Potential \"Ghost Branch\":")
+diag.MotifReductionList[0].summary()
+
+print("============")
+diag.MotifReductionList[0].build_partial_STG()
+print("Partial STG edge-list in", *sorted(diag.MotifReductionList[0].reduced_primes), "order:")
+print(diag.MotifReductionList[0].partial_STG.edges())
