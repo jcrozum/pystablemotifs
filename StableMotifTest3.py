@@ -71,4 +71,4 @@ sm.Format.pretty_print_prime_rules(primes)
 print()
 
 diag = sm.Succession.build_succession_diagram(primes)
-diag.attractor_candidates()
+diag.attractor_candidate_summary()
