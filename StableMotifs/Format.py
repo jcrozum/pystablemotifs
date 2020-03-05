@@ -1,5 +1,5 @@
 import PyBoolNet
-
+import re
 # Convert rules from Jorge's format to PyBoolNet format
 def booleannet2bnet(rules):
     """
@@ -9,7 +9,12 @@ def booleannet2bnet(rules):
     returns
     A,  B | C & !D
     """
-    return rules.replace(' *=',',\t').replace('*=',',\t').replace('not ','!').replace(' and ',' & ').replace(' or ',' | ')
+    #return rules.replace(' *=',',\t').replace('*=',',\t').replace('not ','!').replace(' and ',' & ').replace(' or ',' | ')
+    s = re.sub("\s*\*\s*=\s*",",\t",rules)
+    s = re.sub("\s*not\s*"," ! ",s, flags=re.IGNORECASE)
+    s = re.sub("\s*and\s*"," & ",s, flags=re.IGNORECASE)
+    s = re.sub("\s*or\s*"," | ",s, flags=re.IGNORECASE)
+    return s
 
 def statestring2dict(statestring,names):
     """

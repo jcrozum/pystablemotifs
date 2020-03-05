@@ -11,34 +11,47 @@ class SuccessionDiagram:
     __init__(self)
     add_motif_reduction(self,motif_reduction)
     summary(self,terminal_keys=None) - prints a summary of the succession diagram to screen
-    attractor_candidates(self) - prints a summary of found or potential attractors
+    attractor_candidate_summary(self) - prints a summary of found or potential attractors
     """
 
     def __init__(self):
         self.MotifReductionList = []
+        self.attractor_fixed_nodes_list = []
+        self.attractor_reduced_primes_list = []
+        self.attractor_guaranteed_list = []
+        self.reduced_complex_attractor_list = []
     def add_motif_reduction(self,motif_reduction):
         self.MotifReductionList.append(motif_reduction)
-    def attractor_candidates(self):
-        fixed_nodes_list = []
-        reduced_primes_list = []
-        terminal_list = []
-        for motif_reduction in self.MotifReductionList:
-            if not motif_reduction.terminal == "no":
-                if not motif_reduction.logically_fixed_nodes in fixed_nodes_list:
-                    fixed_nodes_list.append(motif_reduction.logically_fixed_nodes)
-                    reduced_primes_list.append(motif_reduction.reduced_primes)
-                    terminal_list.append(motif_reduction.terminal)
-        for fn,rp,tr in zip(fixed_nodes_list,reduced_primes_list,terminal_list):
+        if not motif_reduction.terminal == "no":
+            if not motif_reduction.logically_fixed_nodes in self.attractor_fixed_nodes_list:
+                self.attractor_fixed_nodes_list.append(motif_reduction.logically_fixed_nodes)
+                self.attractor_reduced_primes_list.append(motif_reduction.reduced_primes)
+                self.attractor_guaranteed_list.append(motif_reduction.terminal)
+                self.reduced_complex_attractor_list.append(motif_reduction.no_motif_attractors)
+    def attractor_candidate_summary(self):
+        for fn,rp,tr,at in zip(self.attractor_fixed_nodes_list,
+                               self.attractor_reduced_primes_list,
+                               self.attractor_guaranteed_list,
+                               self.reduced_complex_attractor_list):
             print("__________________")
             if tr == "possible":
                 print("Space May Contain Attractor")
                 print()
             else:
-                print("Space Guaranteed to Contain Attractor")
+                print("Space Guaranteed to Contain Attractor(s)")
             print("Logically Fixed Nodes:",{k:v for k,v in sorted(fn.items())})
             print()
-            print("Reduced Rules:")
-            pretty_print_prime_rules(rp)
+            if len(rp) > 0:
+                print("Reduced Rules:")
+                pretty_print_prime_rules(rp)
+                if not at is None:
+                    print()
+                    print("Complex Attractors in Reduced Network (Alphabetical Node Ordering):")
+                    for x in at:
+                        print(x)
+            else:
+                print("No Free Nodes Remain.")
+
 
     def summary(self,terminal_keys=None):
         for motif_reduction in self.MotifReductionList:

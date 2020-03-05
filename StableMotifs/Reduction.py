@@ -15,13 +15,13 @@ def reduce_primes(fixed,primes):
     primes - PyBoolNet primes describing the system update rules
 
     Outputs:
-    pcr - PyBoolNet primes decribing the simplified update rules
-    percolated - a dictionary of fixed node states (including the inputs) that were simplified and removed
+    reduced_primes - PyBoolNet primes decribing the simplified update rules
+    percolated_states - a dictionary of fixed node states (including the inputs) that were simplified and removed
     """
-    pcr=PyBoolNet.PrimeImplicants.create_constants(primes,fixed,Copy=True)
-    percolated = PyBoolNet.PrimeImplicants._percolation(pcr,True)
-    percolated.update(fixed)
-    return pcr, percolated
+    reduced_primes = PyBoolNet.PrimeImplicants.create_constants(primes,fixed,Copy=True)
+    percolated_states = PyBoolNet.PrimeImplicants._percolation(reduced_primes,True)
+    percolated_states.update(fixed)
+    return reduced_primes, percolated_states
 
 # Commented out because this function is no longer used
 #def state_in_K(statestring,K,name_inds):
@@ -66,6 +66,7 @@ class MotifReduction:
     partial_STG - subgraph of the state transition graph of the reduced network
                   that contains any and all attractors that do not lie in any
                   of the reduced network's stable motifs
+    no_motif_attractors - list of complex attractors that do not "lock in" any additional stable motifs
 
     Functions:
     __init__(self,motif_history,fixed,reduced_primes)
@@ -73,9 +74,10 @@ class MotifReduction:
     build_K0(self) - helper function for build_partial_STG
     build_inspace(self,ss,names) - helper function for build_partial_STG
     build_partial_STG(self) - for building partial_STG
+    find_no_motif_attractors(self) - finds no_motif_attractors
     summary(self) - prints a summary of the MotifReduction to screen
     """
-    def __init__(self,motif_history,fixed,reduced_primes):
+    def __init__(self,motif_history,fixed,reduced_primes,search_partial_STGs=True):
         if motif_history is None:
             self.motif_history = []
         else:
@@ -96,18 +98,20 @@ class MotifReduction:
         self.rspace_update_primes=None # {}
         self.conserved_functions=None # [[{}]]
         self.rspace_attractor_candidates=None # []
+        self.partial_STG=None # nx.DiGraph()
+        self.no_motif_attractors=None # []
 
-        look_for_conservation = False
+        study_possible_oscillation = False
 
         if self.rspace == [[{'0':1}]] and len(self.stable_motifs) > 0: # a stable motif must lock in
             self.terminal = "no"
         elif self.rspace == [[{}]] and len(self.stable_motifs) > 0: # could not find 1-node drivers
             self.terminal = "possible"
-            look_for_conservation = True
+            study_possible_oscillation = True
         elif len(self.stable_motifs) == 0: # necessarily terminal
             self.terminal = "yes"
             if len(self.reduced_primes) > 0: # Terminates in oscillation, else, fixed point
-                look_for_conservation = True
+                study_possible_oscillation = True
         else: # found 1-node drivers, so we can investigate further
             self.terminal = "possible" # TODO: implement case-checking based on rspace
             self.fixed_rspace_nodes = fixed_rspace_nodes(self.rspace,self.reduced_primes)
@@ -115,10 +119,17 @@ class MotifReduction:
             self.reduced_rspace_constraint = reduce_rspace_string(self.rspace_constraint,self.fixed_rspace_nodes)
             self.rspace_update_primes = reduce_primes(self.fixed_rspace_nodes,self.reduced_primes)[0]
             self.test_rspace()
-            look_for_conservation = self.terminal == "possible" # value may be changed by test_rspace
-        if look_for_conservation:
+            study_possible_oscillation = self.terminal == "possible" # value may be changed by test_rspace
+        if study_possible_oscillation:
             self.conserved_functions = attractor_space_candidates(self.stable_motifs,
                                                                   self.tr_stable_motifs)
+            if search_partial_STGs:
+                self.find_no_motif_attractors()
+                if len(self.no_motif_attractors) == 0:
+                    self.terminal = "no"
+                else:
+                    self.terminal = "yes"
+
     def test_rspace(self):
         STG=PyBoolNet.StateTransitionGraphs.primes2stg(self.rspace_update_primes,"asynchronous")
         sss,cas=PyBoolNet.Attractors.compute_attractors_tarjan(STG)
@@ -222,6 +233,10 @@ class MotifReduction:
                         break # we know the ss at r changed, no need to check more primes
                 if not simstate: break # don't check other vars: already found ss -> K
 
+    def find_no_motif_attractors(self):
+        if self.partial_STG is None:
+            self.build_partial_STG()
+        self.no_motif_attractors = list(nx.attracting_components(self.partial_STG))
 
     def summary(self):
         print("Motif History:",self.motif_history)
@@ -257,8 +272,17 @@ class MotifReduction:
 
         if not self.conserved_functions is None:
             print()
-            print("Found the following functions that are constant on attractors in this branch:")
-            for x in self.conserved_functions:
-                if len(x) > 0:
-                    pretty_print_rspace([x],silent=False)
-                    print()
+            if len(self.conserved_functions) > 0:
+                print("Found the following functions that are constant on attractors in this branch:")
+                for x in self.conserved_functions:
+                    if len(x) > 0:
+                        pretty_print_rspace([x],silent=False)
+                        print()
+            else:
+                print("Unable to find non-trivial conserved functions for attractors in this branch.")
+                print()
+            if not self.no_motif_attractors is None:
+                if len(self.no_motif_attractors) > 0:
+                    print("Found the following complex attractors that do not lock in additional stable motifs:")
+                    for x in self.no_motif_attractors:
+                        print(x)
