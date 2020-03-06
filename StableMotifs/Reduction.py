@@ -132,20 +132,20 @@ class MotifReduction:
 
     def test_rspace(self):
         STG=PyBoolNet.StateTransitionGraphs.primes2stg(self.rspace_update_primes,"asynchronous")
-        sss,cas=PyBoolNet.Attractors.compute_attractors_tarjan(STG)
+        steady_states,complex_attractors=PyBoolNet.Attractors.compute_attractors_tarjan(STG)
         names = sorted(self.rspace_update_primes)
-        atts = cas+[[s] for s in sss]
+        attractors = complex_attractors+[[s] for s in steady_states]
         self.rspace_attractor_candidates = []
 
-        for att in atts:
-            possible_rspace_att = True
-            for state in att:
-                sd = statestring2dict(state,names)
-                if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,implicant2bnet(sd)):
-                    possible_rspace_att = False
+        for attractor in attractors:
+            possible_rspace_attractor = True
+            for state in attractor:
+                if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,
+                                                                 implicant2bnet(statestring2dict(state,names))):
+                    possible_rspace_attractor = False
                     break
-            if possible_rspace_att:
-                self.rspace_attractor_candidates.append(att)
+            if possible_rspace_attractor:
+                self.rspace_attractor_candidates.append(attractor)
 
         if len(self.rspace_attractor_candidates) == 0:
             self.terminal = "no"
