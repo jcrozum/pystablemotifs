@@ -17,7 +17,10 @@ def simplify_primes(primes):
     a simplified version of primes
     """
     # reimport to force simplification
-    return PyBoolNet.FileExchange.bnet2primes(PyBoolNet.FileExchange.primes2bnet(primes))
+    if len(primes) > 0:
+        return PyBoolNet.FileExchange.bnet2primes(PyBoolNet.FileExchange.primes2bnet(primes))
+    else:
+        return primes
 
 def reduce_primes(fixed,primes):
     """
