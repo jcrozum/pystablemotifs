@@ -65,7 +65,7 @@ S1P*=SPHK1 and not Ceramide"""
 
 rules_pbn = sm.Format.booleannet2bnet(rules)
 primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
-PyBoolNet.PrimeImplicants._percolation(primes,True) # Get rid of constants
+primes = sm.Reduction.reduce_primes({},primes)[0] # Get rid of constants
 print("TLGL Network (Fixed Inputs):")
 sm.Format.pretty_print_prime_rules(primes)
 print()
