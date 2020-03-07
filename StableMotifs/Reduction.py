@@ -6,6 +6,19 @@ from StableMotifs.TimeReversal import time_reverse_primes
 from StableMotifs.RestrictSpace import rspace, fixed_rspace_nodes, reduce_rspace_string, attractor_space_candidates
 from StableMotifs.Format import pretty_print_rspace, pretty_print_prime_rules, statestring2dict, implicant2bnet
 
+def simplify_primes(primes):
+    """
+    Simplifies PyBoolNet primes (e.g., A | A & B becomes A)
+
+    Input:
+    primes - PyBoolNet primes describing the system update rules
+
+    Output:
+    a simplified version of primes
+    """
+    # reimport to force simplification
+    return PyBoolNet.FileExchange.bnet2primes(PyBoolNet.FileExchange.primes2bnet(primes))
+
 def reduce_primes(fixed,primes):
     """
     Simplifies boolean rules when some nodes are held fixed
@@ -21,8 +34,9 @@ def reduce_primes(fixed,primes):
     reduced_primes = PyBoolNet.PrimeImplicants.create_constants(primes,fixed,Copy=True)
     percolated_states = PyBoolNet.PrimeImplicants._percolation(reduced_primes,True)
     percolated_states.update(fixed)
-    return reduced_primes, percolated_states
 
+
+    return simplify_primes(reduced_primes), percolated_states
 # Commented out because this function is no longer used
 #def state_in_K(statestring,K,name_inds):
 #    for kd in K:
