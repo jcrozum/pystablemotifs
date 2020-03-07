@@ -1,3 +1,6 @@
+#
+# Describe model here
+#
 xA*= not xA and not xB or xC
 xB*= not xA and not xB or xC
 xC*= xA and xB
