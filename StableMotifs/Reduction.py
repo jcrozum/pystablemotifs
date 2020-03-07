@@ -140,8 +140,9 @@ class MotifReduction:
         for attractor in attractors:
             possible_rspace_attractor = True
             for state in attractor:
+                state_dict = {**statestring2dict(state,names),**self.fixed_rspace_nodes}
                 if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,
-                                                                 implicant2bnet(statestring2dict(state,names))):
+                                                                 implicant2bnet(state_dict)):
                     possible_rspace_attractor = False
                     break
             if possible_rspace_attractor:
