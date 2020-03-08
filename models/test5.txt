@@ -1,0 +1,14 @@
+#maximally reduced version of ABA network
+
+Vac_acid*= ABA or Ca or Vac_acid
+ROS*= Vac_acid and (Ca or ROS)
+Ca*= (ROS or ABA) and not Ca
+CPK3_21*= Ca or CPK3_21
+MPK9_12* = Ca or MPK9_12
+Microt_depoly*= Ca or Microt_depoly
+Depolarization*= Vac_acid and (ABA or ROS or not Depolarization)
+Closure*= Microt_depoly and (Ca and CPK3_21 or MPK9_12 and ROS and Vac_acid)
+
+
+
+
