@@ -23,5 +23,6 @@ PyBoolNet.PrimeImplicants._percolation(primes,True)
 sm.Format.pretty_print_prime_rules(primes)
 
 diag = sm.Succession.build_succession_diagram(primes)
+diag.summary()
 
 diag.attractor_candidate_summary()
