@@ -64,7 +64,7 @@ class MotifReduction:
     reduced_primes - update rules of the reduced network as PyBoolNet primes
     time_reverse_primes - update rules of the time reversed system as PyBoolNet primes
     stable_motifs - list of stable motifs in the reduced network
-    tr_stable_motifs - list of stable motifs in the time reversed system
+    time_reverse_stable_motifs - list of stable motifs in the time reversed system
 
     rspace - the rspace, or "restrict space" of the reduced network, describing a
              necessary condition for the system to avoid activating additional
@@ -94,7 +94,7 @@ class MotifReduction:
     find_no_motif_attractors(self) - finds no_motif_attractors
     summary(self) - prints a summary of the MotifReduction to screen
     """
-    def __init__(self,motif_history,fixed,reduced_primes,search_partial_STGs=True):
+    def __init__(self,motif_history,fixed,reduced_primes,search_partial_STGs=True,prioritize_source_motifs=True):
         if motif_history is None:
             self.motif_history = []
         else:
@@ -104,9 +104,16 @@ class MotifReduction:
 
         self.time_reverse_primes = time_reverse_primes(self.reduced_primes)
         self.stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.reduced_primes, "max")
-        self.tr_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max")
-        self.rspace=rspace(self.stable_motifs,self.reduced_primes)
-
+        self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max")
+        
+        self.merged_source_motifs=None
+        self.source_independent_motifs=None
+        if self.motif_history == [] and prioritize_source_motifs:
+            self.merge_source_motifs()
+            self.rspace=None
+        else:    
+            self.rspace=rspace(self.stable_motifs,self.reduced_primes)
+            
         # These may or may not get calculated.
         # Sensible default values are in comments, but we will just use None for now.
         self.fixed_rspace_nodes=None # {}
@@ -119,8 +126,9 @@ class MotifReduction:
         self.no_motif_attractors=None # []
 
         study_possible_oscillation = False
-
-        if self.rspace == [[{'0':1}]] and len(self.stable_motifs) > 0: # a stable motif must lock in
+        if not self.merged_source_motifs is None:
+            self.terminal = "no"
+        elif self.rspace == [[{'0':1}]] and len(self.stable_motifs) > 0: # a stable motif must lock in
             self.terminal = "no"
         elif self.rspace == [[{}]] and len(self.stable_motifs) > 0: # could not find 1-node drivers
             self.terminal = "possible"
@@ -139,14 +147,38 @@ class MotifReduction:
             study_possible_oscillation = self.terminal == "possible" # value may be changed by test_rspace
         if study_possible_oscillation:
             self.conserved_functions = attractor_space_candidates(self.stable_motifs,
-                                                                  self.tr_stable_motifs)
+                                                                  self.time_reverse_stable_motifs)
             if search_partial_STGs:
                 self.find_no_motif_attractors()
                 if len(self.no_motif_attractors) == 0:
                     self.terminal = "no"
                 else:
                     self.terminal = "yes"
-
+                    
+    def merge_source_motifs(self):
+        """
+        Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
+        avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
+        merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+        source nodes all stabilize simultaneously.
+        
+        We will assume that stable motifs and time reverse stable motifs have already been computed.
+        
+        Note that a source node in the forward time system is a source node in the time reverse system as well.
+        This follows from A* = A => A- = ~(A*(A=~A)) = ~(~A) = A.
+        
+        If A* = A or X (i.e., A=1 is a stable motif), then A- = ~(~A | X) = A & ~X, so A=0 is a time-reverse stable motif. A similar
+        argument applies for the A=0 stable motif. Thus, a motif is only a source motif if it is also a time-reverse motif.
+        """
+        source_motifs = [x for x in self.stable_motifs if len(x) == 1 and x in self.time_reverse_stable_motifs]
+        self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
+        
+        source_vars = list(set([next(iter(x.keys())) for x in source_motifs])) # a list of source nodes
+     
+        self.merged_source_motifs = []
+        for state in it.product([0,1],repeat=len(source_vars)):
+            self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
+        
     def test_rspace(self):
         STG=PyBoolNet.StateTransitionGraphs.primes2stg(self.rspace_update_primes,"asynchronous")
         steady_states,complex_attractors=PyBoolNet.Attractors.compute_attractors_tarjan(STG)
@@ -189,7 +221,7 @@ class MotifReduction:
     # List all tr stable_motifs to which state ss belongs
     def build_inspace(self,ss,names):
         inspaces = []
-        for ts in self.tr_stable_motifs:
+        for ts in self.time_reverse_stable_motifs:
             tsin = True
             for i,r in enumerate(names):
                 if r in ts and not int(ss[i]) == ts[r]:
@@ -265,9 +297,19 @@ class MotifReduction:
         pretty_print_prime_rules(self.reduced_primes)
         print()
         if self.terminal == "no":
-            print("At least one additional stable motif must stabilize.")
-            print()
-            print("Stable motifs:", self.stable_motifs)
+            if self.merged_source_motifs is None:
+                print("At least one additional stable motif must stabilize.")
+                print()
+                print("Stable motifs:", self.stable_motifs)
+            else:
+                print("Source node values are not yet specified for the following nodes:",
+                       ', '.join(sorted([k for k in self.merged_source_motifs[0]])))
+                print()
+                if self.source_independent_motifs == []:
+                    print("There are no source-independent stable motifs.")
+                else:
+                    print("The following stable motifs exist independently of the source configuration:")
+                    print(self.source_independent_motifs)
         elif self.terminal == "yes":
             if len(self.reduced_primes) > 0:
                 print("At least some of the following must oscillate:")

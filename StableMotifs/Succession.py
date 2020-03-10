@@ -81,7 +81,13 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
         diagram = SuccessionDiagram()
     diagram.add_motif_reduction(myMotifReduction)
 
-    for sm in myMotifReduction.stable_motifs:
+    # Prioritize source nodes
+    if myMotifReduction.merged_source_motifs is None:
+        stable_motif_list = myMotifReduction.stable_motifs
+    else:
+        stable_motif_list = myMotifReduction.merged_source_motifs
+        
+    for sm in stable_motif_list:
         np,fixed2 = reduce_primes(sm,primes)
         fixed3 = fixed.copy()
         fixed3.update(fixed2)
