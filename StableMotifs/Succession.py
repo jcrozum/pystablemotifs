@@ -42,6 +42,10 @@ class SuccessionDiagram:
                 self.attractor_guaranteed_list.append(motif_reduction.terminal)
                 self.reduced_complex_attractor_list.append(motif_reduction.no_motif_attractors)
     def attractor_candidate_summary(self):
+        print("Found", len([x for x in self.attractor_guaranteed_list if x == "yes"]), "guaranteed attractor space(s) and", 
+            len([x for x in self.attractor_guaranteed_list if x == "possible"]), "possible attractor space(s).")
+        print("Found", len([x for x in self.attractor_reduced_primes_list if len(x)==0]), "steady state(s) and",
+            sum([len(x) for x in self.reduced_complex_attractor_list if not x is None]), "complex attractor(s) in the guaranteed attractor space(s).")
         for fn,rp,tr,at in zip(self.attractor_fixed_nodes_list,
                                self.attractor_reduced_primes_list,
                                self.attractor_guaranteed_list,
