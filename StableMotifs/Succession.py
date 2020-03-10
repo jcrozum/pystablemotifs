@@ -10,7 +10,7 @@ class SuccessionDiagram:
     Functions:
     __init__(self)
     add_motif_reduction(self,motif_reduction)
-    summary(self,terminal_keys=None) - prints a summary of the succession diagram to screen
+    summary(self,terminal_keys=None,show_original_rules=False) - prints a summary of the succession diagram to screen
     attractor_candidate_summary(self) - prints a summary of found or potential attractors
     """
 
@@ -53,11 +53,11 @@ class SuccessionDiagram:
                 print("No Free Nodes Remain.")
 
 
-    def summary(self,terminal_keys=None):
+    def summary(self,terminal_keys=None,show_original_rules=True):
         for motif_reduction in self.MotifReductionList:
             if terminal_keys is None or motif_reduction.terminal in terminal_keys:
                 print("__________________")
-                motif_reduction.summary()
+                motif_reduction.summary(show_original_rules=show_original_rules)
 
 def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None):
     """

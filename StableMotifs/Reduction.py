@@ -113,9 +113,8 @@ class MotifReduction:
         self.source_independent_motifs=None
         if self.motif_history == [] and prioritize_source_motifs:
             self.merge_source_motifs()
-            self.rspace=None
-        else:    
-            self.rspace=rspace(self.stable_motifs,self.reduced_primes)
+            
+        self.rspace=rspace(self.stable_motifs,self.reduced_primes)
             
         # These may or may not get calculated.
         # Sensible default values are in comments, but we will just use None for now.
@@ -174,6 +173,8 @@ class MotifReduction:
         argument applies for the A=0 stable motif. Thus, a motif is only a source motif if it is also a time-reverse motif.
         """
         source_motifs = [x for x in self.stable_motifs if len(x) == 1 and x in self.time_reverse_stable_motifs]
+        if source_motifs == []:
+            return
         self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
         
         source_vars = list(set([next(iter(x.keys())) for x in source_motifs])) # a list of source nodes
@@ -181,6 +182,7 @@ class MotifReduction:
         self.merged_source_motifs = []
         for state in it.product([0,1],repeat=len(source_vars)):
             self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
+        
         
     def test_rspace(self):
         STG=PyBoolNet.StateTransitionGraphs.primes2stg(self.rspace_update_primes,"asynchronous")
@@ -291,13 +293,20 @@ class MotifReduction:
             self.build_partial_STG()
         self.no_motif_attractors = list(nx.attracting_components(self.partial_STG))
 
-    def summary(self):
+    def summary(self,show_original_rules=True):
         print("Motif History:",self.motif_history)
         print()
         print("Logically Fixed Nodes:",self.logically_fixed_nodes)
         print()
-        print("Reduced Update Rules:")
-        pretty_print_prime_rules(self.reduced_primes)
+        if not self.motif_history == []:
+            print("Reduced Update Rules:")
+            pretty_print_prime_rules(self.reduced_primes)
+        else:
+            if show_original_rules:
+                print("Original Update Rules:")
+                pretty_print_prime_rules(self.reduced_primes)
+            else: 
+                print("The update rules are not reduced.")
         print()
         if self.terminal == "no":
             if self.merged_source_motifs is None:
@@ -315,7 +324,8 @@ class MotifReduction:
                     print(self.source_independent_motifs)
         elif self.terminal == "yes":
             if len(self.reduced_primes) > 0:
-                print("At least some of the following must oscillate:")
+                print("There is a complex attractor in this reduced system in which no additional stable motifs activate.")
+                print("At least some of the following must oscillate in such an attractor:")
                 print(list(self.reduced_primes.keys()))
             else:
                 print("This branch terminates in a steady state.")
