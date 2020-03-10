@@ -16,12 +16,25 @@ class SuccessionDiagram:
 
     def __init__(self):
         self.MotifReductionList = []
+        self.reduction_permutations = []
         self.attractor_fixed_nodes_list = []
         self.attractor_reduced_primes_list = []
         self.attractor_guaranteed_list = []
         self.reduced_complex_attractor_list = []
-    def add_motif_reduction(self,motif_reduction):
+    def find_motif_permutation(self,motif_history):
+        for i,mr in enumerate(self.MotifReductionList):
+            if len(mr.motif_history) == len(motif_history):
+                if all([x in mr.motif_history for x in motif_history]):
+                    permutation = []
+                    for x in motif_history: 
+                        permutation.append(mr.motif_history.index(x))
+                    return i,permutation # We already have an equivalent motif in the list
+        return None,None
+    def add_motif_permutation(self,reduction_index,permutation):
+        self.reduction_permutations[reduction_index].append(permutation)
+    def add_motif_reduction(self,motif_reduction,merge_equivalent_motifs=True):
         self.MotifReductionList.append(motif_reduction)
+        self.reduction_permutations.append([])
         if not motif_reduction.terminal == "no":
             if not motif_reduction.logically_fixed_nodes in self.attractor_fixed_nodes_list:
                 self.attractor_fixed_nodes_list.append(motif_reduction.logically_fixed_nodes)
@@ -54,12 +67,16 @@ class SuccessionDiagram:
 
 
     def summary(self,terminal_keys=None,show_original_rules=True):
-        for motif_reduction in self.MotifReductionList:
+        for motif_reduction, motif_permutations in zip(self.MotifReductionList,self.reduction_permutations):
             if terminal_keys is None or motif_reduction.terminal in terminal_keys:
                 print("__________________")
                 motif_reduction.summary(show_original_rules=show_original_rules)
-
-def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None):
+                if len(motif_permutations) > 0:
+                    print()
+                    print("The following motif_history permutation(s) have been merged into this branch:")
+                    for x in motif_permutations: print(x)
+      
+def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True):
     """
     Constructs a succession diagram recursively from the rules specified by primes
 
@@ -79,7 +96,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     myMotifReduction=MotifReduction(motif_history,fixed.copy(),primes)
     if diagram is None:
         diagram = SuccessionDiagram()
-    diagram.add_motif_reduction(myMotifReduction)
+    diagram.add_motif_reduction(myMotifReduction,merge_equivalent_motifs=merge_equivalent_motifs)
 
     # Prioritize source nodes
     if myMotifReduction.merged_source_motifs is None:
@@ -88,8 +105,13 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
         stable_motif_list = myMotifReduction.merged_source_motifs
         
     for sm in stable_motif_list:
-        np,fixed2 = reduce_primes(sm,primes)
-        fixed3 = fixed.copy()
-        fixed3.update(fixed2)
-        diagram = build_succession_diagram(np,fixed3,myMotifReduction.motif_history+[sm],diagram)
+        if merge_equivalent_motifs:
+            perm_index,perm = diagram.find_motif_permutation(myMotifReduction.motif_history+[sm])
+            if not perm_index is None:
+                diagram.add_motif_permutation(perm_index,perm)
+        if not merge_equivalent_motifs or perm_index is None:
+            np,fixed2 = reduce_primes(sm,primes)
+            fixed3 = fixed.copy()
+            fixed3.update(fixed2)
+            diagram = build_succession_diagram(np,fixed3,myMotifReduction.motif_history+[sm],diagram, merge_equivalent_motifs=merge_equivalent_motifs)
     return diagram
