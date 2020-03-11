@@ -1,6 +1,5 @@
 import PyBoolNet
 import StableMotifs as sm
-import StableMotifs.DomainOfInfluence as di
 
 rules='''
 xA*= not xA and not xB or xC
@@ -16,6 +15,10 @@ print("\"Pathological\" Example:")
 sm.Format.pretty_print_prime_rules(primes)
 print()
 motif = {'xA':1,'xB':1,'xC':1}
-drivers = di.find_internal_motif_drivers(motif,primes)
+drivers = sm.DomainOfInfluence.find_internal_motif_drivers(motif,primes)
 print("The following sets are internal driver sets of the stable motif", motif)
 print(drivers)
+diag = sm.Succession.build_succession_diagram(primes)
+
+print("Driver sets that reprogram to an attractor with xA=1:")
+print(diag.reprogram_to_trap_spaces({'xA':1}))

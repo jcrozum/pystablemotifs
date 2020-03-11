@@ -24,7 +24,7 @@ class SuccessionDiagram:
         self.attractor_reduced_primes_list = []
         self.attractor_guaranteed_list = []
         self.reduced_complex_attractor_list = []
-
+        self.unreduced_primes = None
     def find_motif_permutation(self,motif_history):
         for i,mr in enumerate(self.MotifReductionList):
             if len(mr.motif_history) == len(motif_history):
@@ -39,6 +39,8 @@ class SuccessionDiagram:
         self.reduction_permutations[reduction_index].append(permutation)
 
     def add_motif_reduction(self,motif_reduction,merge_equivalent_motifs=True):
+        if self.MotifReductionList == []:
+            self.unreduced_primes = motif_reduction.reduced_primes
         self.MotifReductionList.append(motif_reduction)
         self.reduction_permutations.append([])
         if not motif_reduction.terminal == "no":
@@ -86,24 +88,35 @@ class SuccessionDiagram:
                     print("The following motif_history permutation(s) have been merged into this branch:")
                     for x in motif_permutations: print(x)
 
-    def motif_sequence_to_reductions(self,TargetMotifReductions):
+    def motif_sequence_to_reductions(self,target_motif_reductions):
         """
         Input:
-        TargetMotifReductions - a list of MotifReductions that we want to reprogram to (we want to reach any, not necessarily all)
+        target_motif_reductions - a list of MotifReductions that we want to reprogram to (we want to reach any, not necessarily all)
 
         Output:
         stable motif sequences that achieve the desired reprogramming
         """
-        return
+        target_motif_mergers = [] # we will think of members as unordered for now; might consider orders later
+        for reduction in target_motif_reductions:
+            target_motif_mergers.append({k:v for d in reduction.motif_history for k,v in d.items()})
+        return target_motif_mergers
 
-    def find_reductions_with_states(self,logically_fixed, potentially_oscillating):
-        return
+    def find_reductions_with_states(self,logically_fixed):
+        # NOTE: This finds all reductions, not just those closest to the root
+        target_motif_reductions = []
+        for reduction in self.MotifReductionList:
+            if logically_fixed.items() <= reduction.logically_fixed_nodes.items():
+                target_motif_reductions.append(reduction)
+        return target_motif_reductions
 
-    def reprogram_to_attractor(self,logically_fixed, potentially_oscillating,max_internal_drivers=None,max_external_drivers=None):
-        TargetMotifReductions = self.find_reductions_with_states(logically_fixed, potentially_oscillating)
-        TargetStableMotifSequences = self.motif_sequence_to_reductions(TargetMotifReductions)
+    def reprogram_to_trap_spaces(self,logically_fixed,max_internal_drivers=None,max_external_drivers=None):
+        target_motif_reductions = self.find_reductions_with_states(logically_fixed)
+        target_motif_mergers = self.motif_sequence_to_reductions(target_motif_reductions)
 
-        return
+        drivers = []
+        for motif_merger in target_motif_mergers:
+            drivers += find_internal_motif_drivers(motif_merger,self.unreduced_primes)
+        return sorted(drivers,key=lambda x:len(x))
 
 def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True):
     """
@@ -114,7 +127,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
 
     Inputs used in recursion only:
     fixed - dictionary with node names as keys and fixed node states as values
-    motif_hisory: list of stable motifs that have been "locked in" so far in the recursion
+    motif_history: list of stable motifs that have been "locked in" so far in the recursion
     diagram - the succession diagram being constructed by the recursion
 
     Outputs:
