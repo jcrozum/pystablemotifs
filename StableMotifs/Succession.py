@@ -1,5 +1,6 @@
 from StableMotifs.Reduction import MotifReduction, reduce_primes
 from StableMotifs.Format import pretty_print_prime_rules
+from StableMotifs.DomainOfInfluence import find_internal_motif_drivers
 class SuccessionDiagram:
     """
     Representation of a succession diagram of a Boolean system
@@ -9,6 +10,8 @@ class SuccessionDiagram:
 
     Functions:
     __init__(self)
+    find_motif_permutation(self,motif_history)
+    add_motif_permutation(self,reduction_index,permutation)
     add_motif_reduction(self,motif_reduction)
     summary(self,terminal_keys=None,show_original_rules=False) - prints a summary of the succession diagram to screen
     attractor_candidate_summary(self) - prints a summary of found or potential attractors
@@ -21,17 +24,20 @@ class SuccessionDiagram:
         self.attractor_reduced_primes_list = []
         self.attractor_guaranteed_list = []
         self.reduced_complex_attractor_list = []
+
     def find_motif_permutation(self,motif_history):
         for i,mr in enumerate(self.MotifReductionList):
             if len(mr.motif_history) == len(motif_history):
                 if all([x in mr.motif_history for x in motif_history]):
                     permutation = []
-                    for x in motif_history: 
+                    for x in motif_history:
                         permutation.append(mr.motif_history.index(x))
                     return i,permutation # We already have an equivalent motif in the list
         return None,None
+
     def add_motif_permutation(self,reduction_index,permutation):
         self.reduction_permutations[reduction_index].append(permutation)
+
     def add_motif_reduction(self,motif_reduction,merge_equivalent_motifs=True):
         self.MotifReductionList.append(motif_reduction)
         self.reduction_permutations.append([])
@@ -41,8 +47,9 @@ class SuccessionDiagram:
                 self.attractor_reduced_primes_list.append(motif_reduction.reduced_primes)
                 self.attractor_guaranteed_list.append(motif_reduction.terminal)
                 self.reduced_complex_attractor_list.append(motif_reduction.no_motif_attractors)
+
     def attractor_candidate_summary(self):
-        print("Found", len([x for x in self.attractor_guaranteed_list if x == "yes"]), "guaranteed attractor space(s) and", 
+        print("Found", len([x for x in self.attractor_guaranteed_list if x == "yes"]), "guaranteed attractor space(s) and",
             len([x for x in self.attractor_guaranteed_list if x == "possible"]), "possible attractor space(s).")
         print("Found", len([x for x in self.attractor_reduced_primes_list if len(x)==0]), "steady state(s) and",
             sum([len(x) for x in self.reduced_complex_attractor_list if not x is None]), "complex attractor(s) in the guaranteed attractor space(s).")
@@ -69,7 +76,6 @@ class SuccessionDiagram:
             else:
                 print("No Free Nodes Remain.")
 
-
     def summary(self,terminal_keys=None,show_original_rules=True):
         for motif_reduction, motif_permutations in zip(self.MotifReductionList,self.reduction_permutations):
             if terminal_keys is None or motif_reduction.terminal in terminal_keys:
@@ -79,7 +85,26 @@ class SuccessionDiagram:
                     print()
                     print("The following motif_history permutation(s) have been merged into this branch:")
                     for x in motif_permutations: print(x)
-      
+
+    def motif_sequence_to_reductions(self,TargetMotifReductions):
+        """
+        Input:
+        TargetMotifReductions - a list of MotifReductions that we want to reprogram to (we want to reach any, not necessarily all)
+
+        Output:
+        stable motif sequences that achieve the desired reprogramming
+        """
+        return
+
+    def find_reductions_with_states(self,logically_fixed, potentially_oscillating):
+        return
+
+    def reprogram_to_attractor(self,logically_fixed, potentially_oscillating,max_internal_drivers=None,max_external_drivers=None):
+        TargetMotifReductions = self.find_reductions_with_states(logically_fixed, potentially_oscillating)
+        TargetStableMotifSequences = self.motif_sequence_to_reductions(TargetMotifReductions)
+
+        return
+
 def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True):
     """
     Constructs a succession diagram recursively from the rules specified by primes
@@ -107,7 +132,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
         stable_motif_list = myMotifReduction.stable_motifs
     else:
         stable_motif_list = myMotifReduction.merged_source_motifs
-        
+
     for sm in stable_motif_list:
         if merge_equivalent_motifs:
             perm_index,perm = diagram.find_motif_permutation(myMotifReduction.motif_history+[sm])
