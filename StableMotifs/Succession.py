@@ -170,7 +170,7 @@ class SuccessionDiagram:
             for target_index in target_indices:
                 if set(nx.ancestors(self.digraph,target_index)) & set(target_indices) == set():
                     drivers += self.find_reduction_drivers(target_index,max_drivers=max_drivers)
-                else: print("ignoring",target_index)
+                
         elif method == 'merge':
             target_motif_mergers = self.merge_reduction_motifs(target_reductions)
             for motif_merger in target_motif_mergers:
