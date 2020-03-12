@@ -66,12 +66,12 @@ def single_drivers(ts,primes):
                 drivers.append(ds)
     return drivers
 
-def find_internal_motif_drivers(motif,primes,max_drivers=None):
+def internal_motif_drivers(motif,primes,max_drivers=None):
     """
     Find internal driver nodes of motif through brute-force
     """
     if max_drivers is None:
-        max_drivers = len(motif)
+        max_drivers = len(motif) # The motif itself is always its own driver
 
     driver_sets = []
 
@@ -100,6 +100,55 @@ def find_internal_motif_drivers(motif,primes,max_drivers=None):
 
             if motif_stabilized:
                 driver_sets.append(driver_dict)
+
+    if len(driver_sets) == 0:
+        driver_sets.append(motif)
+
+    return sorted(driver_sets, key = lambda x: len(x))
+
+
+def minimal_motif_drivers(motif,primes,max_drivers=None):
+    """
+    Finds smallest set(s) of driver nodes of motif through brute-force
+    Not limited to internal drivers nodes
+    """
+    if max_drivers is None:
+        max_drivers = len(motif) # The motif itself is always its own driver
+
+    driver_sets = []
+
+    for driver_set_size in range(max_drivers):
+        if len(driver_sets) > 0:
+            break
+
+        for driver_vars in it.combinations(primes.keys(),driver_set_size):
+            # Any internal nodes must be in their motif state to be drivers
+            internal_driver_dict = {k:motif[k] for k in driver_vars if k in motif}
+            out_keys = [k for k in driver_vars if not k in motif]
+            for s in it.product([0,1],repeat=len(out_keys)):
+                external_driver_dict = {k:s for k,s in zip(out_keys,s)}
+                driver_dict = {**internal_driver_dict, **external_driver_dict}
+                is_candidate=True
+                # The driver set we're looking at has too many nodes if we already
+                # found a driver set that is a subset of it.
+                for known_driver_set in driver_sets:
+                    if driver_dict.items() >= known_driver_set.items():
+                        is_candidate = False
+                        break
+                if not is_candidate:
+                    continue
+
+                implied,contradicted = logical_domain_of_influence(driver_dict,primes)
+                fixed = {**implied, **driver_dict}
+
+                motif_stabilized = True
+                for k,v in motif.items():
+                    if not k in fixed or not fixed[k] == v:
+                        motif_stabilized = False
+                        break
+
+                if motif_stabilized:
+                    driver_sets.append(driver_dict)
 
     if len(driver_sets) == 0:
         driver_sets.append(motif)

@@ -3,7 +3,7 @@ import itertools as it
 
 from StableMotifs.Reduction import MotifReduction, reduce_primes
 from StableMotifs.Format import pretty_print_prime_rules
-from StableMotifs.DomainOfInfluence import find_internal_motif_drivers
+from StableMotifs.DomainOfInfluence import internal_motif_drivers, minimal_motif_drivers
 
 class SuccessionDiagram:
     """
@@ -129,7 +129,7 @@ class SuccessionDiagram:
             target_motif_mergers.append({k:v for d in reduction.motif_history for k,v in d.items()})
         return target_motif_mergers
 
-    def find_reductions_with_states(self,logically_fixed):
+    def reductions_indices_with_states(self,logically_fixed):
         # NOTE: This finds all reductions, not just those closest to the root
         target_indicies = []
         for i,reduction in enumerate(self.motif_reduction_list):
@@ -137,7 +137,7 @@ class SuccessionDiagram:
                 target_indicies.append(i)
         return target_indicies
 
-    def find_reduction_drivers(self,target_index,max_drivers=None):
+    def reduction_drivers(self,target_index,max_drivers=None):
         drivers = []
         for path in nx.all_simple_paths(self.digraph,0,target_index):
             path_motif_history=[]
@@ -147,7 +147,7 @@ class SuccessionDiagram:
                     ind_prev = ind
                     continue
                 path_motif_history += [x for x in self.motif_reduction_list[ind].motif_history if not x in path_motif_history]
-                path_drivers.append(find_internal_motif_drivers(path_motif_history[-1],
+                path_drivers.append(internal_motif_drivers(path_motif_history[-1],
                     self.motif_reduction_list[ind_prev].reduced_primes,
                     max_drivers=max_drivers))
                 ind_prev = ind
@@ -156,27 +156,58 @@ class SuccessionDiagram:
         return drivers
 
     def reprogram_to_trap_spaces(self,logically_fixed,max_drivers=None,method='history'):
-        # TODO: consider motifs separately for better scaling. Maybe find middle
-        # ground with motif merger approach.
-        methods = ['history','merge']
+        """
+        Find driver sets that lead to the node states specified by logically_fixed
+
+        Inputs:
+        logically_fixed - state dictionary specifying the control target
+        max_drivers - the maximum number of driver nodes to attempt when looking
+                      for stable motif driver nodes before specifying the entire
+                      stable motif as part fo the driver set
+        method - One of the following:
+                    - history: consider stable motifs seperately, but must
+                      must consider all possible orders they can lock in; better
+                      when stable motifs lock in in only a few orders, scales
+                      better with total combined motif size
+                    - merge: consider all stable motifs at once to avoid
+                      combinatorial explosion for reordering; better when there
+                      are many orders stable motifs can stabilize in, but scales
+                      poorly with total combined motif size
+                    - minimal: only search for the minimal driver sets, but is
+                      not restricted to only searching for internal driver nodes;
+                      performance is better when a small driver set exists
+
+        Output:
+        nonredundant_drivers - list of driver sets, sorted from smallest to largest
+
+        """
+
+        methods = ['history','merge','minimal']
         assert method in methods, ' '.join(["method argument of reprogram_to_trap_spaces must be among",str(methods)])
 
         drivers = []
-        target_indices = self.find_reductions_with_states(logically_fixed)
+        target_indices = self.reductions_indices_with_states(logically_fixed)
 
         if method == 'history':
             for target_index in target_indices:
                 # We only look for drivers if the reduction doesn't have any ancestors that would also work
                 if set(nx.ancestors(self.digraph,target_index)) & set(target_indices) == set():
-                    drivers += self.find_reduction_drivers(target_index,max_drivers=max_drivers)
+                    drivers += self.reduction_drivers(target_index,max_drivers=max_drivers)
 
         elif method == 'merge':
-            target_motif_mergers = [] # we will think of members as unordered for now; might consider orders later
             for target_index in target_indices:
                 if set(nx.ancestors(self.digraph,target_index)) & set(target_indices) == set():
                     target_history = self.motif_reduction_list[target_index].motif_history
                     motif_merger = {k:v for d in target_history for k,v in d.items()}
-                    merger_drivers = find_internal_motif_drivers(motif_merger,
+                    merger_drivers = internal_motif_drivers(motif_merger,
+                        self.unreduced_primes,max_drivers=max_drivers)
+                    drivers += [x for x in merger_drivers if not x in drivers]
+        elif method == 'minimal':
+            for target_index in target_indices:
+                if set(nx.ancestors(self.digraph,target_index)) & set(target_indices) == set():
+                    target_history = self.motif_reduction_list[target_index].motif_history
+                    motif_merger = {k:v for d in target_history for k,v in d.items()}
+                    merger_drivers = minimal_motif_drivers(motif_merger,
                         self.unreduced_primes,max_drivers=max_drivers)
                     drivers += [x for x in merger_drivers if not x in drivers]
 
