@@ -58,6 +58,8 @@ class MotifReduction:
     represents a node in a succession diagram (see Succession.py)
 
     Variables:
+    motif_history - list of stable motifs that can lock in to give the reduced network (in order)
+    merged_history_perumutations - list of permutations of motif_history (by index) that are also valid
     logically_fixed_nodes - node state dictionary describing nodes that have been
                             fixed and reduced by stable motifs and their
                             logical domain of influence
