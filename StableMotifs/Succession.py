@@ -109,18 +109,19 @@ class SuccessionDiagram:
                 target_motif_reductions.append(reduction)
         return target_motif_reductions
 
-    def reprogram_to_trap_spaces(self,logically_fixed,max_internal_drivers=None,max_external_drivers=None):
+    def reprogram_to_trap_spaces(self,logically_fixed,max_drivers=None):
         # TODO: consider motifs separately for better scaling.
         # Let all but one motif lock-in, then look for drivers for the last.
         # Do this for each motif, then we don't have to worry about order, but
-        # we're not oversampling the driver space by such an obscene amount. 
+        # we're not oversampling the driver space by such an obscene amount.
         target_motif_reductions = self.find_reductions_with_states(logically_fixed)
         target_motif_mergers = self.motif_sequence_to_reductions(target_motif_reductions)
 
         drivers = []
         for motif_merger in target_motif_mergers:
-            drivers += find_internal_motif_drivers(motif_merger,self.unreduced_primes)
-        return sorted({k:v for d in drivers for k,v in d.items()},key=lambda x:len(x))
+            drivers += find_internal_motif_drivers(motif_merger,self.unreduced_primes,max_drivers=max_drivers)
+
+        return sorted(drivers,key=lambda x: len(x))
 
 def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True):
     """

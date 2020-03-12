@@ -74,19 +74,19 @@ def find_internal_motif_drivers(motif,primes,max_drivers=None):
 
     for driver_set_size in range(max_drivers):
         for driver_vars in it.combinations(motif.keys(),driver_set_size):
-            for driver_vals in it.product([0,1],repeat=driver_set_size):
-                driver_dict = {k:v for k,v in zip(driver_vars,driver_vals)}
-                implied,contradicted = logical_domain_of_influence(driver_dict,primes)
-                fixed = {**implied, **driver_dict}
-                
-                motif_stabilized = True
-                for k,v in motif.items():
-                    if not k in fixed or not fixed[k] == v:
-                        motif_stabilized = False
-                        break
+            #for driver_vals in it.product([0,1],repeat=driver_set_size):
+            driver_dict = {k:motif[k] for k in driver_vars}
+            implied,contradicted = logical_domain_of_influence(driver_dict,primes)
+            fixed = {**implied, **driver_dict}
 
-                if motif_stabilized:
-                    driver_sets.append(driver_dict)
+            motif_stabilized = True
+            for k,v in motif.items():
+                if not k in fixed or not fixed[k] == v:
+                    motif_stabilized = False
+                    break
+
+            if motif_stabilized:
+                driver_sets.append(driver_dict)
 
     if not motif in driver_sets:
         driver_sets.append(motif)
