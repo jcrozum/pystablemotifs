@@ -131,13 +131,11 @@ class SuccessionDiagram:
 
     def find_reductions_with_states(self,logically_fixed):
         # NOTE: This finds all reductions, not just those closest to the root
-        target_reductions = []
         target_indicies = []
         for i,reduction in enumerate(self.motif_reduction_list):
             if logically_fixed.items() <= reduction.logically_fixed_nodes.items():
                 target_indicies.append(i)
-                target_reductions.append(reduction)
-        return target_reductions,target_indicies
+        return target_indicies
 
     def find_reduction_drivers(self,target_index,max_drivers=None):
         drivers = []
@@ -164,19 +162,23 @@ class SuccessionDiagram:
         assert method in methods, ' '.join(["method argument of reprogram_to_trap_spaces must be among",str(methods)])
 
         drivers = []
-        target_reductions,target_indices = self.find_reductions_with_states(logically_fixed)
+        target_indices = self.find_reductions_with_states(logically_fixed)
 
         if method == 'history':
             for target_index in target_indices:
+                # We only look for drivers if the reduction doesn't have any ancestors that would also work
                 if set(nx.ancestors(self.digraph,target_index)) & set(target_indices) == set():
                     drivers += self.find_reduction_drivers(target_index,max_drivers=max_drivers)
-                
+
         elif method == 'merge':
-            target_motif_mergers = self.merge_reduction_motifs(target_reductions)
-            for motif_merger in target_motif_mergers:
-                merger_drivers = find_internal_motif_drivers(motif_merger,
-                    self.unreduced_primes,max_drivers=max_drivers)
-                drivers += [x for x in merger_drivers if not x in drivers]
+            target_motif_mergers = [] # we will think of members as unordered for now; might consider orders later
+            for target_index in target_indices:
+                if set(nx.ancestors(self.digraph,target_index)) & set(target_indices) == set():
+                    target_history = self.motif_reduction_list[target_index].motif_history
+                    motif_merger = {k:v for d in target_history for k,v in d.items()}
+                    merger_drivers = find_internal_motif_drivers(motif_merger,
+                        self.unreduced_primes,max_drivers=max_drivers)
+                    drivers += [x for x in merger_drivers if not x in drivers]
 
         drivers = sorted(drivers,key=lambda x: len(x))
 
