@@ -119,9 +119,23 @@ class SuccessionDiagram:
 
         drivers = []
         for motif_merger in target_motif_mergers:
-            drivers += find_internal_motif_drivers(motif_merger,self.unreduced_primes,max_drivers=max_drivers)
+            merger_drivers = find_internal_motif_drivers(motif_merger,
+                self.unreduced_primes,max_drivers=max_drivers)
+            drivers += [x for x in merger_drivers if not x in drivers]
 
-        return sorted(drivers,key=lambda x: len(x))
+        drivers = sorted(drivers,key=lambda x: len(x))
+
+        nonredundant_drivers = []
+        # remove redundant control sets
+        for i in range(len(drivers)):
+            use_i = True
+            for j in range(i): # i > j
+                if drivers[i].items() >= drivers[j].items():
+                    use_i = False
+                    break
+            if use_i: nonredundant_drivers.append(drivers[i])
+
+        return nonredundant_drivers
 
 def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True):
     """
@@ -160,5 +174,6 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
             np,fixed2 = reduce_primes(sm,primes)
             fixed3 = fixed.copy()
             fixed3.update(fixed2)
-            diagram = build_succession_diagram(np,fixed3,myMotifReduction.motif_history+[sm],diagram, merge_equivalent_motifs=merge_equivalent_motifs)
+            diagram = build_succession_diagram(np,fixed3,myMotifReduction.motif_history+[sm],
+                diagram, merge_equivalent_motifs=merge_equivalent_motifs)
     return diagram
