@@ -77,6 +77,17 @@ def find_internal_motif_drivers(motif,primes,max_drivers=None):
         for driver_vars in it.combinations(motif.keys(),driver_set_size):
             #for driver_vals in it.product([0,1],repeat=driver_set_size):
             driver_dict = {k:motif[k] for k in driver_vars}
+
+            is_candidate=True
+            # The driver set we're looking at has too many nodes if we already
+            # found a driver set that is a subset of it.
+            for known_driver_set in driver_sets:
+                if driver_dict.items() >= known_driver_set.items():
+                    is_candidate = False
+                    break
+            if not is_candidate:
+                continue
+
             implied,contradicted = logical_domain_of_influence(driver_dict,primes)
             fixed = {**implied, **driver_dict}
 
@@ -89,7 +100,8 @@ def find_internal_motif_drivers(motif,primes,max_drivers=None):
             if motif_stabilized:
                 driver_sets.append(driver_dict)
 
-    if not motif in driver_sets:
+    if len(driver_sets) == 0:
         driver_sets.append(motif)
-
-    return sorted(driver_sets, key = lambda x: len(x))
+        
+    sorted(driver_sets, key = lambda x: len(x))
+    return driver_sets
