@@ -110,10 +110,8 @@ class SuccessionDiagram:
         return target_motif_reductions
 
     def reprogram_to_trap_spaces(self,logically_fixed,max_drivers=None):
-        # TODO: consider motifs separately for better scaling.
-        # Let all but one motif lock-in, then look for drivers for the last.
-        # Do this for each motif, then we don't have to worry about order, but
-        # we're not oversampling the driver space by such an obscene amount.
+        # TODO: consider motifs separately for better scaling. Maybe find middle
+        # ground with motif merger approach.
         target_motif_reductions = self.find_reductions_with_states(logically_fixed)
         target_motif_mergers = self.motif_sequence_to_reductions(target_motif_reductions)
 

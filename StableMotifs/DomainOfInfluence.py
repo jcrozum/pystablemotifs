@@ -67,6 +67,7 @@ def single_drivers(ts,primes):
     return drivers
 
 def find_internal_motif_drivers(motif,primes,max_drivers=None):
+    # TODO: filter out subset redundancies
     if max_drivers is None:
         max_drivers = len(motif)
 
