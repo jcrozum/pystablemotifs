@@ -67,7 +67,9 @@ def single_drivers(ts,primes):
     return drivers
 
 def find_internal_motif_drivers(motif,primes,max_drivers=None):
-    # TODO: filter out subset redundancies
+    """
+    Find internal driver nodes of motif through brute-force
+    """
     if max_drivers is None:
         max_drivers = len(motif)
 
@@ -75,7 +77,6 @@ def find_internal_motif_drivers(motif,primes,max_drivers=None):
 
     for driver_set_size in range(max_drivers):
         for driver_vars in it.combinations(motif.keys(),driver_set_size):
-            #for driver_vals in it.product([0,1],repeat=driver_set_size):
             driver_dict = {k:motif[k] for k in driver_vars}
 
             is_candidate=True
@@ -102,6 +103,5 @@ def find_internal_motif_drivers(motif,primes,max_drivers=None):
 
     if len(driver_sets) == 0:
         driver_sets.append(motif)
-        
-    sorted(driver_sets, key = lambda x: len(x))
-    return driver_sets
+
+    return sorted(driver_sets, key = lambda x: len(x))
