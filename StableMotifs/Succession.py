@@ -1,12 +1,16 @@
+import networkx as nx
+import itertools as it
+
 from StableMotifs.Reduction import MotifReduction, reduce_primes
 from StableMotifs.Format import pretty_print_prime_rules
 from StableMotifs.DomainOfInfluence import find_internal_motif_drivers
+
 class SuccessionDiagram:
     """
     Representation of a succession diagram of a Boolean system
 
     Variables:
-    MotifReductionList - a list of MotifReductions (see Reduction.py)
+    motif_reduction_list - a list of MotifReductions (see Reduction.py)
 
     Functions:
     __init__(self)
@@ -18,15 +22,15 @@ class SuccessionDiagram:
     """
 
     def __init__(self):
-        self.MotifReductionList = []
-        self.reduction_permutations = []
+        self.motif_reduction_list = []
+        self.digraph = nx.DiGraph()
         self.attractor_fixed_nodes_list = []
         self.attractor_reduced_primes_list = []
         self.attractor_guaranteed_list = []
         self.reduced_complex_attractor_list = []
         self.unreduced_primes = None
     def find_motif_permutation(self,motif_history):
-        for i,mr in enumerate(self.MotifReductionList):
+        for i,mr in enumerate(self.motif_reduction_list):
             if len(mr.motif_history) == len(motif_history):
                 if all([x in mr.motif_history for x in motif_history]):
                     permutation = []
@@ -36,19 +40,47 @@ class SuccessionDiagram:
         return None,None
 
     def add_motif_permutation(self,reduction_index,permutation):
-        self.reduction_permutations[reduction_index].append(permutation)
+        self.motif_reduction_list[reduction_index].merged_history_perumutations.append(permutation)
+        for child in nx.topological_sort(self.digraph):
+            for parent in self.digraph.predecessors(child):
+                for parent_perm,child_perm in it.product(self.motif_reduction_list[parent].merged_history_perumutations,self.motif_reduction_list[child].merged_history_perumutations):
+                    new_perm = child_perm.copy()
+                    for i,p in enumerate(parent_perm):
+                        new_perm[i] = child_perm[p]
+                    if not new_perm in self.motif_reduction_list[child].merged_history_perumutations:
+                        self.motif_reduction_list[child].merged_history_perumutations.append(new_perm)
 
-    def add_motif_reduction(self,motif_reduction,merge_equivalent_motifs=True):
-        if self.MotifReductionList == []:
+    def add_motif_reduction(self,motif_reduction):
+        if self.motif_reduction_list == []:
             self.unreduced_primes = motif_reduction.reduced_primes
-        self.MotifReductionList.append(motif_reduction)
-        self.reduction_permutations.append([])
+
+        # note: N is computed BEFORE the new reduction is added,
+        # so it will be the reduction index AFTER the reduction is added.
+        N = len(self.motif_reduction_list)
+        new_set = set([frozenset(tuple(x.items())) for x in motif_reduction.motif_history])
+        for i,reduction in enumerate(self.motif_reduction_list):
+            old_set = set([frozenset(tuple(x.items())) for x in reduction.motif_history])
+
+            # see if we're adding a parent of an existing reduction
+            if len(old_set) == len(new_set) + 1:
+                missing_motif = [dict(s) for s in old_set - new_set][0]
+                if missing_motif in motif_reduction.stable_motifs:
+                    self.digraph.add_edge(N,i)
+            # see if we're adding a child of an existing reduction
+            elif len(old_set) == len(new_set) - 1:
+                missing_motif = [dict(s) for s in new_set - old_set][0]
+                if missing_motif in reduction.stable_motifs:
+                    self.digraph.add_edge(i,N)
+
+        self.motif_reduction_list.append(motif_reduction)
+        self.add_motif_permutation(N,list(range(len(motif_reduction.motif_history))))
         if not motif_reduction.terminal == "no":
             if not motif_reduction.logically_fixed_nodes in self.attractor_fixed_nodes_list:
                 self.attractor_fixed_nodes_list.append(motif_reduction.logically_fixed_nodes)
                 self.attractor_reduced_primes_list.append(motif_reduction.reduced_primes)
                 self.attractor_guaranteed_list.append(motif_reduction.terminal)
                 self.reduced_complex_attractor_list.append(motif_reduction.no_motif_attractors)
+
 
     def attractor_candidate_summary(self):
         print("Found", len([x for x in self.attractor_guaranteed_list if x == "yes"]), "guaranteed attractor space(s) and",
@@ -79,14 +111,10 @@ class SuccessionDiagram:
                 print("No Free Nodes Remain.")
 
     def summary(self,terminal_keys=None,show_original_rules=True):
-        for motif_reduction, motif_permutations in zip(self.MotifReductionList,self.reduction_permutations):
+        for motif_reduction in self.motif_reduction_list:
             if terminal_keys is None or motif_reduction.terminal in terminal_keys:
                 print("__________________")
                 motif_reduction.summary(show_original_rules=show_original_rules)
-                if len(motif_permutations) > 0:
-                    print()
-                    print("The following motif_history permutation(s) have been merged into this branch:")
-                    for x in motif_permutations: print(x)
 
     def motif_sequence_to_reductions(self,target_motif_reductions):
         """
@@ -104,7 +132,7 @@ class SuccessionDiagram:
     def find_reductions_with_states(self,logically_fixed):
         # NOTE: This finds all reductions, not just those closest to the root
         target_motif_reductions = []
-        for reduction in self.MotifReductionList:
+        for reduction in self.motif_reduction_list:
             if logically_fixed.items() <= reduction.logically_fixed_nodes.items():
                 target_motif_reductions.append(reduction)
         return target_motif_reductions
@@ -155,7 +183,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     myMotifReduction=MotifReduction(motif_history,fixed.copy(),primes)
     if diagram is None:
         diagram = SuccessionDiagram()
-    diagram.add_motif_reduction(myMotifReduction,merge_equivalent_motifs=merge_equivalent_motifs)
+    diagram.add_motif_reduction(myMotifReduction)
 
     # Prioritize source nodes
     if myMotifReduction.merged_source_motifs is None:
