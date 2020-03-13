@@ -12,10 +12,12 @@ def booleannet2bnet(rules):
     Also replaces ~ with !
     """
     s = re.sub("\s*\*\s*=\s*",",\t",rules)
-    s = re.sub("\s*not\s*"," ! ",s, flags=re.IGNORECASE)
-    s = re.sub("\s*~\s*"," ! ",s, flags=re.IGNORECASE)
-    s = re.sub("\s*and\s*"," & ",s, flags=re.IGNORECASE)
-    s = re.sub("\s*or\s*"," | ",s, flags=re.IGNORECASE)
+    s = re.sub("\s+not\s+"," !",s, flags=re.IGNORECASE)
+    s = re.sub("\(\s*not\s+","(!",s, flags=re.IGNORECASE)
+    s = re.sub("\s*~\s*"," !",s, flags=re.IGNORECASE)
+    s = re.sub("\s+and\s+"," & ",s, flags=re.IGNORECASE)
+    s = re.sub("\s+or\s+"," | ",s, flags=re.IGNORECASE)
+
     return s
 
 def remove_comment_lines(stream):
@@ -24,7 +26,7 @@ def remove_comment_lines(stream):
     """
     lines = list(stream)
     lines = filter(lambda x: not x.startswith("#"), lines)
-    rules = "\n".join(lines)
+    rules = "".join(lines)
     return rules
 
 def import_primes(fname, format='BooleanNet', remove_constants=False):

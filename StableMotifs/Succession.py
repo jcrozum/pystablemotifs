@@ -288,7 +288,7 @@ class SuccessionDiagram:
 
         return nonredundant_drivers
 
-def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True):
+def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,search_partial_STGs=True,prioritize_source_motifs=True):
     """
     Constructs a succession diagram recursively from the rules specified by primes
 
@@ -305,7 +305,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     """
     if fixed is None:
         fixed = {}
-    myMotifReduction=MotifReduction(motif_history,fixed.copy(),primes)
+    myMotifReduction=MotifReduction(motif_history,fixed.copy(),primes,search_partial_STGs=search_partial_STGs,prioritize_source_motifs=prioritize_source_motifs)
     if diagram is None:
         diagram = SuccessionDiagram()
     diagram.add_motif_reduction(myMotifReduction)
@@ -326,5 +326,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
             fixed3 = fixed.copy()
             fixed3.update(fixed2)
             diagram = build_succession_diagram(np,fixed3,myMotifReduction.motif_history+[sm],
-                diagram, merge_equivalent_motifs=merge_equivalent_motifs)
+                diagram, merge_equivalent_motifs=merge_equivalent_motifs,
+                search_partial_STGs=search_partial_STGs,
+                prioritize_source_motifs=prioritize_source_motifs)
     return diagram

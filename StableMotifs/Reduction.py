@@ -40,17 +40,6 @@ def reduce_primes(fixed,primes):
 
 
     return simplify_primes(reduced_primes), percolated_states
-# Commented out because this function is no longer used
-#def state_in_K(statestring,K,name_inds):
-#    for kd in K:
-#        in_kd = True
-#        for k,v in kd.items():
-#            if not int(statestring[name_inds[k]]) == v:
-#                in_kd = False
-#        if in_kd:
-#            return True
-#    return False
-
 
 class MotifReduction:
     """
@@ -145,10 +134,17 @@ class MotifReduction:
         else: # found 1-node drivers, so we can investigate further
             self.terminal = "possible" # TODO: implement case-checking based on rspace
             self.fixed_rspace_nodes = fixed_rspace_nodes(self.rspace,self.reduced_primes)
-            self.rspace_constraint = pretty_print_rspace(self.rspace)
-            self.reduced_rspace_constraint = reduce_rspace_string(self.rspace_constraint,self.fixed_rspace_nodes)
-            self.rspace_update_primes = reduce_primes(self.fixed_rspace_nodes,self.reduced_primes)[0]
-            self.test_rspace()
+
+            for motif in self.stable_motifs:
+                if motif.items() <= self.fixed_rspace_nodes.items():
+                    self.terminal = "no"
+                    break
+            if self.terminal == "possible":
+                self.rspace_constraint = pretty_print_rspace(self.rspace)
+                self.reduced_rspace_constraint = reduce_rspace_string(self.rspace_constraint,self.fixed_rspace_nodes)
+                self.rspace_update_primes = reduce_primes(self.fixed_rspace_nodes,self.reduced_primes)[0]
+                self.test_rspace()
+
             study_possible_oscillation = self.terminal == "possible" # value may be changed by test_rspace
         if study_possible_oscillation:
             self.conserved_functions = attractor_space_candidates(self.stable_motifs,

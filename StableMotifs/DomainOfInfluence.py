@@ -56,6 +56,8 @@ def logical_domain_of_influence(state,primes):
 def single_drivers(partial_state,primes):
     """
     Finds all 1-node (logical) drivers of partial_state under the rules given by primes
+
+    Returns a list of length-1 dictionaries
     """
     drivers = []
     for k in primes:

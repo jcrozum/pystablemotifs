@@ -3,38 +3,6 @@ import re
 
 from StableMotifs.DomainOfInfluence import single_drivers, logical_domain_of_influence
 
-# def exclusion_space(fspace):
-#     """
-#     NOTE: This function is commented out because it provides only extraneous information and is slow
-#     It was used to negate conserved function to create a new conserved function, but this is superfluous.
-#
-#     Returns a list of PyBoolNet prime implicant dictionaries that is satisfied
-#     if and only if all rules in fspace are violated.
-#
-#     Input:
-#     fspace - a list of prime implicant dictionaries, to be interpeted as a disjunctive normal form function
-#
-#     Output:
-#     p2 - the negation of fspace, provided in the same form
-#     """
-#     if len(fspace) == 0: return [{}]
-#     # Build the rule; TRUE means we are in at least one of the spaces
-#     # So we will want the implicants for the FALSE value
-#     nrule = '__reserved,\t'
-#     rule_list = []
-#     for d in fspace:
-#         clause_list = []
-#         for k in d:
-#             if d[k]: clause_list.append(k)
-#             else: clause_list.append('!'+k)
-#         rule_list.append('&'.join(clause_list))
-#     nrule += '|'.join(rule_list)
-#
-#     # Build the implicants, grab the ones for the FALSE value
-#     p2 = PyBoolNet.FileExchange.bnet2primes(nrule)['__reserved'][0]
-#
-#     return p2
-
 def attractor_space_candidates(maxts,trmaxts):
     """
     Merge the maximum trap spaces maxts and time-reverse maximum trap spaces
@@ -50,20 +18,29 @@ def rspace(maxts,primes):
     In order for none of the trap spaces to "lock in", we would require that
     their single-node drivers are all sustained in a negated state. We can use
     this idea to hone the exclusion space. rspace will return the region that
-    1) does not have any maxts active and
-    2) has the negations of 1-node drivers of each maxts active and
-    3) has the update rules of these 1-node drivers taking the appropriate value
+
+
+    1) has the negations of 1-node drivers of each maxts active and . . .
+    2) has the update rules of these 1-node drivers taking the appropriate value
     The return value is a list L of lists of prime implicants. Each element of L
     is to be interpreted as a list of OR-separated prime implicants; L is to be
     interpreted as AND-separated. e.g.,
     L=[[{'A':0,'B':1},{C:0}],[{'B':0,'D':1},{'A':1}]]
     should be read as L = (!A&B | !C) & (!B & D | A)
     """
-    nds = {}
+    L = []
+    nds = {} # negated 1-node drivers of the stable motifs in maxts
     for ts in maxts:
+        # Make sure we aren't in the stable motif ts
+        # clause = []
+        # for k,v in ts.items():
+        #     clause.append({k:int(not v)})
+        # L.append(clause)
+
+        # Now consider drivers of ts
         drivers = single_drivers(ts,primes)
         for d in drivers:
-            node = list(d.keys())[0]
+            node = list(d.keys())[0] # d only has 1 key because its a 1-node driver set
             if node in nds:
                 if nds[node] == d[node]:
                     return [[{'0':1}]] # In this case, at least one SM MUST stabilize
@@ -74,9 +51,12 @@ def rspace(maxts,primes):
 
     for k in implied: nds[k]=implied[k]
 
-    L = [[nds]]
+    L.append([nds])
+
+    # also include the conditions for the update rules of the negated drivers
     for k in nds:
         L.append(primes[k][nds[k]])
+
     return L
 
 def fixed_rspace_nodes(L,primes):
