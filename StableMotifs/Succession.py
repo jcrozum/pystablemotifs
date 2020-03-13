@@ -3,7 +3,7 @@ import itertools as it
 
 from StableMotifs.Reduction import MotifReduction, reduce_primes
 from StableMotifs.Format import pretty_print_prime_rules
-from StableMotifs.DomainOfInfluence import internal_motif_drivers, minimal_motif_drivers
+from StableMotifs.DomainOfInfluence import internal_drivers, minimal_drivers
 
 class SuccessionDiagram:
     """
@@ -63,14 +63,18 @@ class SuccessionDiagram:
 
             # see if we're adding a parent of an existing reduction
             if len(old_set) == len(new_set) + 1:
-                missing_motif = [dict(s) for s in old_set - new_set][0]
-                if missing_motif in motif_reduction.stable_motifs:
-                    self.digraph.add_edge(N,i)
+                diff_set = old_set - new_set
+                if len(diff_set) == 1:
+                    missing_motif = dict(diff_set.pop())#[dict(s) for s in old_set - new_set][0]
+                    if missing_motif in motif_reduction.stable_motifs:
+                        self.digraph.add_edge(N,i)
             # see if we're adding a child of an existing reduction
             elif len(old_set) == len(new_set) - 1:
-                missing_motif = [dict(s) for s in new_set - old_set][0]
-                if missing_motif in reduction.stable_motifs:
-                    self.digraph.add_edge(i,N)
+                diff_set = new_set - old_set
+                if len(diff_set) == 1:
+                    missing_motif = dict(diff_set.pop())#[dict(s) for s in new_set - old_set][0]
+                    if missing_motif in reduction.stable_motifs:
+                        self.digraph.add_edge(i,N)
 
         self.motif_reduction_list.append(motif_reduction)
         self.add_motif_permutation(N,list(range(len(motif_reduction.motif_history))))
@@ -137,7 +141,9 @@ class SuccessionDiagram:
                 target_indicies.append(i)
         return target_indicies
 
-    def reduction_drivers(self,target_index,max_drivers=None):
+    def reduction_drivers(self,target_index,method='internal',max_drivers=None):
+        methods = ['internal','minimal']
+        assert method in methods, ' '.join(["method argument of reduction_drivers must be among",str(methods)])
         drivers = []
         for path in nx.all_simple_paths(self.digraph,0,target_index):
             path_motif_history=[]
@@ -147,12 +153,41 @@ class SuccessionDiagram:
                     ind_prev = ind
                     continue
                 path_motif_history += [x for x in self.motif_reduction_list[ind].motif_history if not x in path_motif_history]
-                path_drivers.append(internal_motif_drivers(path_motif_history[-1],
-                    self.motif_reduction_list[ind_prev].reduced_primes,
-                    max_drivers=max_drivers))
+
+                if method == 'internal':
+                    history_drivers = internal_drivers(path_motif_history[-1],
+                        self.motif_reduction_list[ind_prev].reduced_primes,
+                        max_drivers=max_drivers)
+                elif method == 'minimal':
+                    #print("Path motif history",path_motif_history)
+                    #print("Indices (new,old)",ind,ind_prev)
+                    #if self.digraph.has_edge(ind_prev,ind):
+                    #     print("Has Edge")
+                    # else:
+                    #     print("Missing Edge!!")
+                    #     print(list(self.digraph.edges()))
+                    # print("Reduction Summaries")
+                    # self.motif_reduction_list[ind].summary()
+                    # self.motif_reduction_list[ind_prev].summary()
+                    #
+                    # print()
+                    # print()
+                    # print()
+                    # print()
+                    history_drivers = minimal_drivers(path_motif_history[-1],
+                        self.motif_reduction_list[ind_prev].reduced_primes,
+                        max_drivers=max_drivers)
+
+                path_drivers.append(history_drivers)
                 ind_prev = ind
-            for control_sequence in it.product(*path_drivers):
-                drivers.append({k:v for x in control_sequence for k,v in x.items()})
+            if method == 'internal':
+                # merge control sets along the path
+                for control_sequence in it.product(*path_drivers):
+                    control_set = {k:v for x in control_sequence for k,v in x.items()}
+                    if not control_set in drivers:
+                        drivers.append(control_set)
+            elif method == 'minimal':
+                drivers = path_drivers
         return drivers
 
     def reprogram_to_trap_spaces(self,logically_fixed,max_drivers=None,method='history'):
@@ -164,7 +199,7 @@ class SuccessionDiagram:
         max_drivers - the maximum number of driver nodes to attempt when looking
                       for stable motif driver nodes before specifying the entire
                       stable motif as part fo the driver set
-        method - One of the following:
+        method - One of the following: TODO: FIX these descriptions
                     - history: consider stable motifs seperately, but must
                       must consider all possible orders they can lock in; better
                       when stable motifs lock in in only a few orders, scales
@@ -182,46 +217,74 @@ class SuccessionDiagram:
 
         """
 
-        methods = ['history','merge','minimal']
+        #methods = ['history','merge','minimal_history','minimal_merge']
+        methods = ['history','merge','minimal','minimal_history']
         assert method in methods, ' '.join(["method argument of reprogram_to_trap_spaces must be among",str(methods)])
 
         drivers = []
-        target_indices = self.reductions_indices_with_states(logically_fixed)
+        target_indices_all = self.reductions_indices_with_states(logically_fixed)
+
+        # We only look for drivers if the reduction doesn't have any ancestors that would also work
+        target_indices = []
+        for target_index in target_indices_all:
+            if set(nx.ancestors(self.digraph,target_index)) & set(target_indices_all) == set():
+                target_indices.append(target_index)
+
 
         if method == 'history':
             for target_index in target_indices:
-                # We only look for drivers if the reduction doesn't have any ancestors that would also work
-                if set(nx.ancestors(self.digraph,target_index)) & set(target_indices) == set():
-                    drivers += self.reduction_drivers(target_index,max_drivers=max_drivers)
-
+                drivers += self.reduction_drivers(target_index,max_drivers=max_drivers)
+        elif method == 'minimal_history':
+            for target_index in target_indices:
+                drivers += self.reduction_drivers(target_index,max_drivers=max_drivers,method='minimal')
         elif method == 'merge':
             for target_index in target_indices:
-                if set(nx.ancestors(self.digraph,target_index)) & set(target_indices) == set():
-                    target_history = self.motif_reduction_list[target_index].motif_history
-                    motif_merger = {k:v for d in target_history for k,v in d.items()}
-                    merger_drivers = internal_motif_drivers(motif_merger,
-                        self.unreduced_primes,max_drivers=max_drivers)
-                    drivers += [x for x in merger_drivers if not x in drivers]
+                target_history = self.motif_reduction_list[target_index].motif_history
+                motif_merger = {k:v for d in target_history for k,v in d.items()}
+                merger_drivers = internal_drivers(motif_merger,
+                    self.unreduced_primes,max_drivers=max_drivers)
+                drivers += [x for x in merger_drivers if not x in drivers]
         elif method == 'minimal':
             for target_index in target_indices:
-                if set(nx.ancestors(self.digraph,target_index)) & set(target_indices) == set():
-                    target_history = self.motif_reduction_list[target_index].motif_history
-                    motif_merger = {k:v for d in target_history for k,v in d.items()}
-                    merger_drivers = minimal_motif_drivers(motif_merger,
-                        self.unreduced_primes,max_drivers=max_drivers)
-                    drivers += [x for x in merger_drivers if not x in drivers]
+                target_history = self.motif_reduction_list[target_index].motif_history
+                motif_merger = {k:v for d in target_history for k,v in d.items()}
+
+                # Because we are potentially dealing with external drivers, we
+                # want to make sure the external drivers do not interfere with
+                # the motif's ability to drive downstream targets, or the
+                motif_merger.update(logically_fixed)
+                merger_drivers = minimal_drivers(motif_merger,
+                    self.unreduced_primes,max_drivers=max_drivers)
+                drivers += [x for x in merger_drivers if not x in drivers]
 
         drivers = sorted(drivers,key=lambda x: len(x))
 
+        # Next, we remove redundant control sets.
+        # In the minimal_history scheme, a set x is redundant if there is a y
+        # that contains all control sets of x in the same order.
+        # In all other schemes, x is redundant if it is a subset of some y.
         nonredundant_drivers = []
-        # remove redundant control sets
-        for i in range(len(drivers)):
-            use_i = True
-            for j in range(i): # i > j
-                if drivers[i].items() >= drivers[j].items():
-                    use_i = False
-                    break
-            if use_i: nonredundant_drivers.append(drivers[i])
+        if method == 'minimal_history':
+            nonredundant_drivers = []
+            for x in drivers:
+                add_x = True
+                for y in nonredundant_drivers:
+                    # note that len(x) >= len(y) is guaranteed because drivers is sorted
+                    for offset in range(len(x)-len(y)+1):
+                        if all([x[i+offset]==y[i] for i in range(len(y))]):
+                            add_x = False
+                            break
+                if add_x:
+                    nonredundant_drivers.append(x)
+
+        else:
+            for i in range(len(drivers)):
+                use_i = True
+                for j in range(i): # i > j
+                    if drivers[i].items() >= drivers[j].items():
+                        use_i = False
+                        break
+                if use_i: nonredundant_drivers.append(drivers[i])
 
         return nonredundant_drivers
 

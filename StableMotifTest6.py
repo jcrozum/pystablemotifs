@@ -15,7 +15,7 @@ from timeit import default_timer
 # sm.Format.pretty_print_prime_rules(primes)
 # print()
 # motif = {'xA':1,'xB':1,'xC':1}
-# drivers = sm.DomainOfInfluence.find_internal_motif_drivers(motif,primes)
+# drivers = sm.DomainOfInfluence.find_internal_drivers(motif,primes)
 # print("The following sets are internal driver sets of the stable motif", motif)
 # print(drivers)
 # diag = sm.Succession.build_succession_diagram(primes)
@@ -29,7 +29,7 @@ primes = sm.Format.import_primes("models/test3.txt",remove_constants=True)
 
 diag = sm.Succession.build_succession_diagram(primes)
 
-print("Computing driver sets (in two ways) that reprogram to an attractor with Apoptosis=0 . . .")
+print("Computing driver sets (in multiple ways) that reprogram to an attractor with Apoptosis=0 . . .")
 start=default_timer()
 reprogram_sets_minimal = diag.reprogram_to_trap_spaces({'Apoptosis':0},method='minimal')
 end=default_timer()
@@ -44,7 +44,14 @@ start=default_timer()
 reprogram_sets_history = diag.reprogram_to_trap_spaces({'Apoptosis':0},method='history')
 end=default_timer()
 print("Time running history method:",end-start)
-if reprogram_sets_merge == reprogram_sets_history:
+
+start=default_timer()
+reprogram_sets_minimal_history = diag.reprogram_to_trap_spaces({'Apoptosis':0},method='minimal_history')
+end=default_timer()
+print("Time running minimal_history method:",end-start)
+
+
+if len(reprogram_sets_merge) == len(reprogram_sets_history) and all([x in reprogram_sets_merge for x in reprogram_sets_history]):
     reprogram_sets = reprogram_sets_merge
 else:
     print("Something went horribly wrong!!")
@@ -52,7 +59,7 @@ else:
     print("HISTORY",reprogram_sets_history)
     print("MINIMAL",reprogram_sets_minimal)
     quit()
-
+print()
 print("Internal drivers found:")
 print(reprogram_sets)
 for f in reprogram_sets:
@@ -65,7 +72,7 @@ for f in reprogram_sets:
         print("Set", f, "verified as driver set of Apoptosis=0.")
     else:
         print("Set", f, "failed to drive Apoptosis=0 as permanent intervention (cannot rule out success though).")
-
+print()
 print("Minimal drivers found:")
 print(reprogram_sets_minimal)
 for f in reprogram_sets_minimal:
@@ -78,6 +85,11 @@ for f in reprogram_sets_minimal:
         print("Set", f, "verified as driver set of Apoptosis=0.")
     else:
         print("Set", f, "failed to drive Apoptosis=0 as permanent intervention (cannot rule out success though).")
+
+print()
+print("Minimal hitory drivers found:")
+for x in reprogram_sets_minimal_history: print(x)
+
 # for set_size in range(len(reprogram_sets[-1])+1):
 #     n = len([x for x in reprogram_sets if len(x)==set_size])
 #     print("There are",n,"driver sets of size",set_size)
