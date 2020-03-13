@@ -144,3 +144,22 @@ def minimal_drivers(partial_state,primes,max_drivers=None):
         driver_sets.append(partial_state)
 
     return sorted(driver_sets, key = lambda x: len(x))
+
+def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None):
+    if max_drivers is None:
+        max_drivers = len(primes) - len(target)
+    knocked_nodes = []
+
+    for n in range(min_drivers,max_drivers+1):
+        found = all_drivers_of_size(n,target, primes)
+        for x in found:
+            add_x = True
+            for y in knocked_nodes:
+                if x.items() >= y.items():
+                    add_x = False
+                    break
+            if add_x:
+                knocked_nodes.append(x)
+
+        n += 1
+    return knocked_nodes
