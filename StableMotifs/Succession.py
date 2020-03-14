@@ -159,26 +159,12 @@ class SuccessionDiagram:
                         self.motif_reduction_list[ind_prev].reduced_primes,
                         max_drivers=max_drivers)
                 elif method == 'minimal':
-                    #print("Path motif history",path_motif_history)
-                    #print("Indices (new,old)",ind,ind_prev)
-                    #if self.digraph.has_edge(ind_prev,ind):
-                    #     print("Has Edge")
-                    # else:
-                    #     print("Missing Edge!!")
-                    #     print(list(self.digraph.edges()))
-                    # print("Reduction Summaries")
-                    # self.motif_reduction_list[ind].summary()
-                    # self.motif_reduction_list[ind_prev].summary()
-                    #
-                    # print()
-                    # print()
-                    # print()
-                    # print()
                     history_drivers = minimal_drivers(path_motif_history[-1],
                         self.motif_reduction_list[ind_prev].reduced_primes,
                         max_drivers=max_drivers)
 
                 path_drivers.append(history_drivers)
+
                 ind_prev = ind
             if method == 'internal':
                 # merge control sets along the path
@@ -187,7 +173,7 @@ class SuccessionDiagram:
                     if not control_set in drivers:
                         drivers.append(control_set)
             elif method == 'minimal':
-                drivers = path_drivers
+                drivers.append(path_drivers)
         return drivers
 
     def reprogram_to_trap_spaces(self,logically_fixed,max_drivers=None,method='history'):
@@ -229,7 +215,6 @@ class SuccessionDiagram:
         for target_index in target_indices_all:
             if set(nx.ancestors(self.digraph,target_index)) & set(target_indices_all) == set():
                 target_indices.append(target_index)
-
 
         if method == 'history':
             for target_index in target_indices:
