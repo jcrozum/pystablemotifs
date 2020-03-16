@@ -133,13 +133,39 @@ class SuccessionDiagram:
             target_motif_mergers.append({k:v for d in reduction.motif_history for k,v in d.items()})
         return target_motif_mergers
 
-    def reductions_indices_with_states(self,logically_fixed):
-        # NOTE: This finds all reductions, not just those closest to the root
-        target_indicies = []
-        for i,reduction in enumerate(self.motif_reduction_list):
-            if logically_fixed.items() <= reduction.logically_fixed_nodes.items():
-                target_indicies.append(i)
-        return target_indicies
+    def reductions_indices_with_states(self,logically_fixed,optimize=True):
+        if not optimize:
+            # NOTE: This finds all reductions, not just those closest to the root
+            target_indicies = []
+            for i,reduction in enumerate(self.motif_reduction_list):
+                if logically_fixed.items() <= reduction.logically_fixed_nodes.items():
+                    target_indicies.append(i)
+            return target_indicies
+        else:
+            # The unoptimized result
+            target_indices_unoptimized = self.reductions_indices_with_states(logically_fixed,optimize=False)
+            target_indices_all = target_indices_unoptimized.copy()
+
+            # Add nodes that inevitably reach nodes in the unoptimized result
+            nodes_to_consider = [x for x in self.digraph if (not x in target_indices_all
+                and not self.motif_reduction_list[x].terminal == "no")]
+            for i in nodes_to_consider:
+                bad_sinks = [x for x in nx.descendants(self.digraph,i) | set([i]) if (
+                    not self.motif_reduction_list[x].terminal == "no" # is a sink and . . .
+                    and not x in target_indices_unoptimized)] # does not have the right nodes fixed
+
+                if len(bad_sinks) == 0:
+                    target_indices_all.append(i)
+
+            # remove nodes who have ancestors that would work instead, as those
+            # will be closer to the root and easier to control
+            target_indices = []
+            for target_index in target_indices_all:
+                if set(nx.ancestors(self.digraph,target_index)) & set(target_indices_all) == set():
+                    target_indices.append(target_index)
+
+            return target_indices
+
 
     def reduction_drivers(self,target_index,method='internal',max_drivers=None):
         methods = ['internal','minimal']
@@ -246,13 +272,13 @@ class SuccessionDiagram:
         assert method in methods, ' '.join(["method argument of reprogram_to_trap_spaces must be among",str(methods)])
 
         drivers = []
-        target_indices_all = self.reductions_indices_with_states(logically_fixed)
-
-        # We only look for drivers if the reduction doesn't have any ancestors that would also work
-        target_indices = []
-        for target_index in target_indices_all:
-            if set(nx.ancestors(self.digraph,target_index)) & set(target_indices_all) == set():
-                target_indices.append(target_index)
+        #target_indices_all = self.reductions_indices_with_states(logically_fixed,optimize=False)
+        target_indices = self.reductions_indices_with_states(logically_fixed)
+        # # We only look for drivers if the reduction doesn't have any ancestors that would also work
+        # target_indices = []
+        # for target_index in target_indices_all:
+        #     if set(nx.ancestors(self.digraph,target_index)) & set(target_indices_all) == set():
+        #         target_indices.append(target_index)
 
         if method == 'history':
             for target_index in target_indices:
