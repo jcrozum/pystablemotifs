@@ -1,7 +1,6 @@
 import PyBoolNet
 import StableMotifs as sm
 from timeit import default_timer
-import pickle
 
 print("Loading EMT network . . .")
 primes = sm.Format.import_primes("models/EMT.txt",remove_constants=True)
