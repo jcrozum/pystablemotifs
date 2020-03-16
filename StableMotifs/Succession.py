@@ -185,21 +185,59 @@ class SuccessionDiagram:
         max_drivers - the maximum number of driver nodes to attempt when looking
                       for stable motif driver nodes before specifying the entire
                       stable motif as part fo the driver set
-        method - One of the following: TODO: FIX these descriptions
-                    - history: consider stable motifs seperately, but must
-                      must consider all possible orders they can lock in; better
-                      when stable motifs lock in in only a few orders, scales
-                      better with total combined motif size
-                    - merge: consider all stable motifs at once to avoid
-                      combinatorial explosion for reordering; better when there
-                      are many orders stable motifs can stabilize in, but scales
-                      poorly with total combined motif size
-                    - minimal: only search for the minimal driver sets, but is
-                      not restricted to only searching for internal driver nodes;
-                      performance is better when a small driver set exists
+        method - One of the following: 'history', 'merge', 'minimal',
+                 'minimal_history'; specifies the reprogramming method to use
+                 (see below for further details)
 
         Output:
-        nonredundant_drivers - list of driver sets, sorted from smallest to largest
+        nonredundant_drivers - control strategies found; interpretation depends
+                               on method selected (see below)
+
+
+        - Methods -
+        history:
+        Finds all shortest stable motif histories that result in the target node states
+        being logically fixed. Each stable motif is searched for internal driver nodes.
+        The resulting internal drivers are combined into a single  control set. The
+        return value consists of all such control sets for all  stable motif histories.
+        Each control set eventually becomes self-sustaining.
+
+        minimal_history:
+        Similar to the history method, except the search for stable motif drivers
+        includes external driver nodes for the motif and does not extend to driver sets
+        of larger size once one driver set has been found for a motif. Because the
+        search includes external driver nodes, special care must be taken in interpreting
+        the effect of the drivers, as their influence may impact the effect of motifs
+        stabilizing. Thus, the control is only guaranteed to work if the interventions
+        are temporary and implemented in the order specified by the motif history.
+
+        For this reason, the output consists of lists of ordered interventions.
+        Each element of the return value is a list of lists of dictionaries. Each
+        element of the return value represents a control strategy. To implement such
+        a strategy, select a dictionary from the first element of the strategy and
+        fix the node states it specifies until their influence has propagated through
+        the system. Then repeat this process iteratively for each element of the strategy
+        list, in order. For example, if
+        nonredundant_drivers = [ [[{'xD':1,'xE=1'}]], [[{'xA':1},{'xB':1}],[{'xC':1}]] ]
+        then there are two control strategies available:
+        1) fix xD=xE=1 temporarily and
+        2) first fix either xA=1 or xB=1 temporarily, then fix xC=1 temporarily.
+
+        merge:
+        Finds all shortest stable motif histories that result in the target node states
+        being logically fixed. All node states in the motifs in the history are merged
+        into a stable module dictionary. This is then searched for internal driver
+        nodes. Each element of the return value is a dictionary corresponding to a
+        control set. Each control set eventually becomes self-sustaining.
+
+        minimal:
+        Similar to the merge method, except the search for drivers is conducted over
+        all nodes, not just those internal to the merged stable module. Furthermore,
+        the search is truncated when a control set is found such that the search does
+        not proceed to driver sets larger than the smallest found. Each element of
+        the return value is a dictionary corresponding to a control set. The control
+        sets are only guaranteed to result in activation of the target if they are
+        temporary interventions.
 
         """
 

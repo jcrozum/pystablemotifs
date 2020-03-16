@@ -118,4 +118,7 @@ end=default_timer()
 print()
 print("Time running minimal_history method:",end-start)
 print("Sets found:")
-for x in reprogram_sets_minimal_history: print(x,"\n")
+for x in reprogram_sets_minimal_history:
+    print("---")
+    print("One temporary intervention from each list, in order.")
+    for y in x: print(y,"\n")
