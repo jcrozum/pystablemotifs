@@ -1,6 +1,6 @@
 import PyBoolNet
 import re
-# Convert rules from Jorge's format to PyBoolNet format
+# Convert rules from BooleanNet format to PyBoolNet format
 def booleannet2bnet(rules):
     """
     Converts BooleanNet rules to BNet format.
@@ -8,13 +8,43 @@ def booleannet2bnet(rules):
     "A*=B or C and not D"
     returns
     A,  B | C & !D
+
+    Also replaces ~ with !
     """
-    #return rules.replace(' *=',',\t').replace('*=',',\t').replace('not ','!').replace(' and ',' & ').replace(' or ',' | ')
     s = re.sub("\s*\*\s*=\s*",",\t",rules)
-    s = re.sub("\s*not\s*"," ! ",s, flags=re.IGNORECASE)
-    s = re.sub("\s*and\s*"," & ",s, flags=re.IGNORECASE)
-    s = re.sub("\s*or\s*"," | ",s, flags=re.IGNORECASE)
+    s = re.sub("\s+not\s+"," !",s, flags=re.IGNORECASE)
+    s = re.sub("\(\s*not\s+","(!",s, flags=re.IGNORECASE)
+    s = re.sub("\s*~\s*"," !",s, flags=re.IGNORECASE)
+    s = re.sub("\s+and\s+"," & ",s, flags=re.IGNORECASE)
+    s = re.sub("\s+or\s+"," | ",s, flags=re.IGNORECASE)
+
     return s
+
+def remove_comment_lines(stream):
+    """
+    Removes commented out lines, i.e., those starting with '#'
+    """
+    lines = list(stream)
+    lines = filter(lambda x: not x.startswith("#"), lines)
+    rules = "".join(lines)
+    return rules
+
+def import_primes(fname, format='BooleanNet', remove_constants=False):
+    # TODO: add more formats
+    rules = remove_comment_lines(open(fname))
+    if format == 'BooleanNet':
+        rules = booleannet2bnet(rules)
+    elif format == 'BNet':
+        rules = rules
+    else:
+        raise ValueError('Unrecognized format',format)
+
+    primes = PyBoolNet.FileExchange.bnet2primes(rules)
+
+    if remove_constants:
+        PyBoolNet.PrimeImplicants._percolation(primes,True)
+
+    return primes
 
 def statestring2dict(statestring,names):
     """
