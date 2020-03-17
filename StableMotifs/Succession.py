@@ -148,7 +148,6 @@ class SuccessionDiagram:
 
             # Add nodes that inevitably reach nodes in the unoptimized result
             nodes_to_consider = [x for x in self.digraph if (not x in target_indices_all
-                and not self.motif_reduction_list[x].terminal == "no")]
                 and self.motif_reduction_list[x].terminal == "no")]
             for i in nodes_to_consider:
                 bad_sinks = [x for x in nx.descendants(self.digraph,i) | set([i]) if (
