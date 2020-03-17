@@ -114,11 +114,11 @@ class SuccessionDiagram:
             else:
                 print("No Free Nodes Remain.")
 
-    def summary(self,terminal_keys=None,show_original_rules=True):
+    def summary(self,terminal_keys=None,show_original_rules=True,show_explicit_permutations=False):
         for motif_reduction in self.motif_reduction_list:
             if terminal_keys is None or motif_reduction.terminal in terminal_keys:
                 print("__________________")
-                motif_reduction.summary(show_original_rules=show_original_rules)
+                motif_reduction.summary(show_original_rules=show_original_rules,show_explicit_permutations=show_explicit_permutations)
 
     def merge_reduction_motifs(self,target_reductions):
         """

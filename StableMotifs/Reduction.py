@@ -292,7 +292,7 @@ class MotifReduction:
             self.build_partial_STG()
         self.no_motif_attractors = list(nx.attracting_components(self.partial_STG))
 
-    def summary(self,show_original_rules=True):
+    def summary(self,show_original_rules=True,show_explicit_permutations=False):
         print("Motif History:",self.motif_history)
         print()
         print("Logically Fixed Nodes:",self.logically_fixed_nodes)
@@ -362,4 +362,7 @@ class MotifReduction:
         if len(self.merged_history_perumutations) > 0:
             print()
             print("This branch contains the following motif_history permutation(s):")
-            for x in self.merged_history_perumutations: print(x)
+            if show_explicit_permutations:
+                for x in self.merged_history_perumutations: print([self.motif_history[i] for i in x])
+            else:
+                for x in self.merged_history_perumutations: print(x)
