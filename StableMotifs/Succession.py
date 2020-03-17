@@ -315,14 +315,21 @@ class SuccessionDiagram:
         nonredundant_drivers = []
         if method == 'minimal_history':
             nonredundant_drivers = []
-            for x in drivers:
+            for x in drivers: # drivers is sorted from fewest timesteps to most
                 add_x = True
-                for y in nonredundant_drivers:
-                    # note that len(x) >= len(y) is guaranteed because drivers is sorted
+                for y in nonredundant_drivers: # note: len(y) <= len(x)
                     for offset in range(len(x)-len(y)+1):
-                        if all([x[i+offset]==y[i] for i in range(len(y))]):
-                            add_x = False
-                            break
+                        for i in range(len(y)):
+                            # want to check that x[i+offset] is a special case of y[i]
+                            for j in range(len(y)):
+                                xset = set([frozenset(tuple(xdict.items())) for xdict in x[i+offset]])
+                                yset = set([frozenset(tuple(xdict.items())) for xdict in y[i]])
+                                if yset <= xset:
+                                    add_x = False
+                                    break
+                            if not add_x: break
+                        if not add_x: break
+                    if not add_x: break
                 if add_x:
                     nonredundant_drivers.append(x)
 
