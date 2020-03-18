@@ -40,15 +40,15 @@ class SuccessionDiagram:
         return None,None
 
     def add_motif_permutation(self,reduction_index,permutation):
-        self.motif_reduction_list[reduction_index].merged_history_perumutations.append(permutation)
+        self.motif_reduction_list[reduction_index].merged_history_permutations.append(permutation)
         for child in nx.topological_sort(self.digraph):
             for parent in self.digraph.predecessors(child):
-                for parent_perm,child_perm in it.product(self.motif_reduction_list[parent].merged_history_perumutations,self.motif_reduction_list[child].merged_history_perumutations):
+                for parent_perm,child_perm in it.product(self.motif_reduction_list[parent].merged_history_permutations,self.motif_reduction_list[child].merged_history_permutations):
                     new_perm = child_perm.copy()
                     for i,p in enumerate(parent_perm):
                         new_perm[i] = child_perm[p]
-                    if not new_perm in self.motif_reduction_list[child].merged_history_perumutations:
-                        self.motif_reduction_list[child].merged_history_perumutations.append(new_perm)
+                    if not new_perm in self.motif_reduction_list[child].merged_history_permutations:
+                        self.motif_reduction_list[child].merged_history_permutations.append(new_perm)
 
     def add_motif_reduction(self,motif_reduction):
         if self.motif_reduction_list == []:
@@ -136,11 +136,11 @@ class SuccessionDiagram:
     def reductions_indices_with_states(self,logically_fixed,optimize=True):
         if not optimize:
             # NOTE: This finds all reductions, not just those closest to the root
-            target_indicies = []
+            target_indices = []
             for i,reduction in enumerate(self.motif_reduction_list):
                 if logically_fixed.items() <= reduction.logically_fixed_nodes.items():
-                    target_indicies.append(i)
-            return target_indicies
+                    target_indices.append(i)
+            return target_indices
         else:
             # The unoptimized result
             target_indices_unoptimized = self.reductions_indices_with_states(logically_fixed,optimize=False)

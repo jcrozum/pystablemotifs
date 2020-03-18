@@ -48,7 +48,7 @@ class MotifReduction:
 
     Variables:
     motif_history - list of stable motifs that can lock in to give the reduced network (in order)
-    merged_history_perumutations - list of permutations of motif_history (by index) that are also valid
+    merged_history_permutations - list of permutations of motif_history (by index) that are also valid
     logically_fixed_nodes - node state dictionary describing nodes that have been
                             fixed and reduced by stable motifs and their
                             logical domain of influence
@@ -93,7 +93,7 @@ class MotifReduction:
             self.motif_history = []
         else:
             self.motif_history = motif_history.copy()
-        self.merged_history_perumutations = []
+        self.merged_history_permutations = []
         self.logically_fixed_nodes = fixed
         self.reduced_primes = reduced_primes.copy()
 
@@ -359,10 +359,10 @@ class MotifReduction:
                     for x in self.no_motif_attractors:
                         print(x)
 
-        if len(self.merged_history_perumutations) > 0:
+        if len(self.merged_history_permutations) > 0:
             print()
             print("This branch contains the following motif_history permutation(s):")
             if show_explicit_permutations:
-                for x in self.merged_history_perumutations: print([self.motif_history[i] for i in x])
+                for x in self.merged_history_permutations: print([self.motif_history[i] for i in x])
             else:
-                for x in self.merged_history_perumutations: print(x)
+                for x in self.merged_history_permutations: print(x)
