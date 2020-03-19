@@ -1,4 +1,5 @@
 import itertools as it
+import random
 
 def fixed_implies_implicant(fixed,implicant):
     """
@@ -163,8 +164,6 @@ def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None):
 
         n += 1
     return knocked_nodes
-
-import random
 
 def initial_GRASP_candidates(target,primes,forbidden):
     if forbidden is None:
