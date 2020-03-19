@@ -163,3 +163,83 @@ def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None):
 
         n += 1
     return knocked_nodes
+
+import random
+
+def initial_GRASP_candidates(target,primes):
+    candidate_vars = [k for k in primes if not k in target]
+    candidates = []
+    for st in [0,1]:
+        candidates += [{k:st} for k in candidate_vars]
+    return candidates
+
+def GRASP_scores(target,primes,candidates):
+    scores = []
+    m = 0 # will be the size of largest LDOI
+    for candidate in candidates:
+        imp,con = logical_domain_of_influence(candidate,primes)
+        sc = len(imp)
+        if sc > m:
+            m = sc
+
+        if any([k in target and target[k] == con[k] for k in con]):
+            scores.append(-1*sc - 1)
+        else:
+            scores.append(sc)
+
+    # score will be len(imp) if no contradictions in LDOI
+    # but will be len(imp) - m otherwise
+    scores = [x - int(x < 0)*(m+2*x+1) for x in scores]
+
+    return scores
+
+def construct_GRASP_solution(target,primes):
+    solution = {}
+    alpha = random.random()
+
+    candidates = initial_GRASP_candidates(target,primes)
+    scores = GRASP_scores(target,primes,candidates)
+    pass_score = alpha * (max(scores) - min(scores)) + min(scores)
+    RCL = [x for i,x in enumerate(candidates) if scores[i] >= pass_score]
+
+    while len(RCL) > 0:
+        s = random.choice(RCL)
+        new_solution = solution.copy()
+        new_solution.update(s)
+
+        imp,con = logical_domain_of_influence(new_solution,primes)
+
+        if any([k in target and target[k] != con[k] for k in con]):
+            RCL = [x for x in RCL if x != s]
+            continue
+
+        if target.items() <= imp.items():
+            return new_solution
+
+        solution = new_solution
+        RCL = [x for x in RCL if not next(iter(x.keys())) in solution]
+
+    return {}
+
+def local_GRASP_reduction(solution,target,primes):
+    old_solution = solution.copy()
+    for k in solution:
+        new_solution = {x:v for x,v in old_solution.items() if x != k}
+        if len(new_solution) == 0:
+            return old_solution
+
+        imp,con = logical_domain_of_influence(new_solution, primes)
+        if target.items() <= imp.items():
+            old_solution = new_solution
+
+    return old_solution
+
+def GRASP(target, primes, max_iterations):
+    solutions = []
+    for iter in range(max_iterations):
+        solution = construct_GRASP_solution(target,primes)
+        solution = local_GRASP_reduction(solution,target,primes)
+        if not solution is None and len(solution) > 0 and not solution in solutions:
+            solutions.append(solution)
+
+    return solutions
