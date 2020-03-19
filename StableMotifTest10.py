@@ -150,5 +150,3 @@ for x in reprogram_sets_minimal_history:
     print("---")
     print("One temporary intervention from each list, in order.")
     for y in x: print(y,"\n")
-
-print(sm.DomainOfInfluence.logical_domain_of_influence({'Ceramide':1},primes)[0])

@@ -166,8 +166,11 @@ def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None):
 
 import random
 
-def initial_GRASP_candidates(target,primes):
-    candidate_vars = [k for k in primes if not k in target]
+def initial_GRASP_candidates(target,primes,forbidden):
+    if forbidden is None:
+        candidate_vars = list(primes.keys())
+    else:
+        candidate_vars = [k for k in primes if not k in forbidden]
     candidates = []
     for st in [0,1]:
         candidates += [{k:st} for k in candidate_vars]
@@ -193,11 +196,11 @@ def GRASP_scores(target,primes,candidates):
 
     return scores
 
-def construct_GRASP_solution(target,primes):
+def construct_GRASP_solution(target,primes,forbidden):
     solution = {}
     alpha = random.random()
 
-    candidates = initial_GRASP_candidates(target,primes)
+    candidates = initial_GRASP_candidates(target,primes,forbidden)
     scores = GRASP_scores(target,primes,candidates)
     pass_score = alpha * (max(scores) - min(scores)) + min(scores)
     RCL = [x for i,x in enumerate(candidates) if scores[i] >= pass_score]
@@ -234,10 +237,10 @@ def local_GRASP_reduction(solution,target,primes):
 
     return old_solution
 
-def GRASP(target, primes, max_iterations):
+def GRASP(target, primes, max_iterations, forbidden=None):
     solutions = []
     for iter in range(max_iterations):
-        solution = construct_GRASP_solution(target,primes)
+        solution = construct_GRASP_solution(target,primes,forbidden)
         solution = local_GRASP_reduction(solution,target,primes)
         if not solution is None and len(solution) > 0 and not solution in solutions:
             solutions.append(solution)
