@@ -14,7 +14,7 @@ diag = sm.Succession.build_succession_diagram(primes)
 
 print("Computing attractor control sets using internal stable motif drivers.")
 start=default_timer()
-reprogram_sets_history = diag.reprogram_to_trap_spaces(reprogramming_target,method='history',max_drivers=4)
+reprogram_sets_history = diag.reprogram_to_trap_spaces(reprogramming_target,target_method='history',driver_method='internal',max_drivers=4)
 end=default_timer()
 print("Time running history method:",end-start)
 print("Sets found:")
