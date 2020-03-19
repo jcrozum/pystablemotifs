@@ -289,7 +289,7 @@ class SuccessionDiagram:
 
         if driver_method == 'GRASP' and max_iterations is None:
             if target_method == 'merge':
-                max_iterations = 4*len(self.unreduced_primes)
+                max_iterations = 2*len(self.unreduced_primes)
             if target_method == 'history':
                 max_iterations = len(self.unreduced_primes)
 
@@ -306,14 +306,17 @@ class SuccessionDiagram:
                 # Because we are potentially dealing with external drivers, we
                 # want to make sure the external drivers do not interfere with
                 # the motif's ability to drive downstream targets
-                if driver_method != 'internal':
-                    motif_merger.update(logically_fixed)
+                # if driver_method != 'internal':
+                #     motif_merger.update(logically_fixed)
 
                 if driver_method == 'GRASP':
                     merger_drivers = GRASP(motif_merger,self.unreduced_primes,max_iterations)
                     if len(merger_drivers) == 0:
                         merger_drivers = [logically_fixed.copy()]
-                else:
+                elif driver_method == 'minimal':
+                    merger_drivers = minimal_drivers(motif_merger,
+                        self.unreduced_primes,max_drivers=max_drivers)
+                elif driver_method == 'internal':
                     merger_drivers = internal_drivers(motif_merger,
                         self.unreduced_primes,max_drivers=max_drivers)
 

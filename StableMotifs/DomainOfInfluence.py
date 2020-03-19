@@ -181,7 +181,8 @@ def GRASP_scores(target,primes,candidates):
     m = 0 # will be the size of largest LDOI
     for candidate in candidates:
         imp,con = logical_domain_of_influence(candidate,primes)
-        sc = len(imp)
+
+        sc = (1+len([x for x in imp if x in target and imp[x]==target[x]])) * len(imp)
         if sc > m:
             m = sc
 
@@ -225,7 +226,9 @@ def construct_GRASP_solution(target,primes,forbidden):
     return {}
 
 def local_GRASP_reduction(solution,target,primes):
-    old_solution = solution.copy()
+    keylist = list(solution.keys())
+    random.shuffle(keylist)
+    old_solution = {x:solution[x] for x in keylist}
     for k in solution:
         new_solution = {x:v for x,v in old_solution.items() if x != k}
         if len(new_solution) == 0:
@@ -233,15 +236,15 @@ def local_GRASP_reduction(solution,target,primes):
 
         imp,con = logical_domain_of_influence(new_solution, primes)
         if target.items() <= imp.items():
-            old_solution = new_solution
+            old_solution = new_solution.copy()
 
     return old_solution
 
 def GRASP(target, primes, max_iterations, forbidden=None):
     solutions = []
     for iter in range(max_iterations):
-        solution = construct_GRASP_solution(target,primes,forbidden)
-        solution = local_GRASP_reduction(solution,target,primes)
+        solution_big = construct_GRASP_solution(target,primes,forbidden)
+        solution = local_GRASP_reduction(solution_big,target,primes)
         if not solution is None and len(solution) > 0 and not solution in solutions:
             solutions.append(solution)
 
