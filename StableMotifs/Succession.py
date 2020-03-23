@@ -1,5 +1,7 @@
 import networkx as nx
 import itertools as it
+import matplotlib
+import matplotlib.pyplot as plt
 
 from StableMotifs.Reduction import MotifReduction, reduce_primes
 from StableMotifs.Format import pretty_print_prime_rules
@@ -386,3 +388,61 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
                 search_partial_STGs=search_partial_STGs,
                 prioritize_source_motifs=prioritize_source_motifs)
     return diagram
+
+def networkx_succession_diagram(motif_reduction_list,G_old):
+    G_succession_diagram=G_old.copy()
+    h_dict=dict()
+    g_dict=dict()
+    for i,reduction in enumerate(motif_reduction_list):
+        newlabel="" if len(reduction.motif_history)==0 else motif_history_text(reduction.motif_history)
+        h_dict[i]=str(i)+" ["+newlabel+"]"
+        g_dict[h_dict[i]]=str(i)
+    H = nx.relabel_nodes(G_succession_diagram, h_dict)
+    return(H,h_dict)
+
+def motif_history_text(history):
+    motif_history_str=""
+    for motif in history:
+        motif_str="("+", ".join([str(k)+"="+str(v) for k,v in motif.items()])+")"
+        motif_history_str=motif_history_str+motif_str+"\n"
+    return(motif_history_str[:-1])
+        
+def plot_networkx_succession_diagram(G_plot,H_plot,pos):
+    edge_labels={(u,v):str(u)+"_"+str(v) for u,v in G_plot.edges()}
+    nx.draw_networkx_nodes(G_plot, pos, node_size=200,alpha=0.4)
+    nx.draw_networkx_edges(G_plot, pos, width=1, arrowsize=20, alpha=1, edge_color='r')
+    nx.draw_networkx_edge_labels(G_plot, pos, edge_labels = edge_labels,font_size=10)
+    nx.draw_networkx_labels(G_plot, pos, font_size=12, alpha=1)
+
+    x_values, y_values = zip(*pos.values())
+    x_max = max(x_values)
+    x_min = min(x_values)
+    x_margin = (x_max - x_min) * 0.5
+    plt.xlim(x_min - x_margin, x_max + x_margin)
+    print("Succession diagram nodes:\n")
+    for node in H_plot.nodes():
+        print(node.replace("\n"," "))
+    print("\nSuccession diagram edges:\n")
+    for u,v in G_plot.edges():
+        print(G_plot.edges[u, v]['label'])
+    plt.show()
+
+def edge_labels(motif_reduction_list,G_old):
+    G_new=G_old.copy()   
+    motif_reduction_list_dictionary={i:set([frozenset(tuple(x.items())) for x in reduction.motif_history]) for i,reduction in enumerate(motif_reduction_list)}
+    for u,v in G_new.edges():
+        motif_set=motif_reduction_list_dictionary[v]-motif_reduction_list_dictionary[u]
+        motif_list=[list(x) for x in list(motif_set)][0]
+        G_new.edges[u, v]['label']=str(u)+"_"+str(v)+" ("+", ".join([x[0]+"="+str(x[1]) for x in motif_list])+")"
+    return(G_new)
+
+def prepare_networkx_write(H,h_dict,pos):
+    xmax=0
+    ymax=0
+    for node,(x,y) in pos.items():
+        xmax=max(x,xmax)
+        ymax=max(y,ymax)
+    for node,(x,y) in pos.items():
+        H.node[h_dict[node]]['x'] = 1.5*(xmax-float(x))
+        H.node[h_dict[node]]['y'] = 1.5*(ymax-float(y))
+        H.node[h_dict[node]]['label'] = str(h_dict[node])
