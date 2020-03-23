@@ -312,7 +312,7 @@ class SuccessionDiagram:
                 if driver_method == 'GRASP':
                     merger_drivers = GRASP(motif_merger,self.unreduced_primes,max_iterations)
                     if len(merger_drivers) == 0:
-                        merger_drivers = [logically_fixed.copy()]
+                        merger_drivers = [motif_merger.copy()]
                 elif driver_method == 'minimal':
                     merger_drivers = minimal_drivers(motif_merger,
                         self.unreduced_primes,max_drivers=max_drivers)
