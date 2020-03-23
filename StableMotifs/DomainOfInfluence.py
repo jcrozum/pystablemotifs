@@ -215,12 +215,10 @@ def GRASP_scores(target,primes,candidates):
 
     return scores
 
-def construct_GRASP_solution(target,primes,forbidden):
+def construct_GRASP_solution(target,primes,candidates,scores):
     solution = {}
     alpha = random.random()
 
-    candidates = initial_GRASP_candidates(target,primes,forbidden)
-    scores = GRASP_scores(target,primes,candidates)
     pass_score = alpha * (max(scores) - min(scores)) + min(scores)
     RCL = [x for i,x in enumerate(candidates) if scores[i] >= pass_score]
 
@@ -265,8 +263,10 @@ def local_GRASP_reduction(solution,target,primes):
 
 def GRASP(target, primes, max_iterations, forbidden=None):
     solutions = []
+    candidates = initial_GRASP_candidates(target,primes,forbidden)
+    scores = GRASP_scores(target,primes,candidates)
     for iter in range(max_iterations):
-        solution_big = construct_GRASP_solution(target,primes,forbidden)
+        solution_big = construct_GRASP_solution(target,primes,candidates,scores)
         solution = local_GRASP_reduction(solution_big,target,primes)
         if not solution is None and len(solution) > 0 and not solution in solutions:
             solutions.append(solution)

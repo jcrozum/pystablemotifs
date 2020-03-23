@@ -289,9 +289,9 @@ class SuccessionDiagram:
 
         if driver_method == 'GRASP' and max_iterations is None:
             if target_method == 'merge':
-                max_iterations = 2*len(self.unreduced_primes)
+                max_iterations = len(self.unreduced_primes)**2
             if target_method == 'history':
-                max_iterations = len(self.unreduced_primes)
+                max_iterations = 2*len(self.unreduced_primes)
 
         target_indices = self.reductions_indices_with_states(logically_fixed)
 
