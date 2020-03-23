@@ -288,18 +288,14 @@ def local_GRASP_reduction(solution,target,primes):
     random.shuffle(keylist)
     old_solution = {x:solution[x] for x in keylist}
 
-    locally_reduced = False
-    while not locally_reduced:
-        locally_reduced = True
-        for k in old_solution:
-            new_solution = {x:v for x,v in old_solution.items() if x != k}
-            if len(new_solution) == 0:
-                return old_solution
+    for k in keylist:
+        new_solution = {x:v for x,v in old_solution.items() if x != k}
+        if len(new_solution) == 0:
+            return old_solution
 
-            imp,con = logical_domain_of_influence(new_solution, primes)
-            if target.items() <= imp.items():
-                old_solution = new_solution.copy()
-                locally_reduced = False
+        imp,con = logical_domain_of_influence(new_solution, primes)
+        if target.items() <= imp.items():
+            old_solution = new_solution.copy()
 
     return old_solution
 
