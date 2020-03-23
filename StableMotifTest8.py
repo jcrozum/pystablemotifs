@@ -3,10 +3,6 @@ import StableMotifs as sm
 from timeit import default_timer
 import pickle
 
-#print("Loading EMT network . . .")
-#primes = sm.Format.import_primes("models/test4.txt",remove_constants=True)
-#reprogramming_target = {'E_cadherin':1}
-
 rules = """PDGF*= 0
 IL15*=1
 Stimuli*=1
@@ -73,18 +69,7 @@ rules = sm.Format.booleannet2bnet(rules)
 primes = PyBoolNet.FileExchange.bnet2primes(rules)
 PyBoolNet.PrimeImplicants._percolation(primes,True)
 
-# print("Brute-force search for knockout/knockins that achieve",reprogramming_target,". . .")
-# start=default_timer()
-# koki = sm.DomainOfInfluence.knock_to_partial_state(reprogramming_target,primes,max_drivers=2)
-# end=default_timer()
-# print("Time running brute-force search method:",end-start)
-# print("Sets found:")
-# for x in koki: print(x)
-
-
 print("Building succession diagram . . .")
-# We do not need the complex attractors for this example, and ruling them
-# out in the EMT case is extremely slow
 diag = sm.Succession.build_succession_diagram(primes)
 
 print("Computing driver sets (in multiple ways) that reprogram to an attractor with ",reprogramming_target,". . .")

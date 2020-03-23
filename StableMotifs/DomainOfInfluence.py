@@ -16,32 +16,51 @@ def fixed_implies_implicant(fixed,implicant):
     return rval
 
 
-def logical_domain_of_influence(state,primes):
+def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None):
     """
     Computes the logical domain of influence (LDOI) (see Yang et al. 2018)
 
     Inputs:
-    state - a dict in the PyBoolNet implicant form that define fixed nodes
+    partial_state - a dict in the PyBoolNet implicant form that define fixed nodes
     primes - a PyBoolNet primes dictionary that define the update rules
+    implied_hint - set of states known to be a subset of the LDOI
+    contradicted_hint - set of states known to be a subset of the contradicted states
+
+    WARNING: hint states are NOT tested for consistency, as this would defeat
+    the purpose of speedup and redundancy reduction.
 
     Outputs:
-    implied - node states in the LDOI of state
+    implied - node states in the LDOI of partial_state
     contradicted - node states that are implied by a subset of the LDOI,
-                   but contradict the node states specified by state
-    Note: implied and contradicted are dictionaries in the same format as state.
+                   but contradict the node states specified by partial_state
+    Note: implied and contradicted are dictionaries in the same format as partial_state.
     """
-    fixed = state.copy()
-    implied = {}
-    contradicted = {}
+
+    if implied_hint is None:
+        implied_hint = {}
+    if contradicted_hint is None:
+        contradicted_hint = {}
+
+    fixed = partial_state.copy() # fixed will be partial_state + its LDOI
+    fixed.update(implied_hint)
+    implied = implied_hint # the LDOI
+    contradicted = contradicted_hint # states implied by partial_state that contradict partial_state
     primes_to_search = primes.copy()
+
+    for k in implied_hint: del primes_to_search[k]
+    for k in contradicted_hint: del primes_to_search[k]
 
     while True:
         states_added = False
         deletion_list = []
         for k,v in primes_to_search.items():
+            kfixed = False
             for i in [0,1]:
+                if kfixed: break
                 for p in v[i]:
+                    if kfixed: break
                     if fixed_implies_implicant(fixed,p):
+                        kfixed = True
                         deletion_list.append(k)
                         states_added = True
                         if k in fixed:
@@ -205,12 +224,15 @@ def construct_GRASP_solution(target,primes,forbidden):
     pass_score = alpha * (max(scores) - min(scores)) + min(scores)
     RCL = [x for i,x in enumerate(candidates) if scores[i] >= pass_score]
 
+    imp_old = None
+    con_old = None
+
     while len(RCL) > 0:
         s = random.choice(RCL)
         new_solution = solution.copy()
         new_solution.update(s)
 
-        imp,con = logical_domain_of_influence(new_solution,primes)
+        imp,con = logical_domain_of_influence(new_solution,primes,implied_hint=imp_old,contradicted_hint=con_old)
 
         if any([k in target and target[k] != con[k] for k in con]):
             RCL = [x for x in RCL if x != s]
@@ -219,6 +241,8 @@ def construct_GRASP_solution(target,primes,forbidden):
         if target.items() <= imp.items():
             return new_solution
 
+        imp_old = imp
+        con_old = con
         solution = new_solution
         RCL = [x for x in RCL if not next(iter(x.keys())) in solution]
 

@@ -17,8 +17,6 @@ for x in koki: print(x)
 
 
 print("Building succession diagram . . .")
-# We do not need the complex attractors for this example, and ruling them
-# out in the EMT case is extremely slow
 diag = sm.Succession.build_succession_diagram(primes)
 
 print("Computing driver sets (in multiple ways) that reprogram to an attractor with ",reprogramming_target,". . .")

@@ -84,7 +84,7 @@ for x in koki: print(x)
 print()
 print("GRASP search for knockout/knockins that achieve",target,". . .")
 start=default_timer()
-sols = sm.DomainOfInfluence.GRASP(target,primes,100)
+sols = sm.DomainOfInfluence.GRASP(target,primes,300)
 end=default_timer()
 print("Time running GRASP search method:",end-start)
 print("Control sets that fix",target)
@@ -93,8 +93,6 @@ for x in sols:
 
 print()
 print("Building succession diagram . . .")
-# We do not need the complex attractors for this example, and ruling them
-# out in the EMT case is extremely slow
 diag = sm.Succession.build_succession_diagram(primes)
 
 print("Computing driver sets (in multiple ways) that reprogram to an attractor with ",target,". . .")

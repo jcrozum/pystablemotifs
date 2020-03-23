@@ -8,8 +8,6 @@ primes = sm.Format.import_primes("models/EMT.txt",remove_constants=True)
 reprogramming_target = {'EMT':0}
 
 print("Building succession diagram . . .")
-# We do not need the complex attractors for this example, and ruling them
-# out in the EMT case is extremely slow
 diag = sm.Succession.build_succession_diagram(primes)
 
 print("Computing attractor control sets using internal stable motif drivers.")
