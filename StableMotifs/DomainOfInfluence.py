@@ -309,9 +309,4 @@ def GRASP(target, primes, max_iterations, forbidden=None):
         if not solution is None and len(solution) > 0 and not solution in solutions:
             solutions.append(solution)
 
-    unique_solutions = []
-    for x in solutions:
-        if not x in unique_solutions:
-            unique_solutions.append(x)
-
-    return unique_solutions
+    return solutions
