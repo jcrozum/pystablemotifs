@@ -88,7 +88,7 @@ sols = sm.DomainOfInfluence.GRASP(target,primes,2000)
 end=default_timer()
 print("Time running GRASP search method:",end-start)
 print("Control sets that fix",target)
-for x in sols:
+for x in sorted(sols,key=lambda x: len(x)):
     print(x)
 
 print()
@@ -118,7 +118,7 @@ end=default_timer()
 print()
 print("Time running GRASP merge method:",end-start)
 print("Sets found:")
-for x in reprogram_sets_GRASP_merge: print(x)
+for x in sorted(reprogram_sets_GRASP_merge,key=lambda x: len(x)): print(x)
 
 start=default_timer()
 reprogram_sets_history = diag.reprogram_to_trap_spaces(target,target_method='history',driver_method='internal',max_drivers=None)

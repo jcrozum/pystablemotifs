@@ -89,6 +89,21 @@ def single_drivers(partial_state,primes):
     return drivers
 
 def all_drivers_of_size(driver_set_size,partial_state, primes, external_search_vars=None,internal_search_vars=None):
+    """
+    Finds all logical driver sets of the specified size for the target partial state
+
+    INPUTS:
+    driver_set_size - the number of driver nodes to try to find
+    partial_state - dictionary specifying the target partial state
+    primes - PyBoolNet state dictionary specifying the update rules
+    external_search_vars - node set not in partial_state to consider as potential
+                           drivers. Default: all nodes not fixed in partial_state
+    internal_search_vars - node set in partial_state to consider as potential
+                           drivers. Default: all nodes in partial state
+
+    OUTPUT:
+    driver_sets - a list of state dicts, each of which drives partial_state
+    """
     if internal_search_vars is None:
         internal_search_vars = set(partial_state.keys())
     if external_search_vars is None:
@@ -165,13 +180,24 @@ def minimal_drivers(partial_state,primes,max_drivers=None):
 
     return sorted(driver_sets, key = lambda x: len(x))
 
-def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None):
+def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None,forbidden=None):
+    """
+    Find all partial states in primes that drive the target. Do not consider nodes in
+    the forbidden list.
+    """
     if max_drivers is None:
         max_drivers = len(primes) - len(target)
+    if forbidden is None:
+        forbidden = []
+
     knocked_nodes = []
 
+    internal_search = set([k for k in target if not k in forbidden])
+    external_search = set([k for k in primes if not k in forbidden and not k in target])
+
     for n in range(min_drivers,max_drivers+1):
-        found = all_drivers_of_size(n,target, primes)
+        found = all_drivers_of_size(n,target,primes,
+            internal_search_vars=internal_search,external_search_vars=external_search)
         for x in found:
             add_x = True
             for y in knocked_nodes:
@@ -185,6 +211,10 @@ def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None):
     return knocked_nodes
 
 def initial_GRASP_candidates(target,primes,forbidden):
+    """
+    Helper function for GRASP driver search.
+    Constructs initial candidates for driver nodes.
+    """
     if forbidden is None:
         candidate_vars = list(primes.keys())
     else:
@@ -195,6 +225,10 @@ def initial_GRASP_candidates(target,primes,forbidden):
     return candidates
 
 def GRASP_scores(target,primes,candidates):
+    """
+    Helper function for GRASP driver search.
+    Constructs scores for candidate driver nodes.
+    """
     scores = []
     m = 0 # will be the size of largest LDOI
     for candidate in candidates:
@@ -219,7 +253,10 @@ def construct_GRASP_solution(target,primes,candidates,scores):
     solution = {}
     alpha = random.random()
 
-    pass_score = alpha * (max(scores) - min(scores)) + min(scores)
+    #pass_score = alpha * (max(scores) - min(scores)) + min(scores)
+    scores_pos = [x for x in scores if x > 0] + [0] # add 0 to avoid min/max errors
+    pass_score = alpha * (max(scores_pos) - min(scores_pos)) + min(scores_pos)
+
     RCL = [x for i,x in enumerate(candidates) if scores[i] >= pass_score]
 
     imp_old = None
@@ -250,14 +287,19 @@ def local_GRASP_reduction(solution,target,primes):
     keylist = list(solution.keys())
     random.shuffle(keylist)
     old_solution = {x:solution[x] for x in keylist}
-    for k in solution:
-        new_solution = {x:v for x,v in old_solution.items() if x != k}
-        if len(new_solution) == 0:
-            return old_solution
 
-        imp,con = logical_domain_of_influence(new_solution, primes)
-        if target.items() <= imp.items():
-            old_solution = new_solution.copy()
+    locally_reduced = False
+    while not locally_reduced:
+        locally_reduced = True
+        for k in old_solution:
+            new_solution = {x:v for x,v in old_solution.items() if x != k}
+            if len(new_solution) == 0:
+                return old_solution
+
+            imp,con = logical_domain_of_influence(new_solution, primes)
+            if target.items() <= imp.items():
+                old_solution = new_solution.copy()
+                locally_reduced = False
 
     return old_solution
 
@@ -271,4 +313,9 @@ def GRASP(target, primes, max_iterations, forbidden=None):
         if not solution is None and len(solution) > 0 and not solution in solutions:
             solutions.append(solution)
 
-    return solutions
+    unique_solutions = []
+    for x in solutions:
+        if not x in unique_solutions:
+            unique_solutions.append(x)
+
+    return unique_solutions
