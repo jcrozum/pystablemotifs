@@ -3,7 +3,7 @@ import itertools as it
 
 from StableMotifs.Reduction import MotifReduction, reduce_primes
 from StableMotifs.Format import pretty_print_prime_rules
-from StableMotifs.DomainOfInfluence import internal_drivers, minimal_drivers
+from StableMotifs.DomainOfInfluence import internal_drivers, minimal_drivers, GRASP
 
 class SuccessionDiagram:
     """
@@ -167,8 +167,8 @@ class SuccessionDiagram:
             return target_indices
 
 
-    def reduction_drivers(self,target_index,method='internal',max_drivers=None):
-        methods = ['internal','minimal']
+    def reduction_drivers(self,target_index,method='internal',max_drivers=None,GRASP_iterations=None):
+        methods = ['internal','minimal','GRASP']
         assert method in methods, ' '.join(["method argument of reduction_drivers must be among",str(methods)])
         drivers = []
         for path in nx.all_simple_paths(self.digraph,0,target_index):
@@ -184,6 +184,12 @@ class SuccessionDiagram:
                     history_drivers = internal_drivers(path_motif_history[-1],
                         self.motif_reduction_list[ind_prev].reduced_primes,
                         max_drivers=max_drivers)
+                elif method == 'GRASP':
+                    history_drivers = GRASP(path_motif_history[-1],
+                        self.motif_reduction_list[ind_prev].reduced_primes,
+                        GRASP_iterations = GRASP_iterations)
+                    if len(history_drivers) == 0:
+                        history_drivers = [path_motif_history[-1]]
                 elif method == 'minimal':
                     history_drivers = minimal_drivers(path_motif_history[-1],
                         self.motif_reduction_list[ind_prev].reduced_primes,
@@ -198,11 +204,11 @@ class SuccessionDiagram:
                     control_set = {k:v for x in control_sequence for k,v in x.items()}
                     if not control_set in drivers:
                         drivers.append(control_set)
-            elif method == 'minimal':
+            elif method == 'minimal' or method == 'GRASP':
                 drivers.append(path_drivers)
         return drivers
 
-    def reprogram_to_trap_spaces(self,logically_fixed,max_drivers=None,method='history'):
+    def reprogram_to_trap_spaces(self,logically_fixed,target_method='history',driver_method='internal',max_drivers=None,GRASP_iterations=None,GRASP_score_override=None):
         """
         Find driver sets that lead to the node states specified by logically_fixed
 
@@ -210,10 +216,17 @@ class SuccessionDiagram:
         logically_fixed - state dictionary specifying the control target
         max_drivers - the maximum number of driver nodes to attempt when looking
                       for stable motif driver nodes before specifying the entire
-                      stable motif as part fo the driver set
-        method - One of the following: 'history', 'merge', 'minimal',
-                 'minimal_history'; specifies the reprogramming method to use
-                 (see below for further details)
+                      stable motif as part fo the driver set; not used in GRASP
+                      methods.
+        GRASP_iterations - number of times to construct GRASP driver sets; only
+                           used in GRASP methods.
+
+        GRASP_score_override - optional heuristic score function override (see
+                                GRASP function for details). Only used in GRASP
+                                methods.
+        target_method - either 'history' or 'merge'; see Methods below for details
+        driver_method - either 'internal', 'minimal', or 'GRASP' see Methods below
+                        for details
 
         Output:
         nonredundant_drivers - control strategies found; interpretation depends
@@ -221,14 +234,14 @@ class SuccessionDiagram:
 
 
         - Methods -
-        history:
+        history, internal:
         Finds all shortest stable motif histories that result in the target node states
         being logically fixed. Each stable motif is searched for internal driver nodes.
         The resulting internal drivers are combined into a single  control set. The
         return value consists of all such control sets for all  stable motif histories.
         Each control set eventually becomes self-sustaining.
 
-        minimal_history:
+        history, minimal:
         Similar to the history method, except the search for stable motif drivers
         includes external driver nodes for the motif and does not extend to driver sets
         of larger size once one driver set has been found for a motif. Because the
@@ -249,14 +262,18 @@ class SuccessionDiagram:
         1) fix xD=xE=1 temporarily and
         2) first fix either xA=1 or xB=1 temporarily, then fix xC=1 temporarily.
 
-        merge:
+        history, GRASP:
+        The same as history, minimal, except external driver nodes are searched for
+        using the GRASP algorithm using GRASP_iterations iterations.
+
+        merge, internal:
         Finds all shortest stable motif histories that result in the target node states
         being logically fixed. All node states in the motifs in the history are merged
         into a stable module dictionary. This is then searched for internal driver
         nodes. Each element of the return value is a dictionary corresponding to a
         control set. Each control set eventually becomes self-sustaining.
 
-        minimal:
+        merge, minimal:
         Similar to the merge method, except the search for drivers is conducted over
         all nodes, not just those internal to the merged stable module. Furthermore,
         the search is truncated when a control set is found such that the search does
@@ -265,45 +282,51 @@ class SuccessionDiagram:
         sets are only guaranteed to result in activation of the target if they are
         temporary interventions.
 
+        merge, GRASP:
+        The same as merge, minimal, except external driver nodes are searched for
+        using the GRASP algorithm using GRASP_iterations iterations.
         """
 
         #methods = ['history','merge','minimal_history','minimal_merge']
-        methods = ['history','merge','minimal','minimal_history']
-        assert method in methods, ' '.join(["method argument of reprogram_to_trap_spaces must be among",str(methods)])
-
+        target_methods = ['history','merge']
+        driver_methods= ['internal','minimal','GRASP']
+        assert target_method in target_methods, ' '.join(["target_method argument of reprogram_to_trap_spaces must be among",str(target_methods)])
+        assert driver_method in driver_methods, ' '.join(["driver_method argument of reprogram_to_trap_spaces must be among",str(driver_methods)])
         drivers = []
-        #target_indices_all = self.reductions_indices_with_states(logically_fixed,optimize=False)
-        target_indices = self.reductions_indices_with_states(logically_fixed)
-        # # We only look for drivers if the reduction doesn't have any ancestors that would also work
-        # target_indices = []
-        # for target_index in target_indices_all:
-        #     if set(nx.ancestors(self.digraph,target_index)) & set(target_indices_all) == set():
-        #         target_indices.append(target_index)
 
-        if method == 'history':
+        if driver_method == 'GRASP' and GRASP_iterations is None:
+            if target_method == 'merge':
+                GRASP_iterations = len(self.unreduced_primes)**2
+            if target_method == 'history':
+                GRASP_iterations = 2*len(self.unreduced_primes)
+
+        target_indices = self.reductions_indices_with_states(logically_fixed)
+
+        if target_method == 'history':
             for target_index in target_indices:
-                drivers += self.reduction_drivers(target_index,max_drivers=max_drivers)
-        elif method == 'minimal_history':
-            for target_index in target_indices:
-                drivers += self.reduction_drivers(target_index,max_drivers=max_drivers,method='minimal')
-        elif method == 'merge':
-            for target_index in target_indices:
-                target_history = self.motif_reduction_list[target_index].motif_history
-                motif_merger = {k:v for d in target_history for k,v in d.items()}
-                merger_drivers = internal_drivers(motif_merger,
-                    self.unreduced_primes,max_drivers=max_drivers)
-                drivers += [x for x in merger_drivers if not x in drivers]
-        elif method == 'minimal':
+                drivers += self.reduction_drivers(target_index,max_drivers=max_drivers,GRASP_iterations=GRASP_iterations,method=driver_method)
+        elif target_method == 'merge':
             for target_index in target_indices:
                 target_history = self.motif_reduction_list[target_index].motif_history
                 motif_merger = {k:v for d in target_history for k,v in d.items()}
 
                 # Because we are potentially dealing with external drivers, we
                 # want to make sure the external drivers do not interfere with
-                # the motif's ability to drive downstream targets, or the
-                motif_merger.update(logically_fixed)
-                merger_drivers = minimal_drivers(motif_merger,
-                    self.unreduced_primes,max_drivers=max_drivers)
+                # the motif's ability to drive downstream targets
+                # if driver_method != 'internal':
+                #     motif_merger.update(logically_fixed)
+
+                if driver_method == 'GRASP':
+                    merger_drivers = GRASP(motif_merger,self.unreduced_primes,GRASP_iterations)
+                    if len(merger_drivers) == 0:
+                        merger_drivers = [motif_merger.copy()]
+                elif driver_method == 'minimal':
+                    merger_drivers = minimal_drivers(motif_merger,
+                        self.unreduced_primes,max_drivers=max_drivers)
+                elif driver_method == 'internal':
+                    merger_drivers = internal_drivers(motif_merger,
+                        self.unreduced_primes,max_drivers=max_drivers)
+
                 drivers += [x for x in merger_drivers if not x in drivers]
 
         drivers = sorted(drivers,key=lambda x: len(x))
@@ -313,7 +336,7 @@ class SuccessionDiagram:
         # that contains all control sets of x in the same order.
         # In all other schemes, x is redundant if it is a subset of some y.
         nonredundant_drivers = []
-        if method == 'minimal_history':
+        if target_method == 'history' and (driver_method == 'minimal' or driver_method == 'GRASP'):
             nonredundant_drivers = []
             for x in drivers: # drivers is sorted from fewest timesteps to most
                 add_x = True

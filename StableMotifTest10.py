@@ -3,6 +3,10 @@ import StableMotifs as sm
 from timeit import default_timer
 import pickle
 
+#print("Loading EMT network . . .")
+#primes = sm.Format.import_primes("models/test4.txt",remove_constants=True)
+#target = {'E_cadherin':1}
+
 rules = """PDGF*= 0
 IL15*=1
 Stimuli*=1
@@ -64,46 +68,84 @@ SMAD*=GPCR
 SPHK1*=PDGFR
 S1P*=SPHK1 and not Ceramide
 """
-reprogramming_target = {'Apoptosis':1}
+target = {'Apoptosis':1}
 rules = sm.Format.booleannet2bnet(rules)
 primes = PyBoolNet.FileExchange.bnet2primes(rules)
 PyBoolNet.PrimeImplicants._percolation(primes,True)
 
+print("Brute-force search for knockout/knockins that achieve",target,". . .")
+start=default_timer()
+koki = sm.DomainOfInfluence.knock_to_partial_state(target,primes,max_drivers=2)
+end=default_timer()
+print("Time running brute-force search method:",end-start)
+print("Sets found:")
+for x in koki: print(x)
+
+print()
+print("GRASP search for knockout/knockins that achieve",target,". . .")
+start=default_timer()
+sols = sm.DomainOfInfluence.GRASP(target,primes,2000)
+end=default_timer()
+print("Time running GRASP search method:",end-start)
+print("Control sets that fix",target)
+for x in sorted(sols,key=lambda x: len(x)):
+    print(x)
+
+print()
 print("Building succession diagram . . .")
 diag = sm.Succession.build_succession_diagram(primes)
 
-print("Computing driver sets (in multiple ways) that reprogram to an attractor with ",reprogramming_target,". . .")
+print("Computing driver sets (in multiple ways) that reprogram to an attractor with ",target,". . .")
 start=default_timer()
-reprogram_sets_minimal = diag.reprogram_to_trap_spaces(reprogramming_target,target_method='history',driver_method='internal',max_drivers=None)
+reprogram_sets_minimal = diag.reprogram_to_trap_spaces(target,target_method='merge',driver_method='minimal',max_drivers=None)
 end=default_timer()
 print()
-print("Time running minimal method:",end-start)
+print("Time running minimal merge method:",end-start)
 print("Sets found:")
 for x in reprogram_sets_minimal: print(x)
 
 start=default_timer()
-reprogram_sets_merge = diag.reprogram_to_trap_spaces(reprogramming_target,target_method='merge',driver_method='internal',max_drivers=None)
+reprogram_sets_merge = diag.reprogram_to_trap_spaces(target,target_method='merge',driver_method='internal',max_drivers=None)
 end=default_timer()
 print()
-print("Time running merge method:",end-start)
+print("Time running internal merge method:",end-start)
 print("Sets found:")
 for x in reprogram_sets_merge: print(x)
 
 start=default_timer()
-reprogram_sets_history = diag.reprogram_to_trap_spaces(reprogramming_target,target_method='history',driver_method='internal',max_drivers=None)
+reprogram_sets_GRASP_merge = diag.reprogram_to_trap_spaces(target,target_method='merge',driver_method='GRASP',GRASP_iterations=None)
 end=default_timer()
 print()
-print("Time running history method:",end-start)
+print("Time running GRASP merge method:",end-start)
+print("Sets found:")
+for x in sorted(reprogram_sets_GRASP_merge,key=lambda x: len(x)): print(x)
+
+start=default_timer()
+reprogram_sets_history = diag.reprogram_to_trap_spaces(target,target_method='history',driver_method='internal',max_drivers=None)
+end=default_timer()
+print()
+print("Time running internal history method:",end-start)
 print("Sets found:")
 for x in reprogram_sets_history: print(x)
-#
+
 start=default_timer()
-reprogram_sets_minimal_history = diag.reprogram_to_trap_spaces(reprogramming_target,target_method='history',driver_method='minimal',max_drivers=None)
+reprogram_sets_minimal_history = diag.reprogram_to_trap_spaces(target,target_method='history',driver_method='minimal',max_drivers=None)
 end=default_timer()
 print()
-print("Time running minimal_history method:",end-start)
+print("Time running minimal history method:",end-start)
 print("Sets found:")
 for x in reprogram_sets_minimal_history:
+    print("---")
+    print("One temporary intervention from each list, in order.")
+    for y in x: print(y,"\n")
+
+start=default_timer()
+reprogram_sets_GRASP_history = diag.reprogram_to_trap_spaces(target,target_method='history',driver_method='GRASP',GRASP_iterations=None)
+end=default_timer()
+print()
+print("Time running GRASP history method:",end-start)
+print("Sets found:")
+for x in reprogram_sets_GRASP_history:
     print("---")
     print("One temporary intervention from each list, in order.")
     for y in x: print(y,"\n")
