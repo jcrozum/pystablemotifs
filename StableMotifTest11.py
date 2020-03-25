@@ -32,7 +32,7 @@ print("Computing driver sets (in multiple ways) that reprogram to an attractor w
 
 
 start=default_timer()
-reprogram_sets_GRASP_merge = diag.reprogram_to_trap_spaces(target,target_method='merge',driver_method='GRASP',max_iterations=100000)
+reprogram_sets_GRASP_merge = diag.reprogram_to_trap_spaces(target,target_method='merge',driver_method='GRASP',GRASP_iterations=100000)
 end=default_timer()
 print()
 print("Time running GRASP merge method:",end-start)
@@ -40,7 +40,7 @@ print("Sets found:")
 for x in sorted(reprogram_sets_GRASP_merge,key=lambda x: len(x)): print(x)
 print()
 start=default_timer()
-reprogram_sets_GRASP_history = diag.reprogram_to_trap_spaces(target,target_method='history',driver_method='GRASP',max_iterations=100000)
+reprogram_sets_GRASP_history = diag.reprogram_to_trap_spaces(target,target_method='history',driver_method='GRASP',GRASP_iterations=100000)
 end=default_timer()
 print()
 print("Time running GRASP history method:",end-start)

@@ -224,7 +224,7 @@ def initial_GRASP_candidates(target,primes,forbidden):
         candidates += [{k:st} for k in candidate_vars]
     return candidates
 
-def GRASP_scores(target,primes,candidates):
+def GRASP_default_scores(target,primes,candidates):
     """
     Helper function for GRASP driver search.
     Constructs scores for candidate driver nodes.
@@ -250,6 +250,10 @@ def GRASP_scores(target,primes,candidates):
     return scores
 
 def construct_GRASP_solution(target,primes,candidates,scores):
+    """
+    A helper funciton for GRASP driver search.
+    Constructs an individual driver set using the GRASP search method.
+    """
     solution = {}
     alpha = random.random()
 
@@ -284,6 +288,10 @@ def construct_GRASP_solution(target,primes,candidates,scores):
     return {}
 
 def local_GRASP_reduction(solution,target,primes):
+    """
+    A helper funciton for GRASP driver search.
+    Reduces valid solutions to attempt to remove redundancies.
+    """
     keylist = list(solution.keys())
     random.shuffle(keylist)
     old_solution = {x:solution[x] for x in keylist}
@@ -299,11 +307,28 @@ def local_GRASP_reduction(solution,target,primes):
 
     return old_solution
 
-def GRASP(target, primes, max_iterations, forbidden=None):
+def GRASP(target, primes, GRASP_iterations, forbidden=None, GRASP_scores=GRASP_default_scores):
+    """
+    Search for drivers of target in primes.
+
+    INPUTS:
+    target - dict representing the target partial state
+    primes - PyBoolNet primes dict describing the update rules
+    GRASP_iterations - the number of times to run the GRASP method
+    forbidden - a list of variables that should not be considered as potential drivers
+    GRASP_scores - a function for calculating heuristic scores of candidates;
+                   takes arguments target,primes,candidates (in that order).
+                   Must return a list of neumeric scores in the same order as
+                   candidates. Candidates with negative scores will be removed
+                   from consideration.
+
+    OUTPUT:
+    solutions - A list of driver sets in dictionary form
+    """
     solutions = []
     candidates = initial_GRASP_candidates(target,primes,forbidden)
     scores = GRASP_scores(target,primes,candidates)
-    for iter in range(max_iterations):
+    for iter in range(GRASP_iterations):
         solution_big = construct_GRASP_solution(target,primes,candidates,scores)
         solution = local_GRASP_reduction(solution_big,target,primes)
         if not solution is None and len(solution) > 0 and not solution in solutions:

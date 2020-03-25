@@ -167,7 +167,7 @@ class SuccessionDiagram:
             return target_indices
 
 
-    def reduction_drivers(self,target_index,method='internal',max_drivers=None,max_iterations=None):
+    def reduction_drivers(self,target_index,method='internal',max_drivers=None,GRASP_iterations=None):
         methods = ['internal','minimal','GRASP']
         assert method in methods, ' '.join(["method argument of reduction_drivers must be among",str(methods)])
         drivers = []
@@ -187,7 +187,7 @@ class SuccessionDiagram:
                 elif method == 'GRASP':
                     history_drivers = GRASP(path_motif_history[-1],
                         self.motif_reduction_list[ind_prev].reduced_primes,
-                        max_iterations = max_iterations)
+                        GRASP_iterations = GRASP_iterations)
                     if len(history_drivers) == 0:
                         history_drivers = [path_motif_history[-1]]
                 elif method == 'minimal':
@@ -208,7 +208,7 @@ class SuccessionDiagram:
                 drivers.append(path_drivers)
         return drivers
 
-    def reprogram_to_trap_spaces(self,logically_fixed,max_drivers=None,max_iterations=None,target_method='history',driver_method='internal'):
+    def reprogram_to_trap_spaces(self,logically_fixed,target_method='history',driver_method='internal',max_drivers=None,GRASP_iterations=None,GRASP_score_override=None):
         """
         Find driver sets that lead to the node states specified by logically_fixed
 
@@ -216,10 +216,17 @@ class SuccessionDiagram:
         logically_fixed - state dictionary specifying the control target
         max_drivers - the maximum number of driver nodes to attempt when looking
                       for stable motif driver nodes before specifying the entire
-                      stable motif as part fo the driver set
-        method - One of the following: 'history', 'merge', 'minimal',
-                 'minimal_history'; specifies the reprogramming method to use
-                 (see below for further details)
+                      stable motif as part fo the driver set; not used in GRASP
+                      methods.
+        GRASP_iterations - number of times to construct GRASP driver sets; only
+                           used in GRASP methods.
+
+        GRASP_score_override - optional heuristic score function override (see
+                                GRASP function for details). Only used in GRASP
+                                methods.
+        target_method - either 'history' or 'merge'; see Methods below for details
+        driver_method - either 'internal', 'minimal', or 'GRASP' see Methods below
+                        for details
 
         Output:
         nonredundant_drivers - control strategies found; interpretation depends
@@ -257,7 +264,7 @@ class SuccessionDiagram:
 
         history, GRASP:
         The same as history, minimal, except external driver nodes are searched for
-        using the GRASP algorithm using max_iterations iterations.
+        using the GRASP algorithm using GRASP_iterations iterations.
 
         merge, internal:
         Finds all shortest stable motif histories that result in the target node states
@@ -277,7 +284,7 @@ class SuccessionDiagram:
 
         merge, GRASP:
         The same as merge, minimal, except external driver nodes are searched for
-        using the GRASP algorithm using max_iterations iterations.
+        using the GRASP algorithm using GRASP_iterations iterations.
         """
 
         #methods = ['history','merge','minimal_history','minimal_merge']
@@ -287,17 +294,17 @@ class SuccessionDiagram:
         assert driver_method in driver_methods, ' '.join(["driver_method argument of reprogram_to_trap_spaces must be among",str(driver_methods)])
         drivers = []
 
-        if driver_method == 'GRASP' and max_iterations is None:
+        if driver_method == 'GRASP' and GRASP_iterations is None:
             if target_method == 'merge':
-                max_iterations = len(self.unreduced_primes)**2
+                GRASP_iterations = len(self.unreduced_primes)**2
             if target_method == 'history':
-                max_iterations = 2*len(self.unreduced_primes)
+                GRASP_iterations = 2*len(self.unreduced_primes)
 
         target_indices = self.reductions_indices_with_states(logically_fixed)
 
         if target_method == 'history':
             for target_index in target_indices:
-                drivers += self.reduction_drivers(target_index,max_drivers=max_drivers,max_iterations=max_iterations,method=driver_method)
+                drivers += self.reduction_drivers(target_index,max_drivers=max_drivers,GRASP_iterations=GRASP_iterations,method=driver_method)
         elif target_method == 'merge':
             for target_index in target_indices:
                 target_history = self.motif_reduction_list[target_index].motif_history
@@ -310,7 +317,7 @@ class SuccessionDiagram:
                 #     motif_merger.update(logically_fixed)
 
                 if driver_method == 'GRASP':
-                    merger_drivers = GRASP(motif_merger,self.unreduced_primes,max_iterations)
+                    merger_drivers = GRASP(motif_merger,self.unreduced_primes,GRASP_iterations)
                     if len(merger_drivers) == 0:
                         merger_drivers = [motif_merger.copy()]
                 elif driver_method == 'minimal':
