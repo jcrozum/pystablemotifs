@@ -346,6 +346,18 @@ class SuccessionDiagram:
 
         return nonredundant_drivers
 
+    def process_networkx_succession_diagram(self):
+        G_reduced_network_based=edge_labels(self.motif_reduction_list,self.digraph.copy())
+        G_reduced_network_based_labeled,h_dict=networkx_succession_diagram(self.motif_reduction_list,G_reduced_network_based)
+        h_dict_edges={(u,v):G_reduced_network_based.edges[u, v]['label'] for u,v in G_reduced_network_based.edges()}
+        pos_reduced_network_based = nx.nx_pydot.graphviz_layout(G_reduced_network_based, prog='dot')
+        prepare_networkx_write_reduced_network_based(G_reduced_network_based_labeled,h_dict,pos_reduced_network_based)
+        G_motif_based = nx.line_graph(G_reduced_network_based)
+        pos_motif_based = nx.nx_pydot.graphviz_layout(G_motif_based, prog='dot')
+        G_motif_based_labeled=prepare_networkx_write_motif_based(G_motif_based,h_dict,h_dict_edges,pos_motif_based)
+        return(G_reduced_network_based,G_reduced_network_based_labeled,pos_reduced_network_based,G_motif_based,G_motif_based_labeled,pos_motif_based)
+
+
 def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,search_partial_STGs=True,prioritize_source_motifs=True):
     """
     Constructs a succession diagram recursively from the rules specified by primes
@@ -389,14 +401,13 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
                 prioritize_source_motifs=prioritize_source_motifs)
     return diagram
 
+
 def networkx_succession_diagram(motif_reduction_list,G_old):
     G_succession_diagram=G_old.copy()
     h_dict=dict()
-    g_dict=dict()
     for i,reduction in enumerate(motif_reduction_list):
         newlabel="" if len(reduction.motif_history)==0 else motif_history_text(reduction.motif_history)
         h_dict[i]=str(i)+" ["+newlabel+"]"
-        g_dict[h_dict[i]]=str(i)
     H = nx.relabel_nodes(G_succession_diagram, h_dict)
     return(H,h_dict)
 
@@ -407,7 +418,7 @@ def motif_history_text(history):
         motif_history_str=motif_history_str+motif_str+"\n"
     return(motif_history_str[:-1])
         
-def plot_networkx_succession_diagram(G_plot,H_plot,pos):
+def plot_networkx_succession_diagram_reduced_network_based(G_plot,H_plot,pos,print_out_labels=False):
     edge_labels={(u,v):str(u)+"_"+str(v) for u,v in G_plot.edges()}
     nx.draw_networkx_nodes(G_plot, pos, node_size=200,alpha=0.4)
     nx.draw_networkx_edges(G_plot, pos, width=1, arrowsize=20, alpha=1, edge_color='r')
@@ -419,12 +430,13 @@ def plot_networkx_succession_diagram(G_plot,H_plot,pos):
     x_min = min(x_values)
     x_margin = (x_max - x_min) * 0.5
     plt.xlim(x_min - x_margin, x_max + x_margin)
-    print("Succession diagram nodes:\n")
-    for node in H_plot.nodes():
-        print(node.replace("\n"," "))
-    print("\nSuccession diagram edges:\n")
-    for u,v in G_plot.edges():
-        print(G_plot.edges[u, v]['label'])
+    if(print_out_labels):
+        print("Succession diagram nodes:\n")
+        for node in H_plot.nodes():
+            print(node.replace("\n"," "))
+        print("\nSuccession diagram edges:\n")
+        for u,v in G_plot.edges():
+            print(G_plot.edges[u, v]['label'])
     plt.show()
 
 def edge_labels(motif_reduction_list,G_old):
@@ -436,7 +448,7 @@ def edge_labels(motif_reduction_list,G_old):
         G_new.edges[u, v]['label']=str(u)+"_"+str(v)+" ("+", ".join([x[0]+"="+str(x[1]) for x in motif_list])+")"
     return(G_new)
 
-def prepare_networkx_write(H,h_dict,pos):
+def prepare_networkx_write_reduced_network_based(H,h_dict,pos):
     xmax=0
     ymax=0
     for node,(x,y) in pos.items():
@@ -446,3 +458,41 @@ def prepare_networkx_write(H,h_dict,pos):
         H.node[h_dict[node]]['x'] = 1.5*(xmax-float(x))
         H.node[h_dict[node]]['y'] = 1.5*(ymax-float(y))
         H.node[h_dict[node]]['label'] = str(h_dict[node])
+
+def prepare_networkx_write_motif_based(L0,h_dict,h_dict_edges,posL):
+    L_temp=L0.copy()
+    xmax=0
+    ymax=0
+    for node,(x,y) in posL.items():
+        xmax=max(x,xmax)
+        ymax=max(y,ymax)
+    for node,(x,y) in posL.items():
+        L_temp.node[node]['x'] = 1.5*(float(x))
+        L_temp.node[node]['y'] = 1.5*(ymax-float(y))
+        L_temp.node[node]['label'] = str(h_dict_edges[node])
+    for u,v in L_temp.edges():
+        L_temp.edges[u,v]['label'] = h_dict[u[1]]
+    L=nx.relabel_nodes(L_temp, h_dict_edges)
+    return(L)
+
+def plot_networkx_succession_diagram_motif_based(L0,L_labeled,posL,print_out_labels=False):
+    edge_labels_motif_based={(u,v):str(u[1]) for u,v in L0.edges()}
+    node_labels_motif_based={n:str(n[0])+"_"+str(n[1]) for n in L0.nodes()}
+    nx.draw_networkx_nodes(L0, posL, node_size=200,alpha=0.4)
+    nx.draw_networkx_edges(L0, posL, width=1, arrowsize=20, alpha=1, edge_color='r')
+    nx.draw_networkx_edge_labels(L0, posL, edge_labels = edge_labels_motif_based,font_size=10)
+    nx.draw_networkx_labels(L0, posL,labels = node_labels_motif_based, font_size=12, alpha=1)
+    
+    x_values, y_values = zip(*posL.values())
+    x_max = max(x_values)
+    x_min = min(x_values)
+    x_margin = (x_max - x_min) * 0.5
+    plt.xlim(x_min - x_margin, x_max + x_margin)
+    if(print_out_labels):
+        print("Succession diagram nodes:\n")
+        for node in L_labeled.nodes():
+            print(L_labeled.nodes[node]['label'])
+        print("\nSuccession diagram edges:\n")
+        for u,v in L_labeled.edges():
+            print(L_labeled.edges[u, v]['label'].replace("\n"," "))
+    plt.show()
