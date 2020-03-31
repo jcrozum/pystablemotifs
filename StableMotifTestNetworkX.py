@@ -3,6 +3,7 @@ import StableMotifs as sm
 from timeit import default_timer
 import pickle
 import networkx as nx
+import pandas as pd
 
 rules = """PDGF*= 0
 IL15*=1
@@ -75,7 +76,7 @@ print("Building succession diagram . . .")
 diag = sm.Succession.build_succession_diagram(primes)
 
 print("Creating visualization for succession diagram network . . .")
-G_reduced_network_based,G_reduced_network_based_labeled,pos_reduced_network_based,G_motif_based,G_motif_based_labeled,pos_motif_based=diag.process_networkx_succession_diagram()
+G_reduced_network_based,G_reduced_network_based_labeled,pos_reduced_network_based,G_motif_based,G_motif_based_labeled,pos_motif_based=diag.process_networkx_succession_diagram(include_attractors_in_diagram=True)
 
 print("Writing succession diagram network to file . . .")
 nx.write_graphml(G_reduced_network_based_labeled, "SuccessionDiagram_reduced_network_based.graphml")
@@ -83,6 +84,13 @@ nx.write_gml(G_reduced_network_based_labeled, "SuccessionDiagram_reduced_network
 nx.write_graphml(G_motif_based_labeled, "SuccessionDiagram_motif_based.graphml")
 nx.write_gml(G_motif_based_labeled, "SuccessionDiagram_motif_based.gml")
 
+print("Writing attractors to file . . .")
+df_attractors=pd.DataFrame(columns=[node for node in diag.unreduced_primes])
+df_attractors=df_attractors.merge(pd.DataFrame(diag.attractor_fixed_nodes_list),how="outer")
+df_attractors.index=["Attractor_"+str(i) for i,value in enumerate(diag.attractor_fixed_nodes_list)]
+df_attractors=df_attractors.fillna("X").astype(str).replace({"0.0": "0", "1.0": "1"}).sort_index(axis=1)
+df_attractors.to_csv("Attractors.csv")
+
 print("Visualization for succession diagram network using matplotlib")
 sm.Succession.plot_networkx_succession_diagram_reduced_network_based(G_reduced_network_based,G_reduced_network_based_labeled,pos_reduced_network_based,print_out_labels=True)
-sm.Succession.plot_networkx_succession_diagram_motif_based(G_motif_based,G_motif_based_labeled,pos_motif_based)
+sm.Succession.plot_networkx_succession_diagram_motif_based(G_motif_based,G_motif_based_labeled,pos_motif_based,print_out_labels=True)
