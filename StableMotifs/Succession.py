@@ -353,15 +353,54 @@ class SuccessionDiagram:
         return nonredundant_drivers
 
     def process_networkx_succession_diagram(self,include_attractors_in_diagram=True):
-        self.G_reduced_network_based,self.G_reduced_network_based_labeled,h_dict=networkx_succession_diagram_reduced_network_based(self.motif_reduction_list,self.digraph)
-        h_dict_edges={(u,v):self.G_reduced_network_based.edges[u, v]['label'] for u,v in self.G_reduced_network_based.edges()}
-        self.pos_reduced_network_based = nx.nx_pydot.graphviz_layout(self.G_reduced_network_based, prog='dot')
-        prepare_networkx_reduced_network_based_labeled(self.G_reduced_network_based_labeled,h_dict,self.pos_reduced_network_based)
-        self.G_motif_based = nx.line_graph(self.G_reduced_network_based)
-        self.pos_motif_based = nx.nx_pydot.graphviz_layout(self.G_motif_based, prog='dot')
-        self.G_motif_based_labeled=prepare_networkx_motif_based_labeled(self.G_motif_based,h_dict,h_dict_edges,self.pos_motif_based)
+        self.G_reduced_network_based,self.G_reduced_network_based_labeled,self.pos_reduced_network_based,h_dict,h_dict_edges=self.networkx_succession_diagram_reduced_network_based()
+        self.G_motif_based,self.G_motif_based_labeled,self.pos_motif_based=self.networkx_succession_diagram_motif_based(h_dict,h_dict_edges)
         if(include_attractors_in_diagram):
             self.add_attractors_networkx_diagram(h_dict,h_dict_edges)
+
+    def networkx_succession_diagram_reduced_network_based(self):
+        G_reduced_network_based=self.digraph.copy()
+        self.motif_reduction_list_dictionary={i:set([frozenset(tuple(x.items())) for x in reduction.motif_history]) for i,reduction in enumerate(self.motif_reduction_list)}
+        for u,v in G_reduced_network_based.edges():
+                motif_set=self.motif_reduction_list_dictionary[v]-self.motif_reduction_list_dictionary[u]
+                motif_list=[list(x) for x in list(motif_set)][0]
+                G_reduced_network_based.edges[u, v]['label']=str(u)+"_"+str(v)+" ("+", ".join([x[0]+"="+str(x[1]) for x in motif_list])+")"
+        h_dict=dict()
+        for i,reduction in enumerate(self.motif_reduction_list):
+                newlabel="" if len(reduction.motif_history)==0 else motif_history_text(reduction.motif_history)
+                h_dict[i]=str(i)+" ["+newlabel+"]"
+        G_reduced_network_based_labeled = nx.relabel_nodes(G_reduced_network_based.copy(), h_dict)
+        pos_reduced_network_based = nx.nx_pydot.graphviz_layout(G_reduced_network_based, prog='dot')
+        xmax=0
+        ymax=0
+        for node,(x,y) in pos_reduced_network_based.items():
+                xmax=max(x,xmax)
+                ymax=max(y,ymax)
+        for node,(x,y) in pos_reduced_network_based.items():
+                G_reduced_network_based_labeled.node[h_dict[node]]['x'] = 1.5*(xmax-float(x))
+                G_reduced_network_based_labeled.node[h_dict[node]]['y'] = 1.5*(ymax-float(y))
+                G_reduced_network_based_labeled.node[h_dict[node]]['label'] = str(h_dict[node])
+        h_dict_edges={(u,v):G_reduced_network_based.edges[u, v]['label'] for u,v in G_reduced_network_based.edges()}
+        return(G_reduced_network_based,G_reduced_network_based_labeled,pos_reduced_network_based,h_dict,h_dict_edges)
+
+    def networkx_succession_diagram_motif_based(self,h_dict,h_dict_edges):
+        G_motif_based = nx.line_graph(self.G_reduced_network_based)
+        pos_motif_based = nx.nx_pydot.graphviz_layout(G_motif_based, prog='dot')
+        G_motif_based_labeled_temp=G_motif_based.copy()
+        xmax=0
+        ymax=0
+        for node,(x,y) in pos_motif_based.items():
+                xmax=max(x,xmax)
+                ymax=max(y,ymax)
+        for node,(x,y) in pos_motif_based.items():
+                G_motif_based_labeled_temp.node[node]['x'] = 1.5*(float(x))
+                G_motif_based_labeled_temp.node[node]['y'] = 1.5*(ymax-float(y))
+                G_motif_based_labeled_temp.node[node]['label'] = str(h_dict_edges[node])
+        for u,v in G_motif_based_labeled_temp.edges():
+                G_motif_based_labeled_temp.edges[u,v]['label'] = h_dict[u[1]]
+        G_motif_based_labeled=nx.relabel_nodes(G_motif_based_labeled_temp, h_dict_edges)
+        
+        return(G_motif_based,G_motif_based_labeled,pos_motif_based)
 
     def add_attractors_networkx_diagram(self,h_dict,h_dict_edges):
         G=self.G_reduced_network_based
@@ -502,49 +541,17 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
                 prioritize_source_motifs=prioritize_source_motifs)
     return diagram
 
-
-def networkx_succession_diagram_reduced_network_based(motif_reduction_list,digraph):
-    G_reduced_network_based=digraph.copy()
-    motif_reduction_list_dictionary={i:set([frozenset(tuple(x.items())) for x in reduction.motif_history]) for i,reduction in enumerate(motif_reduction_list)}
-    for u,v in G_reduced_network_based.edges():
-        motif_set=motif_reduction_list_dictionary[v]-motif_reduction_list_dictionary[u]
-        motif_list=[list(x) for x in list(motif_set)][0]
-        G_reduced_network_based.edges[u, v]['label']=str(u)+"_"+str(v)+" ("+", ".join([x[0]+"="+str(x[1]) for x in motif_list])+")"
-    h_dict=dict()
-    for i,reduction in enumerate(motif_reduction_list):
-        newlabel="" if len(reduction.motif_history)==0 else motif_history_text(reduction.motif_history)
-        h_dict[i]=str(i)+" ["+newlabel+"]"
-    G_reduced_network_based_labeled = nx.relabel_nodes(G_reduced_network_based.copy(), h_dict)
-    return(G_reduced_network_based,G_reduced_network_based_labeled,h_dict)
-
-def prepare_networkx_reduced_network_based_labeled(G_reduced_network_based_labeled,h_dict,pos_reduced_network_based):
-    xmax=0
-    ymax=0
-    for node,(x,y) in pos_reduced_network_based.items():
-        xmax=max(x,xmax)
-        ymax=max(y,ymax)
-    for node,(x,y) in pos_reduced_network_based.items():
-        G_reduced_network_based_labeled.node[h_dict[node]]['x'] = 1.5*(xmax-float(x))
-        G_reduced_network_based_labeled.node[h_dict[node]]['y'] = 1.5*(ymax-float(y))
-        G_reduced_network_based_labeled.node[h_dict[node]]['label'] = str(h_dict[node])
-
-def prepare_networkx_motif_based_labeled(G_motif_based,h_dict,h_dict_edges,pos_motif_based):
-    G_motif_based_labeled_temp=G_motif_based.copy()
-    xmax=0
-    ymax=0
-    for node,(x,y) in pos_motif_based.items():
-        xmax=max(x,xmax)
-        ymax=max(y,ymax)
-    for node,(x,y) in pos_motif_based.items():
-        G_motif_based_labeled_temp.node[node]['x'] = 1.5*(float(x))
-        G_motif_based_labeled_temp.node[node]['y'] = 1.5*(ymax-float(y))
-        G_motif_based_labeled_temp.node[node]['label'] = str(h_dict_edges[node])
-    for u,v in G_motif_based_labeled_temp.edges():
-        G_motif_based_labeled_temp.edges[u,v]['label'] = h_dict[u[1]]
-    G_motif_based_labeled=nx.relabel_nodes(G_motif_based_labeled_temp, h_dict_edges)
-    return(G_motif_based_labeled)
-
 def motif_history_text(history):
+    """
+    Obtain the string version of the motif_history of a reduced network
+    Given the motif_history of a reduction.from motif_reduction_list, obtain a text version of this motif_history
+
+    Inputs:
+    history - motif_history of a reduced network.from motif_reduction_list
+
+    Outputs:
+    String of motif history with each motif inside a parenthesis and separated by a line break
+    """
     motif_history_str=""
     for motif in history:
         motif_str="("+", ".join([str(k)+"="+str(v) for k,v in motif.items()])+")"
