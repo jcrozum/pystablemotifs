@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="label" attr.type="string" for="edge" id="d3" />
+  <key attr.name="label" attr.type="string" for="node" id="d2" />
+  <key attr.name="y" attr.type="double" for="node" id="d1" />
+  <key attr.name="x" attr.type="double" for="node" id="d0" />
+  <graph edgedefault="directed">
+    <node id="0 []">
+      <data key="d0">882.015</data>
+      <data key="d1">0.0</data>
+      <data key="d2">0 []</data>
+    </node>
+    <node id="1 [(TBET=1)]">
+      <data key="d0">882.015</data>
+      <data key="d1">130.5</data>
+      <data key="d2">1 [(TBET=1)]</data>
+    </node>
+    <node id="2 [(TBET=1)&#10;(PDGFR=0, S1P=0, SPHK1=0)]">
+      <data key="d0">381.015</data>
+      <data key="d1">292.5</data>
+      <data key="d2">2 [(TBET=1)
+(PDGFR=0, S1P=0, SPHK1=0)]</data>
+    </node>
+    <node id="3 [(TBET=1)&#10;(PDGFR=0, S1P=0, SPHK1=0)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]">
+      <data key="d0">673.515</data>
+      <data key="d1">454.5</data>
+      <data key="d2">3 [(TBET=1)
+(PDGFR=0, S1P=0, SPHK1=0)
+(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]</data>
+    </node>
+    <node id="4 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]">
+      <data key="d0">987.015</data>
+      <data key="d1">292.5</data>
+      <data key="d2">4 [(TBET=1)
+(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]</data>
+    </node>
+    <node id="5 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)&#10;(Ceramide=1, Fas=1, S1P=0, sFas=0)]">
+      <data key="d0">976.515</data>
+      <data key="d1">454.5</data>
+      <data key="d2">5 [(TBET=1)
+(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)
+(Ceramide=1, Fas=1, S1P=0, sFas=0)]</data>
+    </node>
+    <node id="6 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)&#10;(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]">
+      <data key="d0">1596.0</data>
+      <data key="d1">454.5</data>
+      <data key="d2">6 [(TBET=1)
+(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)
+(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]</data>
+    </node>
+    <node id="7 [(TBET=1)&#10;(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]">
+      <data key="d0">1870.5</data>
+      <data key="d1">373.5</data>
+      <data key="d2">7 [(TBET=1)
+(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]</data>
+    </node>
+    <node id="8 [(PDGFR=0, S1P=0, SPHK1=0)]">
+      <data key="d0">421.515</data>
+      <data key="d1">130.5</data>
+      <data key="d2">8 [(PDGFR=0, S1P=0, SPHK1=0)]</data>
+    </node>
+    <node id="9 [(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]">
+      <data key="d0">2013.0</data>
+      <data key="d1">211.5</data>
+      <data key="d2">9 [(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]</data>
+    </node>
+    <node id="10 Attractor_0">
+      <data key="d2">10 Attractor_0</data>
+      <data key="d0">769.515</data>
+      <data key="d1">564.0</data>
+    </node>
+    <node id="11 Attractor_1">
+      <data key="d2">11 Attractor_1</data>
+      <data key="d0">1870.5</data>
+      <data key="d1">564.0</data>
+    </node>
+    <edge source="0 []" target="1 [(TBET=1)]">
+      <data key="d3">0_1 (TBET=1)</data>
+    </edge>
+    <edge source="0 []" target="8 [(PDGFR=0, S1P=0, SPHK1=0)]">
+      <data key="d3">0_8 (S1P=0, SPHK1=0, PDGFR=0)</data>
+    </edge>
+    <edge source="0 []" target="9 [(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]">
+      <data key="d3">0_9 (SPHK1=1, PDGFR=1, Ceramide=0, S1P=1)</data>
+    </edge>
+    <edge source="1 [(TBET=1)]" target="2 [(TBET=1)&#10;(PDGFR=0, S1P=0, SPHK1=0)]">
+      <data key="d3">1_2 (S1P=0, SPHK1=0, PDGFR=0)</data>
+    </edge>
+    <edge source="1 [(TBET=1)]" target="4 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]">
+      <data key="d3">1_4 (IL2RB=1, PI3K=1, IL2RBT=1, GRB2=1, RAS=1, MEK=1, ERK=1)</data>
+    </edge>
+    <edge source="1 [(TBET=1)]" target="7 [(TBET=1)&#10;(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]">
+      <data key="d3">1_7 (SPHK1=1, PDGFR=1, Ceramide=0, S1P=1)</data>
+    </edge>
+    <edge source="2 [(TBET=1)&#10;(PDGFR=0, S1P=0, SPHK1=0)]" target="3 [(TBET=1)&#10;(PDGFR=0, S1P=0, SPHK1=0)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]">
+      <data key="d3">2_3 (IL2RB=1, PI3K=1, IL2RBT=1, GRB2=1, RAS=1, MEK=1, ERK=1)</data>
+    </edge>
+    <edge source="3 [(TBET=1)&#10;(PDGFR=0, S1P=0, SPHK1=0)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]" target="10 Attractor_0">
+      <data key="d3">3_10</data>
+    </edge>
+    <edge source="4 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]" target="3 [(TBET=1)&#10;(PDGFR=0, S1P=0, SPHK1=0)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]">
+      <data key="d3">4_3 (S1P=0, SPHK1=0, PDGFR=0)</data>
+    </edge>
+    <edge source="4 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]" target="5 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)&#10;(Ceramide=1, Fas=1, S1P=0, sFas=0)]">
+      <data key="d3">4_5 (sFas=0, Ceramide=1, S1P=0, Fas=1)</data>
+    </edge>
+    <edge source="4 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)]" target="6 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)&#10;(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]">
+      <data key="d3">4_6 (SPHK1=1, PDGFR=1, Ceramide=0, S1P=1)</data>
+    </edge>
+    <edge source="5 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)&#10;(Ceramide=1, Fas=1, S1P=0, sFas=0)]" target="10 Attractor_0">
+      <data key="d3">5_10</data>
+    </edge>
+    <edge source="6 [(TBET=1)&#10;(ERK=1, GRB2=1, IL2RB=1, IL2RBT=1, MEK=1, PI3K=1, RAS=1)&#10;(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]" target="11 Attractor_1">
+      <data key="d3">6_11</data>
+    </edge>
+    <edge source="7 [(TBET=1)&#10;(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]" target="11 Attractor_1">
+      <data key="d3">7_11</data>
+    </edge>
+    <edge source="8 [(PDGFR=0, S1P=0, SPHK1=0)]" target="2 [(TBET=1)&#10;(PDGFR=0, S1P=0, SPHK1=0)]">
+      <data key="d3">8_2 (TBET=1)</data>
+    </edge>
+    <edge source="9 [(Ceramide=0, PDGFR=1, S1P=1, SPHK1=1)]" target="11 Attractor_1">
+      <data key="d3">9_11</data>
+    </edge>
+  </graph>
+</graphml>
