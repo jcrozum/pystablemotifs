@@ -353,6 +353,32 @@ class SuccessionDiagram:
         return nonredundant_drivers
 
     def process_networkx_succession_diagram(self,include_attractors_in_diagram=True):
+        """
+        Generate network x graphs for the succession diagrams labeled with the stable motifs and the motif history.
+        The succession diagram graphs are stored in the Succession object. We also store some position dictionaries
+        for used for plotting these graphs with matplotlib. There are 4 succession diagram graphs:
+
+        G_reduced_network_based, G_reduced_network_based_labeled: Each node denotes either the original network model or,
+            a reduced network obtained after fixing the state of a stable motif. The edges denote a stable motif that
+            when fixed, transforms one reduced network to another. G_reduced_network_based only has numbers as the
+            node and edge names/labels, and is mostly used to plot the network with matplotlib. G_reduced_network_based_labeled
+            has the reduced network motif history as the node labels, the stable motifs as the edge labels, and the matplotlib 
+            x,y plotting positions as node and edge attributes.
+        G_motif_based, G_motif_based_labeled: Analogous to the above, but nodes denote stable motifs and edges denote reduced networks.
+            These are obtained through a line_graph transformation of the G_reduced_network_based networks.
+
+        There are 2 types of position dictionaries, pos_reduced_network_based and pos_motif_based, which store the positions for 
+        matplotlib plotting.
+
+        Inputs:
+        self - Succession object in which Succession.build_succession_diagram has been run
+        include_attractors_in_diagram - Boolean variable indicating whether the attractors
+                      will be included as sink nodes in the succession diagram graph
+
+        Output:
+        None, the Network x graphs and the matplotlib plot positions are formatted and stored in the Succession object 
+        """
+
         self.G_reduced_network_based,self.G_reduced_network_based_labeled,self.pos_reduced_network_based,h_dict,h_dict_edges=self.networkx_succession_diagram_reduced_network_based()
         self.G_motif_based,self.G_motif_based_labeled,self.pos_motif_based=self.networkx_succession_diagram_motif_based(h_dict,h_dict_edges)
         if(include_attractors_in_diagram):
