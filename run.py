@@ -14,6 +14,22 @@ diag.summary()
 
 diag.attractor_candidate_summary()
 
+# Uncomment to write attractors and succession diagrams to file. Requires networkx and pandas libraries
+print("Writing succession diagram network and attractors to file . . .")
+import networkx as nx
+diag.process_networkx_succession_diagram(include_attractors_in_diagram=True)
+nx.write_graphml(diag.G_reduced_network_based_labeled, "SuccessionDiagram_reduced_network_based.graphml")
+nx.write_gml(diag.G_reduced_network_based_labeled, "SuccessionDiagram_reduced_network_based.gml")
+nx.write_graphml(diag.G_motif_based_labeled, "SuccessionDiagram_motif_based.graphml")
+nx.write_gml(diag.G_motif_based_labeled, "SuccessionDiagram_motif_based.gml")
+
+import pandas as pd
+df_attractors=pd.DataFrame(columns=[node for node in diag.unreduced_primes])
+df_attractors=df_attractors.merge(pd.DataFrame(diag.attractor_fixed_nodes_list),how="outer")
+df_attractors.index=["Attractor_"+str(i) for i,value in enumerate(diag.attractor_fixed_nodes_list)]
+df_attractors=df_attractors.fillna("X").astype(str).replace({"0.0": "0", "1.0": "1"}).sort_index(axis=1)
+df_attractors.to_csv("Attractors.csv")
+
 reprogramming_target = None
 for reduction in diag.motif_reduction_list:
     if reduction.terminal == "yes" and len(reduction.logically_fixed_nodes) > 0:
