@@ -33,7 +33,7 @@ seed=1000
 start=default_timer()
 rbn_ensemble_rules_K3_pcrit=sm.randomBooleanNetworks.Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=seed,write_Boolean_network=True)
 end=default_timer()
-print("Time (s) running brute-force search method:",end-start)
+print("Time (s) generating ensemble:",end-start)
 
 print("\nGenerating ensemble of 100 Kauffman RBN with K=3 and N=500 not at criticality . . .")
 N=500
@@ -44,7 +44,7 @@ seed=1000
 start=default_timer()
 rbn_ensemble_rules_K3_p05=sm.randomBooleanNetworks.Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=seed,write_Boolean_network=True)
 end=default_timer()
-print("Time (s) running brute-force search method:",end-start)
+print("Time (s) generating ensemble:",end-start)
 
 print("\nPrinting out original rules and reduced prime implicant rules for a RBN")
 rules=rbn_ensemble_rules_K3_pcrit[0]
