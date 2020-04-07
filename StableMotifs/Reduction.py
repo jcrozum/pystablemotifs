@@ -1,6 +1,7 @@
 import PyBoolNet
 import itertools as it
 import networkx as nx
+import re
 
 import StableMotifs.TimeReversal as sm_time
 import StableMotifs.RestrictSpace as sm_rspace
@@ -41,6 +42,81 @@ def reduce_primes(fixed,primes):
 
 
     return simplify_primes(reduced_primes), percolated_states
+
+def delete_node(primes, node):
+    G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
+
+    assert not G.has_edge(node,node), ' '.join(["Node",str(node),"has a self-loop and cannot be deleted."])
+
+    new_primes = {k:v for k,v in primes.items() if not k == node}
+
+    rule1 = sm_format.rule2bnet(primes[node][1])
+
+    for child in G.successors(node):
+        crule = sm_format.rule2bnet(primes[child][1])
+        print("BEFORE",crule)
+        print("SUB:",node,"->","("+rule1+")")
+        crule = re.sub(rf'\b{node}\b',"("+rule1+")",crule)
+        crule = PyBoolNet.BooleanLogic.minimize_espresso(crule)
+        print("AFTER",crule)
+        crule = child + ",\t" + crule
+
+        new_primes[child] = PyBoolNet.FileExchange.bnet2primes(crule)[child]
+        PyBoolNet.PrimeImplicants._percolation(new_primes,True)
+    return new_primes
+
+def remove_outdag(primes):
+    G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
+    od = PyBoolNet.InteractionGraphs.find_outdag(G)
+    reduced = primes.copy()
+    for node in od:
+        if node in reduced:
+            reduced = delete_node(reduced, node)
+    return reduced
+
+def deletion_reduction(primes, max_in_degree = float('inf')):
+    reduced = remove_outdag(primes)
+    G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
+    cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
+
+    change = True
+    while change and len(reduced) > 0:
+        change = False
+        for node in cur_order:
+            retry_node = True
+            if not node in reduced or G.in_degree(node) > max_in_degree:
+                continue
+            elif not any([node in p for p in reduced[node][1]]):
+                reduced = delete_node(reduced, node)
+                G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
+                change = True
+                break
+        cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
+
+    return reduced
+
+def mediator_reduction(primes):
+    """
+    Network reduction method of Saadadtpour, Albert, Reluga (2013)
+    Preserves number of fixed points and complex attractors, but may change
+    qualitative features of complex attractors.
+    """
+
+    reduced = remove_outdag(primes)
+    cur_order = sorted(reduced)
+    G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
+    candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
+    return reduced
+    for node in candidates:
+        u = list(G.predecessors(node))[0]
+        w = list(G.successors(node))[0]
+        if not w in G.successors(u) and not w in G.predecessors(u):
+            reduced = delete_node(reduced, node)
+            G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
+            candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
+
+    return reduced
+
 
 class MotifReduction:
     """
@@ -149,6 +225,12 @@ class MotifReduction:
             study_possible_oscillation = self.terminal == "possible" # value may be changed by test_rspace
         if study_possible_oscillation:
             if search_partial_STGs:
+                if self.rspace_update_primes is not None and len(self.rspace_update_primes) > 30:
+                    print("STG is too large ("+str(len(self.reduced_primes))+"). Giving up.")
+                    return
+                elif len(self.reduced_primes) > 30:
+                    print("STG is too large ("+str(len(self.reduced_primes))+"). Giving up.")
+                    return
                 self.find_no_motif_attractors()
                 if len(self.no_motif_attractors) == 0:
                     self.terminal = "no"
@@ -281,6 +363,25 @@ class MotifReduction:
             rname_ind = name_ind.copy()
             fixed = {}
 
+
+
+        # G = PyBoolNet.InteractionGraphs.primes2igraph(self.reduced_primes)
+        # ignored = PyBoolNet.InteractionGraphs.find_outdag(G)
+        # C = nx.condensation(G)
+        #
+        # sim_names = [x for x in names if not x in fixed and not x in ignored]
+        sim_names = [x for x in names if not x in fixed]
+        # s_inds = {}
+        # j = 0
+        # for n in names:
+        #     if n in sim_names:
+        #         s_inds[n] = j
+        #         j += 1
+        # print("NUMBERS",len(names),len(sim_names) ,len(fixed),len(ignored))
+        # topological_order = []
+        # for x in nx.topological_sort(C):
+        #     topological_order += [s_inds[y] for y in C.nodes[x]['members'] if y in sim_names]
+        # topological_order.reverse()
         #N = len(names)
 
         #K = self.build_K0()
@@ -288,15 +389,25 @@ class MotifReduction:
         self.partial_STG = nx.DiGraph()
 
         inspace_dict = {}
+        t = 0
+        T = 1
+        # note: product order gives s counting up in binary from 00..0 to 11..1
+        for s in it.product(['0','1'],repeat=len(sim_names)):
+            # if t > T:
+            #     T*=2
+            #     print(t,"/",2**len(sim_names))
+            # t+=1
 
-        for s in it.product(['0','1'],repeat=len(names)-len(fixed)):
-            sl = []
+            # s_topo = [s[k] for k in topological_order]
+            sl = ['']*len(names)
             j = 0
             for i in range(len(names)):
                 if names[i] in fixed:
-                    sl.append(str(fixed[names[i]]))
+                    sl[i] = str(fixed[names[i]])
+                # elif names[i] in ignored:
+                #     sl[i] = '2'
                 else:
-                    sl.append(s[j])
+                    sl[i] = s[j]#s_topo[j]
                     j += 1
 
             ss = ''.join(sl)

@@ -73,6 +73,13 @@ def implicant2bnet(sd):
     """
     return ' & '.join(["!"+k for k in sd if not sd[k]]+[k for k in sd if sd[k]])
 
+def rule2bnet(rule):
+    """
+    Converts a PyBoolNet prime rule into a BNet string.
+    e.g., [{'A':1,'B':0},{'C':0}] returns 'A & !B | !C'
+    """
+    return ' | '.join([implicant2bnet(imp) for imp in rule])
+
 def pretty_print_primes(primes):
     """
     Prints PyBoolNet a prime dictionary in a more readable format
@@ -88,6 +95,10 @@ def pretty_print_prime_rules(primes):
     A* = B & C | !D, for example.
     Assumes the PyBoolNet default of disjunctive normal form.
     """
+
+    if primes is None:
+        return ""
+
     for k,v in primes.items():
         s = k + "* = "
         sl = []
