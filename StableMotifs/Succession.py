@@ -1,9 +1,9 @@
 import networkx as nx
 import itertools as it
 
-from StableMotifs.Reduction import MotifReduction, reduce_primes
-from StableMotifs.Format import pretty_print_prime_rules
-from StableMotifs.DomainOfInfluence import internal_drivers, minimal_drivers, GRASP
+import StableMotifs.Reduction as sm_reduction
+import StableMotifs.Format as sm_format
+import StableMotifs.DomainOfInfluence as sm_doi
 
 class SuccessionDiagram:
     """
@@ -105,7 +105,7 @@ class SuccessionDiagram:
             print()
             if len(rp) > 0:
                 print("Reduced Rules:")
-                pretty_print_prime_rules(rp)
+                sm_format.pretty_print_prime_rules(rp)
                 if not at is None:
                     print()
                     print("Complex Attractors in Reduced Network (Alphabetical Node Ordering):")
@@ -181,17 +181,17 @@ class SuccessionDiagram:
                 path_motif_history += [x for x in self.motif_reduction_list[ind].motif_history if not x in path_motif_history]
 
                 if method == 'internal':
-                    history_drivers = internal_drivers(path_motif_history[-1],
+                    history_drivers = sm_doi.internal_drivers(path_motif_history[-1],
                         self.motif_reduction_list[ind_prev].reduced_primes,
                         max_drivers=max_drivers)
                 elif method == 'GRASP':
-                    history_drivers = GRASP(path_motif_history[-1],
+                    history_drivers = sm_doi.GRASP(path_motif_history[-1],
                         self.motif_reduction_list[ind_prev].reduced_primes,
                         GRASP_iterations = GRASP_iterations)
                     if len(history_drivers) == 0:
                         history_drivers = [path_motif_history[-1]]
                 elif method == 'minimal':
-                    history_drivers = minimal_drivers(path_motif_history[-1],
+                    history_drivers = sm_doi.minimal_drivers(path_motif_history[-1],
                         self.motif_reduction_list[ind_prev].reduced_primes,
                         max_drivers=max_drivers)
 
@@ -317,14 +317,14 @@ class SuccessionDiagram:
                 #     motif_merger.update(logically_fixed)
 
                 if driver_method == 'GRASP':
-                    merger_drivers = GRASP(motif_merger,self.unreduced_primes,GRASP_iterations)
+                    merger_drivers = sm_doi.GRASP(motif_merger,self.unreduced_primes,GRASP_iterations)
                     if len(merger_drivers) == 0:
                         merger_drivers = [motif_merger.copy()]
                 elif driver_method == 'minimal':
-                    merger_drivers = minimal_drivers(motif_merger,
+                    merger_drivers = sm_doi.minimal_drivers(motif_merger,
                         self.unreduced_primes,max_drivers=max_drivers)
                 elif driver_method == 'internal':
-                    merger_drivers = internal_drivers(motif_merger,
+                    merger_drivers = sm_doi.internal_drivers(motif_merger,
                         self.unreduced_primes,max_drivers=max_drivers)
 
                 drivers += [x for x in merger_drivers if not x in drivers]
@@ -384,7 +384,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     """
     if fixed is None:
         fixed = {}
-    myMotifReduction=MotifReduction(motif_history,fixed.copy(),primes,search_partial_STGs=search_partial_STGs,prioritize_source_motifs=prioritize_source_motifs)
+    myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,search_partial_STGs=search_partial_STGs,prioritize_source_motifs=prioritize_source_motifs)
     if diagram is None:
         diagram = SuccessionDiagram()
     diagram.add_motif_reduction(myMotifReduction)
@@ -401,7 +401,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
             if not perm_index is None:
                 diagram.add_motif_permutation(perm_index,perm)
         if not merge_equivalent_motifs or perm_index is None:
-            np,fixed2 = reduce_primes(sm,primes)
+            np,fixed2 = sm_reduction.reduce_primes(sm,primes)
             fixed3 = fixed.copy()
             fixed3.update(fixed2)
             diagram = build_succession_diagram(np,fixed3,myMotifReduction.motif_history+[sm],

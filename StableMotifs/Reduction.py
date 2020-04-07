@@ -2,9 +2,10 @@ import PyBoolNet
 import itertools as it
 import networkx as nx
 
-from StableMotifs.TimeReversal import time_reverse_primes
-from StableMotifs.RestrictSpace import rspace, fixed_rspace_nodes, reduce_rspace_string, attractor_space_candidates
-from StableMotifs.Format import pretty_print_rspace, pretty_print_prime_rules, statestring2dict, implicant2bnet
+import StableMotifs.TimeReversal as sm_time
+import StableMotifs.RestrictSpace as sm_rspace
+import StableMotifs.Format as sm_format
+import StableMotifs.Succession as sm_succession
 
 def simplify_primes(primes):
     """
@@ -97,7 +98,7 @@ class MotifReduction:
         self.logically_fixed_nodes = fixed
         self.reduced_primes = reduced_primes.copy()
 
-        self.time_reverse_primes = time_reverse_primes(self.reduced_primes)
+        self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
         self.stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.reduced_primes, "max")
         self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max")
 
@@ -106,7 +107,7 @@ class MotifReduction:
         if self.motif_history == [] and prioritize_source_motifs:
             self.merge_source_motifs()
 
-        self.rspace=rspace(self.stable_motifs,self.reduced_primes)
+        self.rspace = sm_rspace.rspace(self.stable_motifs,self.reduced_primes)
 
         # These may or may not get calculated.
         # Sensible default values are in comments, but we will just use None for now.
@@ -133,28 +134,28 @@ class MotifReduction:
                 study_possible_oscillation = True
         else: # found 1-node drivers, so we can investigate further
             self.terminal = "possible" # TODO: implement case-checking based on rspace
-            self.fixed_rspace_nodes = fixed_rspace_nodes(self.rspace,self.reduced_primes)
+            self.fixed_rspace_nodes =sm_rspace.fixed_rspace_nodes(self.rspace,self.reduced_primes)
 
             for motif in self.stable_motifs:
                 if motif.items() <= self.fixed_rspace_nodes.items():
                     self.terminal = "no"
                     break
             if self.terminal == "possible":
-                self.rspace_constraint = pretty_print_rspace(self.rspace)
-                self.reduced_rspace_constraint = reduce_rspace_string(self.rspace_constraint,self.fixed_rspace_nodes)
+                self.rspace_constraint = sm_format.pretty_print_rspace(self.rspace)
+                self.reduced_rspace_constraint = sm_rspace.reduce_rspace_string(self.rspace_constraint,self.fixed_rspace_nodes)
                 self.rspace_update_primes = reduce_primes(self.fixed_rspace_nodes,self.reduced_primes)[0]
-                self.test_rspace()
+                #self.test_rspace(search_partial_STGs = search_partial_STGs)
 
             study_possible_oscillation = self.terminal == "possible" # value may be changed by test_rspace
         if study_possible_oscillation:
-            self.conserved_functions = attractor_space_candidates(self.stable_motifs,
-                                                                  self.time_reverse_stable_motifs)
             if search_partial_STGs:
                 self.find_no_motif_attractors()
                 if len(self.no_motif_attractors) == 0:
                     self.terminal = "no"
                 else:
                     self.terminal = "yes"
+                    self.conserved_functions = sm_rspace.attractor_space_candidates(self.stable_motifs,
+                                                                         self.time_reverse_stable_motifs)
 
     def merge_source_motifs(self):
         """
@@ -183,7 +184,27 @@ class MotifReduction:
             self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
 
 
-    def test_rspace(self):
+    # def attractor_satisfies_constraint(attractor, names, constraint):
+    #     possible_attractor = True
+    #     for state in attractor:
+    #         state_dict = {** sm_format.statestring2dict(state,names)}
+    #         if PyBoolNet.BooleanLogic.are_mutually_exclusive(constraint,
+    #                                                          sm_format.implicant2bnet(state_dict)):
+    #             possible_attractor = False
+    #             break
+    #     return possible_attractor
+
+    def test_rspace(self, search_partial_STGs=True):
+        #
+        #
+        # rdiag = build_succession_diagram(self.rspace_update_primes,search_partial_STGs=False)
+        # for fn in rdiag.attractor_fixed_nodes_list:
+        #     if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,
+        #                                                      sm_format.implicant2bnet(fn)):
+        #         return
+        #
+        # if not search_partial_STGs:
+        #     return
         STG=PyBoolNet.StateTransitionGraphs.primes2stg(self.rspace_update_primes,"asynchronous")
         steady_states,complex_attractors=PyBoolNet.Attractors.compute_attractors_tarjan(STG)
         names = sorted(self.rspace_update_primes)
@@ -193,9 +214,9 @@ class MotifReduction:
         for attractor in attractors:
             possible_rspace_attractor = True
             for state in attractor:
-                state_dict = {**statestring2dict(state,names),**self.fixed_rspace_nodes}
+                state_dict = {** sm_format.statestring2dict(state,names),**self.fixed_rspace_nodes}
                 if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,
-                                                                 implicant2bnet(state_dict)):
+                                                                 sm_format.implicant2bnet(state_dict)):
                     possible_rspace_attractor = False
                     break
             if possible_rspace_attractor:
@@ -221,6 +242,20 @@ class MotifReduction:
                 K.add(s)
         return K
 
+    #def contradicts_reduced_rspace(self,ss,names,rnames):
+    #    state_dict =
+    #    return not PyBoolNet.BooleanLogic.are_mutually_exclusive(self.reduced_rspace_constraint,
+    #                                                        sm_format.implicant2bnet(state_dict))
+
+    def in_motif(self,ss,names):
+        for sm in self.stable_motifs:
+            smin = True
+            for i,r in enumerate(names):
+                if r in sm and not int(ss[i]) == sm[r]:
+                    smin = False
+            if smin: return True
+        return False
+
     # Helper function for smart STG building
     # List all tr stable_motifs to which state ss belongs
     def build_inspace(self,ss,names):
@@ -236,16 +271,40 @@ class MotifReduction:
     def build_partial_STG(self):
         names = sorted(self.reduced_primes)
         name_ind = {n:i for i,n in enumerate(names)}
-        N = len(names)
-        K = self.build_K0()
 
+        if self.rspace_update_primes is not None:
+            rnames = sorted(self.rspace_update_primes)
+            rname_ind = {n:i for i,n in enumerate(names) if n in rnames}
+            fixed = self.fixed_rspace_nodes
+        else:
+            rnames = names.copy()
+            rname_ind = name_ind.copy()
+            fixed = {}
+
+        #N = len(names)
+
+        #K = self.build_K0()
+        K = set()
         self.partial_STG = nx.DiGraph()
 
         inspace_dict = {}
 
-        for s in it.product(['0','1'],repeat=N):
-            ss = ''.join(s)
+        for s in it.product(['0','1'],repeat=len(names)-len(fixed)):
+            sl = []
+            j = 0
+            for i in range(len(names)):
+                if names[i] in fixed:
+                    sl.append(str(fixed[names[i]]))
+                else:
+                    sl.append(s[j])
+                    j += 1
+
+            ss = ''.join(sl)
+
             if ss in K: continue
+            if self.in_motif(ss,names): continue
+            #if self.contradicts_reduced_rspace(ss,names): continue
+
             simstate = True
 
             inspace = self.build_inspace(ss,names)
@@ -267,9 +326,9 @@ class MotifReduction:
                         child_state_list[i] = str(nri)
                         child_state = ''.join(child_state_list)
 
-                        # Check if landed in K
+                        # Check if changed something that should be fixed or landed in K
                         # If not, check if we left a TR stable motif
-                        prune = child_state in K
+                        prune = r in fixed or child_state in K
                         if not prune:
                             if not child_state in inspace_dict:
                                 inspace_dict[child_state] = self.build_inspace(child_state,names)
@@ -299,11 +358,11 @@ class MotifReduction:
         print()
         if not self.motif_history == []:
             print("Reduced Update Rules:")
-            pretty_print_prime_rules(self.reduced_primes)
+            sm_format.pretty_print_prime_rules(self.reduced_primes)
         else:
             if show_original_rules:
                 print("Original Update Rules:")
-                pretty_print_prime_rules(self.reduced_primes)
+                sm_format.pretty_print_prime_rules(self.reduced_primes)
             else:
                 print("The update rules are not reduced.")
         print()
@@ -340,7 +399,7 @@ class MotifReduction:
                 print(self.reduced_rspace_constraint)
                 print()
                 print("In this case, the unfixed nodes update according to the following rules:")
-                pretty_print_prime_rules(self.rspace_update_primes)
+                sm_format.pretty_print_prime_rules(self.rspace_update_primes)
 
         if not self.conserved_functions is None:
             print()
@@ -348,7 +407,7 @@ class MotifReduction:
                 print("Found the following functions that are constant on attractors in this branch:")
                 for x in self.conserved_functions:
                     if len(x) > 0:
-                        pretty_print_rspace([x],silent=False)
+                        sm_format.pretty_print_rspace([x],silent=False)
                         print()
             else:
                 print("Unable to find non-trivial conserved functions for attractors in this branch.")
