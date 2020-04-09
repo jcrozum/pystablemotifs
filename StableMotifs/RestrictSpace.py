@@ -2,6 +2,7 @@ import PyBoolNet
 import re
 
 from StableMotifs.DomainOfInfluence import single_drivers, logical_domain_of_influence
+import StableMotifs.DomainOfInfluence as sm_doi
 
 def attractor_space_candidates(maxts,trmaxts):
     """
@@ -13,7 +14,42 @@ def attractor_space_candidates(maxts,trmaxts):
     for t in maxts+trmaxts: L.append([t])
     return L
 
-def rspace(maxts,primes):
+def state_in_rspace(state,L):
+    for clause in L:
+        sat = False
+        for p in clause:
+            if sm_doi.fixed_implies_implicant(state,p):
+                sat = True
+                break
+        if not sat:
+            return False
+    return True
+
+def partial_state_contradicts_rspace(st,L):
+    for clause in L:
+        csat = False
+        for p in clause:
+            if not sm_doi.fixed_excludes_implicant(st,p):
+                csat = True
+                break
+        if not csat:
+            return False
+    return True
+
+def reduce_rspace(L,primes):
+    fixed = fixed_rspace_nodes(L,primes)
+    L2 = [[fixed]]
+    for clause in L:
+        sat = False
+        for p in clause:
+            if sm_doi.fixed_implies_implicant(fixed,p):
+                sat = True
+                break
+        if not sat:
+            L2.append(clause)
+    return L2
+
+def rspace(maxts,trmaxts,primes):
     """
     In order for none of the trap spaces to "lock in", we would require that
     their single-node drivers are all sustained in a negated state. We can use
@@ -22,6 +58,14 @@ def rspace(maxts,primes):
 
     1) has the negations of 1-node drivers of each maxts active and . . .
     2) has the update rules of these 1-node drivers taking the appropriate value
+
+    In addition, a time-reverse trap space (trmaxts) describes a region that,
+    once exited, cannot be reentered. Thus, if the LDOI of the region contains
+    any contradiciton, the region cannot contain any attractor. Therefore,
+    we include a third criterion for the rspace:
+
+    3) is not in a state belonging to an attractor-free time-reversed trap space
+
     The return value is a list L of lists of prime implicants. Each element of L
     is to be interpreted as a list of OR-separated prime implicants; L is to be
     interpreted as AND-separated. e.g.,
@@ -56,6 +100,13 @@ def rspace(maxts,primes):
     # also include the conditions for the update rules of the negated drivers
     for k in nds:
         L.append(primes[k][nds[k]])
+
+
+    # Now, investigate the trmaxts:
+    for gs in trmaxts:
+        implied,contradicted = logical_domain_of_influence(gs,primes)
+        if len(contradicted) > 0:
+            L.append([{n:int(not v)} for n,v in gs.items()])
 
     return L
 

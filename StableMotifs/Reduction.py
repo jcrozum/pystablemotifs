@@ -7,6 +7,7 @@ import StableMotifs.TimeReversal as sm_time
 import StableMotifs.RestrictSpace as sm_rspace
 import StableMotifs.Format as sm_format
 import StableMotifs.Succession as sm_succession
+import StableMotifs.DomainOfInfluence as sm_doi
 
 def simplify_primes(primes):
     """
@@ -54,11 +55,11 @@ def delete_node(primes, node):
 
     for child in G.successors(node):
         crule = sm_format.rule2bnet(primes[child][1])
-        print("BEFORE",crule)
-        print("SUB:",node,"->","("+rule1+")")
+        # print("BEFORE",crule)
+        # print("SUB:",node,"->","("+rule1+")")
         crule = re.sub(rf'\b{node}\b',"("+rule1+")",crule)
         crule = PyBoolNet.BooleanLogic.minimize_espresso(crule)
-        print("AFTER",crule)
+        # print("AFTER",crule)
         crule = child + ",\t" + crule
 
         new_primes[child] = PyBoolNet.FileExchange.bnet2primes(crule)[child]
@@ -86,7 +87,7 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
             retry_node = True
             if not node in reduced or G.in_degree(node) > max_in_degree:
                 continue
-            elif not any([node in p for p in reduced[node][1]]):
+            elif not any(node in p for p in reduced[node][1]):
                 reduced = delete_node(reduced, node)
                 G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
                 change = True
@@ -165,7 +166,7 @@ class MotifReduction:
     find_no_motif_attractors(self) - finds no_motif_attractors
     summary(self) - prints a summary of the MotifReduction to screen
     """
-    def __init__(self,motif_history,fixed,reduced_primes,search_partial_STGs=True,prioritize_source_motifs=True):
+    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True):
         if motif_history is None:
             self.motif_history = []
         else:
@@ -173,7 +174,6 @@ class MotifReduction:
         self.merged_history_permutations = []
         self.logically_fixed_nodes = fixed
         self.reduced_primes = reduced_primes.copy()
-
         self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
         self.stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.reduced_primes, "max")
         self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max")
@@ -183,8 +183,7 @@ class MotifReduction:
         if self.motif_history == [] and prioritize_source_motifs:
             self.merge_source_motifs()
 
-        self.rspace = sm_rspace.rspace(self.stable_motifs,self.reduced_primes)
-
+        self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
         # These may or may not get calculated.
         # Sensible default values are in comments, but we will just use None for now.
         self.fixed_rspace_nodes=None # {}
@@ -195,8 +194,11 @@ class MotifReduction:
         self.rspace_attractor_candidates=None # []
         self.partial_STG=None # nx.DiGraph()
         self.no_motif_attractors=None # []
+        self.deletion_STG = None
+        self.deletion_no_motif_attractors = None
 
         study_possible_oscillation = False
+
         if not self.merged_source_motifs is None:
             self.terminal = "no"
         elif self.rspace == [[{'0':1}]] and len(self.stable_motifs) > 0: # a stable motif must lock in
@@ -210,7 +212,10 @@ class MotifReduction:
                 study_possible_oscillation = True
         else: # found 1-node drivers, so we can investigate further
             self.terminal = "possible" # TODO: implement case-checking based on rspace
-            self.fixed_rspace_nodes =sm_rspace.fixed_rspace_nodes(self.rspace,self.reduced_primes)
+
+            #self.fixed_rspace_nodes =sm_rspace.fixed_rspace_nodes(self.rspace,self.reduced_primes)
+            self.rspace = sm_rspace.reduce_rspace(self.rspace,self.reduced_primes)
+            self.fixed_rspace_nodes = self.rspace[0][0]
 
             for motif in self.stable_motifs:
                 if motif.items() <= self.fixed_rspace_nodes.items():
@@ -221,23 +226,44 @@ class MotifReduction:
                 self.reduced_rspace_constraint = sm_rspace.reduce_rspace_string(self.rspace_constraint,self.fixed_rspace_nodes)
                 self.rspace_update_primes = reduce_primes(self.fixed_rspace_nodes,self.reduced_primes)[0]
                 #self.test_rspace(search_partial_STGs = search_partial_STGs)
-
             study_possible_oscillation = self.terminal == "possible" # value may be changed by test_rspace
         if study_possible_oscillation:
-            if search_partial_STGs:
-                if self.rspace_update_primes is not None and len(self.rspace_update_primes) > 30:
-                    print("STG is too large ("+str(len(self.reduced_primes))+"). Giving up.")
-                    return
-                elif len(self.reduced_primes) > 30:
-                    print("STG is too large ("+str(len(self.reduced_primes))+"). Giving up.")
-                    return
-                self.find_no_motif_attractors()
-                if len(self.no_motif_attractors) == 0:
-                    self.terminal = "no"
+            if max_simulate_size > 0 :
+                if self.rspace_update_primes is not None:
+                    simulate_size = len(self.rspace_update_primes)
                 else:
-                    self.terminal = "yes"
-                    self.conserved_functions = sm_rspace.attractor_space_candidates(self.stable_motifs,
-                                                                         self.time_reverse_stable_motifs)
+                    simulate_size = len(self.reduced_primes)
+
+                if simulate_size > max_simulate_size:
+                    print("STG is too large to simulate ("+
+                    str(simulate_size)+"/"+str(max_simulate_size)+
+                    "). Increase max_simulate_size to force simulation.")
+                    print("Attempting internal reduction...")
+                    self.delprimes = mediator_reduction(self.reduced_primes)
+                    self.delprimes = deletion_reduction(self.delprimes)
+                    print("Reduced.")
+                    if len(self.delprimes) < max_simulate_size:
+                        print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
+
+                        self.find_deletion_no_motif_attractors()
+                        print("WARNING: WE NEED TO FINISH THE PROOF OF THE THEOREM UNDERLYING THIS STEP")
+                        if len(self.deletion_no_motif_attractors) == 0:
+                            self.terminal = "no"
+                        else:
+                            self.terminal = "yes"
+                        print("Finished simulating.")
+
+                    else:
+                        print("The STG is still too large ("+str(len(self.delprimes))+").")
+                else:
+                    self.find_no_motif_attractors()
+                    if len(self.no_motif_attractors) == 0:
+                        self.terminal = "no"
+                    else:
+                        self.terminal = "yes"
+                        self.conserved_functions = sm_rspace.attractor_space_candidates(self.stable_motifs,
+                                                                             self.time_reverse_stable_motifs)
+
 
     def merge_source_motifs(self):
         """
@@ -265,34 +291,15 @@ class MotifReduction:
         for state in it.product([0,1],repeat=len(source_vars)):
             self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
 
-
-    # def attractor_satisfies_constraint(attractor, names, constraint):
-    #     possible_attractor = True
-    #     for state in attractor:
-    #         state_dict = {** sm_format.statestring2dict(state,names)}
-    #         if PyBoolNet.BooleanLogic.are_mutually_exclusive(constraint,
-    #                                                          sm_format.implicant2bnet(state_dict)):
-    #             possible_attractor = False
-    #             break
-    #     return possible_attractor
-
     def test_rspace(self, search_partial_STGs=True):
-        #
-        #
-        # rdiag = build_succession_diagram(self.rspace_update_primes,search_partial_STGs=False)
-        # for fn in rdiag.attractor_fixed_nodes_list:
-        #     if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,
-        #                                                      sm_format.implicant2bnet(fn)):
-        #         return
-        #
-        # if not search_partial_STGs:
-        #     return
         STG=PyBoolNet.StateTransitionGraphs.primes2stg(self.rspace_update_primes,"asynchronous")
         steady_states,complex_attractors=PyBoolNet.Attractors.compute_attractors_tarjan(STG)
         names = sorted(self.rspace_update_primes)
         attractors = complex_attractors+[[s] for s in steady_states]
-        self.rspace_attractor_candidates = []
+        self.build_rspace_attractor_candidates(attractors)
 
+    def build_rspace_attractor_candidates(self,attractors):
+        self.rspace_attractor_candidates = []
         for attractor in attractors:
             possible_rspace_attractor = True
             for state in attractor:
@@ -324,11 +331,7 @@ class MotifReduction:
                 K.add(s)
         return K
 
-    #def contradicts_reduced_rspace(self,ss,names,rnames):
-    #    state_dict =
-    #    return not PyBoolNet.BooleanLogic.are_mutually_exclusive(self.reduced_rspace_constraint,
-    #                                                        sm_format.implicant2bnet(state_dict))
-
+    # tests whether the (partial) state ss is in any stable motifs
     def in_motif(self,ss,names):
         for sm in self.stable_motifs:
             smin = True
@@ -339,16 +342,134 @@ class MotifReduction:
         return False
 
     # Helper function for smart STG building
-    # List all tr stable_motifs to which state ss belongs
-    def build_inspace(self,ss,names):
+    # List all tr stable_motifs to which (partial) state ss belongs
+    def build_inspace(self,ss,names, tr_stable_motifs = None):
         inspaces = []
-        for ts in self.time_reverse_stable_motifs:
+        if tr_stable_motifs is None:
+            tr_stable_motifs = self.time_reverse_stable_motifs
+
+        for ts in tr_stable_motifs:
             tsin = True
             for i,r in enumerate(names):
                 if r in ts and not int(ss[i]) == ts[r]:
                     tsin = False
             if tsin: inspaces.append(ts)
         return inspaces
+
+    def build_deletion_STG(self):
+        names = sorted(self.delprimes)
+        name_ind = {n:i for i,n in enumerate(names)}
+
+        trprimes = sm_time.time_reverse_primes(self.delprimes)
+        trsms = PyBoolNet.AspSolver.trap_spaces(trprimes,"max")
+
+
+        if self.rspace_update_primes is not None:
+            delrnames = [x for x in sorted(self.rspace_update_primes) if x in self.delprimes]
+            rname_ind = {n:i for i,n in enumerate(names) if n in delrnames}
+            fixed = {k:v for k,v in self.fixed_rspace_nodes.items()}
+        else:
+            rnames = names.copy()
+            rname_ind = name_ind.copy()
+            fixed = {}
+
+        sim_names = [x for x in names if not x in fixed]
+
+
+        #K = self.build_K0()
+        K = set()
+        self.deletion_STG = nx.DiGraph()
+
+        inspace_dict = {}
+        t = 0
+        T = 1
+        # note: product order gives s counting up in binary from 00..0 to 11..1
+        for s in it.product(['0','1'],repeat=len(sim_names)):
+            sl = ['']*len(names)
+            j = 0
+            for i in range(len(names)):
+                if names[i] in fixed:
+                    sl[i] = str(fixed[names[i]])
+                else:
+                    sl[i] = s[j]
+                    j += 1
+
+            ss = ''.join(sl)
+
+            if ss in K: continue
+            if self.in_motif(ss,names): continue
+
+            simstate = True
+
+            inspace = self.build_inspace(ss,names,tr_stable_motifs = trsms)
+            inspace_dict[ss] = inspace
+
+            self.deletion_STG.add_node(ss) # might end up removing later
+            for i,r in enumerate(names):
+                nri = int(not int(ss[i]))
+                # if any p below is satisfied, we get a change of state
+                # the value of the new r will be equal to nri
+                for p in self.delprimes[r][nri]:
+                    psat = True
+                    for k,v in p.items():
+                        if not int(ss[name_ind[k]]) == v:
+                            psat = False
+                            break
+                    if psat: # state change verified
+                        child_state_list = list(ss)
+                        child_state_list[i] = str(nri)
+                        child_state = ''.join(child_state_list)
+
+                        # Check if changed something that should be fixed or landed in K
+                        # If not, check if we left a TR stable motif
+                        prune = r in fixed or child_state in K
+
+                        # next we check to see if we've left the rspace
+                        # note that we don't have to check rspace[0], as this
+                        # is handled by checking r in fixed
+                        if not prune:
+                            stdict = sm_format.statestring2dict(child_state,names)
+                            prune = not sm_rspace.partial_state_contradicts_rspace(stdict, self.rspace[1:])
+
+                        # next, we check to see if we left a TR motif
+                        if not prune:
+                            if not child_state in inspace_dict:
+                                inspace_dict[child_state] = self.build_inspace(child_state,names,tr_stable_motifs = trsms)
+                            prune = not inspace_dict[child_state] == inspace
+
+
+                        # By here, prune is TRUE if we left a TR motif or are in K
+                        if prune:
+                            # prune the STG and stop simulating ss
+                            simstate = False
+                            rnodes = list(nx.bfs_tree(self.deletion_STG,ss,reverse=True).nodes())
+                            K.update(rnodes)
+                            self.deletion_STG.remove_nodes_from(rnodes)
+                        else:
+                            self.deletion_STG.add_edge(ss,child_state)
+                        break # we know the ss at r changed, no need to check more primes
+                if not simstate: break # don't check other vars: already found ss -> K
+    def find_deletion_no_motif_attractors(self):
+        if self.deletion_STG is None:
+            self.build_deletion_STG()
+
+        # Note: fixed points of the deletion system are fixed
+        # points of the undeleted system, so we ignore these
+        candidates = [x for x in nx.attracting_components(self.deletion_STG) if len(x) > 1]
+
+        self.deletion_no_motif_attractors = []
+        # next, we see if any of these activate stable motifs
+        names = sorted(self.delprimes)
+        for att in candidates:
+            no_motif = True
+            for s in att:
+                st = sm_format.statestring2dict(s,names)
+                imp,con = sm_doi.logical_domain_of_influence(st,self.reduced_primes)
+                if any(sm_doi.fixed_implies_implicant(imp,sm) for sm in self.stable_motifs):
+                    no_motif = False
+                    break
+            if no_motif:
+                self.deletion_no_motif_attractors.append(att)
 
     def build_partial_STG(self):
         names = sorted(self.reduced_primes)
@@ -363,26 +484,8 @@ class MotifReduction:
             rname_ind = name_ind.copy()
             fixed = {}
 
-
-
-        # G = PyBoolNet.InteractionGraphs.primes2igraph(self.reduced_primes)
-        # ignored = PyBoolNet.InteractionGraphs.find_outdag(G)
-        # C = nx.condensation(G)
-        #
-        # sim_names = [x for x in names if not x in fixed and not x in ignored]
         sim_names = [x for x in names if not x in fixed]
-        # s_inds = {}
-        # j = 0
-        # for n in names:
-        #     if n in sim_names:
-        #         s_inds[n] = j
-        #         j += 1
-        # print("NUMBERS",len(names),len(sim_names) ,len(fixed),len(ignored))
-        # topological_order = []
-        # for x in nx.topological_sort(C):
-        #     topological_order += [s_inds[y] for y in C.nodes[x]['members'] if y in sim_names]
-        # topological_order.reverse()
-        #N = len(names)
+
 
         #K = self.build_K0()
         K = set()
@@ -393,28 +496,19 @@ class MotifReduction:
         T = 1
         # note: product order gives s counting up in binary from 00..0 to 11..1
         for s in it.product(['0','1'],repeat=len(sim_names)):
-            # if t > T:
-            #     T*=2
-            #     print(t,"/",2**len(sim_names))
-            # t+=1
-
-            # s_topo = [s[k] for k in topological_order]
             sl = ['']*len(names)
             j = 0
             for i in range(len(names)):
                 if names[i] in fixed:
                     sl[i] = str(fixed[names[i]])
-                # elif names[i] in ignored:
-                #     sl[i] = '2'
                 else:
-                    sl[i] = s[j]#s_topo[j]
+                    sl[i] = s[j]
                     j += 1
 
             ss = ''.join(sl)
 
             if ss in K: continue
             if self.in_motif(ss,names): continue
-            #if self.contradicts_reduced_rspace(ss,names): continue
 
             simstate = True
 
@@ -440,12 +534,22 @@ class MotifReduction:
                         # Check if changed something that should be fixed or landed in K
                         # If not, check if we left a TR stable motif
                         prune = r in fixed or child_state in K
+
+                        # next we check to see if we've left the rspace
+                        # note that we don't have to check rspace[0], as this
+                        # is handled by checking r in fixed
+                        if not prune:
+                            stdict = sm_format.statestring2dict(child_state,names)
+                            prune = not sm_rspace.state_in_rspace(stdict, self.rspace[1:])
+
+                        # next, we check to see if we left a TR motif
                         if not prune:
                             if not child_state in inspace_dict:
                                 inspace_dict[child_state] = self.build_inspace(child_state,names)
                             prune = not inspace_dict[child_state] == inspace
-                        # By here, prune is TRUE if we left a TR motif or are in K
 
+
+                        # By here, prune is TRUE if we left a TR motif or are in K
                         if prune:
                             # prune the STG and stop simulating ss
                             simstate = False
@@ -462,12 +566,14 @@ class MotifReduction:
             self.build_partial_STG()
         self.no_motif_attractors = list(nx.attracting_components(self.partial_STG))
 
-    def summary(self,show_original_rules=True,show_explicit_permutations=False):
+    def summary(self,show_original_rules=True,hide_rules=False,show_explicit_permutations=False):
         print("Motif History:",self.motif_history)
         print()
         print("Logically Fixed Nodes:",self.logically_fixed_nodes)
         print()
-        if not self.motif_history == []:
+        if hide_rules:
+            pass
+        elif not self.motif_history == []:
             print("Reduced Update Rules:")
             sm_format.pretty_print_prime_rules(self.reduced_primes)
         else:

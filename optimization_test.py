@@ -153,7 +153,7 @@ from timeit import default_timer
 # print()
 # diag.attractor_candidate_summary()
 
-N=500
+N=1500
 K=2
 p=sm.randomBooleanNetworks.get_criticality_p_Kauffman(K)[0]
 N_ensemble=1
@@ -165,34 +165,36 @@ rules=rbn_ensemble[0]
 
 rules = sm.Format.booleannet2bnet(rules)
 # print(rules)
-primes = PyBoolNet.FileExchange.bnet2primes(rules)
+#primes = PyBoolNet.FileExchange.bnet2primes(rules)
+primes = sm.Format.longbnet2primes(rules)
 PyBoolNet.PrimeImplicants._percolation(primes,True)
-primes = sm.Reduction.mediator_reduction(primes)
-primes = sm.Reduction.deletion_reduction(primes)
+#primes = sm.Reduction.mediator_reduction(primes)
+#primes = sm.Reduction.deletion_reduction(primes)
 end=default_timer()
 print("Time (s) creating reduced networks:",end-start)
 print("Reduced network size: ",str(len(primes)))
 sm.Format.pretty_print_prime_rules(primes)
 
-G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
-C = nx.condensation(G)
-for x in nx.topological_sort(C):
-    print("===========================")
-    print(len(C.nodes[x]['members'])," nodes in this SCC")
-    sm.Format.pretty_print_prime_rules({k:v for k,v in primes.items() if k in C.nodes[x]['members']})
-    print("===========================")
-print(nx.number_weakly_connected_components(G))
-print(nx.number_strongly_connected_components(G))
-print(len(list(C.edges)))
-od = PyBoolNet.InteractionGraphs.find_outdag(G)
-print(len(od))
-print(len(primes))
+# G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
+# C = nx.condensation(G)
+# for x in nx.topological_sort(C):
+#     print("===========================")
+#     print(len(C.nodes[x]['members'])," nodes in this SCC")
+#     sm.Format.pretty_print_prime_rules({k:v for k,v in primes.items() if k in C.nodes[x]['members']})
+#     print("===========================")
+# print(nx.number_weakly_connected_components(G))
+# print(nx.number_strongly_connected_components(G))
+# print(len(list(C.edges)))
+# od = PyBoolNet.InteractionGraphs.find_outdag(G)
+# print(len(od))
+# print(len(primes))
 
 # quit()
 
 start=default_timer()
-diag = sm.Succession.build_succession_diagram(primes,search_partial_STGs=True)
+diag = sm.Succession.build_succession_diagram(primes,max_simulate_size=20)
 end=default_timer()
 print("Time (s) finding atttactors:",end-start)
 print("Number of attractors: ",str(len(diag.attractor_fixed_nodes_list)))
+diag.summary(terminal_keys=["yes","possible"],hide_rules=True)
 diag.attractor_candidate_summary()

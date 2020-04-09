@@ -15,6 +15,18 @@ def fixed_implies_implicant(fixed,implicant):
             break
     return rval
 
+def fixed_excludes_implicant(fixed,implicant):
+    """
+    Returns True iff the partial state "fixed" contradicts the implicant
+    """
+    rval = True
+    for k,v in implicant.items():
+        if not k in fixed:
+            continue
+        elif fixed[k] != v:
+            rval = False
+            break
+    return not rval
 
 def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None):
     """
@@ -238,7 +250,7 @@ def GRASP_default_scores(target,primes,candidates):
         if sc > m:
             m = sc
 
-        if any([k in target and target[k] == con[k] for k in con]):
+        if any(k in target and target[k] == con[k] for k in con):
             scores.append(-1*sc - 1)
         else:
             scores.append(sc)
@@ -273,7 +285,7 @@ def construct_GRASP_solution(target,primes,candidates,scores):
 
         imp,con = logical_domain_of_influence(new_solution,primes,implied_hint=imp_old,contradicted_hint=con_old)
 
-        if any([k in target and target[k] != con[k] for k in con]):
+        if any(k in target and target[k] != con[k] for k in con):
             RCL = [x for x in RCL if x != s]
             continue
 
