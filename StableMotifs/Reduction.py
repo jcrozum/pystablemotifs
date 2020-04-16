@@ -50,6 +50,7 @@ def delete_node(primes, node):
     assert not G.has_edge(node,node), ' '.join(["Node",str(node),"has a self-loop and cannot be deleted."])
 
     new_primes = {k:v for k,v in primes.items() if not k == node}
+    constants = {}
 
     rule1 = sm_format.rule2bnet(primes[node][1])
 
@@ -63,20 +64,23 @@ def delete_node(primes, node):
         crule = child + ",\t" + crule
 
         new_primes[child] = PyBoolNet.FileExchange.bnet2primes(crule)[child]
-        PyBoolNet.PrimeImplicants._percolation(new_primes,True)
-    return new_primes
+        nc = PyBoolNet.PrimeImplicants._percolation(new_primes,True)
+        constants.update(nc)
+    return new_primes, constants
 
 def remove_outdag(primes):
     G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
     od = PyBoolNet.InteractionGraphs.find_outdag(G)
     reduced = primes.copy()
+    constants = {}
     for node in od:
         if node in reduced:
-            reduced = delete_node(reduced, node)
-    return reduced
+            reduced, nc = delete_node(reduced, node)
+            constants.update(nc)
+    return reduced, constants
 
 def deletion_reduction(primes, max_in_degree = float('inf')):
-    reduced = remove_outdag(primes)
+    reduced, constants = remove_outdag(primes)
     G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
     cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
 
@@ -88,13 +92,17 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
             if not node in reduced or G.in_degree(node) > max_in_degree:
                 continue
             elif not any(node in p for p in reduced[node][1]):
-                reduced = delete_node(reduced, node)
-                G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
+                reduced, nc = delete_node(reduced, node)
+                constants.update(nc)
+                if len(reduced) > 0:
+                    G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
+                else:
+                    G = nx.DiGraph()
                 change = True
                 break
         cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
 
-    return reduced
+    return reduced, constants
 
 def mediator_reduction(primes):
     """
@@ -103,20 +111,21 @@ def mediator_reduction(primes):
     qualitative features of complex attractors.
     """
 
-    reduced = remove_outdag(primes)
+    reduced, constants = remove_outdag(primes)
     cur_order = sorted(reduced)
     G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
     candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
-    return reduced
+    
     for node in candidates:
         u = list(G.predecessors(node))[0]
         w = list(G.successors(node))[0]
         if not w in G.successors(u) and not w in G.predecessors(u):
-            reduced = delete_node(reduced, node)
+            reduced, nc = delete_node(reduced, node)
+            constants.update(nc)
             G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
             candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
 
-    return reduced
+    return reduced, constants
 
 
 class MotifReduction:
@@ -196,7 +205,7 @@ class MotifReduction:
         self.no_motif_attractors=None # []
         self.deletion_STG = None
         self.deletion_no_motif_attractors = None
-
+        self.attractor_constants = None
         study_possible_oscillation = False
 
         if not self.merged_source_motifs is None:
@@ -227,42 +236,63 @@ class MotifReduction:
                 self.rspace_update_primes = reduce_primes(self.fixed_rspace_nodes,self.reduced_primes)[0]
                 #self.test_rspace(search_partial_STGs = search_partial_STGs)
             study_possible_oscillation = self.terminal == "possible" # value may be changed by test_rspace
-        if study_possible_oscillation:
-            if max_simulate_size > 0 :
-                if self.rspace_update_primes is not None:
-                    simulate_size = len(self.rspace_update_primes)
+
+        if study_possible_oscillation and max_simulate_size > 0:
+            print("Attempting internal reduction...")
+            self.delprimes, self.attractor_constants = mediator_reduction(self.reduced_primes)
+            self.delprimes, nc = deletion_reduction(self.delprimes)
+            self.attractor_constants.update(nc)
+            print("Reduced.")
+
+            # Before building any STGs, let's see if we've already identified
+            # that a stable motif must stabilize based on the reduction.
+            for sm in self.stable_motifs:
+                sat = True
+                for k,v in sm.items():
+                    if (k,v) in self.attractor_constants.items():
+                        continue
+                    elif k not in self.delprimes:
+                        continue
+                    sat = False
+                    break
+                if sat:
+                    self.terminal = "no"
+                    return
+
+            # Now, we check to see if we can afford to simulate the proper STG
+            # to actually find the attractors. If we can't, we'll simulate the
+            # reduction, which will give bounds on the number of motif-free
+            # complex attractors.
+            if self.rspace_update_primes is not None:
+                simulate_size = len(self.rspace_update_primes)
+            else:
+                simulate_size = len(self.reduced_primes)
+
+            if simulate_size < max_simulate_size:
+                self.find_no_motif_attractors()
+                if len(self.no_motif_attractors) == 0:
+                    self.terminal = "no"
                 else:
-                    simulate_size = len(self.reduced_primes)
+                    self.terminal = "yes"
+                    self.conserved_functions = sm_rspace.attractor_space_candidates(self.stable_motifs,
+                                                                         self.time_reverse_stable_motifs)
+            else:
+                print("STG is too large to simulate ("+
+                str(simulate_size)+"/"+str(max_simulate_size)+
+                "). Increase max_simulate_size to force simulation.")
 
-                if simulate_size > max_simulate_size:
-                    print("STG is too large to simulate ("+
-                    str(simulate_size)+"/"+str(max_simulate_size)+
-                    "). Increase max_simulate_size to force simulation.")
-                    print("Attempting internal reduction...")
-                    self.delprimes = mediator_reduction(self.reduced_primes)
-                    self.delprimes = deletion_reduction(self.delprimes)
-                    print("Reduced.")
-                    if len(self.delprimes) < max_simulate_size:
-                        print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
-
-                        self.find_deletion_no_motif_attractors()
-                        print("WARNING: WE NEED TO FINISH THE PROOF OF THE THEOREM UNDERLYING THIS STEP")
-                        if len(self.deletion_no_motif_attractors) == 0:
-                            self.terminal = "no"
-                        else:
-                            self.terminal = "yes"
-                        print("Finished simulating.")
-
-                    else:
-                        print("The STG is still too large ("+str(len(self.delprimes))+").")
-                else:
-                    self.find_no_motif_attractors()
-                    if len(self.no_motif_attractors) == 0:
+                if len(self.delprimes) < max_simulate_size:
+                    print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
+                    self.find_deletion_no_motif_attractors()
+                    if len(self.deletion_no_motif_attractors) == 0:
                         self.terminal = "no"
                     else:
                         self.terminal = "yes"
-                        self.conserved_functions = sm_rspace.attractor_space_candidates(self.stable_motifs,
-                                                                             self.time_reverse_stable_motifs)
+                    print("Finished simulating.")
+                else:
+                    print("The STG is still too large ("+str(len(self.delprimes))+").")
+                    print("Further analysis of this branch is needed.")
+
 
 
     def merge_source_motifs(self):
@@ -449,25 +479,31 @@ class MotifReduction:
                             self.deletion_STG.add_edge(ss,child_state)
                         break # we know the ss at r changed, no need to check more primes
                 if not simstate: break # don't check other vars: already found ss -> K
+
     def find_deletion_no_motif_attractors(self):
         if self.deletion_STG is None:
             self.build_deletion_STG()
 
-        # Note: fixed points of the deletion system are fixed
-        # points of the undeleted system, so we ignore these
+        # Note: fixed points of the deletion system are fixed points of the
+        # undeleted system, so we ignore these as they must contain stable motifs
         candidates = [x for x in nx.attracting_components(self.deletion_STG) if len(x) > 1]
 
         self.deletion_no_motif_attractors = []
+
         # next, we see if any of these activate stable motifs
         names = sorted(self.delprimes)
         for att in candidates:
             no_motif = True
             for s in att:
+                # The following check stems from the result that a stable motif
+                # is active in an attractor of the original system iff its projection
+                # is active in the projected attractor in the deletion-reduced system
                 st = sm_format.statestring2dict(s,names)
-                imp,con = sm_doi.logical_domain_of_influence(st,self.reduced_primes)
-                if any(sm_doi.fixed_implies_implicant(imp,sm) for sm in self.stable_motifs):
+                st.update(self.attractor_constants)
+                if any(not sm_doi.fixed_excludes_implicant(st,sm) for sm in self.stable_motifs):
                     no_motif = False
                     break
+
             if no_motif:
                 self.deletion_no_motif_attractors.append(att)
 

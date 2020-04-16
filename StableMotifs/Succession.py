@@ -95,20 +95,27 @@ class SuccessionDiagram:
                 self.reduced_complex_attractor_list.append(motif_reduction.no_motif_attractors)
                 self.deletion_attractor_list.append(motif_reduction.deletion_no_motif_attractors)
 
-    def attractor_candidate_summary(self):
+    def attractor_candidate_summary(self, show_reduced_rules = True):
         guaranteed_spaces = len([x for x in self.attractor_guaranteed_list if x == "yes"])
         possible_spaces = len([x for x in self.attractor_guaranteed_list if x == "possible"])
         steady_states =  len([x for x in self.attractor_reduced_primes_list if len(x)==0])
-        lbound_complex_attractors = sum([len(x) for x in self.reduced_complex_attractor_list if x is not None])
-        deletion_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None])
-        ubound_complex_attractors = lbound_complex_attractors + deletion_oscillations
+        found_complex_attractors = sum([len(x) for x in self.reduced_complex_attractor_list if x is not None])
+        deletion_split_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)>1])
+        deletion_lone_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)==1])
+
+        lbound_oscillations = found_complex_attractors + deletion_lone_oscillations
+        ubound_oscillations = lbound_oscillations + deletion_split_oscillations
 
         print("Found", guaranteed_spaces, "guaranteed attractor space(s) and",
             possible_spaces, "possible attractor space(s).")
-        print("Found", steady_states, "steady state(s) and", lbound_complex_attractors,
+        print("Found", steady_states, "steady state(s) and explored", found_complex_attractors,
             "complex attractor(s) in the guaranteed attractor space(s).")
-
-        print("There at most", deletion_oscillations, "overlooked oscillations.")
+        if ubound_oscillations == found_complex_attractors:
+            print("There are no additional attractors.")
+        elif deletion_split_oscillations == 0:
+            print("There are exactly",deletion_lone_oscillations,"additional complex attractor(s) that were not fully explored.")
+        else:
+            print("There are between",lbound_oscillations,"and",ubound_oscillations,"complex attractors in total.")
 
         for fn,rp,tr,at in zip(self.attractor_fixed_nodes_list,
                                self.attractor_reduced_primes_list,
@@ -123,8 +130,10 @@ class SuccessionDiagram:
             print("Logically Fixed Nodes:",{k:v for k,v in sorted(fn.items())})
             print()
             if len(rp) > 0:
-                print("Reduced Rules:")
-                sm_format.pretty_print_prime_rules(rp)
+                if show_reduced_rules:
+                    print("Reduced Rules:")
+                    sm_format.pretty_print_prime_rules(rp)
+                else: print("Logically Unfixed Nodes:", sorted(rp.keys()))
                 if not at is None:
                     print()
                     print("Complex Attractors in Reduced Network (Alphabetical Node Ordering):")
