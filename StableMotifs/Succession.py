@@ -419,7 +419,7 @@ class SuccessionDiagram:
                       will be included as sink nodes in the succession diagram graph
 
         Output:
-        None, the Network x graphs and the matplotlib plot positions are formatted and stored in the Succession object
+        None, the Network x graphs and the matplotlib plot positions are formatted and stored in the Succession object 
         """
 
         self.G_reduced_network_based,self.G_reduced_network_based_labeled,self.pos_reduced_network_based,h_dict,h_dict_edges=self.networkx_succession_diagram_reduced_network_based()
@@ -625,4 +625,5 @@ def motif_history_text(history):
     for motif in history:
         motif_str="("+", ".join([str(k)+"="+str(v) for k,v in motif.items()])+")"
         motif_history_str=motif_history_str+motif_str+"\n"
+
     return(motif_history_str[:-1])
