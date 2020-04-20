@@ -1,5 +1,35 @@
 import PyBoolNet
 import re
+import subprocess
+import os
+import ast
+import datetime
+
+BASE = os.path.join(os.path.dirname(PyBoolNet.__file__))
+config = PyBoolNet.Utility.Misc.myconfigparser.SafeConfigParser()
+config.read(os.path.join(BASE, "Dependencies", "settings.cfg"))
+
+CMD_BNET2PRIMES = os.path.normpath(os.path.join(BASE, "Dependencies", config.get("Executables", "bnet2prime")))
+
+def longbnet2primes(BNET):
+    """
+    A modified version of PyBoolNet's bnet2primes that does not do path-checking,
+    as this can cause errors if the bnet rules are very long. Assumes BNET is a
+    bnet string, not a file.
+    """
+    cmd = [CMD_BNET2PRIMES]
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = proc.communicate( input=BNET.encode() )
+    proc.stdin.close()
+    PyBoolNet.FileExchange._bnet2primes_error(proc, out, err, cmd)
+    out = out.decode()
+
+    out = out.replace('\x08','') # remove backspaces
+    out = out.replace(' ','') # remove whitespaces
+
+    primes = ast.literal_eval(out)
+    return primes
+
 # Convert rules from BooleanNet format to PyBoolNet format
 def booleannet2bnet(rules):
     """
@@ -73,6 +103,13 @@ def implicant2bnet(sd):
     """
     return ' & '.join(["!"+k for k in sd if not sd[k]]+[k for k in sd if sd[k]])
 
+def rule2bnet(rule):
+    """
+    Converts a PyBoolNet prime rule into a BNet string.
+    e.g., [{'A':1,'B':0},{'C':0}] returns 'A & !B | !C'
+    """
+    return ' | '.join([implicant2bnet(imp) for imp in rule])
+
 def pretty_print_primes(primes):
     """
     Prints PyBoolNet a prime dictionary in a more readable format
@@ -88,6 +125,10 @@ def pretty_print_prime_rules(primes):
     A* = B & C | !D, for example.
     Assumes the PyBoolNet default of disjunctive normal form.
     """
+
+    if primes is None:
+        return ""
+
     for k,v in primes.items():
         s = k + "* = "
         sl = []

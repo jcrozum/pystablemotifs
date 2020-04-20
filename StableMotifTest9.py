@@ -23,7 +23,7 @@ print("Looking for knockout/knockins that achieve the controls . . .")
 allowed_permanent = []
 for x in reprogram_sets_history:
     print("Searching for smaller driver set for",x)
-    koki = sm.DomainOfInfluence.knock_to_partial_state(x,primes,max_drivers=3)
+    koki = sm.DomainOfInfluence.knock_to_partial_state(x,primes,max_drivers=len(x)-1)
 
 
     print(len(koki),"smaller driver sets found.")

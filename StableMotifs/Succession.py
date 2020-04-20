@@ -3,9 +3,9 @@ import itertools as it
 import matplotlib
 import matplotlib.pyplot as plt
 
-from StableMotifs.Reduction import MotifReduction, reduce_primes
-from StableMotifs.Format import pretty_print_prime_rules
-from StableMotifs.DomainOfInfluence import internal_drivers, minimal_drivers, GRASP
+import StableMotifs.Reduction as sm_reduction
+import StableMotifs.Format as sm_format
+import StableMotifs.DomainOfInfluence as sm_doi
 
 class SuccessionDiagram:
     """
@@ -36,6 +36,7 @@ class SuccessionDiagram:
         self.attractor_reduced_primes_list = []
         self.attractor_guaranteed_list = []
         self.reduced_complex_attractor_list = []
+        self.deletion_attractor_list = []
         self.unreduced_primes = None
     def find_motif_permutation(self,motif_history):
         for i,mr in enumerate(self.motif_reduction_list):
@@ -92,13 +93,30 @@ class SuccessionDiagram:
                 self.attractor_reduced_primes_list.append(motif_reduction.reduced_primes)
                 self.attractor_guaranteed_list.append(motif_reduction.terminal)
                 self.reduced_complex_attractor_list.append(motif_reduction.no_motif_attractors)
+                self.deletion_attractor_list.append(motif_reduction.deletion_no_motif_attractors)
 
+    def attractor_candidate_summary(self, show_reduced_rules = True):
+        guaranteed_spaces = len([x for x in self.attractor_guaranteed_list if x == "yes"])
+        possible_spaces = len([x for x in self.attractor_guaranteed_list if x == "possible"])
+        steady_states =  len([x for x in self.attractor_reduced_primes_list if len(x)==0])
+        found_complex_attractors = sum([len(x) for x in self.reduced_complex_attractor_list if x is not None])
+        deletion_split_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)>1])
+        deletion_lone_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)==1])
 
-    def attractor_candidate_summary(self):
-        print("Found", len([x for x in self.attractor_guaranteed_list if x == "yes"]), "guaranteed attractor space(s) and",
-            len([x for x in self.attractor_guaranteed_list if x == "possible"]), "possible attractor space(s).")
-        print("Found", len([x for x in self.attractor_reduced_primes_list if len(x)==0]), "steady state(s) and",
-            sum([len(x) for x in self.reduced_complex_attractor_list if not x is None]), "complex attractor(s) in the guaranteed attractor space(s).")
+        lbound_oscillations = found_complex_attractors + deletion_lone_oscillations
+        ubound_oscillations = lbound_oscillations + deletion_split_oscillations
+
+        print("Found", guaranteed_spaces, "guaranteed attractor space(s) and",
+            possible_spaces, "possible attractor space(s).")
+        print("Found", steady_states, "steady state(s) and explored", found_complex_attractors,
+            "complex attractor(s) in the guaranteed attractor space(s).")
+        if ubound_oscillations == found_complex_attractors:
+            print("There are no additional attractors.")
+        elif deletion_split_oscillations == 0:
+            print("There are exactly",deletion_lone_oscillations,"additional complex attractor(s) that were not fully explored.")
+        else:
+            print("There are between",lbound_oscillations,"and",ubound_oscillations,"complex attractors in total.")
+
         for fn,rp,tr,at in zip(self.attractor_fixed_nodes_list,
                                self.attractor_reduced_primes_list,
                                self.attractor_guaranteed_list,
@@ -112,8 +130,10 @@ class SuccessionDiagram:
             print("Logically Fixed Nodes:",{k:v for k,v in sorted(fn.items())})
             print()
             if len(rp) > 0:
-                print("Reduced Rules:")
-                pretty_print_prime_rules(rp)
+                if show_reduced_rules:
+                    print("Reduced Rules:")
+                    sm_format.pretty_print_prime_rules(rp)
+                else: print("Logically Unfixed Nodes:", sorted(rp.keys()))
                 if not at is None:
                     print()
                     print("Complex Attractors in Reduced Network (Alphabetical Node Ordering):")
@@ -122,11 +142,11 @@ class SuccessionDiagram:
             else:
                 print("No Free Nodes Remain.")
 
-    def summary(self,terminal_keys=None,show_original_rules=True,show_explicit_permutations=False):
+    def summary(self,terminal_keys=None,show_original_rules=True,hide_rules=False,show_explicit_permutations=False):
         for motif_reduction in self.motif_reduction_list:
             if terminal_keys is None or motif_reduction.terminal in terminal_keys:
                 print("__________________")
-                motif_reduction.summary(show_original_rules=show_original_rules,show_explicit_permutations=show_explicit_permutations)
+                motif_reduction.summary(show_original_rules=show_original_rules,hide_rules=hide_rules,show_explicit_permutations=show_explicit_permutations)
 
     def merge_reduction_motifs(self,target_reductions):
         """
@@ -189,17 +209,17 @@ class SuccessionDiagram:
                 path_motif_history += [x for x in self.motif_reduction_list[ind].motif_history if not x in path_motif_history]
 
                 if method == 'internal':
-                    history_drivers = internal_drivers(path_motif_history[-1],
+                    history_drivers = sm_doi.internal_drivers(path_motif_history[-1],
                         self.motif_reduction_list[ind_prev].reduced_primes,
                         max_drivers=max_drivers)
                 elif method == 'GRASP':
-                    history_drivers = GRASP(path_motif_history[-1],
+                    history_drivers = sm_doi.GRASP(path_motif_history[-1],
                         self.motif_reduction_list[ind_prev].reduced_primes,
                         GRASP_iterations = GRASP_iterations)
                     if len(history_drivers) == 0:
                         history_drivers = [path_motif_history[-1]]
                 elif method == 'minimal':
-                    history_drivers = minimal_drivers(path_motif_history[-1],
+                    history_drivers = sm_doi.minimal_drivers(path_motif_history[-1],
                         self.motif_reduction_list[ind_prev].reduced_primes,
                         max_drivers=max_drivers)
 
@@ -325,14 +345,14 @@ class SuccessionDiagram:
                 #     motif_merger.update(logically_fixed)
 
                 if driver_method == 'GRASP':
-                    merger_drivers = GRASP(motif_merger,self.unreduced_primes,GRASP_iterations)
+                    merger_drivers = sm_doi.GRASP(motif_merger,self.unreduced_primes,GRASP_iterations)
                     if len(merger_drivers) == 0:
                         merger_drivers = [motif_merger.copy()]
                 elif driver_method == 'minimal':
-                    merger_drivers = minimal_drivers(motif_merger,
+                    merger_drivers = sm_doi.minimal_drivers(motif_merger,
                         self.unreduced_primes,max_drivers=max_drivers)
                 elif driver_method == 'internal':
-                    merger_drivers = internal_drivers(motif_merger,
+                    merger_drivers = sm_doi.internal_drivers(motif_merger,
                         self.unreduced_primes,max_drivers=max_drivers)
 
                 drivers += [x for x in merger_drivers if not x in drivers]
@@ -385,12 +405,12 @@ class SuccessionDiagram:
             a reduced network obtained after fixing the state of a stable motif. The edges denote a stable motif that
             when fixed, transforms one reduced network to another. G_reduced_network_based only has numbers as the
             node and edge names/labels, and is mostly used to plot the network with matplotlib. G_reduced_network_based_labeled
-            has the reduced network motif history as the node labels, the stable motifs as the edge labels, and the matplotlib 
+            has the reduced network motif history as the node labels, the stable motifs as the edge labels, and the matplotlib
             x,y plotting positions as node and edge attributes.
         G_motif_based, G_motif_based_labeled: Analogous to the above, but nodes denote stable motifs and edges denote reduced networks.
             These are obtained through a line_graph transformation of the G_reduced_network_based networks.
 
-        There are 2 types of position dictionaries, pos_reduced_network_based and pos_motif_based, which store the positions for 
+        There are 2 types of position dictionaries, pos_reduced_network_based and pos_motif_based, which store the positions for
         matplotlib plotting.
 
         Inputs:
@@ -419,22 +439,22 @@ class SuccessionDiagram:
                 newlabel="" if len(reduction.motif_history)==0 else motif_history_text(reduction.motif_history)
                 h_dict[i]=str(i)+" ["+newlabel+"]"
         G_reduced_network_based_labeled = nx.relabel_nodes(G_reduced_network_based.copy(), h_dict)
-        pos_reduced_network_based = nx.nx_pydot.graphviz_layout(G_reduced_network_based, prog='dot')
+        pos_reduced_network_based = nx.spring_layout(G_reduced_network_based)#nx.nx_pydot.graphviz_layout(G_reduced_network_based, prog='dot')
         xmax=0
         ymax=0
         for node,(x,y) in pos_reduced_network_based.items():
                 xmax=max(x,xmax)
                 ymax=max(y,ymax)
         for node,(x,y) in pos_reduced_network_based.items():
-                G_reduced_network_based_labeled.node[h_dict[node]]['x'] = 1.5*(xmax-float(x))
-                G_reduced_network_based_labeled.node[h_dict[node]]['y'] = 1.5*(ymax-float(y))
-                G_reduced_network_based_labeled.node[h_dict[node]]['label'] = str(h_dict[node])
+                G_reduced_network_based_labeled.nodes[h_dict[node]]['x'] = 1.5*(xmax-float(x))
+                G_reduced_network_based_labeled.nodes[h_dict[node]]['y'] = 1.5*(ymax-float(y))
+                G_reduced_network_based_labeled.nodes[h_dict[node]]['label'] = str(h_dict[node])
         h_dict_edges={(u,v):G_reduced_network_based.edges[u, v]['label'] for u,v in G_reduced_network_based.edges()}
         return(G_reduced_network_based,G_reduced_network_based_labeled,pos_reduced_network_based,h_dict,h_dict_edges)
 
     def networkx_succession_diagram_motif_based(self,h_dict,h_dict_edges):
         G_motif_based = nx.line_graph(self.G_reduced_network_based)
-        pos_motif_based = nx.nx_pydot.graphviz_layout(G_motif_based, prog='dot')
+        pos_motif_based = nx.spring_layout(G_motif_based)#nx.nx_pydot.graphviz_layout(G_motif_based, prog='dot')
         G_motif_based_labeled_temp=G_motif_based.copy()
         xmax=0
         ymax=0
@@ -442,13 +462,13 @@ class SuccessionDiagram:
                 xmax=max(x,xmax)
                 ymax=max(y,ymax)
         for node,(x,y) in pos_motif_based.items():
-                G_motif_based_labeled_temp.node[node]['x'] = 1.5*(float(x))
-                G_motif_based_labeled_temp.node[node]['y'] = 1.5*(ymax-float(y))
-                G_motif_based_labeled_temp.node[node]['label'] = str(h_dict_edges[node])
+                G_motif_based_labeled_temp.nodes[node]['x'] = 1.5*(float(x))
+                G_motif_based_labeled_temp.nodes[node]['y'] = 1.5*(ymax-float(y))
+                G_motif_based_labeled_temp.nodes[node]['label'] = str(h_dict_edges[node])
         for u,v in G_motif_based_labeled_temp.edges():
                 G_motif_based_labeled_temp.edges[u,v]['label'] = h_dict[u[1]]
         G_motif_based_labeled=nx.relabel_nodes(G_motif_based_labeled_temp, h_dict_edges)
-        
+
         return(G_motif_based,G_motif_based_labeled,pos_motif_based)
 
     def add_attractors_networkx_diagram(self,h_dict,h_dict_edges):
@@ -470,7 +490,7 @@ class SuccessionDiagram:
 
         self.G_reduced_network_based.add_nodes_from(nodes_attractors)
         self.G_reduced_network_based.add_edges_from(edges_attractors)
-        self.pos_reduced_network_based = nx.nx_pydot.graphviz_layout(self.G_reduced_network_based, prog='dot')
+        self.pos_reduced_network_based = nx.spring_layout(self.G_reduced_network_based)#nx.nx_pydot.graphviz_layout(self.G_reduced_network_based, prog='dot')
         self.G_reduced_network_based_labeled.add_nodes_from(node_labels_attractors)
         self.G_reduced_network_based_labeled.add_edges_from([(h_dict[e[0]],h_dict[e[1]],{'label':str(e[0])+"_"+str(e[1])}) for e in edges_attractors])
         G=self.G_reduced_network_based_labeled
@@ -481,15 +501,15 @@ class SuccessionDiagram:
             xmax=max(x,xmax)
             ymax=max(y,ymax)
         for node,(x,y) in pos.items():
-            G.node[h_dict[node]]['x'] = 1.5*(float(x))
-            G.node[h_dict[node]]['y'] = 1.5*(ymax-float(y))
+            G.nodes[h_dict[node]]['x'] = 1.5*(float(x))
+            G.nodes[h_dict[node]]['y'] = 1.5*(ymax-float(y))
 
         G = self.G_motif_based
         sink_nodes_motif_based=[node for node, out_degree in G.out_degree if out_degree == 0]
         edges_attractors_motif_based=[(s,sink_node_attractor_dictionary[s[1]],{'label':""}) for s in sink_nodes_motif_based]
         self.G_motif_based.add_nodes_from(nodes_attractors)
         self.G_motif_based.add_edges_from(edges_attractors_motif_based)
-        self.pos_motif_based = nx.nx_pydot.graphviz_layout(self.G_motif_based, prog='dot')
+        self.pos_motif_based = nx.spring_layout(self.G_motif_based)#nx.nx_pydot.graphviz_layout(self.G_motif_based, prog='dot')
         self.G_motif_based_labeled.add_nodes_from(node_labels_attractors)
         self.G_motif_based_labeled.add_edges_from([(h_dict_edges[e[0]],h_dict_edges[e[1]],{'label':h_dict[e[0][1]]}) for e in edges_attractors_motif_based])
         G=self.G_motif_based_labeled
@@ -500,8 +520,8 @@ class SuccessionDiagram:
             xmax=max(x,xmax)
             ymax=max(y,ymax)
         for node,(x,y) in pos.items():
-            G.node[h_dict_edges[node]]['x'] = 1.5*(float(x))
-            G.node[h_dict_edges[node]]['y'] = 1.5*(ymax-float(y))
+            G.nodes[h_dict_edges[node]]['x'] = 1.5*(float(x))
+            G.nodes[h_dict_edges[node]]['y'] = 1.5*(ymax-float(y))
 
     def plot_networkx_succession_diagram_motif_based(self,print_out_labels=False):
         edge_labels_motif_based={(u,v):str(u[1]) for u,v in self.G_motif_based.edges()}
@@ -547,7 +567,7 @@ class SuccessionDiagram:
                 print(self.G_reduced_network_based_labeled.edges[u, v]['label'])
         plt.show()
 
-def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,search_partial_STGs=True,prioritize_source_motifs=True):
+def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,max_simulate_size=20,prioritize_source_motifs=True):
     """
     Constructs a succession diagram recursively from the rules specified by primes
 
@@ -564,7 +584,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     """
     if fixed is None:
         fixed = {}
-    myMotifReduction=MotifReduction(motif_history,fixed.copy(),primes,search_partial_STGs=search_partial_STGs,prioritize_source_motifs=prioritize_source_motifs)
+    myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,max_simulate_size=max_simulate_size,prioritize_source_motifs=prioritize_source_motifs)
     if diagram is None:
         diagram = SuccessionDiagram()
     diagram.add_motif_reduction(myMotifReduction)
@@ -581,12 +601,12 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
             if not perm_index is None:
                 diagram.add_motif_permutation(perm_index,perm)
         if not merge_equivalent_motifs or perm_index is None:
-            np,fixed2 = reduce_primes(sm,primes)
+            np,fixed2 = sm_reduction.reduce_primes(sm,primes)
             fixed3 = fixed.copy()
             fixed3.update(fixed2)
             diagram = build_succession_diagram(np,fixed3,myMotifReduction.motif_history+[sm],
                 diagram, merge_equivalent_motifs=merge_equivalent_motifs,
-                search_partial_STGs=search_partial_STGs,
+                max_simulate_size=max_simulate_size,
                 prioritize_source_motifs=prioritize_source_motifs)
     return diagram
 
@@ -605,4 +625,5 @@ def motif_history_text(history):
     for motif in history:
         motif_str="("+", ".join([str(k)+"="+str(v) for k,v in motif.items()])+")"
         motif_history_str=motif_history_str+motif_str+"\n"
+
     return(motif_history_str[:-1])

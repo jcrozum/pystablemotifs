@@ -1,0 +1,6 @@
+xA*=xF
+xB*=!xA
+xC*=xB
+xD*=xC
+xE*=xC
+xF*=xE|xD

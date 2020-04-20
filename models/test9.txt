@@ -1,0 +1,9 @@
+# Two complex attractors in one stable-motif-free SCC
+alpha* = not beta or Z2
+beta* = gamma or Z2
+gamma* = alpha and not Z2
+Z1* = not (alpha and beta and not gamma)
+xa* = not xb or Z1
+xb* = xc or Z1
+xc* = xa and not Z1
+Z2* = not (xa and xb and not xc)

@@ -6,3 +6,4 @@ from StableMotifs import Reduction
 from StableMotifs import TimeReversal
 from StableMotifs import RestrictSpace
 from StableMotifs import Succession
+from StableMotifs import RandomBooleanNetworks
