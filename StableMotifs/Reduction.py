@@ -45,6 +45,22 @@ def reduce_primes(fixed,primes):
     return simplify_primes(reduced_primes), percolated_states
 
 def delete_node(primes, node):
+    """
+    Reduces Boolean rules given by primes by deleting the variable specified by
+    node. The deleted node may not appear in its own update function. Any update
+    rules depending on the deleted node will have that dependence replaced by
+    the update function of the deleted node. The rules are simplified after node
+    deletion.
+
+    Inputs:
+    primes - PyBoolNet primes describing update rules
+    node - the name of the node node to delete
+
+    Outputs:
+    new_primes - the reduced primes
+    constants - a dictionary of nodes that became logically fixed during the
+                simplification process
+    """
     G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
 
     assert not G.has_edge(node,node), ' '.join(["Node",str(node),"has a self-loop and cannot be deleted."])
@@ -56,11 +72,8 @@ def delete_node(primes, node):
 
     for child in G.successors(node):
         crule = sm_format.rule2bnet(primes[child][1])
-        # print("BEFORE",crule)
-        # print("SUB:",node,"->","("+rule1+")")
         crule = re.sub(rf'\b{node}\b',"("+rule1+")",crule)
         crule = PyBoolNet.BooleanLogic.minimize_espresso(crule)
-        # print("AFTER",crule)
         crule = child + ",\t" + crule
 
         new_primes[child] = PyBoolNet.FileExchange.bnet2primes(crule)[child]
@@ -69,6 +82,10 @@ def delete_node(primes, node):
     return new_primes, constants
 
 def remove_outdag(primes):
+    """
+    Removes the terminal directed acyclic part of the regulatory network. This
+    part of the network does not influence the attractor repertoire.
+    """
     G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
     od = PyBoolNet.InteractionGraphs.find_outdag(G)
     reduced = primes.copy()
@@ -80,6 +97,11 @@ def remove_outdag(primes):
     return reduced, constants
 
 def deletion_reduction(primes, max_in_degree = float('inf')):
+    """
+    Implements the reduction method of Veliz-Cuba (2011).
+    Deletion order is such that nodes with low in-degree are prioritized for
+    removal. Deletion proceeds until all remaining nodes have self-loops.
+    """
     reduced, constants = remove_outdag(primes)
     G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
     cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
@@ -115,7 +137,7 @@ def mediator_reduction(primes):
     cur_order = sorted(reduced)
     G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
     candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
-    
+
     for node in candidates:
         u = list(G.predecessors(node))[0]
         w = list(G.successors(node))[0]
@@ -238,27 +260,6 @@ class MotifReduction:
             study_possible_oscillation = self.terminal == "possible" # value may be changed by test_rspace
 
         if study_possible_oscillation and max_simulate_size > 0:
-            print("Attempting internal reduction...")
-            self.delprimes, self.attractor_constants = mediator_reduction(self.reduced_primes)
-            self.delprimes, nc = deletion_reduction(self.delprimes)
-            self.attractor_constants.update(nc)
-            print("Reduced.")
-
-            # Before building any STGs, let's see if we've already identified
-            # that a stable motif must stabilize based on the reduction.
-            for sm in self.stable_motifs:
-                sat = True
-                for k,v in sm.items():
-                    if (k,v) in self.attractor_constants.items():
-                        continue
-                    elif k not in self.delprimes:
-                        continue
-                    sat = False
-                    break
-                if sat:
-                    self.terminal = "no"
-                    return
-
             # Now, we check to see if we can afford to simulate the proper STG
             # to actually find the attractors. If we can't, we'll simulate the
             # reduction, which will give bounds on the number of motif-free
@@ -279,8 +280,25 @@ class MotifReduction:
             else:
                 print("STG is too large to simulate ("+
                 str(simulate_size)+"/"+str(max_simulate_size)+
-                "). Increase max_simulate_size to force simulation.")
+                "). We will attempt reduction methods. Increase max_simulate_size to force simulation.")
+                self.delprimes, self.attractor_constants = mediator_reduction(self.reduced_primes)
+                self.delprimes, nc = deletion_reduction(self.delprimes)
+                self.attractor_constants.update(nc)
 
+                # Before building any STGs, let's see if we've already identified
+                # that a stable motif must stabilize based on the reduction.
+                for sm in self.stable_motifs:
+                    sat = True
+                    for k,v in sm.items():
+                        if (k,v) in self.attractor_constants.items():
+                            continue
+                        elif k not in self.delprimes:
+                            continue
+                        sat = False
+                        break
+                    if sat:
+                        self.terminal = "no"
+                        return
                 if len(self.delprimes) < max_simulate_size:
                     print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
                     self.find_deletion_no_motif_attractors()
@@ -288,7 +306,6 @@ class MotifReduction:
                         self.terminal = "no"
                     else:
                         self.terminal = "yes"
-                    print("Finished simulating.")
                 else:
                     print("The STG is still too large ("+str(len(self.delprimes))+").")
                     print("Further analysis of this branch is needed.")

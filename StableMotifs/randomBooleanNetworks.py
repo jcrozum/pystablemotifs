@@ -5,11 +5,11 @@ from datetime import datetime
 from uuid import uuid4
 import os
 
-class randomBooleanNetworks:
+class RandomBooleanNetworks:
     """
     Generator of random Boolean networks (RBN) and ensembles of RBN.
-    The randomBooleanNetworks class object is a Boolean model and stores information of how the Boolean model was generated
-    The randomBooleanNetworks class has functions that generate ensembles of RBN by generating multiple randomBooleanNetworks objects
+    The RandomBooleanNetworks class object is a Boolean model and stores information of how the Boolean model was generated
+    The RandomBooleanNetworks class has functions that generate ensembles of RBN by generating multiple RandomBooleanNetworks objects
 
     Variables:
 
@@ -36,7 +36,7 @@ class randomBooleanNetworks:
         if seed is not None:
             rd.seed(seed)
         self.node_names=["n"+str(i) for i in range(N)]
-        
+
         if(random_Boolean_type=="Kauffman NK"):
             K,p=self.random_Boolean_Network_parameters
             self.node_inputs_dictionary={node_name:rd.sample(self.node_names,K) for node_name in self.node_names}
@@ -68,7 +68,7 @@ def read_Boolean_network_decimal(filename):
     node_rules_decimal_dictionary={key:(element[1],[x[1:-1] for x in element[2].strip('][').split(', ')])  for key,element in df_dict.items()}
     node_rules_binary_dictionary=Binary_Rules_From_Decimal(node_rules_decimal_dictionary)
     node_rules_string_dictionary=String_Rules_From_Binary(node_rules_binary_dictionary)
-    
+
     rules=""
     for n,f in node_rules_string_dictionary.items():
         rules=rules+n+" *= "+f+"\n"
@@ -127,7 +127,7 @@ def Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=1000,write_Bo
     write_Boolean_network - boolean, if True, will write each network in the ensemble as a CSV file in a new directory
 
     Outputs:
-    RBN_ensemble_rules - List of strings, each string are the Boolea rules of an ensemble in booleannet format. 
+    RBN_ensemble_rules - List of strings, each string are the Boolea rules of an ensemble in booleannet format.
         Each element in RBN_ensemble_rules can be used as an input for the Format.booleannet2bnet function
 
     """
@@ -145,13 +145,13 @@ def Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=1000,write_Bo
     for n in range(N_ensemble):
         if(write_Boolean_network):
             filename="RBN"+"_N-"+str(N)+"_K-"+str(K)+"_p-"+str(p)+"_Nensemble-"+str(n)+".csv"
-            rbn=randomBooleanNetworks()
+            rbn=RandomBooleanNetworks()
             rbn.Random_Boolean_Network(random_Boolean_type,N,rbn_parameters=[K,p],filename=os.path.join(directory, filename))
             rules=rbn.Random_Boolean_Network_Rules()
             RBN_ensemble_rules.append(rules)
         else:
-            rbn=randomBooleanNetworks()
-            rbn=randomBooleanNetworks.Random_Boolean_Network(random_Boolean_type,N,rbn_parameters=[K,p])
+            rbn=RandomBooleanNetworks()
+            rbn=RandomBooleanNetworks.Random_Boolean_Network(random_Boolean_type,N,rbn_parameters=[K,p])
             rules=rbn.Random_Boolean_Network_Rules()
             RBN_ensemble_rules.append(rules)
     return(RBN_ensemble_rules)

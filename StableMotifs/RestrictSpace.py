@@ -8,13 +8,18 @@ def attractor_space_candidates(maxts,trmaxts):
     """
     Merge the maximum trap spaces maxts and time-reverse maximum trap spaces
     to obtain a list of attractor-conserved quantities.
+
+    Note that any Boolean function of these is also conserved in attractors.
     """
-    #L=[exclusion_space(maxts+trmaxts)] # use exclusion space to include negation of conserved quantities
     L = []
     for t in maxts+trmaxts: L.append([t])
     return L
 
 def state_in_rspace(state,L):
+    """
+    Tests to see if the state specified by the dictionary state is in the rspace
+    specified by L (see rspace for format of L).
+    """
     for clause in L:
         sat = False
         for p in clause:
@@ -26,6 +31,10 @@ def state_in_rspace(state,L):
     return True
 
 def partial_state_contradicts_rspace(st,L):
+    """
+    Tests to see if the partial state specified by the dictionary st contradicts
+    the rspace specified by L (see rspace for format of L).
+    """
     for clause in L:
         csat = False
         for p in clause:
@@ -37,6 +46,11 @@ def partial_state_contradicts_rspace(st,L):
     return True
 
 def reduce_rspace(L,primes):
+    """
+    Reduce the rspace L for the system given by primes so that trivially fixed
+    nodes are factored out. The first element of the returned rspace (L2) will
+    specify these trivially fixed nodes (i.e., they are factored on the left).
+    """
     fixed = fixed_rspace_nodes(L,primes)
     L2 = [[fixed]]
     for clause in L:
