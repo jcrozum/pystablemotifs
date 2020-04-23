@@ -51,8 +51,10 @@ def reduce_rspace(L,primes):
     nodes are factored out. The first element of the returned rspace (L2) will
     specify these trivially fixed nodes (i.e., they are factored on the left).
     """
+    L2 = []
     fixed = fixed_rspace_nodes(L,primes)
-    L2 = [[fixed]]
+    if len(fixed) > 0:
+        L2.append([fixed])
     for clause in L:
         sat = False
         for p in clause:
@@ -117,10 +119,18 @@ def rspace(maxts,trmaxts,primes):
 
 
     # Now, investigate the trmaxts:
+    # If a trsm has a nonempty contradiction boundary, then it cannot contain
+    # any attractor.
     for gs in trmaxts:
         implied,contradicted = logical_domain_of_influence(gs,primes)
         if len(contradicted) > 0:
             L.append([{n:int(not v)} for n,v in gs.items()])
+
+    # If the tr system gave us information, but we couldn't find any 1-node sm
+    # drivers, we need to remove the null condition given by the inability to
+    # find the sm drivers
+    if L[0]==[{}] and len(L) > 0:
+        L = L[1:]
 
     return L
 

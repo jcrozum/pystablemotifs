@@ -159,7 +159,7 @@ def pretty_print_rspace(L,simplify=True,silent=True):
                 if v: s.append(k)
                 else: s.append('!'+k)
             t.append(' & '.join(s))
-        u.append('( '+' | '.join(t)+' )')
+        if len(t) > 0: u.append('( '+' | '.join(t)+' )')
     s=' & '.join(u)
     if simplify:
         s = PyBoolNet.BooleanLogic.minimize_espresso(s)
