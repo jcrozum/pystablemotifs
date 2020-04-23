@@ -121,6 +121,8 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
                 else:
                     G = nx.DiGraph()
                 change = True
+                # print("\n\n\nNEW PRIMES")
+                # sm_format.pretty_print_prime_rules(reduced)
                 break
         cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
 
