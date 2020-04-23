@@ -156,12 +156,13 @@ def fixed_rspace_nodes(L,primes):
     fd.update(imp)
     return fd
 
-def reduce_rspace_string(s,fd):
+def reduce_rspace_string(s,fd,simplify=True):
     """
     Replaces variables in the string s with the fixed values given by the dictionary fd.
     """
     s2 = s
     for k,v in fd.items():
         s2 = re.sub(rf"\b{k}\b",str(v),s2)
-    s2 = PyBoolNet.BooleanLogic.minimize_espresso(s2)
+    if simplify:
+        s2 = PyBoolNet.BooleanLogic.minimize_espresso(s2)
     return s2

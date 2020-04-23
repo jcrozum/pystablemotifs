@@ -419,7 +419,7 @@ class SuccessionDiagram:
                       will be included as sink nodes in the succession diagram graph
 
         Output:
-        None, the Network x graphs and the matplotlib plot positions are formatted and stored in the Succession object 
+        None, the Network x graphs and the matplotlib plot positions are formatted and stored in the Succession object
         """
 
         self.G_reduced_network_based,self.G_reduced_network_based_labeled,self.pos_reduced_network_based,h_dict,h_dict_edges=self.networkx_succession_diagram_reduced_network_based()
@@ -567,7 +567,7 @@ class SuccessionDiagram:
                 print(self.G_reduced_network_based_labeled.edges[u, v]['label'])
         plt.show()
 
-def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,max_simulate_size=20,prioritize_source_motifs=True):
+def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000):
     """
     Constructs a succession diagram recursively from the rules specified by primes
 
@@ -584,7 +584,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     """
     if fixed is None:
         fixed = {}
-    myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,max_simulate_size=max_simulate_size,prioritize_source_motifs=prioritize_source_motifs)
+    myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,max_simulate_size=max_simulate_size,prioritize_source_motifs=prioritize_source_motifs,max_stable_motifs=max_stable_motifs)
     if diagram is None:
         diagram = SuccessionDiagram()
     diagram.add_motif_reduction(myMotifReduction)

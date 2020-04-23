@@ -197,7 +197,7 @@ class MotifReduction:
     find_no_motif_attractors(self) - finds no_motif_attractors
     summary(self) - prints a summary of the MotifReduction to screen
     """
-    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True):
+    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000):
         if motif_history is None:
             self.motif_history = []
         else:
@@ -206,8 +206,8 @@ class MotifReduction:
         self.logically_fixed_nodes = fixed
         self.reduced_primes = reduced_primes.copy()
         self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
-        self.stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.reduced_primes, "max")
-        self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max")
+        self.stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.reduced_primes, "max",MaxOutput=max_stable_motifs)
+        self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max",MaxOutput=max_stable_motifs)
 
         self.merged_source_motifs=None
         self.source_independent_motifs=None
@@ -253,8 +253,9 @@ class MotifReduction:
                     self.terminal = "no"
                     break
             if self.terminal == "possible":
-                self.rspace_constraint = sm_format.pretty_print_rspace(self.rspace)
-                self.reduced_rspace_constraint = sm_rspace.reduce_rspace_string(self.rspace_constraint,self.fixed_rspace_nodes)
+                self.rspace_constraint = sm_format.pretty_print_rspace(self.rspace,simplify=False)
+                #self.reduced_rspace_constraint = sm_rspace.reduce_rspace_string(self.rspace_constraint,self.fixed_rspace_nodes,simplify=False)
+                self.reduced_rspace_constraint=sm_format.pretty_print_rspace(self.rspace[1:],simplify=False)
                 self.rspace_update_primes = reduce_primes(self.fixed_rspace_nodes,self.reduced_primes)[0]
                 #self.test_rspace(search_partial_STGs = search_partial_STGs)
             study_possible_oscillation = self.terminal == "possible" # value may be changed by test_rspace
@@ -298,6 +299,7 @@ class MotifReduction:
                         break
                     if sat:
                         self.terminal = "no"
+                        print("The reduction indicates that the branch is not terminal. No need to simulate.")
                         return
                 if len(self.delprimes) < max_simulate_size:
                     print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
@@ -350,9 +352,10 @@ class MotifReduction:
         for attractor in attractors:
             possible_rspace_attractor = True
             for state in attractor:
-                state_dict = {** sm_format.statestring2dict(state,names),**self.fixed_rspace_nodes}
-                if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,
-                                                                 sm_format.implicant2bnet(state_dict)):
+                # state_dict = {** sm_format.statestring2dict(state,names),**self.fixed_rspace_nodes}
+                # if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,
+                #                                                  sm_format.implicant2bnet(state_dict)):
+                if sm_rspace.partial_state_contradicts_rspace(sm_format.statestring2dict(state,names),self.rspace):
                     possible_rspace_attractor = False
                     break
             if possible_rspace_attractor:
