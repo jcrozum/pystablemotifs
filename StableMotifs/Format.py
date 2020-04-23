@@ -107,8 +107,14 @@ def rule2bnet(rule):
     """
     Converts a PyBoolNet prime rule into a BNet string.
     e.g., [{'A':1,'B':0},{'C':0}] returns 'A & !B | !C'
+
+    There are two special cases:
+    [] is identically 0
+    [{}] is identically 1
     """
-    return ' | '.join([implicant2bnet(imp) for imp in rule])
+    if rule == []: return '0'
+    elif rule == [{}]: return '1'
+    else: return ' | '.join([implicant2bnet(imp) for imp in rule])
 
 def pretty_print_primes(primes):
     """
@@ -150,8 +156,9 @@ def pretty_print_rspace(L,simplify=True,silent=True):
     rspace L (see RestrictSpace.rspace). The rule is simplified if simplify=True,
     and the string is printed to screen if silent=False.
     """
+    L_trim = [x for x in L if x != [{}]]
     u = []
-    for x in L:
+    for x in L_trim:
         t = []
         for y in x:
             s = []

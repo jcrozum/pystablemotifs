@@ -51,10 +51,8 @@ def reduce_rspace(L,primes):
     nodes are factored out. The first element of the returned rspace (L2) will
     specify these trivially fixed nodes (i.e., they are factored on the left).
     """
-    L2 = []
     fixed = fixed_rspace_nodes(L,primes)
-    if len(fixed) > 0:
-        L2.append([fixed])
+    L2 = [[fixed]]
     for clause in L:
         sat = False
         for p in clause:
@@ -129,8 +127,8 @@ def rspace(maxts,trmaxts,primes):
     # If the tr system gave us information, but we couldn't find any 1-node sm
     # drivers, we need to remove the null condition given by the inability to
     # find the sm drivers
-    if L[0]==[{}] and len(L) > 0:
-        L = L[1:]
+    # if L[0]==[{}] and len(L) > 0:
+    #     L = L[1:]
 
     return L
 
