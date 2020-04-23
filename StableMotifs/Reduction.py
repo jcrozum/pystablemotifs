@@ -73,7 +73,7 @@ def delete_node(primes, node):
     for child in G.successors(node):
         crule = sm_format.rule2bnet(primes[child][1])
         crule = re.sub(rf'\b{node}\b',"("+rule1+")",crule)
-        crule = PyBoolNet.BooleanLogic.minimize_espresso(crule)
+        #crule = PyBoolNet.BooleanLogic.minimize_espresso(crule)
         crule = child + ",\t" + crule
 
         new_primes[child] = PyBoolNet.FileExchange.bnet2primes(crule)[child]

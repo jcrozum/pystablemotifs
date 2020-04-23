@@ -4,14 +4,14 @@ import networkx as nx
 from timeit import default_timer
 
 N=1000
-K=3
+K=2
 p=sm.RandomBooleanNetworks.get_criticality_p_Kauffman(K)[0]
 N_ensemble=10
 seed=1000
 rbn_ensemble=sm.RandomBooleanNetworks.Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=seed,write_Boolean_network=True)
 
 start=default_timer()
-rules=rbn_ensemble[4]
+rules=rbn_ensemble[0]
 
 rules = sm.Format.booleannet2bnet(rules)
 primes = sm.Format.longbnet2primes(rules)

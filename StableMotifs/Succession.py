@@ -110,7 +110,9 @@ class SuccessionDiagram:
             possible_spaces, "possible attractor space(s).")
         print("Found", steady_states, "steady state(s) and explored", found_complex_attractors,
             "complex attractor(s) in the guaranteed attractor space(s).")
-        if ubound_oscillations == found_complex_attractors:
+        if possible_spaces > 0:
+            print("There are at least",lbound_oscillations,"complex attractor(s) in total.")
+        elif ubound_oscillations == found_complex_attractors:
             print("There are no additional attractors.")
         elif deletion_split_oscillations == 0:
             print("There are exactly",deletion_lone_oscillations,"additional complex attractor(s) that were not fully explored.")
