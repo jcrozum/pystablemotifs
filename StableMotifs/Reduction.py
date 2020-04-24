@@ -2,11 +2,12 @@ import PyBoolNet
 import itertools as it
 import networkx as nx
 import re
+import sympy
 
 import StableMotifs.TimeReversal as sm_time
 import StableMotifs.RestrictSpace as sm_rspace
 import StableMotifs.Format as sm_format
-import StableMotifs.Succession as sm_succession
+# import StableMotifs.Succession as sm_succession
 import StableMotifs.DomainOfInfluence as sm_doi
 
 def simplify_primes(primes):
@@ -68,18 +69,35 @@ def delete_node(primes, node):
     new_primes = {k:v for k,v in primes.items() if not k == node}
     constants = {}
 
-    rule1 = sm_format.rule2bnet(primes[node][1])
+    neg = "!"+node
+
+    expr0 = sm_format.rule2bnet(primes[node][0])
+    expr1 = sm_format.rule2bnet(primes[node][1])
 
     for child in G.successors(node):
-        crule = sm_format.rule2bnet(primes[child][1])
-        crule = re.sub(rf'\b{node}\b',"("+rule1+")",crule)
-        #crule = PyBoolNet.BooleanLogic.minimize_espresso(crule)
-        crule = child + ",\t" + crule
+        crule1 = sm_format.rule2bnet(primes[child][1])
+        crule1 = simplify_using_expression_and_negation(node,expr0,expr1,crule1)
+        crule0 = sm_format.rule2bnet(primes[child][0])
+        crule0 = simplify_using_expression_and_negation(node,expr0,expr1,crule0)
 
-        new_primes[child] = PyBoolNet.FileExchange.bnet2primes(crule)[child]
+        new_primes[child] = sm_format.build_rule_using_bnetDNFs(crule0,crule1)
+
+        #crule = PyBoolNet.BooleanLogic.minimize_espresso(crule)
+        # crule = child + ",\t" + crule
+
+        # new_primes[child] = PyBoolNet.FileExchange.bnet2primes(crule)[child]
         nc = PyBoolNet.PrimeImplicants._percolation(new_primes,True)
         constants.update(nc)
     return new_primes, constants
+
+def simplify_using_expression_and_negation(node,expr0,expr1,bnet):
+    neg = "!"+node
+    crule = re.sub(rf'\b{neg}\b',"("+expr0+")",bnet)
+    crule = re.sub(rf'\b{node}\b',"("+expr1+")",crule)
+    crule = sm_format.bnet2sympy(crule)
+    crule = str(sympy.to_dnf(sympy.sympify(crule).simplify()))
+    crule = sm_format.sympy2bnet(crule)
+    return crule
 
 def remove_outdag(primes):
     """

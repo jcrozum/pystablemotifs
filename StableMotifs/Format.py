@@ -50,6 +50,45 @@ def booleannet2bnet(rules):
 
     return s
 
+def bnetDNF2list(bnet):
+    if bnet == "0":
+        return []
+    elif bnet == "1":
+        return [{}]
+
+    bnetList = []
+    bnet_trim = re.sub("[\s\(\)]*","",bnet) # remove all whitespace and parens
+    LL = [x.split('&') for x in bnet_trim.split('|')]
+
+    for L in LL:
+        Ldict = {}
+        for literal in L:
+            if literal[0]=="!":
+                Ldict[literal[1:]] = 0
+            else:
+                Ldict[literal] = 1
+        bnetList.append(Ldict)
+    return bnetList
+
+def build_rule_using_bnetDNFs(expr0,expr1):
+    return [bnetDNF2list(expr0),bnetDNF2list(expr1)]
+
+def bnet2sympy(rule):
+    # print("bnet:",rule)
+    crule = re.sub("!","~",rule)
+    crule = re.sub("[\b\(]1[\b\)]","(x | ~x)",crule)
+    crule = re.sub("[\b\(]0[\b\)]","(x & ~x)",crule)
+    crule = re.sub("True","(x | ~x)",crule)
+    crule = re.sub("False","(x & ~x)",crule)
+    # print("sympy:",crule)
+    return crule
+
+def sympy2bnet(rule):
+    crule = re.sub("~","!",rule)
+    crule = re.sub("True","1",crule)
+    crule = re.sub("False","0",crule)
+    return crule
+
 def remove_comment_lines(stream):
     """
     Removes commented out lines, i.e., those starting with '#'
