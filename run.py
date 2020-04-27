@@ -13,7 +13,7 @@ diag = sm.Succession.build_succession_diagram(primes)
 diag.summary()
 
 diag.attractor_candidate_summary()
-quit()
+
 # Uncomment to write attractors and succession diagrams to file. Requires networkx and pandas libraries
 print("Writing succession diagram network and attractors to file . . .")
 import networkx as nx
