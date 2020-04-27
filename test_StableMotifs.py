@@ -35,6 +35,23 @@ F*=E
         [{'E': 0, 'F': 0}],
         [{'E': 0, 'F': 0}, {'A': 0, 'B': 0}]]
         self.assertListEqual(motif_history_list,validation_motif_history_list)
+        #pathological example with a complex attractor on a "ghost" branch
+
+    rules_pathological='''xA*= not xA and not xB or xC
+    xB*= not xA and not xB or xC
+    xC*= xA and xB'''
+    rules_pbn_pathological = sm.Format.booleannet2bnet(rules_pathological)
+    primes_pathological = PyBoolNet.FileExchange.bnet2primes(rules_pbn_pathological)
+    diag_pathological = sm.Succession.build_succession_diagram(primes_pathological)
+
+    def test_ghost_branch(self):
+        '''
+        High level test of the correct identification of attractors that are not preceded by stable motif lockins.
+        (ghost_branch is not a function in the module)
+        '''
+
+        self.assertListEqual(self.diag_pathological.reduced_complex_attractor_list,[[{'000', '010', '100'}], None])
+        self.assertListEqual(self.diag_pathological.attractor_fixed_nodes_list,[{}, {'xA': 1, 'xB': 1, 'xC': 1}])
 
 if __name__ == '__main__':
     unittest.main()
