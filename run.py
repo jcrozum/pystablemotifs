@@ -7,13 +7,13 @@ from timeit import default_timer
 primes = sm.Format.import_primes(sys.argv[1],remove_constants=True)
 
 # print rules after reduction
-sm.Format.pretty_print_prime_rules(primes)
+sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
 
 diag = sm.Succession.build_succession_diagram(primes)
 diag.summary()
 
 diag.attractor_candidate_summary()
-
+quit()
 # Uncomment to write attractors and succession diagrams to file. Requires networkx and pandas libraries
 print("Writing succession diagram network and attractors to file . . .")
 import networkx as nx

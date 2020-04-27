@@ -591,7 +591,7 @@ class MotifReduction:
             inspace = self.build_inspace(ss,names)
             inspace_dict[ss] = inspace
 
-            self.partial_STG.add_node(ss) # might end up removing later
+            self.partial_STG.add_node(ss) # might end up removing ss later
             for i,r in enumerate(names):
                 nri = int(not int(ss[i]))
                 # if any p below is satisfied, we get a change of state

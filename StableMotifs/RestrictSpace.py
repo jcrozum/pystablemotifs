@@ -90,10 +90,10 @@ def rspace(maxts,trmaxts,primes):
     nds = {} # negated 1-node drivers of the stable motifs in maxts
     for ts in maxts:
         # Make sure we aren't in the stable motif ts
-        # clause = []
-        # for k,v in ts.items():
-        #     clause.append({k:int(not v)})
-        # L.append(clause)
+        clause = []
+        for k,v in ts.items():
+            clause.append({k:int(not v)})
+        L.append(clause)
 
         # Now consider drivers of ts
         drivers = single_drivers(ts,primes)
