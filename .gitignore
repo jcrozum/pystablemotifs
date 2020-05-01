@@ -1,6 +1,8 @@
 # Project specific
 RBN*/
 *.graphml
+*.gml
+*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

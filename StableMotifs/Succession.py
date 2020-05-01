@@ -103,17 +103,19 @@ class SuccessionDiagram:
         deletion_split_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)>1])
         deletion_lone_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)==1])
 
-        lbound_oscillations = found_complex_attractors + deletion_lone_oscillations
-        ubound_oscillations = lbound_oscillations + deletion_split_oscillations
+        lbound_oscillations = found_complex_attractors
+        ubound_oscillations = lbound_oscillations + deletion_lone_oscillations + deletion_split_oscillations
 
         print("Found", guaranteed_spaces, "guaranteed attractor space(s) and",
             possible_spaces, "possible attractor space(s).")
         print("Found", steady_states, "steady state(s) and explored", found_complex_attractors,
             "complex attractor(s) in the guaranteed attractor space(s).")
-        if ubound_oscillations == found_complex_attractors:
+        if possible_spaces > 0:
+            print("There are at least",lbound_oscillations,"complex attractor(s) in total.")
+        elif ubound_oscillations == found_complex_attractors:
             print("There are no additional attractors.")
-        elif deletion_split_oscillations == 0:
-            print("There are exactly",deletion_lone_oscillations,"additional complex attractor(s) that were not fully explored.")
+        # elif deletion_split_oscillations == 0:
+        #     print("There are exactly",deletion_lone_oscillations,"additional complex attractor(s) that were not fully explored.")
         else:
             print("There are between",lbound_oscillations,"and",ubound_oscillations,"complex attractors in total.")
 
@@ -419,7 +421,7 @@ class SuccessionDiagram:
                       will be included as sink nodes in the succession diagram graph
 
         Output:
-        None, the Network x graphs and the matplotlib plot positions are formatted and stored in the Succession object 
+        None, the Network x graphs and the matplotlib plot positions are formatted and stored in the Succession object
         """
 
         self.G_reduced_network_based,self.G_reduced_network_based_labeled,self.pos_reduced_network_based,h_dict,h_dict_edges=self.networkx_succession_diagram_reduced_network_based()
@@ -567,7 +569,7 @@ class SuccessionDiagram:
                 print(self.G_reduced_network_based_labeled.edges[u, v]['label'])
         plt.show()
 
-def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,max_simulate_size=20,prioritize_source_motifs=True):
+def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000):
     """
     Constructs a succession diagram recursively from the rules specified by primes
 
@@ -584,7 +586,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     """
     if fixed is None:
         fixed = {}
-    myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,max_simulate_size=max_simulate_size,prioritize_source_motifs=prioritize_source_motifs)
+    myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,max_simulate_size=max_simulate_size,prioritize_source_motifs=prioritize_source_motifs,max_stable_motifs=max_stable_motifs)
     if diagram is None:
         diagram = SuccessionDiagram()
     diagram.add_motif_reduction(myMotifReduction)

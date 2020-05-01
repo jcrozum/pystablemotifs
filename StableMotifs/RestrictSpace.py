@@ -90,10 +90,10 @@ def rspace(maxts,trmaxts,primes):
     nds = {} # negated 1-node drivers of the stable motifs in maxts
     for ts in maxts:
         # Make sure we aren't in the stable motif ts
-        # clause = []
-        # for k,v in ts.items():
-        #     clause.append({k:int(not v)})
-        # L.append(clause)
+        clause = []
+        for k,v in ts.items():
+            clause.append({k:int(not v)})
+        L.append(clause)
 
         # Now consider drivers of ts
         drivers = single_drivers(ts,primes)
@@ -156,12 +156,13 @@ def fixed_rspace_nodes(L,primes):
     fd.update(imp)
     return fd
 
-def reduce_rspace_string(s,fd):
+def reduce_rspace_string(s,fd,simplify=True):
     """
     Replaces variables in the string s with the fixed values given by the dictionary fd.
     """
     s2 = s
     for k,v in fd.items():
         s2 = re.sub(rf"\b{k}\b",str(v),s2)
-    s2 = PyBoolNet.BooleanLogic.minimize_espresso(s2)
+    if simplify:
+        s2 = PyBoolNet.BooleanLogic.minimize_espresso(s2)
     return s2
