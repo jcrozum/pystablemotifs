@@ -3,7 +3,7 @@ import StableMotifs as sm
 import networkx as nx
 from timeit import default_timer
 
-N=500
+N=1500
 K=2
 p=sm.RandomBooleanNetworks.get_criticality_p_Kauffman(K)[0]
 N_ensemble=10

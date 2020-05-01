@@ -324,10 +324,10 @@ class MotifReduction:
                 if len(self.delprimes) < max_simulate_size:
                     print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
                     self.find_deletion_no_motif_attractors()
-                    if len(self.deletion_no_motif_attractors) == 0:
+                    if len(self.deletion_no_motif_attractors) == 0 and self.terminal != "yes":
                         self.terminal = "no"
-                    else:
-                        self.terminal = "yes"
+                    # else:
+                    #     self.terminal = "possible"
                 else:
                     print("The STG is still too large ("+str(len(self.delprimes))+").")
                     print("Further analysis of this branch is needed.")

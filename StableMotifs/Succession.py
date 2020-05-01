@@ -103,8 +103,8 @@ class SuccessionDiagram:
         deletion_split_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)>1])
         deletion_lone_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)==1])
 
-        lbound_oscillations = found_complex_attractors + deletion_lone_oscillations
-        ubound_oscillations = lbound_oscillations + deletion_split_oscillations
+        lbound_oscillations = found_complex_attractors
+        ubound_oscillations = lbound_oscillations + deletion_lone_oscillations + deletion_split_oscillations
 
         print("Found", guaranteed_spaces, "guaranteed attractor space(s) and",
             possible_spaces, "possible attractor space(s).")
@@ -114,8 +114,8 @@ class SuccessionDiagram:
             print("There are at least",lbound_oscillations,"complex attractor(s) in total.")
         elif ubound_oscillations == found_complex_attractors:
             print("There are no additional attractors.")
-        elif deletion_split_oscillations == 0:
-            print("There are exactly",deletion_lone_oscillations,"additional complex attractor(s) that were not fully explored.")
+        # elif deletion_split_oscillations == 0:
+        #     print("There are exactly",deletion_lone_oscillations,"additional complex attractor(s) that were not fully explored.")
         else:
             print("There are between",lbound_oscillations,"and",ubound_oscillations,"complex attractors in total.")
 
