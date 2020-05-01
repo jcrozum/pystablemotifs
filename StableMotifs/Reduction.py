@@ -7,7 +7,6 @@ import sympy
 import StableMotifs.TimeReversal as sm_time
 import StableMotifs.RestrictSpace as sm_rspace
 import StableMotifs.Format as sm_format
-# import StableMotifs.Succession as sm_succession
 import StableMotifs.DomainOfInfluence as sm_doi
 
 def simplify_primes(primes):
