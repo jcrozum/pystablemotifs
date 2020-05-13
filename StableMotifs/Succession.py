@@ -429,7 +429,8 @@ class SuccessionDiagram:
             self.add_attractors_networkx_diagram(h_dict,h_dict_edges)
 
     def networkx_succession_diagram_reduced_network_based(self,include_attractors_in_diagram=True):
-        G_reduced_network_based=self.digraph.copy()
+
+        G_reduced_network_based=self.digraph.copy() #this is the reduction based succession diagram with integer node-ids
         self.motif_reduction_list_dictionary={i:set([frozenset(tuple(x.items())) for x in reduction.motif_history]) for i,reduction in enumerate(self.motif_reduction_list)}
         for u,v in G_reduced_network_based.edges():
                 motif_set=self.motif_reduction_list_dictionary[v]-self.motif_reduction_list_dictionary[u]
@@ -443,30 +444,24 @@ class SuccessionDiagram:
         for node in G_reduced_network_based.nodes():
                 G_reduced_network_based.nodes[node]['label'] = str(h_dict[node])
         h_dict_edges={(u,v):G_reduced_network_based.edges[u, v]['label'] for u,v in G_reduced_network_based.edges()}
+
         if include_attractors_in_diagram:
-            return self.add_attractors_networkx_diagram(G_reduced_network_based,h_dict,h_dict_edges)
+            return self.add_attractors_networkx_diagram(G_reduced_network_based)
         return G_reduced_network_based
 
-    def networkx_succession_diagram_motif_based(self,h_dict,h_dict_edges):
-        G_motif_based = nx.line_graph(self.G_reduced_network_based)
-        pos_motif_based = nx.spring_layout(G_motif_based)#nx.nx_pydot.graphviz_layout(G_motif_based, prog='dot')
-        G_motif_based_labeled_temp=G_motif_based.copy()
-        xmax=0
-        ymax=0
-        for node,(x,y) in pos_motif_based.items():
-                xmax=max(x,xmax)
-                ymax=max(y,ymax)
-        for node,(x,y) in pos_motif_based.items():
-                G_motif_based_labeled_temp.nodes[node]['x'] = 1.5*(float(x))
-                G_motif_based_labeled_temp.nodes[node]['y'] = 1.5*(ymax-float(y))
-                G_motif_based_labeled_temp.nodes[node]['label'] = str(h_dict_edges[node])
-        for u,v in G_motif_based_labeled_temp.edges():
-                G_motif_based_labeled_temp.edges[u,v]['label'] = h_dict[u[1]]
-        G_motif_based_labeled=nx.relabel_nodes(G_motif_based_labeled_temp, h_dict_edges)
+    def networkx_succession_diagram_motif_based(self,include_attractors_in_diagram=True):
+        G_reduced_network_based=self.networkx_succession_diagram_reduced_network_based(include_attractors_in_diagram=False)
+        G_motif_based = nx.line_graph(G_reduced_network_based)
 
-        return(G_motif_based,G_motif_based_labeled,pos_motif_based)
+        for u,v in G_motif_based.nodes():
+            G_motif_based.nodes[(u,v)]['label'] = G_reduced_network_based.edges[u,v]['label']
 
-    def add_attractors_networkx_diagram(self,G,h_dict,h_dict_edges):
+        if include_attractors_in_diagram:
+            return self.add_attractors_networkx_diagram(G_motif_based)
+
+        return G_motif_based
+
+    def add_attractors_networkx_diagram(self,G):
         sink_nodes=[node for node, out_degree in G.out_degree if out_degree == 0]
         sink_node_attractor_dictionary={}
         max_node=len([node for node in G])
@@ -480,8 +475,6 @@ class SuccessionDiagram:
                     if reduction.logically_fixed_nodes.items() <= attractor.items():
                         sink_node_attractor_dictionary[j]=max_node+i
                         edges_attractors.append((j,max_node+i,{'label':""}))
-        h_dict.update({max_node+i:str(max_node+i)+" Attractor_"+str(i) for i,a in enumerate(nodes_attractors)})
-        h_dict_edges.update({max_node+i:str(max_node+i)+" Attractor_"+str(i) for i,a in enumerate(nodes_attractors)})
 
         G.add_nodes_from(nodes_attractors)
         G.add_edges_from(edges_attractors)
