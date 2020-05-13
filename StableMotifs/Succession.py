@@ -33,6 +33,7 @@ class SuccessionDiagram:
         self.pos_reduced_network_based = dict()
         self.pos_motif_based = dict()
         self.attractor_fixed_nodes_list = []
+        self.attractor_dict= dict()
         self.attractor_reduced_primes_list = []
         self.attractor_guaranteed_list = []
         self.reduced_complex_attractor_list = []
@@ -94,6 +95,30 @@ class SuccessionDiagram:
                 self.attractor_guaranteed_list.append(motif_reduction.terminal)
                 self.reduced_complex_attractor_list.append(motif_reduction.no_motif_attractors)
                 self.deletion_attractor_list.append(motif_reduction.deletion_no_motif_attractors)
+                self.attractor_dict=self.generate_attr_dict(set(self.unreduced_primes.keys()),self.attractor_fixed_nodes_list) #calling this function here is possibly an overkill but I leave it here for now.
+
+    def generate_attr_dict(self,nodes,attractor_fixed_nodes_list,oscillation_mark='X'):
+
+        '''
+        Turns attrator_fixed_nodes_list into a dictionary of attractors extended with all node states, where nodes
+        that oscillate in an attractor are marked with oscillation_mark (default = 'X'). The attractor keys are
+        integers going from 0 to the number of attractors -1.
+
+        Input: nodes - set of all the nodes in the model
+              attractor_fixed_nodes_list - list of dictionaries matching the attractors containing
+              the node states that are stabilized in the attractor.
+        Returns: dictionary of integer keys where the values are dictionaries of node states
+        '''
+
+        attractors_dict={}
+        for attr_id,node_state_dict in enumerate(attractor_fixed_nodes_list):
+            node_state_dict=node_state_dict.copy()
+            for n in nodes:
+                if n not in node_state_dict:
+                    node_state_dict[n]='X'
+            attractors_dict[attr_id]=node_state_dict
+
+        return attractors_dict
 
     def attractor_candidate_summary(self, show_reduced_rules = True):
         guaranteed_spaces = len([x for x in self.attractor_guaranteed_list if x == "yes"])
