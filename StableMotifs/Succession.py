@@ -482,30 +482,71 @@ class SuccessionDiagram:
             G_motif_based.nodes[(u,v)]['label'] = G_reduced_network_based.edges[u,v]['label']
 
         if include_attractors_in_diagram:
-            return self.add_attractors_networkx_diagram(G_motif_based)
+            return self.add_attractors_networkx_diagram(G_motif_based, motif_based_diagram=True)
 
         return G_motif_based
 
-    def add_attractors_networkx_diagram(self,G):
-        sink_nodes=[node for node, out_degree in G.out_degree if out_degree == 0]
-        sink_node_attractor_dictionary={}
-        max_node=len([node for node in G])
-        nodes_attractors=list(range(max_node,max_node+len(self.attractor_fixed_nodes_list)))
-        edges_attractors=[]
-        node_labels_attractors={a:str(max_node+i)+" Attractor_"+str(i) for i,a in enumerate(nodes_attractors)}#this should be a dictionalry with the node ids as keys
+    def match_reduction_node_to_attractors(self,reduction_node):
+        '''
+        Matches the nodes of the reduced network based succession diagram (from self..motif_reduction_list_dictionary)
+        to the attractor states (from self.attractor_dict).
 
-        for i,attractor in enumerate(self.attractor_fixed_nodes_list):
-            for j,reduction in enumerate(self.motif_reduction_list):
-                if j in sink_nodes:
-                    if reduction.logically_fixed_nodes.items() <= attractor.items():
-                        sink_node_attractor_dictionary[j]=max_node+i
-                        edges_attractors.append((j,max_node+i,{'label':""}))
+        It returns the keys attractors with which the reduction node has a perfect match
+        '''
+        merged_reductions=frozenset().union(*self.motif_reduction_list_dictionary[reduction_node])
+        match_list=[]
+        for attr in self.attractor_dict:
+            attr_tuple_set=frozenset(zip(self.attractor_dict[attr].keys(),self.attractor_dict[attr].values()))
+            if attr_tuple_set.intersection(merged_reductions)==merged_reductions:
+                match_list.append(attr)
+        return match_list
 
-        G.add_nodes_from(nodes_attractors)
-        G.add_edges_from(edges_attractors)
-        for node in nodes_attractors:
-            G.nodes[node]['label']=node_labels_attractors[node]
-        return G
+    def add_attractors_networkx_diagram(self,G,motif_based_diagram=False):
+
+        '''
+        Returns an expanded version of the G succession graph with nodes representing the attractors of the model
+        added to the leaves of the succession diagram as terminal nodes.
+
+        Inputs: G - networkx DiGraph of the succession diagram (it can be both reduced network based or motif based)
+                motif_based_diagram - bool variable specifying the kind of succession diagram. Default is False,
+                    assuming a reduced network based succession diagram. If the param False, yet G is a motif based
+                    diagram, the funtion will show a warning.
+
+        Returns: Ga - a networkx DiGraph expanded with the attractor nodes
+        '''
+
+        import warnings
+        Ga=G.copy()
+
+        #a few checks
+        if Ga.number_of_nodes()==0:
+            warnings.warn('There are no nodes in the succession diagram. Returning it without modification.')
+            return Ga
+        if type(list(Ga.nodes)[0])==tuple and motif_based_diagram==False:
+            warnings.warn('This looks like a motif based diagram, while the parameter is set to false.')
+            #motif_based_diagram=True #this can be uncommented if we want to do an automatic overrule
+
+        sink_nodes=[node for node, out_degree in Ga.out_degree if out_degree == 0]
+        leaf_reductions=[]
+        if motif_based_diagram: #motif based network - a node is an edge of the reduction based network
+            for i in range(len(sink_nodes)):
+                leaf_reductions.append(sink_nodes[i][-1])
+        else:
+            leaf_reductions=sink_nodes
+
+        Ga.add_nodes_from(['Attractor_'+str(i) for i in self.attractor_dict])
+        #we add the attractor states as an attibute and the id as label (can be shown as tooltip label in yED)
+        for i in self.attractor_dict:
+            Ga.nodes['Attractor_'+str(i)]['node_states']=str(self.attractor_dict[i])
+            Ga.nodes['Attractor_'+str(i)]['label']='Attractor_'+str(i)
+
+        #we do the itearative matching to the attractors and add the edges to the diagram
+        for i in range(len(leaf_reductions)): #we itearate with range because we want to grab the sink_nodes on the same index
+            matching_attr=self.match_reduction_node_to_attractors(leaf_reductions[i])
+            assert len(matching_attr)<=1 #we want a unique attractor
+            Ga.add_edge(sink_nodes[i],'Attractor_'+str(matching_attr[0]))
+
+        return Ga
 
     def plot_networkx_succession_diagram_motif_based(self,print_out_labels=False):
         edge_labels_motif_based={(u,v):str(u[1]) for u,v in self.G_motif_based.edges()}
