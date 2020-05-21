@@ -120,6 +120,27 @@ class SuccessionDiagram:
 
         return attractors_dict
 
+    def find_constants_in_complex_attractor(self,c):
+
+        '''
+        Given a set of strings representing the states of a complex attractor the function finds the nodes
+        that are constant in the full complex attractor.
+
+        Input: a set of iterables constituting ones and zeros.
+        E.g. {'000', '010', '100'}
+
+        Returns: an array constituting 0s, 1s, and Xs. X represents an oscillating node, and the 0s and 1s
+        represent nodes stabilized to those states.
+        E.g. for the example given for the input the code will return: array(['X', 'X', '0'], dtype='<U1')
+        '''
+        import numpy as np
+        ca=np.array([np.fromiter(i, int, count=len(i)) for i in c])
+        attr=np.array(['X' for i in range(len(ca[0]))])
+        sum_a0=ca.sum(axis=0)
+        attr[np.where(sum_a0==0)[0]]=0
+        attr[np.where(sum_a0==len(ca))[0]]=1
+        return attr
+
     def attractor_candidate_summary(self, show_reduced_rules = True):
         guaranteed_spaces = len([x for x in self.attractor_guaranteed_list if x == "yes"])
         possible_spaces = len([x for x in self.attractor_guaranteed_list if x == "possible"])
@@ -543,7 +564,6 @@ class SuccessionDiagram:
         #we do the itearative matching to the attractors and add the edges to the diagram
         for i in range(len(leaf_reductions)): #we itearate with range because we want to grab the sink_nodes on the same index
             matching_attr=self.match_reduction_node_to_attractors(leaf_reductions[i])
-            assert len(matching_attr)<=1 #we want a unique attractor
             Ga.add_edge(sink_nodes[i],'Attractor_'+str(matching_attr[0]))
 
         return Ga
