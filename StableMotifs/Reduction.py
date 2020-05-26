@@ -247,6 +247,8 @@ class MotifReduction:
         self.deletion_STG = None
         self.deletion_no_motif_attractors = None
         self.attractor_constants = None
+        self.attractor_dict={}
+
         study_possible_oscillation = False
 
         if not self.merged_source_motifs is None:
@@ -330,7 +332,6 @@ class MotifReduction:
                 else:
                     print("The STG is still too large ("+str(len(self.delprimes))+").")
                     print("Further analysis of this branch is needed.")
-
 
 
     def merge_source_motifs(self):
@@ -640,6 +641,72 @@ class MotifReduction:
         if self.partial_STG is None:
             self.build_partial_STG()
         self.no_motif_attractors = list(nx.attracting_components(self.partial_STG))
+
+    def generate_attr_dict(self):
+
+        '''
+        '''
+
+        attractors_dict={}
+        #the reduction is not terminal --> no attractor
+        if self.terminal=='no':
+            return 'not terminal reduction' #I should replace this with an empty dict
+        nodes_sorted=sorted(list(set(self.logically_fixed_nodes.keys()).union(set(self.reduced_primes.keys())))) #steady state
+        #the reduction is terminal
+        if self.terminal=='yes':
+            # the reduction is terminal and all nodes are logically fixed --> a single steady state
+            if sorted(self.logically_fixed_nodes.keys())==nodes_sorted:
+                return self.logically_fixed_nodes
+            #the reduction is terminal, not all nodes are fixed
+            #and there is NO complex attractor mapped out
+            if self.no_motif_attractors==None:
+                node_state_dict=self.logically_fixed_nodes.copy()
+                for n in nodes_sorted:
+                    if n not in node_state_dict:
+                        node_state_dict[n]='?'
+                return node_state_dict
+            #the reduction is terminal, not all nodes are fixed
+            #there are complex attractors mapped out:
+            attr_list=[]
+
+            for complex_attractor in self.no_motif_attractors:
+                non_fixed_nodes=sorted(list(set(nodes_sorted)-set(self.logically_fixed_nodes.keys())))
+                #we check if there are stabilized nodes within the complex attractor
+                ca=self.find_constants_in_complex_attractor(complex_attractor)
+                node_state_dict=self.logically_fixed_nodes.copy()
+                for i in range(len(non_fixed_nodes)): #non-stabilized nodes
+                    node_state_dict[non_fixed_nodes[i]]=ca[i]
+
+                attr_list.append(node_state_dict)
+            return(attr_list)
+        #the reduction is only possibly terminal
+        if self.terminal=='possible':
+            non_fixed_nodes=sorted(list(set(nodes_sorted)-set(self.logically_fixed_nodes.keys())))
+            node_state_dict=self.logically_fixed_nodes.copy()
+            for i in range(len(non_fixed_nodes)): #non-stabilized nodes
+                    node_state_dict[non_fixed_nodes[i]]='!'
+            return(node_state_dict)
+
+    def find_constants_in_complex_attractor(self,c):
+
+        '''
+        Given a set of strings representing the states of a complex attractor the function finds the nodes
+        that are constant in the full complex attractor.
+
+        Input: a set of iterables constituting ones and zeros.
+        E.g. {'000', '010', '100'}
+
+        Returns: an array constituting 0s, 1s, and Xs. X represents an oscillating node, and the 0s and 1s
+        represent nodes stabilized to those states.
+        E.g. for the example given for the input the code will return: array(['X', 'X', '0'], dtype='<U1')
+        '''
+        import numpy as np
+        ca=np.array([np.fromiter(i, int, count=len(i)) for i in c])
+        attr=np.array(['X' for i in range(len(ca[0]))])
+        sum_a0=ca.sum(axis=0)
+        attr[np.where(sum_a0==0)[0]]=0
+        attr[np.where(sum_a0==len(ca))[0]]=1
+        return attr
 
     def summary(self,show_original_rules=True,hide_rules=False,show_explicit_permutations=False):
         print("Motif History:",self.motif_history)
