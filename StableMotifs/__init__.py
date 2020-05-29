@@ -7,3 +7,5 @@ from StableMotifs import TimeReversal
 from StableMotifs import RestrictSpace
 from StableMotifs import Succession
 from StableMotifs import RandomBooleanNetworks
+from StableMotifs import Attractor
+from StableMotifs import AttractorRepertoire

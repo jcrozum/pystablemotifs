@@ -7,26 +7,32 @@ import StableMotifs.Reduction as sm_reduction
 
 class Attractor:
 
-    def __init__(reduction, reduction_attractor_id):
+    def __init__(self,reduction, reduction_attractor_id):
         self.logically_fixed_nodes = reduction.logically_fixed_nodes
         self.representative = (reduction,reduction_attractor_id)
         self.reductions = [reduction]
-        self.attractor_dict = reduction.attractor_dicts[reduction_attractor_id]
-        self.stg = reduction.attractor_stgs[reduction_attractor_id]
+        self.attractor_dict = reduction.attractor_dict_list[reduction_attractor_id]
 
-        self.fixed_nodes = {k:v for k,v in attractor_dict.items() if v in ['0','1']}
+        if reduction.no_motif_attractors is not None:
+            self.stg = reduction.no_motif_attractors[reduction_attractor_id]
+        else:
+            self.stg = None
+
+        self.fixed_nodes = {k:v for k,v in self.attractor_dict.items() if v in ['0','1']}
         if reduction.fixed_rspace_nodes is not None:
             self.fixed_nodes.update(reduction.fixed_rspace_nodes)
 
-        self.oscillation_fixed_nodes = {k:v for k,v in fixed_nodes if k not in self.logically_fixed_nodes}
-        self.n_unfixed = len(self.reduced_primes) - len(self.oscilation_fixed_nodes)
+        self.oscillation_fixed_nodes = {k:v for k,v in self.fixed_nodes if k not in self.logically_fixed_nodes}
+
         if reduction.rspace_update_primes is not None:
             self.reduced_primes = reduction.rspace_update_primes
         else:
             self.reduced_primes = reduction.reduced_primes
 
+        self.n_unfixed = len(self.reduced_primes) - len(self.oscillation_fixed_nodes)
+
         if self.stg is not None:
-            self.size = len(self.stg.nodes())
+            self.size = len(self.stg)
             self.size_lower_bound = self.size
             self.size_upper_bound = self.size
         else:
@@ -39,10 +45,10 @@ class Attractor:
                 self.size_lower_bound = 2
                 self.size_upper_bound = 2**(n_unfixed)
 
-        if '?' in attractor_dict.values():
+        if '?' in self.attractor_dict.values():
             self.explored = False
             self.guaranteed = True
-        elif '!' in attractor_dict.values():
+        elif '!' in self.attractor_dict.values():
             self.explored = False
             self.guaranteed = False
         else: # X's, 1's, 0's
@@ -51,5 +57,5 @@ class Attractor:
 
         self.reductions = [reduction]
 
-    def add_reduction(reduction):
+    def add_reduction(self,reduction):
         self.reductions.append(reduction)

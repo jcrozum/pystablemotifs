@@ -115,6 +115,23 @@ def import_primes(fname, format='BooleanNet', remove_constants=False):
 
     return primes
 
+def statelist2dict(names,c):
+    """
+    Converts a collection of statestrings to a dictionary. If a node takes the
+    same value in every state, the corresponding dictionary value matches its
+    fixed value; otherwise, the dictionary value is 'X'.
+    """
+    d = {}
+    for n in names:
+        for cs in c:
+            if n not in d:
+                d[n] = cs
+                continue
+            if cs != d[n]:
+                d[n] = 'X'
+                break
+    return d
+
 def statestring2dict(statestring,names):
     """
     Converts a state string, which specifies a node in an STG, to the corresponding dictionary representation.

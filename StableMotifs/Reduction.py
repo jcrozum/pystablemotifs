@@ -321,6 +321,7 @@ class MotifReduction:
                     if sat:
                         self.terminal = "no"
                         print("The reduction indicates that the branch is not terminal. No need to simulate.")
+                        self.attractor_dict_list = self.generate_attr_dict()
                         return
                 if len(self.delprimes) < max_simulate_size:
                     print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
@@ -332,7 +333,7 @@ class MotifReduction:
                 else:
                     print("The STG is still too large ("+str(len(self.delprimes))+").")
                     print("Further analysis of this branch is needed.")
-
+        self.attractor_dict_list = self.generate_attr_dict()
 
     def merge_source_motifs(self):
         """
@@ -643,49 +644,59 @@ class MotifReduction:
         self.no_motif_attractors = list(nx.attracting_components(self.partial_STG))
 
     def generate_attr_dict(self):
-
-        '''
-        '''
-
+        """
+        """
         attractors_dict={}
+
         #the reduction is not terminal --> no attractor
-        if self.terminal=='no':
-            return 'not terminal reduction' #I should replace this with an empty dict
-        nodes_sorted=sorted(list(set(self.logically_fixed_nodes.keys()).union(set(self.reduced_primes.keys())))) #steady state
-        #the reduction is terminal
-        if self.terminal=='yes':
-            # the reduction is terminal and all nodes are logically fixed --> a single steady state
-            if sorted(self.logically_fixed_nodes.keys())==nodes_sorted:
-                return self.logically_fixed_nodes
+        if self.terminal == 'no':
+            return []#'not terminal reduction' #I should replace this with an empty dict
+
+        nodes_sorted = sorted(list(set(self.logically_fixed_nodes.keys()) | set(self.reduced_primes.keys()))) #steady state
+
+
+        node_state_dict = self.logically_fixed_nodes.copy()
+        if self.fixed_rspace_nodes is not None:
+            node_state_dict.update(self.fixed_rspace_nodes)
+
+        # Found a steady state (will always be terminal)
+        if len(node_state_dict) == len(nodes_sorted):
+            assert self.terminal == 'yes', "Found non-terminal steady state. This should not be possible!"
+            return [node_state_dict]
+        #non_fixed_nodes = sorted(list(set(nodes_sorted)-set(node_state_dict.keys())))
+        non_fixed_nodes = [x for x in nodes_sorted if x not in node_state_dict]
+
+        #the reduction is only possibly terminal
+        if self.terminal=='possible':
+            for n in non_fixed_nodes: #non-stabilized nodes
+                node_state_dict[n] = '!'
+            return(node_state_dict)
+
+        #the reduction is definitely terminal
+        elif self.terminal=='yes':
             #the reduction is terminal, not all nodes are fixed
             #and there is NO complex attractor mapped out
-            if self.no_motif_attractors==None:
-                node_state_dict=self.logically_fixed_nodes.copy()
-                for n in nodes_sorted:
-                    if n not in node_state_dict:
-                        node_state_dict[n]='?'
-                return node_state_dict
+            if self.no_motif_attractors is None:
+                for n in non_fixed_nodes:
+                    node_state_dict[n]='?'
+                return [node_state_dict]
+
             #the reduction is terminal, not all nodes are fixed
             #there are complex attractors mapped out:
             attr_list=[]
-
             for complex_attractor in self.no_motif_attractors:
-                non_fixed_nodes=sorted(list(set(nodes_sorted)-set(self.logically_fixed_nodes.keys())))
-                #we check if there are stabilized nodes within the complex attractor
-                ca=self.find_constants_in_complex_attractor(complex_attractor)
-                node_state_dict=self.logically_fixed_nodes.copy()
-                for i in range(len(non_fixed_nodes)): #non-stabilized nodes
-                    node_state_dict[non_fixed_nodes[i]]=ca[i]
-
-                attr_list.append(node_state_dict)
-            return(attr_list)
-        #the reduction is only possibly terminal
-        if self.terminal=='possible':
-            non_fixed_nodes=sorted(list(set(nodes_sorted)-set(self.logically_fixed_nodes.keys())))
-            node_state_dict=self.logically_fixed_nodes.copy()
-            for i in range(len(non_fixed_nodes)): #non-stabilized nodes
-                    node_state_dict[non_fixed_nodes[i]]='!'
-            return(node_state_dict)
+                ca_dict = sm_format.statelist2dict(non_fixed_nodes,complex_attractor)
+                ns = node_state_dict.copy()
+                ns.update(ca_dict)
+                attr_list.append(ns)
+                # # we check if there are stabilized nodes within the complex attractor
+                # ca=self.find_constants_in_complex_attractor(complex_attractor)
+                # node_state_dict=self.logically_fixed_nodes.copy()
+                # for i in range(len(non_fixed_nodes)): #non-stabilized nodes
+                #     node_state_dict[non_fixed_nodes[i]]=ca[i]
+                #
+                # attr_list.append(node_state_dict)
+            return attr_list
 
     def find_constants_in_complex_attractor(self,c):
 

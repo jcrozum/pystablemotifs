@@ -1,14 +1,20 @@
-import StableMotifs.Succesion as sm_succession
+import StableMotifs.Succession as sm_succession
 import StableMotifs.Attractor as sm_attractor
 
 class AttractorRepertoire:
-    def __init__():
+    def __init__(self,primes,max_simulate_size=20,max_stable_motifs=10000):
+        self.succession_diagram = None
         self.attractors = []
         self.reduction_attractors = {} # dict with values that are lists of matching attractors
+        self.fewest_attractors = None
+        self.most_attractors = None
 
-    def get_attractors_from_succession_diagram(succession_diagram):
-        for ri, reduction in enumerate(succession_diagram.motif_reduction_list):
-            if reduction.terminal == "yes": continue
+        self.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
+
+
+    def get_attractors_from_succession_diagram(self):
+        for ri, reduction in enumerate(self.succession_diagram.motif_reduction_list):
+            if reduction.terminal == "no": continue
 
             self.reduction_attractors[ri] = []
 
@@ -21,12 +27,12 @@ class AttractorRepertoire:
 
             if duplicate: continue
 
-            for id in reduction.attractor_ids:
+            for id,att in enumerate(reduction.attractor_dict_list):
                 new_attractor = sm_attractor.Attractor(reduction,id)
                 self.attractors.append(new_attractor)
                 self.reduction_attractors[ri].append(new_attractor)
 
-    def count_attractors():
+    def count_attractors(self):
         self.fewest_attractors = 0
         self.most_attractors = 0
         for attractor in self.attractors:
@@ -38,3 +44,14 @@ class AttractorRepertoire:
                 self.most_attractors += 1
             else: # ludicrously conservative upper bound; assumes STG is all 2-cycles
                 self.most_attractors = 2**(attractor.n_unfixed - 1)
+
+    def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000):
+        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
+        self.get_attractors_from_succession_diagram()
+        self.count_attractors()
+
+    def summary(self):
+        print("There are between ",self.fewest_attractors,"and",self.most_attractors,"attractors.")
+        for att in self.attractors:
+            print(att.attractor_dict)
+            print()
