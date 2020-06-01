@@ -122,12 +122,12 @@ def statelist2dict(names,c):
     fixed value; otherwise, the dictionary value is 'X'.
     """
     d = {}
-    for n in names:
+    for i,n in enumerate(names):
         for cs in c:
             if n not in d:
-                d[n] = cs
+                d[n] = cs[i]
                 continue
-            if cs != d[n]:
+            if cs[i] != d[n]:
                 d[n] = 'X'
                 break
     return d

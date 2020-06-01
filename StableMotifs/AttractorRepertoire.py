@@ -51,8 +51,13 @@ class AttractorRepertoire:
         self.count_attractors()
 
     def summary(self):
-        if self.fewest_attractors == self.most_attractors:
-            print("There are",self.fewest_attractors,"attractors.")
+        if self.fewest_attractors == 0:
+            print("Unable to properly count attractors.")
+        elif self.fewest_attractors == self.most_attractors:
+            if self.fewest_attractors == 1:
+                print("There is 1 attractor.")
+            else:
+                print("There are",self.fewest_attractors,"attractors.")
         else:
             print("There are between",self.fewest_attractors,"and",self.most_attractors,"attractors.")
         for att in self.attractors:
