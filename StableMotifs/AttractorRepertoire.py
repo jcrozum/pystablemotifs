@@ -51,7 +51,10 @@ class AttractorRepertoire:
         self.count_attractors()
 
     def summary(self):
-        print("There are between ",self.fewest_attractors,"and",self.most_attractors,"attractors.")
+        if self.fewest_attractors == self.most_attractors:
+            print("There are",self.fewest_attractors,"attractors.")
+        else:
+            print("There are between",self.fewest_attractors,"and",self.most_attractors,"attractors.")
         for att in self.attractors:
             print(att.attractor_dict)
             print()

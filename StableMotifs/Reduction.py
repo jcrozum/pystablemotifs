@@ -654,7 +654,6 @@ class MotifReduction:
 
         nodes_sorted = sorted(list(set(self.logically_fixed_nodes.keys()) | set(self.reduced_primes.keys()))) #steady state
 
-
         node_state_dict = self.logically_fixed_nodes.copy()
         if self.fixed_rspace_nodes is not None:
             node_state_dict.update(self.fixed_rspace_nodes)
@@ -662,6 +661,7 @@ class MotifReduction:
         # Found a steady state (will always be terminal)
         if len(node_state_dict) == len(nodes_sorted):
             assert self.terminal == 'yes', "Found non-terminal steady state. This should not be possible!"
+            node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
             return [node_state_dict]
         #non_fixed_nodes = sorted(list(set(nodes_sorted)-set(node_state_dict.keys())))
         non_fixed_nodes = [x for x in nodes_sorted if x not in node_state_dict]
@@ -670,6 +670,7 @@ class MotifReduction:
         if self.terminal=='possible':
             for n in non_fixed_nodes: #non-stabilized nodes
                 node_state_dict[n] = '!'
+                node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
             return(node_state_dict)
 
         #the reduction is definitely terminal
@@ -679,6 +680,7 @@ class MotifReduction:
             if self.no_motif_attractors is None:
                 for n in non_fixed_nodes:
                     node_state_dict[n]='?'
+                node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
                 return [node_state_dict]
 
             #the reduction is terminal, not all nodes are fixed
@@ -688,6 +690,7 @@ class MotifReduction:
                 ca_dict = sm_format.statelist2dict(non_fixed_nodes,complex_attractor)
                 ns = node_state_dict.copy()
                 ns.update(ca_dict)
+                ns = {k:v for k,v in sorted(ns.items())}
                 attr_list.append(ns)
                 # # we check if there are stabilized nodes within the complex attractor
                 # ca=self.find_constants_in_complex_attractor(complex_attractor)
