@@ -2,16 +2,31 @@ import StableMotifs.Succession as sm_succession
 import StableMotifs.Attractor as sm_attractor
 
 class AttractorRepertoire:
-    def __init__(self,primes,max_simulate_size=20,max_stable_motifs=10000):
+    def __init__(self,primes=None,max_simulate_size=20,max_stable_motifs=10000):
+        """
+        If primes is specified, then a succession diagram will be built from them.
+        Otherwise, an empty instance of the class is created. To, for example,
+        create an AttractorRepertoire instance from a pre-built SuccessionDiagram
+        object, use
+        ar = AttractorRepertoire()
+        ar.get_attractors_from_succession_diagram(succession_diagram)
+
+        """
         self.succession_diagram = None
         self.attractors = []
         self.reduction_attractors = {} # dict with values that are lists of matching attractors
         self.fewest_attractors = None
         self.most_attractors = None
 
-        self.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
+        if primes is not None:
+            self.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
 
-    def get_attractors_from_succession_diagram(self):
+    def get_attractors_from_succession_diagram(self, succession_diagram = None):
+        if succession_diagram is not None:
+            self.succession_diagram = succession_diagram
+
+        assert self.succession_diagram is not None, "Succession diagram is None!"
+
         for ri, reduction in self.succession_diagram.motif_reduction_dict.items():
             if reduction.terminal == "no": continue
 
