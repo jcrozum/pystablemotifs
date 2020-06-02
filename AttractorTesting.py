@@ -18,6 +18,11 @@ ar.summary()
 ar2 = sm.AttractorRepertoire.from_succession_diagram(ar.succession_diagram)
 print("Should be the same")
 ar2.summary()
+
+print()
+print("Alternate presentation")
+for a in ar2.attractors:
+    print(sm.Format.statedict2str(a.attractor_dict))
 #
 # from timeit import default_timer
 # diag = ar.succession_diagram
