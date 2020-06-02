@@ -4,13 +4,6 @@ import StableMotifs.Attractor as sm_attractor
 class AttractorRepertoire:
     def __init__(self):
         """
-        If primes is specified, then a succession diagram will be built from them.
-        Otherwise, an empty instance of the class is created. To, for example,
-        create an AttractorRepertoire instance from a pre-built SuccessionDiagram
-        object, use
-        ar = AttractorRepertoire()
-        ar.get_attractors_from_succession_diagram(succession_diagram)
-
         """
         self.succession_diagram = None
         self.attractors = []
@@ -65,8 +58,12 @@ class AttractorRepertoire:
 
             if attractor.explored:
                 self.most_attractors += 1
-            else: # ludicrously conservative upper bound; assumes STG is all 2-cycles
-                self.most_attractors = 2**(attractor.n_unfixed - 1)
+            else:
+                if attractor.representative[0].deletion_no_motif_attractors is not None:
+                    self.most_attractors += len(attractor.representative[0].deletion_no_motif_attractors)
+                else:
+                    # ludicrously conservative upper bound; assumes STG is all 2-cycles
+                    self.most_attractors += 2**(attractor.n_unfixed - 1)
 
     def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000):
         self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)

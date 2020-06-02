@@ -9,7 +9,7 @@ print("RULES")
 sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
 print()
 print("Analyzing network . . .")
-ar = sm.AttractorRepertoire.from_primes(primes)
+ar = sm.AttractorRepertoire.from_primes(primes,max_simulate_size=7)
 
 print("Analysis complete.")
 print()
