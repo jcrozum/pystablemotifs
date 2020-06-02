@@ -671,7 +671,7 @@ class MotifReduction:
             for n in non_fixed_nodes: #non-stabilized nodes
                 node_state_dict[n] = '!'
                 node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
-            return(node_state_dict)
+            return [node_state_dict]
 
         #the reduction is definitely terminal
         elif self.terminal=='yes':

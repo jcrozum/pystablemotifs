@@ -21,7 +21,7 @@ class Attractor:
         self.fixed_nodes = {k:v for k,v in self.attractor_dict.items() if v in ['0','1']}
         if reduction.fixed_rspace_nodes is not None:
             self.fixed_nodes.update(reduction.fixed_rspace_nodes)
-        
+
         self.oscillation_fixed_nodes = {k:v for k,v in self.fixed_nodes.items() if k not in self.logically_fixed_nodes}
 
         if reduction.rspace_update_primes is not None:
@@ -43,7 +43,7 @@ class Attractor:
             else:
                 self.size = None
                 self.size_lower_bound = 2
-                self.size_upper_bound = 2**(n_unfixed)
+                self.size_upper_bound = 2**(self.n_unfixed)
 
         if '?' in self.attractor_dict.values():
             self.explored = False
