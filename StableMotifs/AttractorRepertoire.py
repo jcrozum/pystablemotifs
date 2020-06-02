@@ -12,7 +12,7 @@ class AttractorRepertoire:
         self.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
 
     def get_attractors_from_succession_diagram(self):
-        for ri, reduction in enumerate(self.succession_diagram.motif_reduction_list):
+        for ri, reduction in self.succession_diagram.motif_reduction_dict.items():
             if reduction.terminal == "no": continue
 
             self.reduction_attractors[ri] = []

@@ -31,7 +31,7 @@ df_attractors=df_attractors.fillna("X").astype(str).replace({"0.0": "0", "1.0": 
 df_attractors.to_csv("Attractors.csv")
 
 reprogramming_target = None
-for reduction in diag.motif_reduction_list:
+for reduction in diag.motif_reduction_dict.values():
     if reduction.terminal == "yes" and len(reduction.logically_fixed_nodes) > 0:
         reprogramming_target = reduction.logically_fixed_nodes
         break

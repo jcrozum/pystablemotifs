@@ -12,7 +12,7 @@ class SuccessionDiagram:
     Representation of a succession diagram of a Boolean system
 
     Variables:
-    motif_reduction_list - a list of MotifReductions (see Reduction.py)
+    motif_reduction_dict - a MotifReduction-valued dictionary with integer (index) keys (see Reduction.py)
 
     Functions:
     __init__(self)
@@ -24,7 +24,7 @@ class SuccessionDiagram:
     """
 
     def __init__(self):
-        self.motif_reduction_list = []
+        self.motif_reduction_dict = {}
         self.digraph = nx.DiGraph()
         self.G_reduced_network_based = nx.DiGraph()
         self.G_reduced_network_based_labeled = nx.DiGraph()
@@ -40,7 +40,7 @@ class SuccessionDiagram:
         self.deletion_attractor_list = []
         self.unreduced_primes = None
     def find_motif_permutation(self,motif_history):
-        for i,mr in enumerate(self.motif_reduction_list):
+        for i,mr in self.motif_reduction_dict.items():
             if len(mr.motif_history) == len(motif_history):
                 if all([x in mr.motif_history for x in motif_history]):
                     permutation = []
@@ -50,25 +50,25 @@ class SuccessionDiagram:
         return None,None
 
     def add_motif_permutation(self,reduction_index,permutation):
-        self.motif_reduction_list[reduction_index].merged_history_permutations.append(permutation)
+        self.motif_reduction_dict[reduction_index].merged_history_permutations.append(permutation)
         for child in nx.topological_sort(self.digraph):
             for parent in self.digraph.predecessors(child):
-                for parent_perm,child_perm in it.product(self.motif_reduction_list[parent].merged_history_permutations,self.motif_reduction_list[child].merged_history_permutations):
+                for parent_perm,child_perm in it.product(self.motif_reduction_dict[parent].merged_history_permutations,self.motif_reduction_dict[child].merged_history_permutations):
                     new_perm = child_perm.copy()
                     for i,p in enumerate(parent_perm):
                         new_perm[i] = child_perm[p]
-                    if not new_perm in self.motif_reduction_list[child].merged_history_permutations:
-                        self.motif_reduction_list[child].merged_history_permutations.append(new_perm)
+                    if not new_perm in self.motif_reduction_dict[child].merged_history_permutations:
+                        self.motif_reduction_dict[child].merged_history_permutations.append(new_perm)
 
     def add_motif_reduction(self,motif_reduction):
-        if self.motif_reduction_list == []:
+        if self.motif_reduction_dict == {}:
             self.unreduced_primes = motif_reduction.reduced_primes
 
         # note: N is computed BEFORE the new reduction is added,
         # so it will be the reduction index AFTER the reduction is added.
-        N = len(self.motif_reduction_list)
+        N = len(self.motif_reduction_dict)
         new_set = set([frozenset(tuple(x.items())) for x in motif_reduction.motif_history])
-        for i,reduction in enumerate(self.motif_reduction_list):
+        for i,reduction in self.motif_reduction_dict.items():
             old_set = set([frozenset(tuple(x.items())) for x in reduction.motif_history])
 
             # see if we're adding a parent of an existing reduction
@@ -86,7 +86,7 @@ class SuccessionDiagram:
                     if missing_motif in reduction.stable_motifs:
                         self.digraph.add_edge(i,N)
 
-        self.motif_reduction_list.append(motif_reduction)
+        self.motif_reduction_dict[N] = motif_reduction
         self.add_motif_permutation(N,list(range(len(motif_reduction.motif_history))))
         if not motif_reduction.terminal == "no":
             if not motif_reduction.logically_fixed_nodes in self.attractor_fixed_nodes_list:
@@ -191,7 +191,7 @@ class SuccessionDiagram:
                 print("No Free Nodes Remain.")
 
     def summary(self,terminal_keys=None,show_original_rules=True,hide_rules=False,show_explicit_permutations=False):
-        for motif_reduction in self.motif_reduction_list:
+        for motif_reduction in self.motif_reduction_dict.values():
             if terminal_keys is None or motif_reduction.terminal in terminal_keys:
                 print("__________________")
                 motif_reduction.summary(show_original_rules=show_original_rules,hide_rules=hide_rules,show_explicit_permutations=show_explicit_permutations)
@@ -213,7 +213,7 @@ class SuccessionDiagram:
         if not optimize:
             # NOTE: This finds all reductions, not just those closest to the root
             target_indices = []
-            for i,reduction in enumerate(self.motif_reduction_list):
+            for i,reduction in self.motif_reduction_dict.items():
                 if logically_fixed.items() <= reduction.logically_fixed_nodes.items():
                     target_indices.append(i)
             return target_indices
@@ -224,10 +224,10 @@ class SuccessionDiagram:
 
             # Add nodes that inevitably reach nodes in the unoptimized result
             nodes_to_consider = [x for x in self.digraph if (not x in target_indices_all
-                and self.motif_reduction_list[x].terminal == "no")]
+                and self.motif_reduction_dict[x].terminal == "no")]
             for i in nodes_to_consider:
                 bad_sinks = [x for x in nx.descendants(self.digraph,i) | set([i]) if (
-                    not self.motif_reduction_list[x].terminal == "no" # is a sink and . . .
+                    not self.motif_reduction_dict[x].terminal == "no" # is a sink and . . .
                     and not x in target_indices_unoptimized)] # does not have the right nodes fixed
 
                 if len(bad_sinks) == 0:
@@ -253,21 +253,21 @@ class SuccessionDiagram:
                 if ind == 0:
                     ind_prev = ind
                     continue
-                path_motif_history += [x for x in self.motif_reduction_list[ind].motif_history if not x in path_motif_history]
+                path_motif_history += [x for x in self.motif_reduction_dict[ind].motif_history if not x in path_motif_history]
 
                 if method == 'internal':
                     history_drivers = sm_doi.internal_drivers(path_motif_history[-1],
-                        self.motif_reduction_list[ind_prev].reduced_primes,
+                        self.motif_reduction_dict[ind_prev].reduced_primes,
                         max_drivers=max_drivers)
                 elif method == 'GRASP':
                     history_drivers = sm_doi.GRASP(path_motif_history[-1],
-                        self.motif_reduction_list[ind_prev].reduced_primes,
+                        self.motif_reduction_dict[ind_prev].reduced_primes,
                         GRASP_iterations = GRASP_iterations)
                     if len(history_drivers) == 0:
                         history_drivers = [path_motif_history[-1]]
                 elif method == 'minimal':
                     history_drivers = sm_doi.minimal_drivers(path_motif_history[-1],
-                        self.motif_reduction_list[ind_prev].reduced_primes,
+                        self.motif_reduction_dict[ind_prev].reduced_primes,
                         max_drivers=max_drivers)
 
                 path_drivers.append(history_drivers)
@@ -382,7 +382,7 @@ class SuccessionDiagram:
                 drivers += self.reduction_drivers(target_index,max_drivers=max_drivers,GRASP_iterations=GRASP_iterations,method=driver_method)
         elif target_method == 'merge':
             for target_index in target_indices:
-                target_history = self.motif_reduction_list[target_index].motif_history
+                target_history = self.motif_reduction_dict[target_index].motif_history
                 motif_merger = {k:v for d in target_history for k,v in d.items()}
 
                 # Because we are potentially dealing with external drivers, we
@@ -477,13 +477,13 @@ class SuccessionDiagram:
     def networkx_succession_diagram_reduced_network_based(self,include_attractors_in_diagram=True):
 
         G_reduced_network_based=self.digraph.copy() #this is the reduction based succession diagram with integer node-ids
-        self.motif_reduction_list_dictionary={i:set([frozenset(tuple(x.items())) for x in reduction.motif_history]) for i,reduction in enumerate(self.motif_reduction_list)}
+        self.motif_reduction_dict_dictionary={i:set([frozenset(tuple(x.items())) for x in reduction.motif_history]) for i,reduction in self.motif_reduction_dict.values()}
         for u,v in G_reduced_network_based.edges():
-                motif_set=self.motif_reduction_list_dictionary[v]-self.motif_reduction_list_dictionary[u]
+                motif_set=self.motif_reduction_dict_dictionary[v]-self.motif_reduction_dict_dictionary[u]
                 motif_list=[list(x) for x in list(motif_set)][0]
                 G_reduced_network_based.edges[u, v]['label']=str(u)+"_"+str(v)+" ("+", ".join([x[0]+"="+str(x[1]) for x in motif_list])+")"
         h_dict=dict()
-        for i,reduction in enumerate(self.motif_reduction_list):
+        for i,reduction in self.motif_reduction_dict.values():
                 newlabel="" if len(reduction.motif_history)==0 else motif_history_text(reduction.motif_history)
                 h_dict[i]=str(i)+" ["+newlabel+"]"
         G_reduced_network_based_labeled = nx.relabel_nodes(G_reduced_network_based.copy(), h_dict)
@@ -509,12 +509,12 @@ class SuccessionDiagram:
 
     def match_reduction_node_to_attractors(self,reduction_node):
         '''
-        Matches the nodes of the reduced network based succession diagram (from self..motif_reduction_list_dictionary)
+        Matches the nodes of the reduced network based succession diagram (from self..motif_reduction_dict_dictionary)
         to the attractor states (from self.attractor_dict).
 
         It returns the keys attractors with which the reduction node has a perfect match
         '''
-        merged_reductions=frozenset().union(*self.motif_reduction_list_dictionary[reduction_node])
+        merged_reductions=frozenset().union(*self.motif_reduction_dict_dictionary[reduction_node])
         match_list=[]
         for attr in self.attractor_dict:
             attr_tuple_set=frozenset(zip(self.attractor_dict[attr].keys(),self.attractor_dict[attr].values()))
@@ -658,10 +658,10 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
 def motif_history_text(history):
     """
     Obtain the string version of the motif_history of a reduced network
-    Given the motif_history of a reduction.from motif_reduction_list, obtain a text version of this motif_history
+    Given the motif_history of a reduction.from motif_reduction_dict, obtain a text version of this motif_history
 
     Inputs:
-    history - motif_history of a reduced network.from motif_reduction_list
+    history - motif_history of a reduced network.from motif_reduction_dict
 
     Outputs:
     String of motif history with each motif inside a parenthesis and separated by a line break

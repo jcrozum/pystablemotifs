@@ -116,7 +116,7 @@ def String_Rules_From_Binary(node_rules_binary_dictionary):
 def Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=1000,write_Boolean_network=True):
     """
     Obtain the string version of the motif_history of a reduced network
-    Given the motif_history of a reduction.from motif_reduction_list, obtain a text version of this motif_history
+    Given the motif_history of a reduction.from motif_reduction_dict, obtain a text version of this motif_history
 
     Inputs:
     N - int, Number of nodes of RBN
