@@ -3,6 +3,8 @@ import itertools as it
 import matplotlib
 import matplotlib.pyplot as plt
 
+from copy import deepcopy
+
 import StableMotifs.Reduction as sm_reduction
 import StableMotifs.Format as sm_format
 import StableMotifs.DomainOfInfluence as sm_doi
@@ -59,6 +61,12 @@ class SuccessionDiagram:
                         new_perm[i] = child_perm[p]
                     if not new_perm in self.motif_reduction_dict[child].merged_history_permutations:
                         self.motif_reduction_dict[child].merged_history_permutations.append(new_perm)
+
+    def find_equivalent_reduction(self,fixed):
+        for reduction in self.motif_reduction_dict.values():
+            if reduction.logically_fixed_nodes == fixed:
+                return reduction
+        return None
 
     def add_motif_reduction(self,motif_reduction):
         if self.motif_reduction_dict == {}:
@@ -627,11 +635,20 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     Outputs:
     diagram - SuccessionDiagram object describing the succession diagram for the system
     """
-    if fixed is None:
-        fixed = {}
-    myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,max_simulate_size=max_simulate_size,prioritize_source_motifs=prioritize_source_motifs,max_stable_motifs=max_stable_motifs)
     if diagram is None:
         diagram = SuccessionDiagram()
+
+    if fixed is None:
+        fixed = {}
+
+    myMotifReductionToCopy = diagram.find_equivalent_reduction(fixed)
+
+    if myMotifReductionToCopy is None:
+        myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,max_simulate_size=max_simulate_size,prioritize_source_motifs=prioritize_source_motifs,max_stable_motifs=max_stable_motifs)
+    else:
+        myMotifReduction = deepcopy(myMotifReductionToCopy)
+        myMotifReduction.motif_history = motif_history
+
     diagram.add_motif_reduction(myMotifReduction)
 
     # Prioritize source nodes
