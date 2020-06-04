@@ -300,9 +300,9 @@ class MotifReduction:
                     self.conserved_functions = sm_rspace.attractor_space_candidates(self.stable_motifs,
                                                                          self.time_reverse_stable_motifs)
             else:
-                print("STG is too large to simulate ("+
-                str(simulate_size)+"/"+str(max_simulate_size)+
-                "). We will attempt reduction methods. Increase max_simulate_size to force simulation.")
+                #print("STG is too large to simulate ("+
+                #str(simulate_size)+"/"+str(max_simulate_size)+
+                #"). We will attempt reduction methods. Increase max_simulate_size to force simulation.")
                 self.delprimes, self.attractor_constants = mediator_reduction(self.reduced_primes)
                 self.delprimes, nc = deletion_reduction(self.delprimes)
                 self.attractor_constants.update(nc)
@@ -320,11 +320,11 @@ class MotifReduction:
                         break
                     if sat:
                         self.terminal = "no"
-                        print("The reduction indicates that the branch is not terminal. No need to simulate.")
+                        #print("The reduction indicates that the branch is not terminal. No need to simulate.")
                         self.attractor_dict_list = self.generate_attr_dict()
                         return
                 if len(self.delprimes) < max_simulate_size:
-                    print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
+                    #print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
                     self.find_deletion_no_motif_attractors()
                     if len(self.deletion_no_motif_attractors) == 0 and self.terminal != "yes":
                         self.terminal = "no"

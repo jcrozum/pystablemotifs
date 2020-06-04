@@ -40,7 +40,8 @@ class SuccessionDiagram:
         self.attractor_guaranteed_list = []
         self.reduced_complex_attractor_list = []
         self.deletion_attractor_list = []
-        self.unreduced_primes = None
+        self.unreduced_primes = None\
+
     def find_motif_permutation(self,motif_history):
         for i,mr in self.motif_reduction_dict.items():
             if len(mr.motif_history) == len(motif_history):
@@ -55,7 +56,9 @@ class SuccessionDiagram:
         self.motif_reduction_dict[reduction_index].merged_history_permutations.append(permutation)
         for child in nx.topological_sort(self.digraph):
             for parent in self.digraph.predecessors(child):
-                for parent_perm,child_perm in it.product(self.motif_reduction_dict[parent].merged_history_permutations,self.motif_reduction_dict[child].merged_history_permutations):
+                for parent_perm,child_perm in it.product(
+                    self.motif_reduction_dict[parent].merged_history_permutations,
+                    self.motif_reduction_dict[child].merged_history_permutations):
                     new_perm = child_perm.copy()
                     for i,p in enumerate(parent_perm):
                         new_perm[i] = child_perm[p]
@@ -647,7 +650,9 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
         myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,max_simulate_size=max_simulate_size,prioritize_source_motifs=prioritize_source_motifs,max_stable_motifs=max_stable_motifs)
     else:
         myMotifReduction = deepcopy(myMotifReductionToCopy)
-        myMotifReduction.motif_history = motif_history
+        myMotifReduction.motif_history = motif_history.copy()
+        myMotifReduction.merged_history_permutations = []
+        myMotifReduction.merge_source_motifs()
 
     diagram.add_motif_reduction(myMotifReduction)
 
