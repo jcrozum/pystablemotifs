@@ -430,10 +430,8 @@ class MotifReduction:
     def build_deletion_STG(self):
         names = sorted(self.delprimes)
         name_ind = {n:i for i,n in enumerate(names)}
-
         trprimes = sm_time.time_reverse_primes(self.delprimes)
         trsms = PyBoolNet.AspSolver.trap_spaces(trprimes,"max")
-
 
         if self.rspace_update_primes is not None:
             delrnames = [x for x in sorted(self.rspace_update_primes) if x in self.delprimes]
@@ -443,9 +441,7 @@ class MotifReduction:
             rnames = names.copy()
             rname_ind = name_ind.copy()
             fixed = {}
-
         sim_names = [x for x in names if not x in fixed]
-
 
         #K = self.build_K0()
         K = set()
@@ -475,7 +471,7 @@ class MotifReduction:
             inspace = self.build_inspace(ss,names,tr_stable_motifs = trsms)
             inspace_dict[ss] = inspace
 
-            self.deletion_STG.add_node(ss) # might end up removing later
+            self.deletion_STG.add_node(ss) # might end up removing the node later
             for i,r in enumerate(names):
                 nri = int(not int(ss[i]))
                 # if any p below is satisfied, we get a change of state
@@ -494,7 +490,6 @@ class MotifReduction:
                         # Check if changed something that should be fixed or landed in K
                         # If not, check if we left a TR stable motif
                         prune = r in fixed or child_state in K
-
                         # next we check to see if we've left the rspace
                         # note that we don't have to check rspace[0], as this
                         # is handled by checking r in fixed

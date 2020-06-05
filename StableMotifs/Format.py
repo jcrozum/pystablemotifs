@@ -11,7 +11,7 @@ config.read(os.path.join(BASE, "Dependencies", "settings.cfg"))
 
 CMD_BNET2PRIMES = os.path.normpath(os.path.join(BASE, "Dependencies", config.get("Executables", "bnet2prime")))
 
-def longbnet2primes(BNET):
+def longbnet2primes(BNET, remove_constants = False):
     """
     A modified version of PyBoolNet's bnet2primes that does not do path-checking,
     as this can cause errors if the bnet rules are very long. Assumes BNET is a
@@ -28,6 +28,10 @@ def longbnet2primes(BNET):
     out = out.replace(' ','') # remove whitespaces
 
     primes = ast.literal_eval(out)
+
+    if remove_constants:
+        PyBoolNet.PrimeImplicants._percolation(primes,True)
+
     return primes
 
 # Convert rules from BooleanNet format to PyBoolNet format
@@ -41,12 +45,12 @@ def booleannet2bnet(rules):
 
     Also replaces ~ with !
     """
-    s = re.sub("\s*\*\s*=\s*",",\t",rules)
-    s = re.sub("\s+not\s+"," !",s, flags=re.IGNORECASE)
-    s = re.sub("\(\s*not\s+","(!",s, flags=re.IGNORECASE)
-    s = re.sub("\s*~\s*"," !",s, flags=re.IGNORECASE)
-    s = re.sub("\s+and\s+"," & ",s, flags=re.IGNORECASE)
-    s = re.sub("\s+or\s+"," | ",s, flags=re.IGNORECASE)
+    s = re.sub("\s*\*\s*=\s*",",\t",rules) # replace "=" with ",\t"
+    s = re.sub("\s+not\s+"," !",s, flags=re.IGNORECASE) # not -> !
+    s = re.sub("\(\s*not\s+","(!",s, flags=re.IGNORECASE) # not -> ! (with parens)
+    s = re.sub("\s*~\s*"," !",s, flags=re.IGNORECASE) # ~ -> !
+    s = re.sub("\s+and\s+"," & ",s, flags=re.IGNORECASE) # and -> &
+    s = re.sub("\s+or\s+"," | ",s, flags=re.IGNORECASE) # or -> |
 
     return s
 
@@ -62,12 +66,21 @@ def bnetDNF2list(bnet):
 
     for L in LL:
         Ldict = {}
+        contradiction = False
         for literal in L:
             if literal[0]=="!":
-                Ldict[literal[1:]] = 0
+                n = literal[1:]
+                s = 0
             else:
-                Ldict[literal] = 1
-        bnetList.append(Ldict)
+                n = literal
+                s = 1
+            if n not in Ldict:
+                Ldict[n] = s
+            elif Ldict[n] != s:
+                contradiction = True
+                break
+        if not contradiction:
+            bnetList.append(Ldict)
     return bnetList
 
 def build_rule_using_bnetDNFs(expr0,expr1):
