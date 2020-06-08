@@ -51,7 +51,8 @@ def booleannet2bnet(rules):
     s = re.sub("\s*~\s*"," !",s, flags=re.IGNORECASE) # ~ -> !
     s = re.sub("\s+and\s+"," & ",s, flags=re.IGNORECASE) # and -> &
     s = re.sub("\s+or\s+"," | ",s, flags=re.IGNORECASE) # or -> |
-
+    s = re.sub("False","0",s, flags=re.IGNORECASE) # False -> 0 (ignore case)
+    s = re.sub("True","1",s, flags=re.IGNORECASE) # True -> 1 (ignore case)
     return s
 
 def bnetDNF2list(bnet):
