@@ -10,12 +10,14 @@ class AttractorRepertoire:
         self.reduction_attractors = {} # dict with values that are lists of matching attractors
         self.fewest_attractors = None
         self.most_attractors = None
+        self.primes = None
 
 
 
     @classmethod
     def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000):
         x = cls()
+        x.primes = primes
         x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
         return x
 
@@ -23,6 +25,7 @@ class AttractorRepertoire:
     def from_succession_diagram(cls,succession_diagram):
         x = cls()
         x.succession_diagram = succession_diagram
+        x.primes = succession_diagram.unreduced_primes
         x.get_attractors_from_succession_diagram()
         x.count_attractors()
         return x
