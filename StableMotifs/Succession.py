@@ -40,7 +40,7 @@ class SuccessionDiagram:
         self.attractor_guaranteed_list = []
         self.reduced_complex_attractor_list = []
         self.deletion_attractor_list = []
-        self.unreduced_primes = None\
+        self.unreduced_primes = None
 
     def find_motif_permutation(self,motif_history):
         for i,mr in self.motif_reduction_dict.items():
