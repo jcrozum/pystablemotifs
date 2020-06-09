@@ -90,3 +90,23 @@ def attractor_dataframe(ar):
         df=df.append(a.attractor_dict,ignore_index=True).astype(int, errors='ignore').astype(str)
 
     return df
+
+def get_motif_set(ar):
+    '''
+    tbd
+    '''
+    GM_no_attr=networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=False)
+    SM_set=set([])
+    for n in GM_no_attr.nodes(data=True):
+        SM_set.add(frozenset([i for i in n[1]['node_states'].items()]))
+    return [dict(sm) for sm in SM_set]
+
+def save_to_graphml(G,model_name):
+    '''
+    tbd
+    '''
+    #Graphml does not support complex attribues so we create a copy with the node_states attribute:
+    G_ex=G.copy()
+    for n in G_ex.nodes():
+        G_ex.nodes[n]['node_states']=str(G_ex.nodes[n]['node_states'])
+    nx.write_graphml(G_ex, "%s.graphml"%model_name)
