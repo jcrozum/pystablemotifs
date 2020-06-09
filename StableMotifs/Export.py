@@ -13,11 +13,14 @@ def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_d
     G_reduced_network_based=ar.succession_diagram.digraph.copy()
     for i in G_reduced_network_based.nodes():
         G_reduced_network_based.nodes[i]['label']=format_reduction_label(str(ar.succession_diagram.motif_reduction_dict[i].motif_history))
+        G_reduced_network_based.nodes[i]['node_states']=ar.succession_diagram.motif_reduction_dict[i].motif_history
 
     if include_attractors_in_diagram:
         for a_index,a in enumerate(ar.attractors):
             G_reduced_network_based.add_node('A'+str(a_index))
             G_reduced_network_based.nodes['A'+str(a_index)]['label']=format_reduction_label(str(a.attractor_dict))
+            G_reduced_network_based.nodes['A'+str(a_index)]['node_states']=a.attractor_dict
+
             for r in a.reductions:
                 r_key=list(ar.succession_diagram.motif_reduction_dict.keys())[list(ar.succession_diagram.motif_reduction_dict.values()).index(r)]
                 G_reduced_network_based.add_edge(r_key,'A'+str(a_index))
@@ -63,11 +66,13 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
         node_motif=set([frozenset(k.items()) for k in ar.succession_diagram.motif_reduction_dict[j].motif_history])-set([frozenset(k.items()) for k in ar.succession_diagram.motif_reduction_dict[i].motif_history])
         node_label=format_reduction_label(str(dict(list(node_motif)[0])))
         G_motif_based.nodes[(i,j)]['label']=node_label
+        G_motif_based.nodes[(i,j)]['node_states']=dict(list(node_motif)[0])
 
     if include_attractors_in_diagram:
         for a_index,a in enumerate(ar.attractors):
             G_motif_based.add_node('A'+str(a_index))
             G_motif_based.nodes['A'+str(a_index)]['label']=format_reduction_label(str(a.attractor_dict))
+            G_motif_based.nodes['A'+str(a_index)]['node_states']=a.attractor_dict
             for r in a.reductions:
                 r_key=list(ar.succession_diagram.motif_reduction_dict.keys())[list(ar.succession_diagram.motif_reduction_dict.values()).index(r)]
                 for i,j in G_motif_based.nodes():
