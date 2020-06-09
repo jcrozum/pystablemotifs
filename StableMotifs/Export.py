@@ -25,12 +25,11 @@ def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_d
     return G_reduced_network_based
 
 def plot_nx_succession_diagram(g, fig_dimensions=[], pos='pydot', detailed_labels=True, node_size=[], node_color='grey',
-                              font_size=12, label_color='b', font_color='black'):
+                              font_size=12, font_color='black'):
 
     '''
     tbd
     '''
-
     from networkx.drawing.nx_agraph import graphviz_layout
     import matplotlib.pyplot as plt
 
@@ -44,7 +43,7 @@ def plot_nx_succession_diagram(g, fig_dimensions=[], pos='pydot', detailed_label
 
     plt.figure(figsize=fig_dimensions)
     nx.drawing.draw_networkx_nodes(g, pos,node_shape='s',node_color=node_color, node_size=node_size)
-    nx.draw_networkx_edges(g, pos, arrowstyle='fancy',arrowsize=20)
+    nx.draw_networkx_edges(g, pos, arrowstyle='fancy',arrowsize=10)
     if detailed_labels:
         nx.drawing.draw_networkx_labels(g,pos, labels=dict(g.nodes('label')),font_size=font_size, font_color=font_color)
     else:
@@ -53,7 +52,6 @@ def plot_nx_succession_diagram(g, fig_dimensions=[], pos='pydot', detailed_label
     plt.show()
 
 def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=True):
-
     '''
     tbd
     '''
@@ -76,3 +74,14 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
                     if r_key==j:
                         G_motif_based.add_edge((i,j),'A'+str(a_index))
     return G_motif_based
+
+def attractor_dataframe(ar):
+    '''
+    tbd
+    '''
+    import pandas as pd
+    df=pd.DataFrame()
+    for a in ar.attractors:
+        df=df.append(a.attractor_dict,ignore_index=True).astype(int, errors='ignore').astype(str)
+
+    return df
