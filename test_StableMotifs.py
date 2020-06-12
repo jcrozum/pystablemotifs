@@ -26,8 +26,8 @@ F*=E
         self.assertDictEqual(self.diag.attractor_fixed_nodes_list[1], {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 1, 'F': 1})
         self.assertDictEqual(self.diag.attractor_fixed_nodes_list[2], {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 0, 'F': 0})
 
-    def test_motif_reduction_list(self):
-        motif_history_list=[i.motif_history for i in self.diag.motif_reduction_list]
+    def test_motif_reduction_dict(self):
+        motif_history_list=[i.motif_history for i in self.diag.motif_reduction_dict.values()]
         validation_motif_history_list=[[],[{'A': 0, 'B': 0}],
         [{'A': 1, 'B': 1}],
         [{'A': 1, 'B': 1}, {'E': 1, 'F': 1}],

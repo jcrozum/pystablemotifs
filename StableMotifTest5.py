@@ -40,17 +40,17 @@ print("ATTRACTOR SUMMARY (MERGED)")
 print()
 diag.attractor_candidate_summary()
 print()
-print("There are", len(diag_unmerge.motif_reduction_list), "network reductions in the unmerged diagram.")
-print("There are", len(diag.motif_reduction_list), "network reductions in the merged diagram.")
+print("There are", len(diag_unmerge.motif_reduction_dict), "network reductions in the unmerged diagram.")
+print("There are", len(diag.motif_reduction_dict), "network reductions in the merged diagram.")
 print("For example . . .")
 ss = {'xA': 0, 'xB': 0, 'xC': 0, 'xD': 0, 'xE': 0}
 i = 0
-for x in diag_unmerge.motif_reduction_list:
+for x in diag_unmerge.motif_reduction_dict.values():
     if ss == x.logically_fixed_nodes:
         i += 1
 print(ss,"appears",i,"times in the unmerged diagram.")
 i = 0
-for x in diag.motif_reduction_list:
+for x in diag.motif_reduction_dict.values():
     if ss == x.logically_fixed_nodes:
         i += 1
 print(ss,"appears",i,"times in the merged diagram.")
