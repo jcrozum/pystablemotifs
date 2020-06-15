@@ -74,19 +74,20 @@ def delete_node(primes, node):
     expr1 = sm_format.rule2bnet(primes[node][1])
 
     for child in G.successors(node):
+        # If we have already simplified this child node, skip it
+        if child in constants:
+            continue
         crule1 = sm_format.rule2bnet(primes[child][1])
         crule1 = simplify_using_expression_and_negation(node,expr0,expr1,crule1)
         crule0 = sm_format.rule2bnet(primes[child][0])
         crule0 = simplify_using_expression_and_negation(node,expr0,expr1,crule0)
 
         new_primes[child] = sm_format.build_rule_using_bnetDNFs(crule0,crule1)
-
-        #crule = PyBoolNet.BooleanLogic.minimize_espresso(crule)
-        # crule = child + ",\t" + crule
-
-        # new_primes[child] = PyBoolNet.FileExchange.bnet2primes(crule)[child]
-        nc = PyBoolNet.PrimeImplicants._percolation(new_primes,True)
+        nc = PyBoolNet.PrimeImplicants._percolation(new_primes,False)
         constants.update(nc)
+
+    nc = PyBoolNet.PrimeImplicants._percolation(new_primes,True)
+    constants.update(nc)
     return new_primes, constants
 
 def simplify_using_expression_and_negation(node,expr0,expr1,bnet):
