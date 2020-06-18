@@ -4,13 +4,17 @@ import multiprocessing as mp
 import time
 from timeit import default_timer
 
+from pathlib import Path
+
+max_simulate_size=10
+
 # The task that will be passed to the workers in the parallelization loop:
 # Given (i,primes), compute the attractor repertoire object. We keep track of i
 # so that we can do follow-up on networks that timeout or have other difficulties.
 def analyze_rules(x):
     i = x[0]
     primes = x[1]
-    return i,sm.AttractorRepertoire.from_primes(primes,max_simulate_size=10)
+    return i,sm.AttractorRepertoire.from_primes(primes,max_simulate_size=max_simulate_size)
 
 # Function to turn ensemble into a dictionary of PyBoolNet primes with index keys
 def primify_rbn(rbn_ensemble_rules):
@@ -22,6 +26,8 @@ def primify_rbn(rbn_ensemble_rules):
 
 # Do not remove this if statement; multiprocessing needs it
 if __name__ == '__main__':
+    # How many cores do we want to use?
+    N_proc = mp.cpu_count()
 
     # Ensemble parameters
     K=2 # in-degree
@@ -35,18 +41,20 @@ if __name__ == '__main__':
     SoftTimeCapSeconds = 30
     GetterTimeoutSeconds = 5
 
-    followups_prime = {} # The primes that timed out
-    followups_ar = {} # these are attractor repertoire objects that have
-                      #different upper and lower bounds for the attractor number
-    attbounds = {} # these are the results we're interested in
-
-    # How many cores do we want to use?
-    N_proc = mp.cpu_count()
-    if N_proc < N_ensemble:
-        N_proc = N_ensemble
+    pname = "p="+str(p_bias)+"_K="+str(K)+"_seed="+str(seed)+"_simsize="+\
+        str(max_simulate_size)+"_timeouts="+str(GetterTimeoutSeconds)+","+\
+        str(SoftTimeCapSeconds)+"/"
+    Path("./"+pname).mkdir(exist_ok=True)
+    fname = pname + "network_summaries.csv"
+    # clear file contents and write header:
+    with open(fname,"w") as file:
+        print("N,index,lbound,ubound",file=file)
 
     chunksize = 1 # How big should the list be that we pass to each worker?
 
+    attbounds = {} # these are the results we're interested in
+
+    # Main loop
     for N in [32,64,128,256,512]: # Number of nodes (before reduction)
         print("Generating ensemble Kauffman RBNs for N =",N,". . .")
         rbn_ensemble_rules=sm.RandomBooleanNetworks.Random_Boolean_Network_Ensemble_Kauffman(N,K,p_bias,N_ensemble,seed=seed,write_Boolean_network=False)
@@ -64,32 +72,14 @@ if __name__ == '__main__':
                 try: # we calculated in time
                     i,r = res.next(timeout=GetterTimeoutSeconds)
                     ars[i]=r
+                    G=sm.Export.networkx_succession_diagram_reduced_network_based(r)
+                    sm.Export.save_to_graphml(G,pname+"N="+str(N)+",i="+str(i))
                 except mp.TimeoutError: # we are too slow . . .
                     if default_timer() - start > SoftTimeCapSeconds: # try again?
-                        print("Timeout")
                         break
                 except StopIteration: # finished calculating everything
-                    print("Done")
                     break
 
-        # Collect and display the primes that timed out
-        followups_prime[N] = [p for i,p in rbn_primes.items() if i not in ars]
-        for p in followups_prime[N]:
-            print()
-            print("Timeout Primes")
-            sm.Format.pretty_print_prime_rules(p)
-            print()
-
-        # Grab the bounds on attractor number, and keep track of when they differ
-        followups_ar[N] = []
-        attbounds[N] = []
-        for ar in ars.values():
-            attbounds[N].append((ar.fewest_attractors,ar.most_attractors))
-            if ar.fewest_attractors != ar.most_attractors:
-                followups_ar[N].append(ar)
-            print(ar.fewest_attractors,ar.most_attractors)
-
-    # Display average upper and lower bounds on attractor number
-    for k in attbounds:
-        L = attbounds[k]
-        print(k,sum([x[0] for x in L]) / len(L),sum([x[1] for x in L]) / len(L))
+        with open(fname, "a") as file:
+            for ind,ar in ars.items():
+                print(N,ind,ar.fewest_attractors,ar.most_attractors,file=file,sep=",")

@@ -11,9 +11,16 @@ def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_d
     '''
 
     G_reduced_network_based=ar.succession_diagram.digraph.copy()
+    has_nodes = False
     for i in G_reduced_network_based.nodes():
+        has_nodes = True
         G_reduced_network_based.nodes[i]['label']=format_reduction_label(str(ar.succession_diagram.motif_reduction_dict[i].motif_history))
         G_reduced_network_based.nodes[i]['node_states']=ar.succession_diagram.motif_reduction_dict[i].motif_history
+
+    if not has_nodes:
+        G_reduced_network_based.add_node(0)
+        G_reduced_network_based.nodes[0]['label'] = '[]'
+        G_reduced_network_based.nodes[0]['node_states'] = []
 
     if include_attractors_in_diagram:
         for a_index,a in enumerate(ar.attractors):

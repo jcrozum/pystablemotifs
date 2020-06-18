@@ -3,6 +3,7 @@ RBN*/
 *.graphml
 *.gml
 *.csv
+p=*_K=*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
