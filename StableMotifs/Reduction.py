@@ -104,6 +104,8 @@ def remove_outdag(primes):
     Removes the terminal directed acyclic part of the regulatory network. This
     part of the network does not influence the attractor repertoire.
     """
+    if len(primes) == 0:
+        return primes, {}
     G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
     od = PyBoolNet.InteractionGraphs.find_outdag(G)
     reduced = primes.copy()

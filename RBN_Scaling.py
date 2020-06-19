@@ -21,7 +21,9 @@ def primify_rbn(rbn_ensemble_rules):
     prime_dict = {}
     for i,x in enumerate(rbn_ensemble_rules):
         rules = sm.Format.booleannet2bnet(x)
-        prime_dict[i] = sm.Format.longbnet2primes(rules, remove_constants = True)
+        primes = sm.Format.longbnet2primes(rules, remove_constants = True)    
+        primes, constants = sm.Reduction.remove_outdag(primes)
+        prime_dict[i] = primes
     return prime_dict
 
 # Do not remove this if statement; multiprocessing needs it
