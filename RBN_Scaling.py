@@ -21,7 +21,7 @@ def primify_rbn(rbn_ensemble_rules):
     prime_dict = {}
     for i,x in enumerate(rbn_ensemble_rules):
         rules = sm.Format.booleannet2bnet(x)
-        primes = sm.Format.longbnet2primes(rules, remove_constants = True)    
+        primes = sm.Format.longbnet2primes(rules, remove_constants = True)
         primes, constants = sm.Reduction.remove_outdag(primes)
         prime_dict[i] = primes
     return prime_dict
@@ -34,14 +34,14 @@ if __name__ == '__main__':
     # Ensemble parameters
     K=2 # in-degree
     p_bias=sm.RandomBooleanNetworks.get_criticality_p_Kauffman(K)[0] # bias
-    N_ensemble=20 # ensemble size
+    N_ensemble=90 # ensemble size
     seed=1000
 
     # Timeout parameters
     # After SoftTimeCapSeconds seconds, we give up if we go more than
     # GetterTimeoutSeconds without obtaining a new result
-    SoftTimeCapSeconds = 30
-    GetterTimeoutSeconds = 5
+    SoftTimeCapSeconds = 3600
+    GetterTimeoutSeconds = 30
 
     pname = "p="+str(p_bias)+"_K="+str(K)+"_seed="+str(seed)+"_simsize="+\
         str(max_simulate_size)+"_timeouts="+str(GetterTimeoutSeconds)+","+\
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     attbounds = {} # these are the results we're interested in
 
     # Main loop
-    for N in [32,64,128,256,512]: # Number of nodes (before reduction)
+    for N in [181]: # Number of nodes (before reduction)
         print("Generating ensemble Kauffman RBNs for N =",N,". . .")
         rbn_ensemble_rules=sm.RandomBooleanNetworks.Random_Boolean_Network_Ensemble_Kauffman(N,K,p_bias,N_ensemble,seed=seed,write_Boolean_network=False)
         rbn_primes = primify_rbn(rbn_ensemble_rules)
