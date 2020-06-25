@@ -121,11 +121,8 @@ def import_primes(fname, format='BooleanNet', remove_constants=False):
         rules = rules
     else:
         raise ValueError('Unrecognized format',format)
-
-    primes = PyBoolNet.FileExchange.bnet2primes(rules)
-
-    if remove_constants:
-        PyBoolNet.PrimeImplicants._percolation(primes,True)
+    
+    primes = longbnet2primes(rules,remove_constants=remove_constants)
 
     return primes
 

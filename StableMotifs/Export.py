@@ -4,6 +4,39 @@ import networkx as nx
 def format_reduction_label(s):
     return s.replace("'","").replace('[','').replace(']','')
 
+def expanded_network(primes, single_parent_composites = False):
+    G = nx.DiGraph()
+    cnode_id = 0
+    for p in primes:
+        for v in [0,1]:
+            name = '('+str(p)+','+str(v)+')'
+            G.add_node(name)
+            G.nodes[name]['label'] = name
+            G.nodes[name]['type'] = 'virtual'
+
+            for hedge in primes[p][v]:
+                G.add_node(cnode_id)
+                G.nodes[cnode_id]['type'] = 'composite'
+                G.add_edge(cnode_id,name)
+
+                for k in hedge:
+                    parent = '(' + str(k) + ',' + str(hedge[k]) + ')'
+                    G.add_edge(parent,cnode_id)
+                cnode_id += 1
+
+    # If we want to remove composite nodes of "size" one
+    if not single_parent_composites:
+        for i in range(cnode_id):
+            if G.in_degree(i) == 1:
+                pre = list(G.predecessors(i))[0]
+                suc = G.successors(i)
+                for j in suc:
+                    G.add_edge(pre,j)
+                G.remove_node(i)
+
+
+    return G
+
 def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=True):
 
     '''

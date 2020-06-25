@@ -60,9 +60,10 @@ if __name__ == '__main__':
     for N in [181]: # Number of nodes (before reduction)
         print("Generating ensemble Kauffman RBNs for N =",N,". . .")
         rbn_ensemble_rules=sm.RandomBooleanNetworks.Random_Boolean_Network_Ensemble_Kauffman(N,K,p_bias,N_ensemble,seed=seed,write_Boolean_network=False)
-        rbn_primes = primify_rbn(rbn_ensemble_rules)
+        rbn_primes = primify_rbn(rbn_ensemble_rules[86:87])
         print("Ensemble generated.")
-
+        sm.AttractorRepertoire.from_primes(rbn_primes[0],max_simulate_size=10)
+        quit()
         ars={} # will store calculated attractor repertoires
 
         start=default_timer() # Timer used for testing timeouts

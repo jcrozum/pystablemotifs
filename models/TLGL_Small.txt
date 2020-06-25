@@ -1,0 +1,6 @@
+s1p*= not ( cer or apo)
+flip*= not (disc or apo)
+fas*= not (s1p or apo)
+cer*=fas and not (s1p or apo)
+disc*=(cer or (fas and not flip)) and not apo
+apo*=disc or apo
