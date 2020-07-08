@@ -115,9 +115,11 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
             G_motif_based.nodes['A'+str(a_index)]['node_states']=a.attractor_dict
             for r in a.reductions:
                 r_key=list(ar.succession_diagram.motif_reduction_dict.keys())[list(ar.succession_diagram.motif_reduction_dict.values()).index(r)]
-                for i,j in G_motif_based.nodes():
-                    if r_key==j:
-                        G_motif_based.add_edge((i,j),'A'+str(a_index))
+                for n in G_motif_based.nodes():
+                    if type(n)==tuple:
+                        i,j=n
+                        if r_key==j:
+                            G_motif_based.add_edge((i,j),'A'+str(a_index))
     return G_motif_based
 
 def attractor_dataframe(ar):
