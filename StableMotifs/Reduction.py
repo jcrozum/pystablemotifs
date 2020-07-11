@@ -351,7 +351,7 @@ class MotifReduction:
                         return
                 if len(self.delprimes) < max_simulate_size:
                     #print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
-                    self.find_deletion_no_motif_attractors()
+                    self.find_deletion_no_motif_attractors(max_stable_motifs=max_stable_motifs)
                     if len(self.deletion_no_motif_attractors) == 0 and self.terminal != "yes":
                         self.terminal = "no"
                     # else:
@@ -453,11 +453,11 @@ class MotifReduction:
             if tsin: inspaces.append(ts)
         return inspaces
 
-    def build_deletion_STG(self):
+    def build_deletion_STG(self,max_stable_motifs=10000):
         names = sorted(self.delprimes)
         name_ind = {n:i for i,n in enumerate(names)}
         trprimes = sm_time.time_reverse_primes(self.delprimes)
-        trsms = PyBoolNet.AspSolver.trap_spaces(trprimes,"max")
+        trsms = PyBoolNet.AspSolver.trap_spaces(trprimes,"max",MaxOutput=max_stable_motifs)
 
         if self.rspace_update_primes is not None:
             delrnames = [x for x in sorted(self.rspace_update_primes) if x in self.delprimes]
@@ -542,9 +542,9 @@ class MotifReduction:
                         break # we know the ss at r changed, no need to check more primes
                 if not simstate: break # don't check other vars: already found ss -> K
 
-    def find_deletion_no_motif_attractors(self):
+    def find_deletion_no_motif_attractors(self,max_stable_motifs=10000):
         if self.deletion_STG is None:
-            self.build_deletion_STG()
+            self.build_deletion_STG(max_stable_motifs=max_stable_motifs)
 
         # Note: fixed points of the deletion system are fixed points of the
         # undeleted system, so we ignore these as they must contain stable motifs

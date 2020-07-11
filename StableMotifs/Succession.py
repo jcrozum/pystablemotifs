@@ -509,6 +509,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
             diagram = build_succession_diagram(np,fixed3,myMotifReduction.motif_history+[sm],
                 diagram, merge_equivalent_motifs=merge_equivalent_motifs,
                 max_simulate_size=max_simulate_size,
+                max_stable_motifs=max_stable_motifs,
                 prioritize_source_motifs=prioritize_source_motifs)
     return diagram
 
