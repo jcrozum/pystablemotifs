@@ -122,6 +122,65 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
                             G_motif_based.add_edge((i,j),'A'+str(a_index))
     return G_motif_based
 
+def networkx_succession_diagram_motif_based_simplified(ar, GM=None, include_attractors_in_diagram=True):
+
+    '''
+    tbd
+    '''
+
+    if GM==None:
+        GM=networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=include_attractors_in_diagram)
+    motifs_list=get_motif_set(ar)
+    motifs_dict = dict(zip(range(len(motifs_list)),motifs_list))
+    merged_dict=motifs_dict.copy()
+    attractors_dict=dict()
+    if include_attractors_in_diagram:
+        for a_index,a in enumerate(ar.attractors):
+            merged_dict['A'+str(a_index)]=a.attractor_dict
+            attractors_dict['A'+str(a_index)]=a.attractor_dict
+    motif_keys=list(merged_dict.keys())
+    motif_values=list(merged_dict.values())
+    GMM=nx.DiGraph()
+    GMM.add_nodes_from(merged_dict)
+    for n in GMM.nodes():
+        GMM.nodes[n]['node_states']=merged_dict[n]
+    for i,j in GM.edges():
+        print(i,j)
+        source=motif_keys[motif_values.index(GM.nodes[i]['node_states'])]
+        target=motif_keys[motif_values.index(GM.nodes[j]['node_states'])]
+        GMM.add_edge(source,target)
+    return GMM
+
+def networkx_motif_attractor_bipartite_graph(ar):
+
+    '''
+    tbd
+    '''
+
+    GMM=networkx_succession_diagram_motif_based_simplified(ar,include_attractors_in_diagram=True)
+
+    motifs_list=get_motif_set(ar)
+    motifs_dict = dict(zip(range(len(motifs_list)),motifs_list))
+
+    attractors_dict=dict()
+    for a_index,a in enumerate(ar.attractors):
+        attractors_dict['A'+str(a_index)]=a.attractor_dict
+
+    GM_bp=nx.DiGraph()
+    GM_bp.add_nodes_from(motifs_dict)
+    GM_bp.add_nodes_from(attractors_dict)
+    for m in motifs_dict:
+        GM_bp.nodes[m]['node_states']=motifs_dict[m]
+        for a in attractors_dict:
+            GM_bp.nodes[a]['node_states']=attractors_dict[a]
+            if nx.has_path(GMM,m,a):
+                GM_bp.add_edge(m,a)
+
+    for a in attractors_dict:
+            GM_bp.nodes[a]['node_states']=attractors_dict[a]
+
+    return GM_bp
+
 def attractor_dataframe(ar):
     '''
     tbd
