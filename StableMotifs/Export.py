@@ -48,18 +48,18 @@ def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_d
     for i in G_reduced_network_based.nodes():
         has_nodes = True
         G_reduced_network_based.nodes[i]['label']=format_reduction_label(str(ar.succession_diagram.motif_reduction_dict[i].motif_history))
-        G_reduced_network_based.nodes[i]['node_states']=ar.succession_diagram.motif_reduction_dict[i].motif_history
+        G_reduced_network_based.nodes[i]['virtual_nodes']=ar.succession_diagram.motif_reduction_dict[i].motif_history
 
     if not has_nodes:
         G_reduced_network_based.add_node(0)
         G_reduced_network_based.nodes[0]['label'] = '[]'
-        G_reduced_network_based.nodes[0]['node_states'] = []
+        G_reduced_network_based.nodes[0]['virtual_nodes'] = []
 
     if include_attractors_in_diagram:
         for a_index,a in enumerate(ar.attractors):
             G_reduced_network_based.add_node('A'+str(a_index))
             G_reduced_network_based.nodes['A'+str(a_index)]['label']=format_reduction_label(str(a.attractor_dict))
-            G_reduced_network_based.nodes['A'+str(a_index)]['node_states']=a.attractor_dict
+            G_reduced_network_based.nodes['A'+str(a_index)]['virtual_nodes']=a.attractor_dict
 
             for r in a.reductions:
                 r_key=list(ar.succession_diagram.motif_reduction_dict.keys())[list(ar.succession_diagram.motif_reduction_dict.values()).index(r)]
@@ -106,13 +106,13 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
         node_motif=set([frozenset(k.items()) for k in ar.succession_diagram.motif_reduction_dict[j].motif_history])-set([frozenset(k.items()) for k in ar.succession_diagram.motif_reduction_dict[i].motif_history])
         node_label=format_reduction_label(str(dict(list(node_motif)[0])))
         G_motif_based.nodes[(i,j)]['label']=node_label
-        G_motif_based.nodes[(i,j)]['node_states']=dict(list(node_motif)[0])
+        G_motif_based.nodes[(i,j)]['virtual_nodes']=dict(list(node_motif)[0])
 
     if include_attractors_in_diagram:
         for a_index,a in enumerate(ar.attractors):
             G_motif_based.add_node('A'+str(a_index))
             G_motif_based.nodes['A'+str(a_index)]['label']=format_reduction_label(str(a.attractor_dict))
-            G_motif_based.nodes['A'+str(a_index)]['node_states']=a.attractor_dict
+            G_motif_based.nodes['A'+str(a_index)]['virtual_nodes']=a.attractor_dict
             for r in a.reductions:
                 r_key=list(ar.succession_diagram.motif_reduction_dict.keys())[list(ar.succession_diagram.motif_reduction_dict.values()).index(r)]
                 for n in G_motif_based.nodes():
@@ -143,11 +143,11 @@ def networkx_succession_diagram_motif_based_simplified(ar, GM=None, include_attr
     GMM=nx.DiGraph()
     GMM.add_nodes_from(merged_dict)
     for n in GMM.nodes():
-        GMM.nodes[n]['node_states']=merged_dict[n]
+        GMM.nodes[n]['virtual_nodes']=merged_dict[n]
     for i,j in GM.edges():
         print(i,j)
-        source=motif_keys[motif_values.index(GM.nodes[i]['node_states'])]
-        target=motif_keys[motif_values.index(GM.nodes[j]['node_states'])]
+        source=motif_keys[motif_values.index(GM.nodes[i]['virtual_nodes'])]
+        target=motif_keys[motif_values.index(GM.nodes[j]['virtual_nodes'])]
         GMM.add_edge(source,target)
     return GMM
 
@@ -170,14 +170,14 @@ def networkx_motif_attractor_bipartite_graph(ar):
     GM_bp.add_nodes_from(motifs_dict)
     GM_bp.add_nodes_from(attractors_dict)
     for m in motifs_dict:
-        GM_bp.nodes[m]['node_states']=motifs_dict[m]
+        GM_bp.nodes[m]['virtual_nodes']=motifs_dict[m]
         for a in attractors_dict:
-            GM_bp.nodes[a]['node_states']=attractors_dict[a]
+            GM_bp.nodes[a]['virtual_nodes']=attractors_dict[a]
             if nx.has_path(GMM,m,a):
                 GM_bp.add_edge(m,a)
 
     for a in attractors_dict:
-            GM_bp.nodes[a]['node_states']=attractors_dict[a]
+            GM_bp.nodes[a]['virtual_nodes']=attractors_dict[a]
 
     return GM_bp
 
@@ -199,15 +199,15 @@ def get_motif_set(ar):
     GM_no_attr=networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=False)
     SM_set=set([])
     for n in GM_no_attr.nodes(data=True):
-        SM_set.add(frozenset([i for i in n[1]['node_states'].items()]))
+        SM_set.add(frozenset([i for i in n[1]['virtual_nodes'].items()]))
     return [dict(sm) for sm in SM_set]
 
 def save_to_graphml(G,model_name):
     '''
     tbd
     '''
-    #Graphml does not support complex attribues so we create a copy with the node_states attribute:
+    #Graphml does not support complex attribues so we create a copy with the virtual_nodes attribute:
     G_ex=G.copy()
     for n in G_ex.nodes():
-        G_ex.nodes[n]['node_states']=str(G_ex.nodes[n]['node_states'])
+        G_ex.nodes[n]['virtual_nodes']=str(G_ex.nodes[n]['virtual_nodes'])
     nx.write_graphml(G_ex, "%s.graphml"%model_name)
