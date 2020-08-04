@@ -5,12 +5,12 @@ import PyBoolNet
 class test_StableMotifs(unittest.TestCase):
 
     rules='''A*=B
-            B*=A
-            C*=A or not D
-            D*=C
-            E*=B and F
-            F*=E
-            '''
+B*=A
+C*=A or not D
+D*=C
+E*=B and F
+F*=E
+'''
     rules_pbn = sm.Format.booleannet2bnet(rules)
     primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
     diag = sm.Succession.build_succession_diagram(primes)
@@ -104,8 +104,91 @@ class test_StableMotifs(unittest.TestCase):
             attractors_dict_list.append(a.attractor_dict)
         self.assertListEqual(attractors_dict_list, [{'A': '?', 'B': '?', 'C': '?', 'Y': '?', 'Z': '?', 'a': '?', 'b': '?', 'c': '?'}])
 
+#Testing functions of Export.py
 
 
+    def test_networkx_succession_diagram_reduced_network_based(self):
+        import StableMotifs.Export as ex
+        rules='''A*=B
+                B*=A
+                C*=A or not D
+                D*=C
+                E*=B and F
+                F*=E'''
+
+        rules_pbn = sm.Format.booleannet2bnet(rules)
+        primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
+        max_simulate_size=20
+        include_attractors_in_diagram=False
+        ar = sm.AttractorRepertoire.from_primes(primes, max_simulate_size=max_simulate_size)
+        GR=ex.networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=include_attractors_in_diagram)
+        self.assertDictEqual(dict(GR.nodes(data=True)),{0: {'label': '', 'virtual_nodes': []},
+                                                         1: {'label': '{A: 0, B: 0}', 'virtual_nodes': [{'A': 0, 'B': 0}]},
+                                                         2: {'label': '{A: 1, B: 1}', 'virtual_nodes': [{'A': 1, 'B': 1}]},
+                                                         3: {'label': '{A: 1, B: 1}, {E: 1, F: 1}',
+                                                          'virtual_nodes': [{'A': 1, 'B': 1}, {'E': 1, 'F': 1}]},
+                                                         4: {'label': '{A: 1, B: 1}, {E: 0, F: 0}',
+                                                          'virtual_nodes': [{'A': 1, 'B': 1}, {'E': 0, 'F': 0}]},
+                                                         5: {'label': '{E: 0, F: 0}', 'virtual_nodes': [{'E': 0, 'F': 0}]},
+                                                         6: {'label': '{E: 0, F: 0}, {A: 0, B: 0}',
+                                                          'virtual_nodes': [{'E': 0, 'F': 0}, {'A': 0, 'B': 0}]}})
+        self.assertListEqual(list(GR.edges()), [(0, 1), (0, 2), (0, 5), (2, 3), (2, 4), (5, 6)])
+
+    def test_networkx_succession_diagram_reduced_network_based(self):
+        import StableMotifs.Export as ex
+        rules='''A*=B
+                B*=A
+                C*=A or not D
+                D*=C
+                E*=B and F
+                F*=E'''
+
+        rules_pbn = sm.Format.booleannet2bnet(rules)
+        primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
+        max_simulate_size=20
+        include_attractors_in_diagram=False
+        ar = sm.AttractorRepertoire.from_primes(primes, max_simulate_size=max_simulate_size)
+        GR=ex.networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=include_attractors_in_diagram)
+        self.assertDictEqual(dict(GR.nodes(data=True)),{0: {'label': '', 'virtual_nodes': []},
+                                                         1: {'label': '{A: 0, B: 0}', 'virtual_nodes': [{'A': 0, 'B': 0}]},
+                                                         2: {'label': '{A: 1, B: 1}', 'virtual_nodes': [{'A': 1, 'B': 1}]},
+                                                         3: {'label': '{A: 1, B: 1}, {E: 1, F: 1}',
+                                                          'virtual_nodes': [{'A': 1, 'B': 1}, {'E': 1, 'F': 1}]},
+                                                         4: {'label': '{A: 1, B: 1}, {E: 0, F: 0}',
+                                                          'virtual_nodes': [{'A': 1, 'B': 1}, {'E': 0, 'F': 0}]},
+                                                         5: {'label': '{E: 0, F: 0}', 'virtual_nodes': [{'E': 0, 'F': 0}]},
+                                                         6: {'label': '{E: 0, F: 0}, {A: 0, B: 0}',
+                                                          'virtual_nodes': [{'E': 0, 'F': 0}, {'A': 0, 'B': 0}]}})
+        self.assertListEqual(list(GR.edges()), [(0, 1), (0, 2), (0, 5), (2, 3), (2, 4), (5, 6)])
+
+        include_attractors_in_diagram=True
+        GR=ex.networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=include_attractors_in_diagram)
+        self.assertDictEqual(dict(GR.nodes(data=True)),{0: {'label': '', 'virtual_nodes': []},
+                                                         1: {'label': '{A: 0, B: 0}', 'virtual_nodes': [{'A': 0, 'B': 0}]},
+                                                         2: {'label': '{A: 1, B: 1}', 'virtual_nodes': [{'A': 1, 'B': 1}]},
+                                                         3: {'label': '{A: 1, B: 1}, {E: 1, F: 1}',
+                                                          'virtual_nodes': [{'A': 1, 'B': 1}, {'E': 1, 'F': 1}]},
+                                                         4: {'label': '{A: 1, B: 1}, {E: 0, F: 0}',
+                                                          'virtual_nodes': [{'A': 1, 'B': 1}, {'E': 0, 'F': 0}]},
+                                                         5: {'label': '{E: 0, F: 0}', 'virtual_nodes': [{'E': 0, 'F': 0}]},
+                                                         6: {'label': '{E: 0, F: 0}, {A: 0, B: 0}',
+                                                          'virtual_nodes': [{'E': 0, 'F': 0}, {'A': 0, 'B': 0}]},
+                                                         'A0': {'label': '{A: 0, B: 0, C: X, D: X, E: 0, F: 0}',
+                                                          'virtual_nodes': {'A': 0, 'B': 0, 'C': 'X', 'D': 'X', 'E': 0, 'F': 0}},
+                                                         'A1': {'label': '{A: 1, B: 1, C: 1, D: 1, E: 1, F: 1}',
+                                                          'virtual_nodes': {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 1, 'F': 1}},
+                                                         'A2': {'label': '{A: 1, B: 1, C: 1, D: 1, E: 0, F: 0}',
+                                                          'virtual_nodes': {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 0, 'F': 0}}})
+        self.assertListEqual(list(GR.edges()), [(0, 1),
+                                                 (0, 2),
+                                                 (0, 5),
+                                                 (1, 'A0'),
+                                                 (2, 3),
+                                                 (2, 4),
+                                                 (3, 'A1'),
+                                                 (4, 'A2'),
+                                                 (5, 6),
+                                                 (6, 'A0')])
 
 if __name__ == '__main__':
     unittest.main()
