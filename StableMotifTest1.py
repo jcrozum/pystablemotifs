@@ -1,3 +1,5 @@
+# add a test with succession diagram for this model
+
 import PyBoolNet
 import StableMotifs as sm
 

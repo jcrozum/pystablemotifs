@@ -1,3 +1,6 @@
+#test this function with a model with inputs
+#primes = sm.Format.import_primes(sys.argv[1],remove_constants=True)
+
 import PyBoolNet
 import StableMotifs as sm
 

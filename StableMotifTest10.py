@@ -1,3 +1,6 @@
+#This tests 6 attractor control methods and 2 target control methods. GRASP might not give determinstic results
+#it should be turned into 8 different tests.
+
 import PyBoolNet
 import StableMotifs as sm
 from timeit import default_timer
