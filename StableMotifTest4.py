@@ -1,3 +1,7 @@
+#this is testing that the source nodes a properly grouped together.
+#The children of the root node in the SD should be the value combinations of the input nodes
+#There should be no more SMs in the SD that involve A or B
+
 import PyBoolNet
 import StableMotifs as sm
 
