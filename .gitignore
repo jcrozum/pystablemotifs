@@ -4,6 +4,7 @@ RBN*/
 *.gml
 *.csv
 p=*_K=*
+!Random*/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
