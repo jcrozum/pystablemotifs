@@ -54,3 +54,5 @@ The output is as follows:
     There are 2 attractors.
     {'xA': 'X', 'xB': 'X', 'xC': 0}
     {'xA': 1, 'xB': 1, 'xC': 1}
+
+For further examples, see the IPython notebook Tutorial.ipynb.
