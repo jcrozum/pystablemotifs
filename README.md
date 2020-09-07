@@ -1,4 +1,4 @@
-# StableMotifs (WORK IN PROGRESS)
+# StableMotifs
 A set of tools for attractor and target control of Boolean systems. 
 Includes stable motif reduction with oscillation checking for attractor identification and control, and Greedy Randomized Adaptive Search Procedure and brute-force methods for target control.
 
@@ -6,24 +6,51 @@ Includes stable motif reduction with oscillation checking for attractor identifi
 Extensive documentation is not yet available. See comments in the code for now if detailed usage instructions are needed.
 
 # Requirements
-PyBoolNet (v2.2.8) https://github.com/hklarner/PyBoolNet
+PyBoolNet (v2.2.8+) https://github.com/hklarner/PyBoolNet
 
-Networkx (v2.3) https://github.com/networkx/networkx/
+Networkx (v2.4+) https://github.com/networkx/networkx/
 
-For getting PyBoolNet v2.2.8 working with Networkx v2.4, see https://github.com/hklarner/PyBoolNet/issues/33
+# Features
+- Import networks in BooleanNet or BNet format
 
-# Features (Rough Outline)
-Import networks in BooleanNet or BNet format.
+- Integration with PyBoolNet
 
-Integration with PyBoolNet.
+- Find and explore all attractors of a general asynchronous update Boolean system using the succession diagram method 
 
-Find all attractors, including complex attractors, of a general asynchronous update Boolean system using the succession diagram method. For large networks, some complex attractors might not be identifiable in a reasonable time. In these cases, we place upper and lower bounds on the number of complex attractors.
+- Place upper and lower bounds on the number of complex attractors in Boolean networks that are too large to fully analyze with available computational resources
 
-Identify the stable motif attractor control strategies using one of several methods. Stable motifs can be "locked in" sequentially or collectively during the control search. Drivers for either individual stable motifs or all stable motifs taken together can be searched for using one of three methods: GRASP, brute-force for internal drivers, brute-force for any drivers (internal or external).
+- Identify attractor control strategies by leveraging stable motifs (maximal trap spaces arising from self-sustaining feedback loops)
 
-Succession diagram plotting.
+- Search for drivers of key system behaviors using brute-force of Greedy Randomized Adaptive Search Procedure (GRASP) methods
 
-Network reduction methods: Saadatpour et al. or Veliz-Cuba. Ability to remove the directed acyclic out component.
+- Plot succession diagrams, which highlight irreversible descision points in a stochastic system's trajectory
 
-Generate Kauffman random boolean networks.
+- Apply projection-based network reduction methods
 
+- Generate Kauffman random boolean networks
+
+# Basic usage example
+In the example below, we import the Boolean model specified by the file test1.txt provided in the models folder. We then print its rules and finds its attractors, which are displayed in a condensed summary form.
+    
+    import StableMotifs as sm
+    
+    relative_path_to_model = "./models/test1.txt"
+    primes = sm.Format.import_primes(relative_path_to_model)
+    
+    print("RULES")
+    sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
+    print()
+    
+    ar = sm.AttractorRepertoire.from_primes(primes)
+    ar.summary()
+
+The output is as follows:
+    
+    RULES
+    xA* = !xA & !xB | xC
+    xB* = !xA & !xB | xC
+    xC* = xA & xB
+    
+    There are 2 attractors.
+    {'xA': 'X', 'xB': 'X', 'xC': 0}
+    {'xA': 1, 'xB': 1, 'xC': 1}
