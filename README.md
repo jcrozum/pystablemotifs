@@ -3,7 +3,7 @@ A set of tools for attractor and target control of Boolean systems.
 Includes stable motif reduction with oscillation checking for attractor identification and control, and Greedy Randomized Adaptive Search Procedure and brute-force methods for target control.
 
 # Documentation
-Extensive documentation is not yet available. See the basic usage example below, or the Tutorial.ipynb notebook for basic intstructions. For advanced usage instructions, see comments in the code or contact the developers directly.
+Extensive documentation is not yet available. See the basic usage example below, or the Tutorial.ipynb notebook for basic instructions. For advanced usage instructions, see comments in the code or contact the developers directly.
 
 # Requirements
 PyBoolNet (v2.2.8+) https://github.com/hklarner/PyBoolNet
@@ -23,7 +23,7 @@ Networkx (v2.4+) https://github.com/networkx/networkx/
 
 - Search for drivers of key system behaviors using brute-force of Greedy Randomized Adaptive Search Procedure (GRASP) methods
 
-- Plot succession diagrams, which highlight irreversible descision points in a stochastic system's trajectory
+- Plot succession diagrams, which highlight irreversible decision points in a stochastic system's trajectory
 
 - Apply projection-based network reduction methods
 
