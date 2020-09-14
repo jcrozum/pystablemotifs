@@ -121,7 +121,7 @@ def import_primes(fname, format='BooleanNet', remove_constants=False):
         rules = rules
     else:
         raise ValueError('Unrecognized format',format)
-    
+
     primes = longbnet2primes(rules,remove_constants=remove_constants)
 
     return primes
@@ -215,6 +215,10 @@ def pretty_print_prime_rules(primes):
                 sl.append(' & '.join(sll))
         if len(sl) > 0:
             s += ' | '.join(sl)
+        if v[1]==[]:
+            s = k + "* = 0"
+        if v[1]==[{}]:
+            s = k + "* = 1"
         print(s)
 
 def pretty_print_rspace(L,simplify=True,silent=True):
