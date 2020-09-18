@@ -79,27 +79,26 @@ class SuccessionDiagram:
         # so it will be the reduction index AFTER the reduction is added.
         N = len(self.motif_reduction_dict)
         new_set = set([frozenset(tuple(x.items())) for x in motif_reduction.motif_history])
-        print("\n\n\nADDING NEW SET", new_set)
         if N == 0:
             self.digraph.add_node(0)
         else:
             for i,reduction in self.motif_reduction_dict.items():
                 old_set = set([frozenset(tuple(x.items())) for x in reduction.motif_history])
-                print(". . . considering old set", old_set)
+
                 # see if we're adding a parent of an existing reduction
                 if len(old_set) == len(new_set) + 1:
                     diff_set = old_set - new_set
                     if len(diff_set) == 1:
                         missing_motif = dict(diff_set.pop())
                         if missing_motif in motif_reduction.stable_motifs:
-                            self.digraph.add_edge(N,i); print("edge to old set added")
+                            self.digraph.add_edge(N,i)
                 # see if we're adding a child of an existing reduction
                 elif len(old_set) == len(new_set) - 1:
                     diff_set = new_set - old_set
                     if len(diff_set) == 1:
                         missing_motif = dict(diff_set.pop())
                         if missing_motif in reduction.stable_motifs:
-                            self.digraph.add_edge(i,N); print("edge from old set added")
+                            self.digraph.add_edge(i,N)
 
         self.motif_reduction_dict[N] = motif_reduction
         self.add_motif_permutation(N,list(range(len(motif_reduction.motif_history))))
