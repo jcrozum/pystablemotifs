@@ -97,7 +97,7 @@ class SuccessionDiagram:
                     diff_set = new_set - old_set
                     if len(diff_set) == 1:
                         missing_motif = dict(diff_set.pop())
-                        if missing_motif in reduction.stable_motifs:
+                        if missing_motif in reduction.stable_motifs or len(new_set) == 1: # valid motif OR source combination
                             self.digraph.add_edge(i,N)
 
         self.motif_reduction_dict[N] = motif_reduction
