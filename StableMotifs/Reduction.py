@@ -200,7 +200,7 @@ class MotifReduction:
     A reduced network with additional information stored;
     represents a node in a succession diagram (see Succession.py)
 
-    Variables:
+    VARIABLES:
     motif_history - list of stable motifs that can lock in to give the reduced network (in order)
     merged_history_permutations - list of permutations of motif_history (by index) that are also valid
     logically_fixed_nodes - node state dictionary describing nodes that have been
@@ -231,8 +231,16 @@ class MotifReduction:
                   that contains any and all attractors that do not lie in any
                   of the reduced network's stable motifs
     no_motif_attractors - list of complex attractors that do not "lock in" any additional stable motifs
+    attractor_dict - a dictionary describing the node states in the attractor
+    according to the following key:
+         1: variable is "ON"
+         0: variable is "OFF"
+         X: variable is known to oscillate
+         ?: at least one such variable must oscillate
+         !: the attractor may be false; if it is genuine, at least
+            one such variable must oscillate
 
-    Functions:
+    FUNCTIONS:
     __init__(self,motif_history,fixed,reduced_primes,search_partial_STGs=True,prioritize_source_motifs=True)
     merge_source_motifs(self) - merges source node motifs into larger multi-node motifs for efficiency
     test_rspace(self) - for building rspace_attractor_candidates
@@ -671,6 +679,15 @@ class MotifReduction:
 
     def generate_attr_dict(self):
         """
+        Generates a dictionary describing the node states in the attractor
+        according to the following key:
+
+             1: variable is "ON"
+             0: variable is "OFF"
+             X: variable is known to oscillate
+             ?: at least one such variable must oscillate
+             !: the attractor may be false; if it is genuine, at least
+                one such variable must oscillate
         """
         attractors_dict={}
 
@@ -729,7 +746,7 @@ class MotifReduction:
 
     def find_constants_in_complex_attractor(self,c):
 
-        '''
+        """
         Given a set of strings representing the states of a complex attractor the function finds the nodes
         that are constant in the full complex attractor.
 
@@ -739,7 +756,7 @@ class MotifReduction:
         Returns: an array constituting 0s, 1s, and Xs. X represents an oscillating node, and the 0s and 1s
         represent nodes stabilized to those states.
         E.g. for the example given for the input the code will return: array(['X', 'X', '0'], dtype='<U1')
-        '''
+        """
         import numpy as np
         ca=np.array([np.fromiter(i, int, count=len(i)) for i in c])
         attr=np.array(['X' for i in range(len(ca[0]))])

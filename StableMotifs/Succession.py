@@ -13,16 +13,14 @@ class SuccessionDiagram:
     """
     Representation of a succession diagram of a Boolean system
 
-    Variables:
+    VARIABLES:
     motif_reduction_dict - a MotifReduction-valued dictionary with integer (index) keys (see Reduction.py)
 
-    Functions:
-    __init__(self)
-    find_motif_permutation(self,motif_history)
-    add_motif_permutation(self,reduction_index,permutation)
-    add_motif_reduction(self,motif_reduction)
-    summary(self,terminal_keys=None,show_original_rules=False) - prints a summary of the succession diagram to screen
-    attractor_candidate_summary(self) - prints a summary of found or potential attractors
+    FUNCTIONS:
+    build_succession_diagram - construct the succession diagram for the input model
+    summary - prints a summary of the succession diagram to screen
+    attractor_candidate_summary - prints a summary of found or potential attractors
+    reprogram_to_trap_spaces - implements various attractor control strategies
     """
 
     def __init__(self):
@@ -301,7 +299,7 @@ class SuccessionDiagram:
         """
         Find driver sets that lead to the node states specified by logically_fixed
 
-        Inputs:
+        INPUTS:
         logically_fixed - state dictionary specifying the control target
         max_drivers - the maximum number of driver nodes to attempt when looking
                       for stable motif driver nodes before specifying the entire
@@ -317,7 +315,7 @@ class SuccessionDiagram:
         driver_method - either 'internal', 'minimal', or 'GRASP' see Methods below
                         for details
 
-        Output:
+        OUTPUTS:
         nonredundant_drivers - control strategies found; interpretation depends
                                on method selected (see below)
 
@@ -460,15 +458,19 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     """
     Constructs a succession diagram recursively from the rules specified by primes
 
-    Inputs:
+    INPUTS:
     primes - PyBoolNet primes dictionary specifying the Boolean update rules
+    merge_equivalent_motifs - True if feed-forward loops should be allowed in the succession diagram (recommended)
+    max_simulate_size - maximum number of variables to allow brute-force simulation on during reduction
+    prioritize_source_motifs - True if source motifs should be considered simultaneously and initially (recommended)
+    max_stable_motifs - upper bound on number of lines of ASP-solver output to be parsed by PyBoolNet
 
     Inputs used in recursion only:
     fixed - dictionary with node names as keys and fixed node states as values
     motif_history: list of stable motifs that have been "locked in" so far in the recursion
     diagram - the succession diagram being constructed by the recursion
 
-    Outputs:
+    OUTPUTS:
     diagram - SuccessionDiagram object describing the succession diagram for the system
     """
     if diagram is None:
@@ -515,10 +517,10 @@ def motif_history_text(history):
     Obtain the string version of the motif_history of a reduced network
     Given the motif_history of a reduction.from motif_reduction_dict, obtain a text version of this motif_history
 
-    Inputs:
+    INPUTS:
     history - motif_history of a reduced network.from motif_reduction_dict
 
-    Outputs:
+    OUTPUTS:
     String of motif history with each motif inside a parenthesis and separated by a line break
     """
     motif_history_str=""

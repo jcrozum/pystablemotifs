@@ -1,12 +1,38 @@
 import StableMotifs.Reduction as sm_reduction
 
 
-## NOTE: this code assumes some changes to Reduction.py that are not implemented
-# these include:
-# 1) Attractor and their STGs are indexed by a new array called attractor_ids
-
 class Attractor:
+    """
+    Stores attractor data for a reduced network.
 
+    VARIABLES:
+    logically_fixed_nodes - the nodes that are fixed by percolation on the
+                            expanded network (i.e., not by up-stream oscillations)
+    representative - tuple; entry 0 is a maximally reduced Reduction.MotifReduction
+                     object that contains the attractor. In general, other such
+                     objects conain the attractor, but they will correspond to
+                     equivalent reduced networks. Entry 1 is a unique identifier
+                     number (integer) for the attractor within the reduced network;
+                     this is necessary in cases when a fully reduced network contains
+                     multiple (complex) attractors.
+    reductions - list of maximally reduced Reduction.MotifReduction objects that
+                 contain the attractor.
+    attractor_dict - a dictionary describing the node states in the attractor
+                     according to the following key:
+
+                     1: variable is "ON"
+                     0: variable is "OFF"
+                     X: variable is known to oscillate
+                     ?: at least one such variable must oscillate
+                     !: the attractor may be false; if it is genuine, at least
+                        one such variable must oscillate
+    stg - the state transition graph corresponding to the attractor (if computed)
+    reduced_primes - the PyBoolNet format primes corresponding to the maximally
+                     reduced network that contains the attractor.
+    guaranteed - True if and only if the attractor is known to be genuine. If False,
+                 the attractor may not actually be stable.
+    explored - True if all attractor states and transitions are explicitly computed.
+    """
     def __init__(self,reduction, reduction_attractor_id):
         self.logically_fixed_nodes = reduction.logically_fixed_nodes
         self.representative = (reduction,reduction_attractor_id)
@@ -19,7 +45,7 @@ class Attractor:
             self.stg = None
 
         self.fixed_nodes = {k:v for k,v in self.attractor_dict.items() if v in [0,1]}
-        
+
         # if reduction.fixed_rspace_nodes is not None:
         #     self.fixed_nodes.update(reduction.fixed_rspace_nodes)
 

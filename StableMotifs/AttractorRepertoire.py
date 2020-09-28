@@ -2,9 +2,32 @@ import StableMotifs.Succession as sm_succession
 import StableMotifs.Attractor as sm_attractor
 
 class AttractorRepertoire:
+    """
+    The class that stores information about attractors.
+
+    VARIABLES:
+    succession_diagram - a Succession.SuccessionDiagram object summarizing the
+                         stable motif structure of the model.
+    attractors - list of (possible) attractors, each an Attractor.Attractor object.
+    reduction_attractors - a dictionary with integer keys that correspond to the
+                           succession_diagram.digraph nodes. The dictionary values
+                           are lists of Attractor.Attractor objects that correspond
+                           to attractors that exist in the region of statespace
+                           corresponding to the reduced network represented by
+                           the key in the succession diagram.
+    fewest_attractors - a lower bound on the number of attractors in the model
+    most_attractors - an upper bound on the number of attractors in the model
+    primes - the model rules in PyBoolNet format
+
+    FUNCTIONS:
+    from_primes - build the succession diagram and attractor repertoire from
+                  PyBoolNet formatted rules.
+    from_succession_diagram - build the attractor repertoire from a pre-computed
+                              Succession.SuccessionDiagram object
+    summary - prints a summary of the attractors to standard output
+    """
+
     def __init__(self):
-        """
-        """
         self.succession_diagram = None
         self.attractors = []
         self.reduction_attractors = {} # dict with values that are lists of matching attractors
@@ -26,12 +49,12 @@ class AttractorRepertoire:
         x = cls()
         x.succession_diagram = succession_diagram
         x.primes = succession_diagram.unreduced_primes
-        x.get_attractors_from_succession_diagram()
-        x.count_attractors()
+        x._get_attractors_from_succession_diagram()
+        x._count_attractors()
         return x
 
 
-    def get_attractors_from_succession_diagram(self):
+    def _get_attractors_from_succession_diagram(self):
         for ri, reduction in self.succession_diagram.motif_reduction_dict.items():
             if reduction.terminal == "no": continue
 
@@ -51,7 +74,7 @@ class AttractorRepertoire:
                 self.attractors.append(new_attractor)
                 self.reduction_attractors[ri].append(new_attractor)
 
-    def count_attractors(self):
+    def _count_attractors(self):
         self.fewest_attractors = 0
         self.most_attractors = 0
         for attractor in self.attractors:
@@ -70,8 +93,8 @@ class AttractorRepertoire:
 
     def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000):
         self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
-        self.get_attractors_from_succession_diagram()
-        self.count_attractors()
+        self._get_attractors_from_succession_diagram()
+        self._count_attractors()
 
     def summary(self):
         if self.fewest_attractors == 0:

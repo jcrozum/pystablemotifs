@@ -56,6 +56,12 @@ def booleannet2bnet(rules):
     return s
 
 def bnetDNF2list(bnet):
+    """
+    Converts a BNet string expression to a list of prime implicant dictionaries.
+    Variable states specified by each dictionary are to be thought of as "AND"-
+    connected, and the dictionaries as "OR"-connected.
+    """
+
     if bnet == "0":
         return []
     elif bnet == "1":
@@ -85,19 +91,30 @@ def bnetDNF2list(bnet):
     return bnetList
 
 def build_rule_using_bnetDNFs(expr0,expr1):
+    """
+    Converts a BNet string expression (expr1) and its negation (expr0) to
+    a PyBoolNet rule list.
+    """
     return [bnetDNF2list(expr0),bnetDNF2list(expr1)]
 
 def bnet2sympy(rule):
-    # print("bnet:",rule)
+    """
+    Converts a BNet string expression to a sympy string expression.
+    """
+
     crule = re.sub("!","~",rule)
     crule = re.sub("[\b\(]1[\b\)]","(x | ~x)",crule)
     crule = re.sub("[\b\(]0[\b\)]","(x & ~x)",crule)
     crule = re.sub("True","(x | ~x)",crule)
     crule = re.sub("False","(x & ~x)",crule)
-    # print("sympy:",crule)
+
     return crule
 
 def sympy2bnet(rule):
+    """
+    Converts a sympy string expression to a BNet string expression.
+    """
+
     crule = re.sub("~","!",rule)
     crule = re.sub("True","1",crule)
     crule = re.sub("False","0",crule)
@@ -105,14 +122,27 @@ def sympy2bnet(rule):
 
 def remove_comment_lines(stream):
     """
-    Removes commented out lines, i.e., those starting with '#'
+    Removes commented out lines from stream, i.e., those starting with '#'.
     """
+
     lines = list(stream)
     lines = filter(lambda x: not x.startswith("#"), lines)
     rules = "".join(lines)
     return rules
 
 def import_primes(fname, format='BooleanNet', remove_constants=False):
+    """
+    Import boolean rules from file and return PyBoolNet formatted primes list.
+
+    INPUTS:
+    fname - path to (plaintext) file containing Boolean rules in format specified
+            by the 'format' option.
+    format - Boolean rule format; options are 'BooleanNet' or 'BNet'.
+    remove_constants - If True, variables that are constant are removed and their
+                       influence is percolated. Otherwise, they remain and we
+                       consider initial conditions in opposition to their values.
+    """
+
     # TODO: add more formats
     rules = remove_comment_lines(open(fname))
     if format == 'BooleanNet':

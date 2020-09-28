@@ -3,7 +3,7 @@ import random
 
 def fixed_implies_implicant(fixed,implicant):
     """
-    Returns True iff the partial state "fixed" implies the implicant
+    Returns True if and only if the partial state "fixed" implies the implicant.
     """
     rval = True
     for k,v in implicant.items():
@@ -17,7 +17,7 @@ def fixed_implies_implicant(fixed,implicant):
 
 def fixed_excludes_implicant(fixed,implicant):
     """
-    Returns True iff the partial state "fixed" contradicts the implicant
+    Returns True if and only if the partial state "fixed" contradicts the implicant.
     """
     rval = True
     for k,v in implicant.items():
@@ -32,7 +32,7 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
     """
     Computes the logical domain of influence (LDOI) (see Yang et al. 2018)
 
-    Inputs:
+    INPUTS:
     partial_state - a dict in the PyBoolNet implicant form that define fixed nodes
     primes - a PyBoolNet primes dictionary that define the update rules
     implied_hint - set of states known to be a subset of the LDOI
@@ -41,7 +41,7 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
     WARNING: hint states are NOT tested for consistency, as this would defeat
     the purpose of speedup and redundancy reduction.
 
-    Outputs:
+    OUTPUTS:
     implied - node states in the LDOI of partial_state
     contradicted - node states that are implied by a subset of the LDOI,
                    but contradict the node states specified by partial_state
