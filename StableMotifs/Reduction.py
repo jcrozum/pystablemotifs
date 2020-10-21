@@ -10,14 +10,18 @@ import StableMotifs.Format as sm_format
 import StableMotifs.DomainOfInfluence as sm_doi
 
 def simplify_primes(primes):
-    """
-    Simplifies PyBoolNet primes (e.g., A | A & B becomes A)
+    """Simplifies PyBoolNet primes (e.g., A | A & B becomes A)
 
-    Input:
-    primes - PyBoolNet primes describing the system update rules
+    Parameters
+    ----------
+    primes : PyBoolNet primes dictionary
+        Rules to simplify.
 
-    Output:
-    a simplified version of primes
+    Returns
+    -------
+    PyBoolNet primes dictionary
+        Simplified rules.
+
     """
 
     # reimport to force simplification
@@ -27,16 +31,22 @@ def simplify_primes(primes):
         return primes
 
 def reduce_primes(fixed,primes):
-    """
-    Simplifies boolean rules when some nodes are held fixed
+    """Simplifies boolean rules when some nodes are held fixed
 
-    Inputs:
-    fixed - a dictionary of node states that are held fixed
-    primes - PyBoolNet primes describing the system update rules
+    Parameters
+    ----------
+    fixed : partial state dictionary
+        Node states to be held fixed.
+    primes : PyBoolNet primes dictionary
+        Update rules.
 
-    Outputs:
-    reduced_primes - PyBoolNet primes decribing the simplified update rules
-    percolated_states - a dictionary of fixed node states (including the inputs) that were simplified and removed
+    Returns
+    -------
+    reduced_primes : PyBoolNet primes dictionary
+        Simplified update rules
+    percolated_states : partial state dictionary
+        Fixed node states (including inputs) that were simplified and removed.
+
     """
     reduced_primes = PyBoolNet.PrimeImplicants.create_constants(primes,fixed,Copy=True)
     percolated_states = PyBoolNet.PrimeImplicants._percolation(reduced_primes,True)
@@ -46,21 +56,27 @@ def reduce_primes(fixed,primes):
     return simplify_primes(reduced_primes), percolated_states
 
 def delete_node(primes, node):
-    """
-    Reduces Boolean rules given by primes by deleting the variable specified by
+    """Reduces Boolean rules given by primes by deleting the variable specified by
     node. The deleted node may not appear in its own update function. Any update
     rules depending on the deleted node will have that dependence replaced by
     the update function of the deleted node. The rules are simplified after node
     deletion.
 
-    Inputs:
-    primes - PyBoolNet primes describing update rules
-    node - the name of the node node to delete
+    Parameters
+    ----------
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    node : str
+        Name of the node to delete.
 
-    Outputs:
-    new_primes - the reduced primes
-    constants - a dictionary of nodes that became logically fixed during the
-                simplification process
+    Returns
+    -------
+    new_primes : PyBoolNet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during simplification.
+
+
     """
     succ = set()
     for p in primes:
@@ -75,10 +91,10 @@ def delete_node(primes, node):
                 break
 
 
+    # uncomment for additional (and hopefully unnecessary), but slow safety checks.
     #G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
-
     #assert not G.has_edge(node,node), ' '.join(["Node",str(node),"has a self-loop and cannot be deleted."])
-    #print("\nn144 primes",primes['n144'])
+
     assert not node in succ, ' '.join(["Node",str(node),"has a self-loop and cannot be deleted."])
     new_primes = {k:v for k,v in primes.items() if not k == node}
     constants = {}
@@ -107,10 +123,27 @@ def delete_node(primes, node):
     return new_primes, constants
 
 def simplify_using_expression_and_negation(node,expr0,expr1,bnet):
-    """
-    simplify the expression bnet by substituting the value for node given by
+    """Simplify the expression bnet by substituting the value for node given by
     node = expr1 = !expr0 (does not check that expr1=!expr0)
+
+    Parameters
+    ----------
+    node : str
+        Name of node to substitute
+    expr0 : str
+        Expression to substitute for !node
+    expr1 : str
+        Expression to substitute for node
+    bnet : str
+        BNET expression in which to perform the substitutions.
+
+    Returns
+    -------
+    str
+        Simplified BNET expression after substitutions are performed.
+
     """
+
     neg = "!"+node
     crule = re.sub(rf'\b{neg}\b',"("+expr0+")",bnet)
     crule = re.sub(rf'\b{node}\b',"("+expr1+")",crule)
@@ -120,9 +153,21 @@ def simplify_using_expression_and_negation(node,expr0,expr1,bnet):
     return crule
 
 def remove_outdag(primes):
-    """
-    Removes the terminal directed acyclic part of the regulatory network. This
+    """Removes the terminal directed acyclic part of the regulatory network. This
     part of the network does not influence the attractor repertoire.
+
+    Parameters
+    ----------
+    primes : PyBoolNet primes dictionary
+        Update rules.
+
+    Returns
+    -------
+    reduced : PyBoolNet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during reduction.
+
     """
     if len(primes) == 0:
         return primes, {}
@@ -137,11 +182,28 @@ def remove_outdag(primes):
     return reduced, constants
 
 def deletion_reduction(primes, max_in_degree = float('inf')):
-    """
-    Implements the reduction method of Veliz-Cuba (2011).
+    """Implements the reduction method of Veliz-Cuba (2011).
     Deletion order is such that nodes with low in-degree are prioritized for
     removal. Deletion proceeds until all remaining nodes have self-loops.
+
+    Parameters
+    ----------
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    max_in_degree : int or float
+        Will not try to delete nodes with in-degree larger than this. Deleting
+        nodes with large in-degree can be computationally expensive (the default
+        is float('inf')).
+
+    Returns
+    -------
+    reduced : PyBoolNet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during reduction.
+
     """
+
     reduced, constants = remove_outdag(primes)
     G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
     cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
@@ -172,10 +234,23 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
     return reduced, constants
 
 def mediator_reduction(primes):
-    """
-    Network reduction method of Saadadtpour, Albert, Reluga (2013)
-    Preserves number of fixed points and complex attractors, but may change
-    qualitative features of complex attractors.
+    """Network reduction method of Saadadtpour, Albert, Reluga (2013)
+    Preserves fixed points. Number of complex attractors is often, but
+    not always conserved (despite inital claims). Can be viewed as a more
+    restrictive version of the deletion reduction method of Veliz-Cuba (2011).
+
+    Parameters
+    ----------
+    primes : PyBoolNet primes dictionary
+        Update rules.
+
+    Returns
+    -------
+    reduced : PyBoolNet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during reduction.
+
     """
     return primes, {}
     reduced, constants = remove_outdag(primes)
@@ -196,60 +271,103 @@ def mediator_reduction(primes):
 
 
 class MotifReduction:
+    """Class to generate and store data about a network reduction that arises
+    during the stable motif succession diagram construction algorithm.
+
+    Parameters
+    ----------
+    motif_history : list of partial state dictionaries
+        Stable motifs that can lock in to give the reduced network (in order)
+    fixed : partial state dictionary
+        Nodes values that have been fixed and reduced by stable motifs and their
+        logical domain of influence
+    reduced_primes : PyBoolNet primes dictionary
+        Update rules for the reduced network.
+    max_simulate_size : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph (the default is 20).
+    prioritize_source_motifs : bool
+        Whether source nodes should be considered first (the default is True).
+    max_stable_motifs : int
+        Maximum number of output lines for PyBoolNet to process from the
+        AspSolver (the default is 10000).
+
+    Attributes
+    ----------
+    merged_history_permutations : list of lists of int
+        Permutations of motif_history (by index) that also yield this reduction.
+    logically_fixed_nodes : partial state dictionary
+        Nodes values that have been fixed and reduced by stable motifs and their
+        logical domain of influence
+    time_reverse_primes : PyBoolNet primes dictionary
+        Update rules of the time reversed reduced system.
+    stable_motifs : list of partial state dictionaries
+        Stable motifs of the reduced system.
+    time_reverse_stable_motifs : list of partial state dictionaries
+        Stable motifs of the time reversed system.
+    merged_source_motifs : list of partial state dictionaries
+        Description of attribute `merged_source_motifs`.
+    source_independent_motifs : list of partial state dictionaries
+        Stable motifs that exist independent of the values of the source nodes
+    merge_source_motifs : list of partial state dictionaries
+        Stable motifs generated by merging the stable motifs corresponding to
+        source nodes.
+    rspace : rspace list
+        The rspace, or "restrict space" of the reduced network, describing a
+        necessary condition for the system to avoid activating additional
+        stable motifs (see RestrictSpace.py for further details).
+    motif_history : list of partial state dictionaries
+        Stable motifs that can lock in to give the reduced network (in order)
+    reduced_primes : PyBoolNet primes dictionary
+        Update rules for the reduced network.
+    fixed_rspace_nodes : partial state dictionary
+        Nodes values that are fixed in the rspace.
+    rspace_constraint : str
+        BNET expression that is true in and only in the rspace.
+    reduced_rspace_constraint : str
+        S simplification of the rspace_constraint given the fixed_rspace_nodes
+        states are satisfied
+    rspace_update_primes : PyBoolNet primes dictionary
+        The update rules obtained from simplifying under the assumption that the
+        fixed_rspace_nodes are fixed
+    conserved_functions : list of PyBoolNet expressions
+        Boolean functions that are constant within every attractor, in PyBoolNet
+        update rule format
+    rspace_attractor_candidates : list of str
+        Attractors (lists of statestrings) in the rspace_update_primes that
+        satisfy the reduced_rspace_constraint
+    partial_STG : networkx.DiGraph
+        Subgraph of the state transition graph of the reduced network that
+        contains any and all attractors that do not lie in any of the reduced
+        network's stable motifs.
+    no_motif_attractors : list of str
+        Complex attractors that do not "lock in" any additional stable motifs,
+        stored as collections of state strings.
+    attractor_dict_list : list of dictionaries
+        Dictionaries corresponding to attractors that are in this reductions, but
+        not in any of its subreductions (if it has any). Each describes the node
+        states in the attractors according to the following
+        1 variable is "ON"
+        0 variable is "OFF"
+        X variable is known to oscillate
+        ? at least one such variable must oscillate
+        ! the attractor may be false; if it is genuine, at least
+          one such variable must oscillate
+    terminal : str
+        One of "yes", "no", or "possible", indicating whether the reduction contains
+        attractors that are not in any of its subreductions.
+    delprimes : PyBoolNet prime dictionary
+        Update rules for the system's deletion projection. Steady states and stable
+        motif activation are preserved. These rules may yield additional, spurious
+        complex attractors.
+    deletion_STG : networkx.DiGraph
+        Portion of the deletion projection's STG that contains all motif-avoidant
+        attractors.
+    deletion_no_motif_attractors : list of str
+        Motif avoidant attractors of the deletion projection. The number of these is
+        an upper bound on the number of motif avoidant attractors in the reduction.
     """
-    A reduced network with additional information stored;
-    represents a node in a succession diagram (see Succession.py)
 
-    VARIABLES:
-    motif_history - list of stable motifs that can lock in to give the reduced network (in order)
-    merged_history_permutations - list of permutations of motif_history (by index) that are also valid
-    logically_fixed_nodes - node state dictionary describing nodes that have been
-                            fixed and reduced by stable motifs and their
-                            logical domain of influence
-    reduced_primes - update rules of the reduced network as PyBoolNet primes
-    time_reverse_primes - update rules of the time reversed system as PyBoolNet primes
-    stable_motifs - list of stable motifs in the reduced network
-    time_reverse_stable_motifs - list of stable motifs in the time reversed system
-    merged_source_motifs - stable motifs generated by merging the stable motifs corresponding to source nodes
-    source_independent_motifs - stable motifs that exist independent of the values of the source nodes
-
-    rspace - the rspace, or "restrict space" of the reduced network, describing a
-             necessary condition for the system to avoid activating additional
-             stable motifs (see RestrictSpace.py)
-    fixed_rspace_nodes - nodes that are fixed in the rspace (stored as a state dictionary)
-    rspace_constraint - a Boolean expression that is true in and only in the rspace
-    reduced_rspace_constraint - a simplification of the rspace_constraint given
-                                the fixed_rspace_nodes states are satisfied
-    rspace_update_primes - the update rules obtained from simplifying under the
-                           assumption that the fixed_rspace_nodes are fixed
-    conserved_functions - a list of Boolean functions that are constant within
-                          every attractor, in PyBoolNet update rule format
-    rspace_attractor_candidates - attractors in the rspace_update_primes that
-                                  satisfy the reduced_rspace_constraint
-
-    partial_STG - subgraph of the state transition graph of the reduced network
-                  that contains any and all attractors that do not lie in any
-                  of the reduced network's stable motifs
-    no_motif_attractors - list of complex attractors that do not "lock in" any additional stable motifs
-    attractor_dict - a dictionary describing the node states in the attractor
-    according to the following key:
-         1: variable is "ON"
-         0: variable is "OFF"
-         X: variable is known to oscillate
-         ?: at least one such variable must oscillate
-         !: the attractor may be false; if it is genuine, at least
-            one such variable must oscillate
-
-    FUNCTIONS:
-    __init__(self,motif_history,fixed,reduced_primes,search_partial_STGs=True,prioritize_source_motifs=True)
-    merge_source_motifs(self) - merges source node motifs into larger multi-node motifs for efficiency
-    test_rspace(self) - for building rspace_attractor_candidates
-    build_K0(self) - helper function for build_partial_STG
-    build_inspace(self,ss,names) - helper function for build_partial_STG
-    build_partial_STG(self) - for building partial_STG
-    find_no_motif_attractors(self) - finds no_motif_attractors
-    summary(self) - prints a summary of the MotifReduction to screen
-    """
     def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000):
         if motif_history is None:
             self.motif_history = []
@@ -281,7 +399,8 @@ class MotifReduction:
         self.deletion_STG = None
         self.deletion_no_motif_attractors = None
         self.attractor_constants = None
-        self.attractor_dict={}
+        self.attractor_dict_list=None # []
+        # self.attractor_dict={}
 
         study_possible_oscillation = False
 
@@ -370,8 +489,7 @@ class MotifReduction:
         self.attractor_dict_list = self.generate_attr_dict()
 
     def merge_source_motifs(self):
-        """
-        Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
+        """Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
         avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
         merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
         source nodes all stabilize simultaneously.
@@ -395,32 +513,40 @@ class MotifReduction:
         for state in it.product([0,1],repeat=len(source_vars)):
             self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
 
-    def test_rspace(self, search_partial_STGs=True):
-        STG=PyBoolNet.StateTransitionGraphs.primes2stg(self.rspace_update_primes,"asynchronous")
-        steady_states,complex_attractors=PyBoolNet.Attractors.compute_attractors_tarjan(STG)
-        names = sorted(self.rspace_update_primes)
-        attractors = complex_attractors+[[s] for s in steady_states]
-        self.build_rspace_attractor_candidates(attractors)
+    # def test_rspace(self, search_partial_STGs=True):
+    #     STG=PyBoolNet.StateTransitionGraphs.primes2stg(self.rspace_update_primes,"asynchronous")
+    #     steady_states,complex_attractors=PyBoolNet.Attractors.compute_attractors_tarjan(STG)
+    #     names = sorted(self.rspace_update_primes)
+    #     attractors = complex_attractors+[[s] for s in steady_states]
+    #     self.build_rspace_attractor_candidates(attractors)
 
-    def build_rspace_attractor_candidates(self,attractors):
-        self.rspace_attractor_candidates = []
-        for attractor in attractors:
-            possible_rspace_attractor = True
-            for state in attractor:
-                # state_dict = {** sm_format.statestring2dict(state,names),**self.fixed_rspace_nodes}
-                # if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,
-                #                                                  sm_format.implicant2bnet(state_dict)):
-                if sm_rspace.partial_state_contradicts_rspace(sm_format.statestring2dict(state,names),self.rspace):
-                    possible_rspace_attractor = False
-                    break
-            if possible_rspace_attractor:
-                self.rspace_attractor_candidates.append(attractor)
+    # def build_rspace_attractor_candidates(self,attractors):
+    #     self.rspace_attractor_candidates = []
+    #     for attractor in attractors:
+    #         possible_rspace_attractor = True
+    #         for state in attractor:
+    #             # state_dict = {** sm_format.statestring2dict(state,names),**self.fixed_rspace_nodes}
+    #             # if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,
+    #             #                                                  sm_format.implicant2bnet(state_dict)):
+    #             if sm_rspace.partial_state_contradicts_rspace(sm_format.statestring2dict(state,names),self.rspace):
+    #                 possible_rspace_attractor = False
+    #                 break
+    #         if possible_rspace_attractor:
+    #             self.rspace_attractor_candidates.append(attractor)
+    #
+    #     if len(self.rspace_attractor_candidates) == 0:
+    #         self.terminal = "no"
 
-        if len(self.rspace_attractor_candidates) == 0:
-            self.terminal = "no"
-
-    # Helper function for smart STG building
     def build_K0(self):
+        """Helper function for smart STG building. Builds initial set of nodes
+        that are not part of any motif-avoidant attractor.
+
+        Returns
+        -------
+        set of str
+            Statestrings that do not belong to any motif-avoidant attractor.
+
+        """
         K = set()
         for sm in self.stable_motifs:
             fill_vars = [k for k in self.reduced_primes if not k in sm]
@@ -436,8 +562,22 @@ class MotifReduction:
                 K.add(s)
         return K
 
-    # tests whether the (partial) state ss is in any stable motifs
     def in_motif(self,ss,names):
+        """Tests whether the (partial) state ss is in any stable motifs
+
+        Parameters
+        ----------
+        ss : str
+            Statestring (possibly on a subspace).
+        names : list of str
+            Variable names ordered to correspond to the positions of ss.
+
+        Returns
+        -------
+        bool
+            Whether ss is in any stable motif of the reduced system.
+
+        """
         for sm in self.stable_motifs:
             smin = True
             for i,r in enumerate(names):
@@ -446,9 +586,26 @@ class MotifReduction:
             if smin: return True
         return False
 
-    # Helper function for smart STG building
-    # List all tr stable_motifs to which (partial) state ss belongs
     def build_inspace(self,ss,names, tr_stable_motifs = None):
+        """Helper function for smart STG building. List all time reversal stable
+        motifs to which (partial) state ss belongs.
+
+        Parameters
+        ----------
+        ss : str
+            Statestring (possibly on a subspace).
+        names : list of str
+            Variable names ordered to correspond to the positions of ss.
+        tr_stable_motifs : list of partial state dictionaries
+            Time reverse stable motifs. If None, use all time reverse stable
+            motifs in the reduced system (the default is None).
+
+        Returns
+        -------
+        list of partial state dictionaries
+            Time reverse stable motifs that are active in the state ss.
+
+        """
         inspaces = []
         if tr_stable_motifs is None:
             tr_stable_motifs = self.time_reverse_stable_motifs
@@ -462,6 +619,17 @@ class MotifReduction:
         return inspaces
 
     def build_deletion_STG(self,max_stable_motifs=10000):
+        """Build a piece of the STG that is guaranteed to contain all
+        motif-avoidant attractors of the deletion projection. Complex attractors
+        found here may be spurious.
+
+        Parameters
+        ----------
+        max_stable_motifs : int
+            Maximum number of output lines for PyBoolNet to process from the
+            AspSolver (the default is 10000).
+
+        """
         names = sorted(self.delprimes)
         name_ind = {n:i for i,n in enumerate(names)}
         trprimes = sm_time.time_reverse_primes(self.delprimes)
@@ -551,6 +719,15 @@ class MotifReduction:
                 if not simstate: break # don't check other vars: already found ss -> K
 
     def find_deletion_no_motif_attractors(self,max_stable_motifs=10000):
+        """Identify motif-avoidant attractors in the deletion projection.
+
+        Parameters
+        ----------
+        max_stable_motifs : int
+            Maximum number of output lines for PyBoolNet to process from the
+            AspSolver (the default is 10000).
+
+        """
         if self.deletion_STG is None:
             self.build_deletion_STG(max_stable_motifs=max_stable_motifs)
 
@@ -580,6 +757,10 @@ class MotifReduction:
                 self.deletion_no_motif_attractors.append(att)
 
     def build_partial_STG(self):
+        """Build a piece of the STG that is guaranteed to contain all
+        motif-avoidant attractors of the reduction.
+
+        """
         names = sorted(self.reduced_primes)
         name_ind = {n:i for i,n in enumerate(names)}
 
@@ -670,6 +851,10 @@ class MotifReduction:
                 if not simstate: break # don't check other vars: already found ss -> K
 
     def find_no_motif_attractors(self):
+        """Find attractors of the reduction that are not present in any of its
+        subreductions.
+
+        """
         if self.partial_STG is None:
             self.build_partial_STG()
         if len(list(self.partial_STG.nodes())) > 0:
@@ -678,16 +863,21 @@ class MotifReduction:
             self.no_motif_attractors = []
 
     def generate_attr_dict(self):
-        """
-        Generates a dictionary describing the node states in the attractor
-        according to the following key:
+        """Generate a list of attractors that are present in the reduction, but
+        not in any of its subreductions.
 
-             1: variable is "ON"
-             0: variable is "OFF"
-             X: variable is known to oscillate
-             ?: at least one such variable must oscillate
-             !: the attractor may be false; if it is genuine, at least
-                one such variable must oscillate
+        Returns
+        -------
+        list of dictionaries
+            Dictionaries corresponding to attractors that are in this reductions, but
+            not in any of its subreductions (if it has any). Each describes the node
+            states in the attractors according to the following
+            1 variable is "ON"
+            0 variable is "OFF"
+            X variable is known to oscillate
+            ? at least one such variable must oscillate
+            ! the attractor may be false; if it is genuine, at least
+              one such variable must oscillate
         """
         attractors_dict={}
 
@@ -745,17 +935,20 @@ class MotifReduction:
             return attr_list
 
     def find_constants_in_complex_attractor(self,c):
-
-        """
-        Given a set of strings representing the states of a complex attractor the function finds the nodes
+        """Given a set of strings representing the states of a complex attractor the function finds the nodes
         that are constant in the full complex attractor.
 
-        Input: a set of iterables constituting ones and zeros.
-        E.g. {'000', '010', '100'}
+        Parameters
+        ----------
+        c : a set of binary strings
+            Set of statestrings, e.g. set(['000', '010', '100']).
 
-        Returns: an array constituting 0s, 1s, and Xs. X represents an oscillating node, and the 0s and 1s
-        represent nodes stabilized to those states.
-        E.g. for the example given for the input the code will return: array(['X', 'X', '0'], dtype='<U1')
+        Returns
+        -------
+        list of str
+            An array consisting of 0s, 1s, and Xs. X represents an oscillating
+            node, and the 0s and 1s represent nodes stabilized to those states.
+
         """
         import numpy as np
         ca=np.array([np.fromiter(i, int, count=len(i)) for i in c])
@@ -766,6 +959,18 @@ class MotifReduction:
         return attr
 
     def summary(self,show_original_rules=True,hide_rules=False,show_explicit_permutations=False):
+        """Print a summary of the reduction.
+
+        Parameters
+        ----------
+        show_original_rules : bool
+            Show rules of the unreduced system (the default is True)?
+        hide_rules : bool
+            Hide rules of the reduced system (the default is False)?
+        show_explicit_permutations : bool
+            Show motif permutations explicitly, instead of by index (the default is False)?
+
+        """
         print("Motif History:",self.motif_history)
         print()
         print("Logically Fixed Nodes:",self.logically_fixed_nodes)
