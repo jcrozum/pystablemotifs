@@ -3,7 +3,7 @@ import random
 
 def fixed_implies_implicant(fixed,implicant):
     """
-    Returns True if and only if the partial state "fixed" implies the implicant.
+    Returns True if and only if the (possibly partial) state "fixed" implies the implicant.
     """
     rval = True
     for k,v in implicant.items():
@@ -17,7 +17,7 @@ def fixed_implies_implicant(fixed,implicant):
 
 def fixed_excludes_implicant(fixed,implicant):
     """
-    Returns True if and only if the partial state "fixed" contradicts the implicant.
+    Returns True if and only if the (possibly partial) state "fixed" contradicts the implicant.
     """
     rval = True
     for k,v in implicant.items():

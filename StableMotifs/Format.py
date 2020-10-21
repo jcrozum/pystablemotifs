@@ -213,6 +213,29 @@ def rule2bnet(rule):
     elif rule == [{}]: return '1'
     else: return ' | '.join([implicant2bnet(imp) for imp in rule])
 
+def primes2bnet(primes):
+    """
+    A simpler version of PyBoolNet's FileExchange.primes2bnet function with
+    fewer options and less organized output. Should handle prime rules with
+    tautologies better than the PyBoolNet version though.
+    """
+    lines = []
+    width = max([len(x) for x in primes]) + 3
+
+    for name in primes:
+        if primes[name][0] == [] or primes[name][1] == [{}]:
+            expression = '1'
+        elif primes[name][1] == [] or primes[name][0] == [{}]:
+            expression = '0'
+        else:
+            expression = ' | '.join(['&'.join([x if term[x]==1 else '!'+x for x in term]) for term in primes[name][1]  ])
+
+        lines+= [(name+',').ljust(width)+expression]
+    lines+=['']
+
+    return "\n".join(lines)
+
+
 def pretty_print_primes(primes):
     """
     Prints PyBoolNet a prime dictionary in a more readable format
