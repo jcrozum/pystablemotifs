@@ -2,29 +2,28 @@ import StableMotifs.Succession as sm_succession
 import StableMotifs.Attractor as sm_attractor
 
 class AttractorRepertoire:
-    """
-    The class that stores information about attractors.
+    """The class that stores information about attractors. Initialize using
+    either from_primes or from_succession_diagram.
 
-    VARIABLES:
-    succession_diagram - a Succession.SuccessionDiagram object summarizing the
-                         stable motif structure of the model.
-    attractors - list of (possible) attractors, each an Attractor.Attractor object.
-    reduction_attractors - a dictionary with integer keys that correspond to the
-                           succession_diagram.digraph nodes. The dictionary values
-                           are lists of Attractor.Attractor objects that correspond
-                           to attractors that exist in the region of statespace
-                           corresponding to the reduced network represented by
-                           the key in the succession diagram.
-    fewest_attractors - a lower bound on the number of attractors in the model
-    most_attractors - an upper bound on the number of attractors in the model
-    primes - the model rules in PyBoolNet format
+    Attributes
+    ----------
+    succession_diagram : Succession.SuccessionDiagram
+        Succession diagram summarizing the stable motif structure of the model.
+    attractors : list of Attractor.Attractor
+        List of (possible) attractors in the model.
+    reduction_attractors : dictionary
+        A dictionary with integer keys that correspond to the
+        succession_diagram.digraph nodes. The dictionary values are lists of
+        Attractor.Attractor objects that correspond to attractors that exist in
+        the region of statespace corresponding to the reduced network
+        represented by the key in the succession diagram.
+    fewest_attractors : int
+        A lower bound on the number of attractors in the model.
+    most_attractors : int
+        An upper bound on the number of attractors in the model.
+    primes : PyBoolNet primes dictionary
+        The model rules.
 
-    FUNCTIONS:
-    from_primes - build the succession diagram and attractor repertoire from
-                  PyBoolNet formatted rules.
-    from_succession_diagram - build the attractor repertoire from a pre-computed
-                              Succession.SuccessionDiagram object
-    summary - prints a summary of the attractors to standard output
     """
 
     def __init__(self):
@@ -39,6 +38,26 @@ class AttractorRepertoire:
 
     @classmethod
     def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000):
+        """Build the succession diagram and attractor repertoire from PyBoolNet
+        formatted update rules rules.
+
+        Parameters
+        ----------
+        primes : PyBoolNet primes dictionary
+            The model rules.
+        max_simulate_size : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph (the default is 20).
+        max_stable_motifs : int
+            Maximum number of output lines for PyBoolNet to process from the
+            AspSolver (the default is 10000).
+
+        Returns
+        -------
+        AttractorRepertoire
+            AttractorRepertoire object for the input primes.
+
+        """
         x = cls()
         x.primes = primes
         x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
@@ -46,6 +65,20 @@ class AttractorRepertoire:
 
     @classmethod
     def from_succession_diagram(cls,succession_diagram):
+        """Build the succession diagram and attractor repertoire from a
+        precomputed succession diagram.
+
+        Parameters
+        ----------
+        succession_diagram : Succession.SuccessionDiagram
+            Succession diagram summarizing the stable motif structure of the model.
+
+        Returns
+        -------
+        AttractorRepertoire
+            AttractorRepertoire object for the input succession diagram.
+
+        """
         x = cls()
         x.succession_diagram = succession_diagram
         x.primes = succession_diagram.unreduced_primes
@@ -55,6 +88,9 @@ class AttractorRepertoire:
 
 
     def _get_attractors_from_succession_diagram(self):
+        """Extract attractors from the succession diagram of the model.
+
+        """
         for ri, reduction in self.succession_diagram.motif_reduction_dict.items():
             if reduction.terminal == "no": continue
 
@@ -75,6 +111,9 @@ class AttractorRepertoire:
                 self.reduction_attractors[ri].append(new_attractor)
 
     def _count_attractors(self):
+        """Place upper and lower bounds on the number of attractors.
+
+        """
         self.fewest_attractors = 0
         self.most_attractors = 0
         for attractor in self.attractors:
@@ -92,11 +131,27 @@ class AttractorRepertoire:
                     self.most_attractors += 2**(attractor.n_unfixed - 1)
 
     def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000):
+        """Build and process the succession diagram for the model.
+
+        Parameters
+        ----------
+        primes : PyBoolNet primes dictionary
+            The model rules.
+        max_simulate_size : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph (the default is 20).
+        max_stable_motifs : int
+            Maximum number of output lines for PyBoolNet to process from the
+            AspSolver (the default is 10000).
+        """
         self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
         self._get_attractors_from_succession_diagram()
         self._count_attractors()
 
     def summary(self):
+        """Prints a summary of the attractors to standard output.
+
+        """
         if self.fewest_attractors == 0:
             print("Unable to properly count attractors.")
         elif self.fewest_attractors == self.most_attractors:

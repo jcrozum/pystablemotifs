@@ -2,38 +2,65 @@ import StableMotifs.Reduction as sm_reduction
 
 
 class Attractor:
-    """
-    Stores attractor data for a reduced network.
+    """Stores attractor data for a reduced network. Automatically initialized by
+    the AttractorRepertoire class.
 
-    VARIABLES:
-    logically_fixed_nodes - the nodes that are fixed by percolation on the
-                            expanded network (i.e., not by up-stream oscillations)
-    representative - tuple; entry 0 is a maximally reduced Reduction.MotifReduction
-                     object that contains the attractor. In general, other such
-                     objects conain the attractor, but they will correspond to
-                     equivalent reduced networks. Entry 1 is a unique identifier
-                     number (integer) for the attractor within the reduced network;
-                     this is necessary in cases when a fully reduced network contains
-                     multiple (complex) attractors.
-    reductions - list of maximally reduced Reduction.MotifReduction objects that
-                 contain the attractor.
-    attractor_dict - a dictionary describing the node states in the attractor
-                     according to the following key:
+    Parameters
+    ----------
+    reduction : Reduction.MotifReduction
+        Motif reduction to use as the representative (see attributes).
+    reduction_attractor_id : int
+        Reduction id to use for the representative (see attributes)
 
-                     1: variable is "ON"
-                     0: variable is "OFF"
-                     X: variable is known to oscillate
-                     ?: at least one such variable must oscillate
-                     !: the attractor may be false; if it is genuine, at least
-                        one such variable must oscillate
-    stg - the state transition graph corresponding to the attractor (if computed)
-    reduced_primes - the PyBoolNet format primes corresponding to the maximally
-                     reduced network that contains the attractor.
-    guaranteed - True if and only if the attractor is known to be genuine. If False,
-                 the attractor may not actually be stable.
-    explored - True if all attractor states and transitions are explicitly computed.
+    Attributes
+    ----------
+    logically_fixed_nodes : partial state dictionary
+        The nodes that are fixed by percolation on the expanded network (i.e.,
+        not by up-stream oscillations)
+    representative : Reduction.MotifReduction, int tuple
+        Entry 0 is a maximally reduced Reduction.MotifReduction object that
+        contains the attractor. In general, other such objects conain the
+        attractor, but they will correspond to equivalent reduced networks.
+        Entry 1 is a unique identifier number (integer) for the attractor within
+        the reduced network; this is necessary in cases when a fully reduced n
+        etwork contains multiple (complex) attractors.
+    reductions : list of Reduction.MotifReduction
+        Maximally reduced MotifReductions that contain the attractor.
+    attractor_dict : dictionary
+        a dictionary describing the node states in the attractor according to
+        the following key -
+             1 variable is "ON"
+             0 variable is "OFF"
+             X variable is known to oscillate
+             ? at least one such variable must oscillate
+             ! the attractor may be false; if it is genuine, at least one such
+               variable must oscillate
+    stg : networkx.DiGraph
+        The state transition graph corresponding to the attractor (if computed)
+    fixed_nodes : type
+        Description of attribute `fixed_nodes`.
+    oscillation_fixed_nodes : type
+        Description of attribute `oscillation_fixed_nodes`.
+    reduced_primes : PyBoolNet primes dictionary
+        Update rules for the maximally reduced network that contains the attractor.
+    n_unfixed : int
+        Number of nodes that are not logically fixed.
+    size : type
+        Description of attribute `size`.
+    size_lower_bound : type
+        Description of attribute `size_lower_bound`.
+    size_upper_bound : type
+        Description of attribute `size_upper_bound`.
+    explored : bool
+        True if all attractor states and transitions are explicitly computed.
+    guaranteed : bool
+        True if and only if the attractor is known to be genuine. If False, the
+        attractor may not actually be stable.
+
+
     """
-    def __init__(self,reduction, reduction_attractor_id):
+
+    def __init__(self, reduction, reduction_attractor_id):
         self.logically_fixed_nodes = reduction.logically_fixed_nodes
         self.representative = (reduction,reduction_attractor_id)
         self.reductions = [reduction]
@@ -84,5 +111,13 @@ class Attractor:
 
         self.reductions = [reduction]
 
-    def add_reduction(self,reduction):
+    def add_reduction(self, reduction):
+        """Add a reduction to the attractor. Does not check for compatibility.
+
+        Parameters
+        ----------
+        reduction : Reduction.MotifReduction
+            Motif reduction that also contains the attractor.
+
+        """
         self.reductions.append(reduction)

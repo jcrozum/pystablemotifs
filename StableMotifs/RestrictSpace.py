@@ -5,20 +5,43 @@ from StableMotifs.DomainOfInfluence import single_drivers, logical_domain_of_inf
 import StableMotifs.DomainOfInfluence as sm_doi
 
 def attractor_space_candidates(maxts,trmaxts):
-    """
-    Merge the maximum trap spaces maxts and time-reverse maximum trap spaces
-    to obtain a list of attractor-conserved quantities.
+    """Merge the maximum trap spaces maxts and time-reverse maximum trap spaces
+    to obtain a list of attractor-conserved quantities. Note that any Boolean
+    function of these is also conserved in attractors.
 
-    Note that any Boolean function of these is also conserved in attractors.
+    Parameters
+    ----------
+    maxts : list of partial state dictionaries
+        Stable motifs, i.e., maximum trap spaces for the system.
+    trmaxts : list of partial state dictionaries
+        Stable motifs, i.e., maximum trap spaces for the time-reversed system.
+
+    Returns
+    -------
+    rspace list
+        Restrict space list (see RestrictSpace.rspace for details).
+
     """
+
     L = []
     for t in maxts+trmaxts: L.append([t])
     return L
 
 def state_in_rspace(state,L):
-    """
-    Tests to see if the state specified by the dictionary state is in the rspace
-    specified by L (see rspace for format of L).
+    """Tests to see if state is in the rspace L.
+
+    Parameters
+    ----------
+    state : partial state dictionary
+        State, or partial state to test.
+    L : rspace list
+        Restrict space list (see RestrictSpace.rspace for details).
+
+    Returns
+    -------
+    bool
+        True if and only if state is in L.
+
     """
     for clause in L:
         sat = False
@@ -30,15 +53,26 @@ def state_in_rspace(state,L):
             return False
     return True
 
-def partial_state_contradicts_rspace(st,L):
-    """
-    Tests to see if the partial state specified by the dictionary st contradicts
-    the rspace specified by L (see rspace for format of L).
+def partial_state_contradicts_rspace(state,L):
+    """Tests to see if state lies entirely outside the rspace L.
+
+    Parameters
+    ----------
+    state : partial state dictionary
+        State, or partial state to test.
+    L : rspace list
+        Restrict space list (see RestrictSpace.rspace for details).
+
+    Returns
+    -------
+    bool
+        True if and only if state is not in L.
+
     """
     for clause in L:
         csat = False
         for p in clause:
-            if not sm_doi.fixed_excludes_implicant(st,p):
+            if not sm_doi.fixed_excludes_implicant(state,p):
                 csat = True
                 break
         if not csat:
@@ -46,10 +80,22 @@ def partial_state_contradicts_rspace(st,L):
     return True
 
 def reduce_rspace(L,primes):
-    """
-    Reduce the rspace L for the system given by primes so that trivially fixed
+    """Reduce the rspace L for the system given by primes so that trivially fixed
     nodes are factored out. The first element of the returned rspace (L2) will
     specify these trivially fixed nodes (i.e., they are factored on the left).
+
+    Parameters
+    ----------
+    L : rspace list
+        Restrict space list (see RestrictSpace.rspace for details).
+    primes : PyBoolNet primes dictionary
+        Update rule for the system.
+
+    Returns
+    -------
+    L2 : rspace list
+        Reduced restrict space list (see RestrictSpace.rspace for details).
+
     """
     fixed = fixed_rspace_nodes(L,primes)
     L2 = [[fixed]]
@@ -64,8 +110,7 @@ def reduce_rspace(L,primes):
     return L2
 
 def rspace(maxts,trmaxts,primes):
-    """
-    In order for none of the trap spaces to "lock in", we would require that
+    """In order for none of the trap spaces to "lock in", we would require that
     their single-node drivers are all sustained in a negated state. We can use
     this idea to hone the exclusion space. rspace will return the region that
 
@@ -85,6 +130,21 @@ def rspace(maxts,trmaxts,primes):
     interpreted as AND-separated. e.g.,
     L=[[{'A':0,'B':1},{C:0}],[{'B':0,'D':1},{'A':1}]]
     should be read as L = (!A&B | !C) & (!B & D | A)
+
+    Parameters
+    ----------
+    maxts : list of partial state dictionaries
+        Stable motifs, i.e., maximum trap spaces for the system.
+    trmaxts : list of partial state dictionaries
+        Stable motifs, i.e., maximum trap spaces for the time-reversed system.
+    primes : PyBoolNet primes dictionary
+        Update rule for the system.
+
+    Returns
+    -------
+    L : rspace list
+        Description of rspace in list form (see summary above for details).
+
     """
     L = []
     nds = {} # negated 1-node drivers of the stable motifs in maxts
@@ -133,11 +193,23 @@ def rspace(maxts,trmaxts,primes):
     return L
 
 def fixed_rspace_nodes(L,primes):
-    """
-    Finds the nodes that must have a fixed value in order for the rspace
+    """Finds the nodes that must have a fixed value in order for the rspace
     constraint L to be satisfied in the system given by primes.
-    Relies on the special structure of L.
-    Returns {'0':1} if reduction uncovers that L is a contradiction.
+
+
+    Parameters
+    ----------
+    L : rspace list
+        Restrict space list (see RestrictSpace.rspace for details).
+    primes : PyBoolNet primes dictionary
+        Update rule for the system.
+
+    Returns
+    -------
+    dictionary
+        Nodes that are fixed everywhere in the rspace L. Returns {'0':1} if L is
+        a self-contradictory.
+
     """
     fL = [r[0] for r in L if len(r)==1]
 
@@ -157,8 +229,22 @@ def fixed_rspace_nodes(L,primes):
     return fd
 
 def reduce_rspace_string(s,fd,simplify=True):
-    """
-    Replaces variables in the string s with the fixed values given by the dictionary fd.
+    """Replaces variables in the string s with the fixed values given by the dictionary fd.
+
+    Parameters
+    ----------
+    s : str
+        Boolean expression in BNET format.
+    fd : partial state dictionary
+        Node values that are to be considered fixed.
+    simplify : bool
+        Whether to simplify the expression using espresso (the default is True).
+
+    Returns
+    -------
+    str
+        String with substitutions made according to fd.
+
     """
     s2 = s
     for k,v in fd.items():

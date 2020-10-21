@@ -2,9 +2,37 @@ import StableMotifs as sm
 import networkx as nx
 
 def format_reduction_label(s):
+    """Short summary.
+
+    Parameters
+    ----------
+    s : type
+        Description of parameter `s`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     return s.replace("'","").replace('[','').replace(']','')
 
 def expanded_network(primes, single_parent_composites = False):
+    """Short summary.
+
+    Parameters
+    ----------
+    primes : type
+        Description of parameter `primes`.
+    single_parent_composites : type
+        Description of parameter `single_parent_composites` (the default is False).
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     G = nx.DiGraph()
     cnode_id = 0
     for p in primes:
@@ -38,10 +66,21 @@ def expanded_network(primes, single_parent_composites = False):
     return G
 
 def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=True):
+    """Short summary.
 
-    '''
-    tbd
-    '''
+    Parameters
+    ----------
+    ar : type
+        Description of parameter `ar`.
+    include_attractors_in_diagram : type
+        Description of parameter `include_attractors_in_diagram` (the default is True).
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
 
     G_reduced_network_based=ar.succession_diagram.digraph.copy()
     has_nodes = False
@@ -69,10 +108,29 @@ def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_d
 
 def plot_nx_succession_diagram(g, fig_dimensions=[], pos='pydot', detailed_labels=True, node_size=[], node_color='grey',
                               font_size=12, font_color='black'):
+    """Short summary.
 
-    '''
-    tbd
-    '''
+    Parameters
+    ----------
+    g : type
+        Description of parameter `g`.
+    fig_dimensions : type
+        Description of parameter `fig_dimensions` (the default is []).
+    pos : type
+        Description of parameter `pos` (the default is 'pydot').
+    detailed_labels : type
+        Description of parameter `detailed_labels` (the default is True).
+    node_size : type
+        Description of parameter `node_size` (the default is []).
+    node_color : type
+        Description of parameter `node_color` (the default is 'grey').
+    font_size : type
+        Description of parameter `font_size` (the default is 12).
+    font_color : type
+        Description of parameter `font_color` (the default is 'black').
+
+    """
+
     from networkx.drawing.nx_agraph import graphviz_layout
     import matplotlib.pyplot as plt
 
@@ -95,9 +153,21 @@ def plot_nx_succession_diagram(g, fig_dimensions=[], pos='pydot', detailed_label
     plt.show()
 
 def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=True):
-    '''
-    tbd
-    '''
+    """Short summary.
+
+    Parameters
+    ----------
+    ar : type
+        Description of parameter `ar`.
+    include_attractors_in_diagram : type
+        Description of parameter `include_attractors_in_diagram` (the default is True).
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     G_reduced_network_based=networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=False)
     G_motif_based = nx.line_graph(G_reduced_network_based)
     for i,j in G_motif_based.nodes():
@@ -123,11 +193,23 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
     return G_motif_based
 
 def networkx_succession_diagram_motif_based_simplified(ar, GM=None, include_attractors_in_diagram=True):
+    """Short summary.
 
-    '''
-    tbd
-    '''
+    Parameters
+    ----------
+    ar : type
+        Description of parameter `ar`.
+    GM : type
+        Description of parameter `GM` (the default is None).
+    include_attractors_in_diagram : type
+        Description of parameter `include_attractors_in_diagram` (the default is True).
 
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     if GM==None:
         GM=networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=include_attractors_in_diagram)
     motifs_list=get_motif_set(ar)
@@ -152,10 +234,19 @@ def networkx_succession_diagram_motif_based_simplified(ar, GM=None, include_attr
     return GMM
 
 def networkx_motif_attractor_bipartite_graph(ar):
+    """Short summary.
 
-    '''
-    tbd
-    '''
+    Parameters
+    ----------
+    ar : type
+        Description of parameter `ar`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
 
     GMM=networkx_succession_diagram_motif_based_simplified(ar,include_attractors_in_diagram=True)
 
@@ -182,9 +273,19 @@ def networkx_motif_attractor_bipartite_graph(ar):
     return GM_bp
 
 def attractor_dataframe(ar):
-    '''
-    tbd
-    '''
+    """Short summary.
+
+    Parameters
+    ----------
+    ar : type
+        Description of parameter `ar`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     import pandas as pd
     df=pd.DataFrame()
     for a in ar.attractors:
@@ -193,9 +294,19 @@ def attractor_dataframe(ar):
     return df
 
 def get_motif_set(ar):
-    '''
-    tbd
-    '''
+    """Short summary.
+
+    Parameters
+    ----------
+    ar : type
+        Description of parameter `ar`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     GM_no_attr=networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=False)
     SM_set=set([])
     for n in GM_no_attr.nodes(data=True):
@@ -203,9 +314,17 @@ def get_motif_set(ar):
     return [dict(sm) for sm in SM_set]
 
 def save_to_graphml(G,model_name):
-    '''
-    tbd
-    '''
+    """Short summary.
+
+    Parameters
+    ----------
+    G : type
+        Description of parameter `G`.
+    model_name : type
+        Description of parameter `model_name`.
+
+    """
+
     #Graphml does not support complex attribues so we create a copy with the virtual_nodes attribute:
     G_ex=G.copy()
     for n in G_ex.nodes():

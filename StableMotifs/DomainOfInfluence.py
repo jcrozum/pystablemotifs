@@ -2,8 +2,22 @@ import itertools as it
 import random
 
 def fixed_implies_implicant(fixed,implicant):
-    """
-    Returns True if and only if the (possibly partial) state "fixed" implies the implicant.
+    """Returns True if and only if the (possibly partial) state "fixed" implies
+    the implicant.
+
+    Parameters
+    ----------
+    fixed : partial state dictionary
+        State (or partial state) representing fixed variable states.
+    implicant : partial state dictionary
+        State (or partial state) representing the target implicant.
+
+    Returns
+    -------
+    bool
+        True if and only if the implicant is in the logical domain of influence
+        of the fixed (partial) state.
+
     """
     rval = True
     for k,v in implicant.items():
@@ -16,8 +30,22 @@ def fixed_implies_implicant(fixed,implicant):
     return rval
 
 def fixed_excludes_implicant(fixed,implicant):
-    """
-    Returns True if and only if the (possibly partial) state "fixed" contradicts the implicant.
+    """Returns True if and only if the (possibly partial) state "fixed"
+    contradicts the implicant.
+
+    Parameters
+    ----------
+    fixed : partial state dictionary
+        State (or partial state) representing fixed variable states.
+    implicant : partial state dictionary
+        State (or partial state) representing the target implicant.
+
+    Returns
+    -------
+    bool
+        True if and only if the implicant contradicts the logical domain of
+        influence of the fixed (partial) state.
+
     """
     rval = True
     for k,v in implicant.items():
@@ -29,23 +57,26 @@ def fixed_excludes_implicant(fixed,implicant):
     return not rval
 
 def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None):
-    """
-    Computes the logical domain of influence (LDOI) (see Yang et al. 2018)
+    """Computes the logical domain of influence (LDOI) (see Yang et al. 2018)
 
-    INPUTS:
-    partial_state - a dict in the PyBoolNet implicant form that define fixed nodes
-    primes - a PyBoolNet primes dictionary that define the update rules
-    implied_hint - set of states known to be a subset of the LDOI
-    contradicted_hint - set of states known to be a subset of the contradicted states
+    Parameters
+    ----------
+    partial_state : partial state dictionary
+        PyBoolNet implicant that defines fixed nodes.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    implied_hint : partial state dictionary
+         Known subset of the LDOI; used during optimization.
+    contradicted_hint : partial state dictionary
+        Known subset of the contradiction boundary; used during optimization.
 
-    WARNING: hint states are NOT tested for consistency, as this would defeat
-    the purpose of speedup and redundancy reduction.
+    Returns
+    -------
+    implied : partial state dictionary
+        The logical domain of influence.
+    contradicted : partial state dictionary
+        The contradiction boundary.
 
-    OUTPUTS:
-    implied - node states in the LDOI of partial_state
-    contradicted - node states that are implied by a subset of the LDOI,
-                   but contradict the node states specified by partial_state
-    Note: implied and contradicted are dictionaries in the same format as partial_state.
     """
 
     if implied_hint is None:
@@ -85,49 +116,70 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
         if not states_added or len(primes_to_search) == 0: break
     return implied, contradicted
 
-def single_drivers(partial_state,primes):
-    """
-    Finds all 1-node (logical) drivers of partial_state under the rules given by primes
+def single_drivers(target,primes):
+    """Finds all 1-node (logical) drivers of target under the rules given
+    by primes.
 
-    Returns a list of length-1 dictionaries
+    Parameters
+    ----------
+    target : partial state dictionary
+        PyBoolNet implicant that defines target fixed node states.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+
+    Returns
+    -------
+    list of length-1 dictionaries
+        Each dictionary describes a single node state that contains the target
+        in its logical domain of influence.
+
     """
     drivers = []
     for k in primes:
         for val in [0,1]:
             ds = {k:val}
             ldoi,contra = logical_domain_of_influence(ds,primes)
-            if all([kk in ldoi for kk in partial_state]):
+            if all([kk in ldoi for kk in target]):
                 drivers.append(ds)
     return drivers
 
-def all_drivers_of_size(driver_set_size,partial_state, primes, external_search_vars=None,internal_search_vars=None):
-    """
-    Finds all logical driver sets of the specified size for the target partial state
+def all_drivers_of_size(driver_set_size,target, primes, external_search_vars=None,internal_search_vars=None):
+    """Short summary.
 
-    INPUTS:
-    driver_set_size - the number of driver nodes to try to find
-    partial_state - dictionary specifying the target partial state
-    primes - PyBoolNet state dictionary specifying the update rules
-    external_search_vars - node set not in partial_state to consider as potential
-                           drivers. Default: all nodes not fixed in partial_state
-    internal_search_vars - node set in partial_state to consider as potential
-                           drivers. Default: all nodes in partial state
+    Parameters
+    ----------
+    driver_set_size : int
+        The number of driver nodes to try to find.
+    target : partial state dictionary
+        PyBoolNet implicant that defines target fixed node states.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    external_search_vars : set of str variable names
+        Node set not in target to consider as potential drivers. If None,
+        then all nodes not fixed in target (the default is None).
+    internal_search_vars : set of str variable names
+        Node set in target to consider as potential drivers. If None, all
+        nodes in partial state (the default is None).
 
-    OUTPUT:
-    driver_sets - a list of state dicts, each of which drives partial_state
+    Returns
+    -------
+    driver_sets : list of partial state dictionaries
+        Each state dictionary in the list drives target.
+
     """
+
     if internal_search_vars is None:
-        internal_search_vars = set(partial_state.keys())
+        internal_search_vars = set(target.keys())
     if external_search_vars is None:
-        external_search_vars = set(x for x in primes if not x in partial_state)
+        external_search_vars = set(x for x in primes if not x in target)
 
     driver_sets = []
 
     search_vars = internal_search_vars | external_search_vars
     for driver_vars in it.combinations(search_vars,driver_set_size):
-        # Any internal nodes must be in their partial_state state to be drivers
-        internal_driver_dict = {k:partial_state[k] for k in driver_vars if k in partial_state}
-        out_keys = [k for k in driver_vars if not k in partial_state]
+        # Any internal nodes must be in their target state to be drivers
+        internal_driver_dict = {k:target[k] for k in driver_vars if k in target}
+        out_keys = [k for k in driver_vars if not k in target]
         for s in it.product([0,1],repeat=len(out_keys)):
             external_driver_dict = {k:s for k,s in zip(out_keys,s)}
             driver_dict = {**internal_driver_dict, **external_driver_dict}
@@ -144,63 +196,120 @@ def all_drivers_of_size(driver_set_size,partial_state, primes, external_search_v
             implied,contradicted = logical_domain_of_influence(driver_dict,primes)
             fixed = {**implied, **driver_dict}
 
-            partial_state_stabilized = True
-            for k,v in partial_state.items():
+            target_stabilized = True
+            for k,v in target.items():
                 if not k in fixed or not fixed[k] == v:
-                    partial_state_stabilized = False
+                    target_stabilized = False
                     break
 
-            if partial_state_stabilized:
+            if target_stabilized:
                 driver_sets.append(driver_dict)
     return driver_sets
 
-def internal_drivers(partial_state,primes,max_drivers=None):
-    """
-    Find internal (logical) driver nodes of partial_state through brute-force
+def internal_drivers(target,primes,max_drivers=None):
+    """Find internal (logical) driver nodes of target through brute-force.
+
+    Parameters
+    ----------
+    target : partial state dictionary
+        PyBoolNet implicant that defines target fixed node states.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    max_drivers : int
+        Maximum size of driver set to consider. If None, is set to the size of
+        the parital state (as this is always sufficient to achieve the target)
+        (the default is None).
+
+    Returns
+    -------
+    driver_sets : list of partial state dictionaries
+        Each state dictionary in the list drives target. These are sorted
+        by length (smallest first).
+
     """
     if max_drivers is None:
-        max_drivers = len(partial_state) # The partial_state itself is always its own driver
+        max_drivers = len(target) # The target itself is always its own driver
 
     driver_sets = []
 
     for driver_set_size in range(1,max_drivers+1):
-        driver_sets += all_drivers_of_size(driver_set_size,partial_state,primes,external_search_vars=set())
+        driver_sets += all_drivers_of_size(driver_set_size,target,primes,external_search_vars=set())
 
     if len(driver_sets) == 0:
-        driver_sets.append(partial_state)
+        driver_sets.append(target)
 
     return sorted(driver_sets, key = lambda x: len(x))
 
 
-def minimal_drivers(partial_state,primes,max_drivers=None):
+def minimal_drivers(target,primes,max_drivers=None):
+    """Finds smallest set(s) of (logical) driver nodes of target through
+    brute-force. Unlike minimal_drivers, we are not limited to internal drivers
+    nodes.
+
+    Parameters
+    ----------
+    target : partial state dictionary
+        PyBoolNet implicant that defines target fixed node states.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    max_drivers : int
+        Maximum size of driver set to consider. If None, is set to the size of
+        the parital state (as this is always sufficient to achieve the target)
+        (the default is None).
+
+    Returns
+    -------
+    driver_sets : list of partial state dictionaries
+        Each state dictionary in the list drives target. These are sorted
+        by length (smallest first).
+
     """
-    Finds smallest set(s) of (logical) driver nodes of partial_state through brute-force
-    Not limited to internal drivers nodes
-    """
+
     if max_drivers is None:
-        max_drivers = len(partial_state) # The partial_state itself is always its own driver
+        max_drivers = len(target) # The target itself is always its own driver
 
     driver_sets = []
-    out_vars = set(x for x in primes if not x in partial_state)
+    out_vars = set(x for x in primes if not x in target)
     for driver_set_size in range(1,max_drivers+1):
         if len(driver_sets) > 0:
             break
-        driver_sets += all_drivers_of_size(driver_set_size,partial_state,primes,external_search_vars=out_vars)
+        driver_sets += all_drivers_of_size(driver_set_size,target,primes,external_search_vars=out_vars)
 
     if len(driver_sets) == 0:
-        driver_sets.append(partial_state)
+        driver_sets.append(target)
 
     return sorted(driver_sets, key = lambda x: len(x))
 
 def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None,forbidden=None):
-    """
-    Find all partial states in primes that drive the target. Do not consider nodes in
-    the forbidden list.
+    """Find all partial states in primes that drive the target. Do not consider
+    nodes in the forbidden list.
+
+    Parameters
+    ----------
+    target : partial state dictionary
+        PyBoolNet implicant that defines target fixed node states.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    min_drivers : int
+        Minimum size of driver set to consider. (the default is 1).
+    max_drivers : int
+        Maximum size of driver set to consider. If None, is set to the size of
+        the parital state (as this is always sufficient to achieve the target)
+        (the default is None).
+    forbidden : set of str variable names
+        Variables to be considered uncontrollable (the default is None).
+
+    Returns
+    -------
+    knocked_nodes : list of partial state dictionaries
+        Each state dictionary in the list drives target. Supersets of
+        previously considered dictionaries are excluded.
+
     """
     if max_drivers is None:
         max_drivers = len(primes) - len(target)
     if forbidden is None:
-        forbidden = []
+        forbidden = set()
 
     knocked_nodes = []
 
@@ -223,9 +332,23 @@ def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None,forbidde
     return knocked_nodes
 
 def initial_GRASP_candidates(target,primes,forbidden):
-    """
-    Helper function for GRASP driver search.
-    Constructs initial candidates for driver nodes.
+    """Helper function for GRASP driver search. Constructs initial candidates
+    for driver nodes.
+
+    Parameters
+    ----------
+    target : partial state dictionary
+        PyBoolNet implicant that defines target fixed node states.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    forbidden : set of str variable names
+        Variables to be considered uncontrollable (the default is None).
+
+    Returns
+    -------
+    candidates : list of partial state dictionaries
+        List of variable states that can potentially lead to the target.
+
     """
     if forbidden is None:
         candidate_vars = list(primes.keys())
@@ -237,9 +360,25 @@ def initial_GRASP_candidates(target,primes,forbidden):
     return candidates
 
 def GRASP_default_scores(target,primes,candidates):
-    """
-    Helper function for GRASP driver search.
-    Constructs scores for candidate driver nodes.
+    """Helper function for GRASP driver search. Scores candidate driver nodes.
+
+    Parameters
+    ----------
+    target : partial state dictionary
+        PyBoolNet implicant that defines target fixed node states.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    candidates : list of partial state dictionaries
+        List of variable states that can potentially lead to the target.
+
+    Returns
+    -------
+    scores : list of ints
+        Logical domain of influence sizes for individual node states. If the
+        node leads to a contradiction, the score will become the negative of the
+        largest LDOI size. Scores are ordered in the same order as the
+        candidates list.
+
     """
     scores = []
     m = 0 # will be the size of largest LDOI
@@ -262,9 +401,29 @@ def GRASP_default_scores(target,primes,candidates):
     return scores
 
 def construct_GRASP_solution(target,primes,candidates,scores):
-    """
-    A helper funciton for GRASP driver search.
-    Constructs an individual driver set using the GRASP search method.
+    """Helper funciton for GRASP driver search. Constructs individual driver set
+    using the GRASP search method.
+
+    Parameters
+    ----------
+    target : partial state dictionary
+        PyBoolNet implicant that defines target fixed node states.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    candidates : list of partial state dictionaries
+        List of variable states that can potentially lead to the target.
+    scores : list of ints
+        Logical domain of influence sizes for individual node states. If the
+        node leads to a contradiction, the score will become the negative of the
+        largest LDOI size. Scores are ordered in the same order as the
+        candidates list.
+
+    Returns
+    -------
+    partial state dictionary
+        A partial state that contains the target in its LDOI. If no such partial
+        state is found, returns an empty dictionary instead.
+
     """
     solution = {}
     alpha = random.random()
@@ -300,9 +459,23 @@ def construct_GRASP_solution(target,primes,candidates,scores):
     return {}
 
 def local_GRASP_reduction(solution,target,primes):
-    """
-    A helper funciton for GRASP driver search.
-    Reduces valid solutions to attempt to remove redundancies.
+    """A helper funciton for GRASP driver search. Reduces valid solutions to
+    attempt to remove redundancies.
+
+    Parameters
+    ----------
+    solution : partial state dictionary
+        Solution to be reduced; must contain the target in its LDOI.
+    target : partial state dictionary
+        PyBoolNet implicant that defines target fixed node states.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+
+    Returns
+    -------
+    partial state dictionary
+        Reduced solution that also contains target in its LDOI.
+
     """
     keylist = list(solution.keys())
     random.shuffle(keylist)
@@ -320,22 +493,28 @@ def local_GRASP_reduction(solution,target,primes):
     return old_solution
 
 def GRASP(target, primes, GRASP_iterations, forbidden=None, GRASP_scores=GRASP_default_scores):
-    """
-    Search for drivers of target in primes.
+    """Search for drivers of target in primes using the method of Yang et al. 2018.
 
-    INPUTS:
-    target - dict representing the target partial state
-    primes - PyBoolNet primes dict describing the update rules
-    GRASP_iterations - the number of times to run the GRASP method
-    forbidden - a list of variables that should not be considered as potential drivers
-    GRASP_scores - a function for calculating heuristic scores of candidates;
-                   takes arguments target,primes,candidates (in that order).
-                   Must return a list of neumeric scores in the same order as
-                   candidates. Candidates with negative scores will be removed
-                   from consideration.
+    Parameters
+    ----------
+    target : partial state dictionary
+        PyBoolNet implicant that defines target fixed node states.
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    GRASP_iterations : int
+        The number of times to run the GRASP method.
+    forbidden : set of str variable names
+        Variables to be considered uncontrollable (the default is None).
+    GRASP_scores : function
+        Function to score candiates (the default is GRASP_default_scores; see
+        that function for required inputs and outputs of the scoring function).
 
-    OUTPUT:
-    solutions - A list of driver sets in dictionary form
+    Returns
+    -------
+    solutions : list of partial state dictionaries
+        Each partial set dictionary represents a driver set whose LDOI contains
+        the target.
+
     """
     solutions = []
     candidates = initial_GRASP_candidates(target,primes,forbidden)
