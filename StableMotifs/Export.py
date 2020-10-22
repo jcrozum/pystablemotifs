@@ -2,35 +2,38 @@ import StableMotifs as sm
 import networkx as nx
 
 def format_reduction_label(s):
-    """Short summary.
+    """Helper function to make graph labels more readable.
 
     Parameters
     ----------
-    s : type
-        Description of parameter `s`.
+    s : str
+        Input label.
 
     Returns
     -------
-    type
-        Description of returned object.
+    str
+        Label with characters ', [, and ] removed.
 
     """
     return s.replace("'","").replace('[','').replace(']','')
 
 def expanded_network(primes, single_parent_composites = False):
-    """Short summary.
+    """Produce the expanded network for given input update rules.
 
     Parameters
     ----------
-    primes : type
-        Description of parameter `primes`.
-    single_parent_composites : type
-        Description of parameter `single_parent_composites` (the default is False).
+    primes : PyBoolNet primes dictionary
+        The update rules for which to construct the expanded network.
+    single_parent_composites : bool
+        Whether to insert composite nodes between virtual nodes when one is a prime
+        implicant of the other. If False, the number of nodes is decreased; if
+        True, then the expanded network is bipartite (the default is False).
 
     Returns
     -------
-    type
-        Description of returned object.
+    networkx.DiGraph
+        Digraph representing the expanded network. Nodes have a 'type' attribute
+        that can be either 'virtual' or 'composite'.
 
     """
     G = nx.DiGraph()
@@ -66,19 +69,22 @@ def expanded_network(primes, single_parent_composites = False):
     return G
 
 def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=True):
-    """Short summary.
+    """Label the succesion diagram and (optionally) attractors of the input attractor
+    repertoire according to the conventions of Rozum et al. (2020). Useful for
+    plotting.
 
     Parameters
     ----------
-    ar : type
-        Description of parameter `ar`.
-    include_attractors_in_diagram : type
-        Description of parameter `include_attractors_in_diagram` (the default is True).
+    ar : AttractorRepertoire
+        Attractor repertoire object for which to build the diagram.
+    include_attractors_in_diagram : bool
+        Whether attractors should be represented as nodes in the diagram (the
+        default is True).
 
     Returns
     -------
-    type
-        Description of returned object.
+    networkx.DiGraph
+        A labeled digraph that represents the succession diagram.
 
     """
 
@@ -108,26 +114,33 @@ def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_d
 
 def plot_nx_succession_diagram(g, fig_dimensions=[], pos='pydot', detailed_labels=True, node_size=[], node_color='grey',
                               font_size=12, font_color='black'):
-    """Short summary.
+    """Plot the input succession diagram. Requires matplotlib. For finer control
+    over plot appearance, it is recommended to plot g directly.
 
     Parameters
     ----------
-    g : type
-        Description of parameter `g`.
-    fig_dimensions : type
-        Description of parameter `fig_dimensions` (the default is []).
-    pos : type
-        Description of parameter `pos` (the default is 'pydot').
-    detailed_labels : type
-        Description of parameter `detailed_labels` (the default is True).
-    node_size : type
-        Description of parameter `node_size` (the default is []).
-    node_color : type
-        Description of parameter `node_color` (the default is 'grey').
-    font_size : type
-        Description of parameter `font_size` (the default is 12).
-    font_color : type
-        Description of parameter `font_color` (the default is 'black').
+    g : networkx.DiGraph
+        Labeled succession diagram, e.g., as is output from
+        Export.networkx_succession_diagram_reduced_network_based().
+    fig_dimensions : (int,int)
+        Dimensions of the output figure. If [], then the dimensions are calculated
+        based on the number of nodes in g (the default is []).
+    pos : str or graphviz_layout
+        Layout for the node labels; if 'pydot', these are automatically computed
+        using pydot (requires pydot) (the default is 'pydot').
+    detailed_labels : bool
+        Whether node labels should be drawn (True) or left as metadata (False)
+        (the default is True).
+    node_size : int
+        Size of the nodes. If [], the size is proportional to the number of nodes
+        in g (the default is []).
+    node_color : color or array of colors
+        Node color. Can be a single color or a sequence of colors with the same
+        length as nodelist. (the default is 'grey').
+    font_size : int
+        Font size for labels (the default is 12).
+    font_color : str
+        Color for label text (the default is 'black').
 
     """
 
@@ -153,19 +166,22 @@ def plot_nx_succession_diagram(g, fig_dimensions=[], pos='pydot', detailed_label
     plt.show()
 
 def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=True):
-    """Short summary.
+    """Label the succesion diagram and (optionally) attractors of the input attractor
+    repertoire according to the conventions of Zanudo and Albert (2015). Useful
+    for plotting.
 
     Parameters
     ----------
-    ar : type
-        Description of parameter `ar`.
-    include_attractors_in_diagram : type
-        Description of parameter `include_attractors_in_diagram` (the default is True).
+    ar : AttractorRepertoire
+        Attractor repertoire object for which to build the diagram.
+    include_attractors_in_diagram : bool
+        Whether attractors should be represented as nodes in the diagram (the
+        default is True).
 
     Returns
     -------
-    type
-        Description of returned object.
+    networkx.DiGraph
+        A labeled digraph that represents the succession diagram.
 
     """
     G_reduced_network_based=networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=False)
@@ -193,21 +209,24 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
     return G_motif_based
 
 def networkx_succession_diagram_motif_based_simplified(ar, GM=None, include_attractors_in_diagram=True):
-    """Short summary.
+    """Produce a compressed version of the succession diagram using the conventions
+    of Zanudo and Albert (2015).
 
     Parameters
     ----------
-    ar : type
-        Description of parameter `ar`.
-    GM : type
-        Description of parameter `GM` (the default is None).
-    include_attractors_in_diagram : type
-        Description of parameter `include_attractors_in_diagram` (the default is True).
+    ar : AttractorRepertoire
+        Attractor repertoire object for which to build the diagram.
+    GM : networkx.DiGraph
+        Labeled motif-based succession diagram to simplify. If None, the diagram
+        is generated from ar (the defaule is None).
+    include_attractors_in_diagram : bool
+        Whether attractors should be represented as nodes in the diagram (the
+        default is True).
 
     Returns
     -------
-    type
-        Description of returned object.
+    networkx.DiGraph
+        Simplified motif-based succession diagram.
 
     """
     if GM==None:
@@ -234,17 +253,18 @@ def networkx_succession_diagram_motif_based_simplified(ar, GM=None, include_attr
     return GMM
 
 def networkx_motif_attractor_bipartite_graph(ar):
-    """Short summary.
+    """Produce a motif-attractor bipartite compression of the succession diagram
+    for the given attractor repertoire.
 
     Parameters
     ----------
-    ar : type
-        Description of parameter `ar`.
+    ar : AttractorRepertoire
+        Attractor repertoire object for which to build the diagram.
 
     Returns
     -------
-    type
-        Description of returned object.
+    networkx.DiGraph
+        Motif-attractor bipartite condensed succession diagram.
 
     """
 
@@ -273,17 +293,18 @@ def networkx_motif_attractor_bipartite_graph(ar):
     return GM_bp
 
 def attractor_dataframe(ar):
-    """Short summary.
+    """Summarize the input attractor repertoire in a pandas DataFrame (requires
+    pandas).
 
     Parameters
     ----------
-    ar : type
-        Description of parameter `ar`.
+    ar : AttractorRepertoire
+        Attractor repertoire to summarize.
 
     Returns
     -------
-    type
-        Description of returned object.
+    pandas.DataFrame
+        Summary of the attractors.
 
     """
     import pandas as pd
@@ -294,17 +315,18 @@ def attractor_dataframe(ar):
     return df
 
 def get_motif_set(ar):
-    """Short summary.
+    """Extract the stable motifs of a system and its reduced networks from its
+    attractor repertoire.
 
     Parameters
     ----------
-    ar : type
-        Description of parameter `ar`.
+    ar : AttractorRepertoire
+        The attractor repertoire of the system.
 
     Returns
     -------
-    type
-        Description of returned object.
+    list of dictionaries
+        Stable motifs that appear in the system or during reduction.
 
     """
     GM_no_attr=networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=False)
@@ -314,14 +336,14 @@ def get_motif_set(ar):
     return [dict(sm) for sm in SM_set]
 
 def save_to_graphml(G,model_name):
-    """Short summary.
+    """Export a labeled succesion diagram to graphml format.
 
     Parameters
     ----------
-    G : type
-        Description of parameter `G`.
-    model_name : type
-        Description of parameter `model_name`.
+    G : networkx.DiGraph
+        Labeled succession diagram to export.
+    model_name : str
+        Name of file to save to (.graphml extension will be appended).
 
     """
 
