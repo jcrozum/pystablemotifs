@@ -210,7 +210,10 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
 
 def networkx_succession_diagram_motif_based_simplified(ar, GM=None, include_attractors_in_diagram=True):
     """Produce a compressed version of the succession diagram using the conventions
-    of Zanudo and Albert (2015).
+    of Zanudo and Albert (2015). In this compression, stable motifs (potentially
+    ones that are only stable after some number of reductions) are represented
+    only once. If a single motif appears more than once in the succession diagram,
+    those nodes are merged.
 
     Parameters
     ----------
@@ -254,7 +257,8 @@ def networkx_succession_diagram_motif_based_simplified(ar, GM=None, include_attr
 
 def networkx_motif_attractor_bipartite_graph(ar):
     """Produce a motif-attractor bipartite compression of the succession diagram
-    for the given attractor repertoire.
+    for the given attractor repertoire. There is an edge from a (conditionally)
+    stable motif to an attractor if the motif is compatible with that attractor.
 
     Parameters
     ----------
@@ -316,7 +320,8 @@ def attractor_dataframe(ar):
 
 def get_motif_set(ar):
     """Extract the stable motifs of a system and its reduced networks from its
-    attractor repertoire.
+    attractor repertoire. Notably, these include both the system's primary stable
+    motifs and conditionally stable motifs (see, e.g., Deritei et al. 2019).
 
     Parameters
     ----------
