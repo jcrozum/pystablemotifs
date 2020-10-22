@@ -10,47 +10,78 @@ import StableMotifs.Format as sm_format
 import StableMotifs.DomainOfInfluence as sm_doi
 
 class SuccessionDiagram:
-    """
-    Representation of a succession diagram of a Boolean system
+    """Class describing the succession diagram of a Boolean system. See, e.g.,
+    Zanudo and Albert (2015) or Rozum et al. (2020).
 
-    VARIABLES:
-    motif_reduction_dict - a MotifReduction-valued dictionary with integer (index) keys (see Reduction.py)
+    Attributes
+    ----------
+    motif_reduction_dict : dictionary
+        MotifReduction-valued dictionary with integer (index) keys (see Reduction.py).
+    digraph : networkx.DiGraph
+        Topological structure of hte succession diagram. Nodes are integers that
+        align with the enteries of motif_reduction_dict.
 
-    FUNCTIONS:
-    build_succession_diagram - construct the succession diagram for the input model
-    summary - prints a summary of the succession diagram to screen
-    attractor_candidate_summary - prints a summary of found or potential attractors
-    reprogram_to_trap_spaces - implements various attractor control strategies
     """
 
     def __init__(self):
         self.motif_reduction_dict = {}
         self.digraph = nx.DiGraph()
-        self.G_reduced_network_based = nx.DiGraph()
-        self.G_reduced_network_based_labeled = nx.DiGraph()
-        self.G_motif_based = nx.DiGraph()
-        self.G_motif_based_labeled = nx.DiGraph()
-        self.pos_reduced_network_based = dict()
-        self.pos_motif_based = dict()
-        self.attractor_fixed_nodes_list = []
-        self.attractor_dict= dict()
-        self.attractor_reduced_primes_list = []
-        self.attractor_guaranteed_list = []
-        self.reduced_complex_attractor_list = []
-        self.deletion_attractor_list = []
-        self.unreduced_primes = None
+        # self.G_reduced_network_based = nx.DiGraph()
+        # self.G_reduced_network_based_labeled = nx.DiGraph()
+        # self.G_motif_based = nx.DiGraph()
+        # self.G_motif_based_labeled = nx.DiGraph()
+        # self.pos_reduced_network_based = dict()
+        # self.pos_motif_based = dict()
+        # self.attractor_fixed_nodes_list = []
+        # self.attractor_dict= dict()
+        # self.attractor_reduced_primes_list = []
+        # self.attractor_guaranteed_list = []
+        # self.reduced_complex_attractor_list = []
+        # self.deletion_attractor_list = []
+        # self.unreduced_primes = None
 
     def find_motif_permutation(self,motif_history):
-        for i,mr in self.motif_reduction_dict.items():
+        """Check whether some permutation of the input motif_history is already
+        represented in the succession diagram. If so, return the preexisting
+        reduction's index and the permutation that maps between the two histories.
+
+        Parameters
+        ----------
+        motif_history : list of partial state dictionaries
+            Stable motifs that can lock in to give a given reduced network (in
+            order).
+
+        Returns
+        -------
+        reduction_index : int
+            Index of the preexisting reduced network. This value is None if no such
+            reduced network exists.
+        permutation : list of int
+            Permutation that maps the preexisting history to the input history.
+            This value is None if no such history exists.
+
+        """
+        for reduction_index,mr in self.motif_reduction_dict.items():
             if len(mr.motif_history) == len(motif_history):
                 if all([x in mr.motif_history for x in motif_history]):
                     permutation = []
                     for x in motif_history:
                         permutation.append(mr.motif_history.index(x))
-                    return i,permutation # We already have an equivalent motif in the list
+                    return reduction_index,permutation # We already have an equivalent motif in the list
         return None,None
 
     def add_motif_permutation(self,reduction_index,permutation):
+        """Adds a permutation of a preexisting stable motif history to a precomputed
+        MotifReduction object.
+
+        Parameters
+        ----------
+        reduction_index : int
+            Index of the preexisting reduced network.
+        permutation : list of int
+            Permutation that maps the preexisting history to the input history.
+
+        """
         self.motif_reduction_dict[reduction_index].merged_history_permutations.append(permutation)
         for child in nx.topological_sort(self.digraph):
             for parent in self.digraph.predecessors(child):
@@ -64,12 +95,38 @@ class SuccessionDiagram:
                         self.motif_reduction_dict[child].merged_history_permutations.append(new_perm)
 
     def find_equivalent_reduction(self,fixed):
+        """Extracts the MotifReduction object that has the frozen node values
+        specified by fixed, if such an object exists (returns None otherwise).
+
+        Parameters
+        ----------
+        fixed : partial state dictionary
+            Nodes values that have been fixed and reduced by stable motifs and their
+            logical domain of influence.
+
+        Returns
+        -------
+        MotifReduction
+            Reduced network that has the frozen node values specified by fixed,
+            if such an object exists (returns None otherwise).
+
+        """
         for reduction in self.motif_reduction_dict.values():
             if reduction.logically_fixed_nodes == fixed:
                 return reduction
         return None
 
     def add_motif_reduction(self,motif_reduction):
+        """Inserts a given MotifReduction into the succession diagram. Does not
+        check for consistency, but will insert a properly constructed MotifReduction
+        into the correct place in the diagram.
+
+        Parameters
+        ----------
+        motif_reduction : MotifReduction
+            Reduced network to be appended to the succession diagram.
+
+        """
         if self.motif_reduction_dict == {}:
             self.unreduced_primes = motif_reduction.reduced_primes
 
@@ -100,128 +157,153 @@ class SuccessionDiagram:
 
         self.motif_reduction_dict[N] = motif_reduction
         self.add_motif_permutation(N,list(range(len(motif_reduction.motif_history))))
-        if not motif_reduction.terminal == "no":
-            if not motif_reduction.logically_fixed_nodes in self.attractor_fixed_nodes_list:
-                self.attractor_fixed_nodes_list.append(motif_reduction.logically_fixed_nodes)
-                self.attractor_reduced_primes_list.append(motif_reduction.reduced_primes)
-                self.attractor_guaranteed_list.append(motif_reduction.terminal)
-                self.reduced_complex_attractor_list.append(motif_reduction.no_motif_attractors)
-                self.deletion_attractor_list.append(motif_reduction.deletion_no_motif_attractors)
-                self.attractor_dict=self.generate_attr_dict(set(self.unreduced_primes.keys()),self.attractor_fixed_nodes_list) #calling this function here is possibly an overkill but I leave it here for now.
+        # if not motif_reduction.terminal == "no":
+        #     if not motif_reduction.logically_fixed_nodes in self.attractor_fixed_nodes_list:
+        #         self.attractor_fixed_nodes_list.append(motif_reduction.logically_fixed_nodes)
+        #         self.attractor_reduced_primes_list.append(motif_reduction.reduced_primes)
+        #         self.attractor_guaranteed_list.append(motif_reduction.terminal)
+        #         self.reduced_complex_attractor_list.append(motif_reduction.no_motif_attractors)
+        #         self.deletion_attractor_list.append(motif_reduction.deletion_no_motif_attractors)
+                #self.attractor_dict=self.generate_attr_dict(set(self.unreduced_primes.keys()),self.attractor_fixed_nodes_list) #calling this function here is possibly an overkill but I leave it here for now.
 
-    def generate_attr_dict(self,nodes,attractor_fixed_nodes_list,oscillation_mark='X'):
+    # def generate_attr_dict(self,nodes,attractor_fixed_nodes_list,oscillation_mark='X'):
+    #
+    #     '''
+    #     Turns attrator_fixed_nodes_list into a dictionary of attractors extended with all node states, where nodes
+    #     that oscillate in an attractor are marked with oscillation_mark (default = 'X'). The attractor keys are
+    #     integers going from 0 to the number of attractors -1.
+    #
+    #     Input: nodes - set of all the nodes in the model
+    #           attractor_fixed_nodes_list - list of dictionaries matching the attractors containing
+    #           the node states that are stabilized in the attractor.
+    #     Returns: dictionary of integer keys where the values are dictionaries of node states
+    #     '''
+    #
+    #     attractors_dict={}
+    #     for attr_id,node_state_dict in enumerate(attractor_fixed_nodes_list):
+    #         node_state_dict=node_state_dict.copy()
+    #         for n in nodes:
+    #             if n not in node_state_dict:
+    #                 node_state_dict[n]='X'
+    #         attractors_dict[attr_id]=node_state_dict
+    #
+    #     return attractors_dict
 
-        '''
-        Turns attrator_fixed_nodes_list into a dictionary of attractors extended with all node states, where nodes
-        that oscillate in an attractor are marked with oscillation_mark (default = 'X'). The attractor keys are
-        integers going from 0 to the number of attractors -1.
+    # def find_constants_in_complex_attractor(self,c):
+    #
+    #     '''
+    #     Given a set of strings representing the states of a complex attractor the function finds the nodes
+    #     that are constant in the full complex attractor.
+    #
+    #     Input: a set of iterables constituting ones and zeros.
+    #     E.g. {'000', '010', '100'}
+    #
+    #     Returns: an array constituting 0s, 1s, and Xs. X represents an oscillating node, and the 0s and 1s
+    #     represent nodes stabilized to those states.
+    #     E.g. for the example given for the input the code will return: array(['X', 'X', '0'], dtype='<U1')
+    #     '''
+    #     import numpy as np
+    #     ca=np.array([np.fromiter(i, int, count=len(i)) for i in c])
+    #     attr=np.array(['X' for i in range(len(ca[0]))])
+    #     sum_a0=ca.sum(axis=0)
+    #     attr[np.where(sum_a0==0)[0]]=0
+    #     attr[np.where(sum_a0==len(ca))[0]]=1
+    #     return attr
 
-        Input: nodes - set of all the nodes in the model
-              attractor_fixed_nodes_list - list of dictionaries matching the attractors containing
-              the node states that are stabilized in the attractor.
-        Returns: dictionary of integer keys where the values are dictionaries of node states
-        '''
+    # def attractor_candidate_summary(self, show_reduced_rules = True):
+    #     guaranteed_spaces = len([x for x in self.attractor_guaranteed_list if x == "yes"])
+    #     possible_spaces = len([x for x in self.attractor_guaranteed_list if x == "possible"])
+    #     steady_states =  len([x for x in self.attractor_reduced_primes_list if len(x)==0])
+    #     found_complex_attractors = sum([len(x) for x in self.reduced_complex_attractor_list if x is not None])
+    #     deletion_split_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)>1])
+    #     deletion_lone_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)==1])
+    #
+    #     lbound_oscillations = found_complex_attractors
+    #     ubound_oscillations = lbound_oscillations + deletion_lone_oscillations + deletion_split_oscillations
+    #
+    #     print("Found", guaranteed_spaces, "guaranteed attractor space(s) and",
+    #         possible_spaces, "possible attractor space(s).")
+    #     print("Found", steady_states, "steady state(s) and explored", found_complex_attractors,
+    #         "complex attractor(s) in the guaranteed attractor space(s).")
+    #     if possible_spaces > 0:
+    #         print("There are at least",lbound_oscillations,"complex attractor(s) in total.")
+    #     elif ubound_oscillations == found_complex_attractors:
+    #         print("There are no additional attractors.")
+    #     # elif deletion_split_oscillations == 0:
+    #     #     print("There are exactly",deletion_lone_oscillations,"additional complex attractor(s) that were not fully explored.")
+    #     else:
+    #         print("There are between",lbound_oscillations,"and",ubound_oscillations,"complex attractors in total.")
+    #
+    #     for fn,rp,tr,at in zip(self.attractor_fixed_nodes_list,
+    #                            self.attractor_reduced_primes_list,
+    #                            self.attractor_guaranteed_list,
+    #                            self.reduced_complex_attractor_list):
+    #         print("__________________")
+    #         if tr == "possible":
+    #             print("Space May Contain Attractor")
+    #             print()
+    #         else:
+    #             print("Space Guaranteed to Contain Attractor(s)")
+    #         print("Logically Fixed Nodes:",{k:v for k,v in sorted(fn.items())})
+    #         print()
+    #         if len(rp) > 0:
+    #             if show_reduced_rules:
+    #                 print("Reduced Rules:")
+    #                 sm_format.pretty_print_prime_rules(rp)
+    #             else: print("Logically Unfixed Nodes:", sorted(rp.keys()))
+    #             if not at is None:
+    #                 print()
+    #                 print("Complex Attractors in Reduced Network (Alphabetical Node Ordering):")
+    #                 for x in at:
+    #                     print(x)
+    #         else:
+    #             print("No Free Nodes Remain.")
+    #
+    # def summary(self,terminal_keys=None,show_original_rules=True,hide_rules=False,show_explicit_permutations=False):
+    #     for motif_reduction in self.motif_reduction_dict.values():
+    #         if terminal_keys is None or motif_reduction.terminal in terminal_keys:
+    #             print("__________________")
+    #             motif_reduction.summary(show_original_rules=show_original_rules,hide_rules=hide_rules,show_explicit_permutations=show_explicit_permutations)
 
-        attractors_dict={}
-        for attr_id,node_state_dict in enumerate(attractor_fixed_nodes_list):
-            node_state_dict=node_state_dict.copy()
-            for n in nodes:
-                if n not in node_state_dict:
-                    node_state_dict[n]='X'
-            attractors_dict[attr_id]=node_state_dict
-
-        return attractors_dict
-
-    def find_constants_in_complex_attractor(self,c):
-
-        '''
-        Given a set of strings representing the states of a complex attractor the function finds the nodes
-        that are constant in the full complex attractor.
-
-        Input: a set of iterables constituting ones and zeros.
-        E.g. {'000', '010', '100'}
-
-        Returns: an array constituting 0s, 1s, and Xs. X represents an oscillating node, and the 0s and 1s
-        represent nodes stabilized to those states.
-        E.g. for the example given for the input the code will return: array(['X', 'X', '0'], dtype='<U1')
-        '''
-        import numpy as np
-        ca=np.array([np.fromiter(i, int, count=len(i)) for i in c])
-        attr=np.array(['X' for i in range(len(ca[0]))])
-        sum_a0=ca.sum(axis=0)
-        attr[np.where(sum_a0==0)[0]]=0
-        attr[np.where(sum_a0==len(ca))[0]]=1
-        return attr
-
-    def attractor_candidate_summary(self, show_reduced_rules = True):
-        guaranteed_spaces = len([x for x in self.attractor_guaranteed_list if x == "yes"])
-        possible_spaces = len([x for x in self.attractor_guaranteed_list if x == "possible"])
-        steady_states =  len([x for x in self.attractor_reduced_primes_list if len(x)==0])
-        found_complex_attractors = sum([len(x) for x in self.reduced_complex_attractor_list if x is not None])
-        deletion_split_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)>1])
-        deletion_lone_oscillations = sum([len(x) for x in self.deletion_attractor_list if x is not None and len(x)==1])
-
-        lbound_oscillations = found_complex_attractors
-        ubound_oscillations = lbound_oscillations + deletion_lone_oscillations + deletion_split_oscillations
-
-        print("Found", guaranteed_spaces, "guaranteed attractor space(s) and",
-            possible_spaces, "possible attractor space(s).")
-        print("Found", steady_states, "steady state(s) and explored", found_complex_attractors,
-            "complex attractor(s) in the guaranteed attractor space(s).")
-        if possible_spaces > 0:
-            print("There are at least",lbound_oscillations,"complex attractor(s) in total.")
-        elif ubound_oscillations == found_complex_attractors:
-            print("There are no additional attractors.")
-        # elif deletion_split_oscillations == 0:
-        #     print("There are exactly",deletion_lone_oscillations,"additional complex attractor(s) that were not fully explored.")
-        else:
-            print("There are between",lbound_oscillations,"and",ubound_oscillations,"complex attractors in total.")
-
-        for fn,rp,tr,at in zip(self.attractor_fixed_nodes_list,
-                               self.attractor_reduced_primes_list,
-                               self.attractor_guaranteed_list,
-                               self.reduced_complex_attractor_list):
-            print("__________________")
-            if tr == "possible":
-                print("Space May Contain Attractor")
-                print()
-            else:
-                print("Space Guaranteed to Contain Attractor(s)")
-            print("Logically Fixed Nodes:",{k:v for k,v in sorted(fn.items())})
-            print()
-            if len(rp) > 0:
-                if show_reduced_rules:
-                    print("Reduced Rules:")
-                    sm_format.pretty_print_prime_rules(rp)
-                else: print("Logically Unfixed Nodes:", sorted(rp.keys()))
-                if not at is None:
-                    print()
-                    print("Complex Attractors in Reduced Network (Alphabetical Node Ordering):")
-                    for x in at:
-                        print(x)
-            else:
-                print("No Free Nodes Remain.")
-
-    def summary(self,terminal_keys=None,show_original_rules=True,hide_rules=False,show_explicit_permutations=False):
-        for motif_reduction in self.motif_reduction_dict.values():
-            if terminal_keys is None or motif_reduction.terminal in terminal_keys:
-                print("__________________")
-                motif_reduction.summary(show_original_rules=show_original_rules,hide_rules=hide_rules,show_explicit_permutations=show_explicit_permutations)
-
-    def merge_reduction_motifs(self,target_reductions):
-        """
-        Input:
-        target_reductions - a list of MotifReductions that we want to reprogram to (we want to reach any, not necessarily all)
-
-        Output:
-        stable motif sequences that achieve the desired reprogramming
-        """
-        target_motif_mergers = [] # we will think of members as unordered for now; might consider orders later
-        for reduction in target_reductions:
-            target_motif_mergers.append({k:v for d in reduction.motif_history for k,v in d.items()})
-        return target_motif_mergers
+    # def merge_reduction_motifs(self,target_reductions):
+    #     """Short summary.
+    #
+    #     Parameters
+    #     ----------
+    #     target_reductions : list of MotifReduction
+    #         list of MotifReductions that we want to reprogram to (we want to
+    #         reach any, not necessarily all)
+    #
+    #     Returns
+    #     -------
+    #     list of partial state dictionaries
+    #         Stable motif sequences that achieve the desired reprogramming
+    #
+    #     """
+    #     target_motif_mergers = [] # we will think of members as unordered for now; might consider orders later
+    #     for reduction in target_reductions:
+    #         target_motif_mergers.append({k:v for d in reduction.motif_history for k,v in d.items()})
+    #     return target_motif_mergers
 
     def reductions_indices_with_states(self,logically_fixed,optimize=True):
+        """Find all reductions (by index) that have the nodes states specified
+        logically fixed.
+
+        Parameters
+        ----------
+        logically_fixed : partial state dictionary
+            Nodes states that should be fixed in all returned network reductions.
+        optimize : bool
+            Whether to remove reduced networks that are subnetworks of valid
+            reductions. This is generally recommended so as to obtain the most
+            parsimonious control strategies (the default is True).
+
+        Returns
+        -------
+        list of int
+            Indices of reduced networks that have the appropriate fixed states.
+
+        """
         if not optimize:
             # NOTE: This finds all reductions, not just those closest to the root
             target_indices = []
@@ -255,6 +337,35 @@ class SuccessionDiagram:
             return target_indices
 
     def reduction_drivers(self,target_index,method='internal',max_drivers=None,GRASP_iterations=None):
+        """Find control strategies that lead to the reduced network specified by
+        the target index. Several control strategies are implemented. See
+        Succession.SuccessionDiagram.reprogram_to_trap_spaces for a detailed
+        description of control methods available. Generally, this method should
+        not be used directly. Instead, use reprogram_to_trap_spaces.
+
+        Parameters
+        ----------
+        target_index : int
+            Index of the target reduced network.
+        method : str
+            One of 'internal', 'minimal', or 'GRASP'. See
+            Succession.SuccessionDiagram.reprogram_to_trap_spaces for details.
+        max_drivers : int
+            Maximum number of driver nodes to consider (not used in GRASP methods).
+            If none, the upper limit is given by the number of free variables
+            (the default is None).
+        GRASP_iterations : int
+            Number of times to construct GRASP driver sets; only used in GRASP
+            methods. If none, the number of iterations is chosen based on the
+            network size (the default is None).
+
+        Returns
+        -------
+        list
+            Control strategies found; interpretation depends on method selected
+            See Succession.SuccessionDiagram.reprogram_to_trap_spaces for details.
+
+        """
         methods = ['internal','minimal','GRASP']
         assert method in methods, ' '.join(["method argument of reduction_drivers must be among",str(methods)])
         drivers = []
@@ -296,39 +407,47 @@ class SuccessionDiagram:
         return drivers
 
     def reprogram_to_trap_spaces(self,logically_fixed,target_method='history',driver_method='internal',max_drivers=None,GRASP_iterations=None,GRASP_score_override=None):
-        """
-        Find driver sets that lead to the node states specified by logically_fixed
+        """Find driver sets that lead to fixing the node states specified.
 
-        INPUTS:
-        logically_fixed - state dictionary specifying the control target
-        max_drivers - the maximum number of driver nodes to attempt when looking
-                      for stable motif driver nodes before specifying the entire
-                      stable motif as part fo the driver set; not used in GRASP
-                      methods.
-        GRASP_iterations - number of times to construct GRASP driver sets; only
-                           used in GRASP methods.
+        Parameters
+        ----------
+        logically_fixed : partial state dictionary
+            Targeted fixed nodes.
+        target_method : str
+            Either 'history' or 'merge'; see Notes below for details.
+        driver_method : str
+            Either 'internal', 'minimal', or 'GRASP' see Notes below for details.
+        max_drivers : int
+            Maximum number of driver nodes to consider (not used in GRASP methods).
+            If none, the upper limit is given by the number of free variables
+            (the default is None).
+        GRASP_iterations : int
+            Number of times to construct GRASP driver sets; only used in GRASP
+            methods. If none, the number of iterations is chosen based on the
+            network size (the default is None).
+        GRASP_score_override : function
+            Optional heuristic score function override (see DomainOfInfluence.GRASP
+            for details). Only used in GRASP methods (the default is None).
 
-        GRASP_score_override - optional heuristic score function override (see
-                                GRASP function for details). Only used in GRASP
-                                methods.
-        target_method - either 'history' or 'merge'; see Methods below for details
-        driver_method - either 'internal', 'minimal', or 'GRASP' see Methods below
-                        for details
+        Returns
+        -------
+        list
+            Control strategies found; interpretation depends on method selected
+            See Notes below for details.
 
-        OUTPUTS:
-        nonredundant_drivers - control strategies found; interpretation depends
-                               on method selected (see below)
+        Notes
+        -----
+        The various combinations of target_method and driver_method options result
+        in different control strategies, which are outlined below.
 
-
-        - Methods -
-        history, internal:
+        target_method = history, driver_method = internal:
         Finds all shortest stable motif histories that result in the target node states
         being logically fixed. Each stable motif is searched for internal driver nodes.
         The resulting internal drivers are combined into a single  control set. The
         return value consists of all such control sets for all  stable motif histories.
         Each control set eventually becomes self-sustaining.
 
-        history, minimal:
+        target_method = history, driver_method = minimal:
         Similar to the history method, except the search for stable motif drivers
         includes external driver nodes for the motif and does not extend to driver sets
         of larger size once one driver set has been found for a motif. Because the
@@ -349,18 +468,18 @@ class SuccessionDiagram:
         1) fix xD=xE=1 temporarily and
         2) first fix either xA=1 or xB=1 temporarily, then fix xC=1 temporarily.
 
-        history, GRASP:
+        target_method = history, driver_method = GRASP:
         The same as history, minimal, except external driver nodes are searched for
         using the GRASP algorithm using GRASP_iterations iterations.
 
-        merge, internal:
+        target_method = merge, driver_method = internal:
         Finds all shortest stable motif histories that result in the target node states
         being logically fixed. All node states in the motifs in the history are merged
         into a stable module dictionary. This is then searched for internal driver
         nodes. Each element of the return value is a dictionary corresponding to a
         control set. Each control set eventually becomes self-sustaining.
 
-        merge, minimal:
+        target_method = merge, driver_method = minimal:
         Similar to the merge method, except the search for drivers is conducted over
         all nodes, not just those internal to the merged stable module. Furthermore,
         the search is truncated when a control set is found such that the search does
@@ -369,9 +488,10 @@ class SuccessionDiagram:
         sets are only guaranteed to result in activation of the target if they are
         temporary interventions.
 
-        merge, GRASP:
+        target_method = merge, driver_method = GRASP:
         The same as merge, minimal, except external driver nodes are searched for
         using the GRASP algorithm using GRASP_iterations iterations.
+
         """
 
         #methods = ['history','merge','minimal_history','minimal_merge']
@@ -455,24 +575,45 @@ class SuccessionDiagram:
         return nonredundant_drivers
 
 def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000):
+    """Recursively construct a succession diagram from the input update rules.
+    Generally, it is preferable to construct this from within the AttractorRepertoire
+    class (using, e.g., AttractorRepertoire.from_primes).
+
+    Parameters
+    ----------
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    fixed : partial state dictionary
+        Used only for recursion. Specifies nodes to be fixed in the next reduced
+        network to be added to the diagram.
+    motif_history : list of partial state dictionaries
+        Used only for recursion. Specifies stable motif history for the next reduced
+        network to be added to the diagram.
+    diagram : SuccessionDiagram
+        Used only for recursion. The SuccessionDiagram object that is under
+        construction.
+    merge_equivalent_motifs : bool
+        If False, equivalent reduced networks have their data recomputed and
+        copied. Making this False is only recommended if the succession diagram
+        must be represented in a form that has no feedforward loops; making this
+        True provides large computational advantages, both in terms of speed and
+        memory usage (the default is True).
+    max_simulate_size : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph (the default is 20).
+    prioritize_source_motifs : bool
+        Whether source nodes should be considered first (the default is True).
+    max_stable_motifs : int
+        Maximum number of output lines for PyBoolNet to process from the
+        AspSolver (the default is 10000).
+
+    Returns
+    -------
+    SuccessionDiagram
+        The succession diagram for the input update rules.
+
     """
-    Constructs a succession diagram recursively from the rules specified by primes
 
-    INPUTS:
-    primes - PyBoolNet primes dictionary specifying the Boolean update rules
-    merge_equivalent_motifs - True if feed-forward loops should be allowed in the succession diagram (recommended)
-    max_simulate_size - maximum number of variables to allow brute-force simulation on during reduction
-    prioritize_source_motifs - True if source motifs should be considered simultaneously and initially (recommended)
-    max_stable_motifs - upper bound on number of lines of ASP-solver output to be parsed by PyBoolNet
-
-    Inputs used in recursion only:
-    fixed - dictionary with node names as keys and fixed node states as values
-    motif_history: list of stable motifs that have been "locked in" so far in the recursion
-    diagram - the succession diagram being constructed by the recursion
-
-    OUTPUTS:
-    diagram - SuccessionDiagram object describing the succession diagram for the system
-    """
     if diagram is None:
         diagram = SuccessionDiagram()
 
@@ -512,20 +653,20 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
                 prioritize_source_motifs=prioritize_source_motifs)
     return diagram
 
-def motif_history_text(history):
-    """
-    Obtain the string version of the motif_history of a reduced network
-    Given the motif_history of a reduction.from motif_reduction_dict, obtain a text version of this motif_history
-
-    INPUTS:
-    history - motif_history of a reduced network.from motif_reduction_dict
-
-    OUTPUTS:
-    String of motif history with each motif inside a parenthesis and separated by a line break
-    """
-    motif_history_str=""
-    for motif in history:
-        motif_str="("+", ".join([str(k)+"="+str(v) for k,v in motif.items()])+")"
-        motif_history_str=motif_history_str+motif_str+"\n"
-
-    return(motif_history_str[:-1])
+# def motif_history_text(history):
+#     """
+#     Obtain the string version of the motif_history of a reduced network
+#     Given the motif_history of a reduction.from motif_reduction_dict, obtain a text version of this motif_history
+#
+#     INPUTS:
+#     history - motif_history of a reduced network.from motif_reduction_dict
+#
+#     OUTPUTS:
+#     String of motif history with each motif inside a parenthesis and separated by a line break
+#     """
+#     motif_history_str=""
+#     for motif in history:
+#         motif_str="("+", ".join([str(k)+"="+str(v) for k,v in motif.items()])+")"
+#         motif_history_str=motif_history_str+motif_str+"\n"
+#
+#     return(motif_history_str[:-1])

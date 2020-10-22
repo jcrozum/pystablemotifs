@@ -277,10 +277,10 @@ class MotifReduction:
     Parameters
     ----------
     motif_history : list of partial state dictionaries
-        Stable motifs that can lock in to give the reduced network (in order)
+        Stable motifs that can lock in to give the reduced network (in order).
     fixed : partial state dictionary
         Nodes values that have been fixed and reduced by stable motifs and their
-        logical domain of influence
+        logical domain of influence.
     reduced_primes : PyBoolNet primes dictionary
         Update rules for the reduced network.
     max_simulate_size : int
@@ -298,7 +298,7 @@ class MotifReduction:
         Permutations of motif_history (by index) that also yield this reduction.
     logically_fixed_nodes : partial state dictionary
         Nodes values that have been fixed and reduced by stable motifs and their
-        logical domain of influence
+        logical domain of influence.
     time_reverse_primes : PyBoolNet primes dictionary
         Update rules of the time reversed reduced system.
     stable_motifs : list of partial state dictionaries

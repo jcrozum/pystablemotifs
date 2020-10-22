@@ -67,7 +67,7 @@ class Attractor:
         self.attractor_dict = reduction.attractor_dict_list[reduction_attractor_id]
 
         if reduction.no_motif_attractors is not None:
-            self.stg = reduction.no_motif_attractors[reduction_attractor_id]
+            self.stg = reduction.partial_STG.subgraph(reduction.no_motif_attractors[reduction_attractor_id])
         else:
             self.stg = None
 
