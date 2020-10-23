@@ -2,7 +2,8 @@ import StableMotifs as sm
 import networkx as nx
 
 def format_reduction_label(s):
-    """Helper function to make graph labels more readable.
+    """Helper function to make graph labels more readable. Removes single quotes
+    and square brackets from the input string.
 
     Parameters
     ----------
@@ -208,93 +209,96 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
                             G_motif_based.add_edge((i,j),'A'+str(a_index))
     return G_motif_based
 
-def networkx_succession_diagram_motif_based_simplified(ar, GM=None, include_attractors_in_diagram=True):
-    """Produce a compressed version of the succession diagram using the conventions
-    of Zanudo and Albert (2015). In this compression, stable motifs (potentially
-    ones that are only stable after some number of reductions) are represented
-    only once. If a single motif appears more than once in the succession diagram,
-    those nodes are merged.
+# The next two methods are commented out because they are experimental methods
+# for compressing the succession diagram and are under development.
 
-    Parameters
-    ----------
-    ar : AttractorRepertoire
-        Attractor repertoire object for which to build the diagram.
-    GM : networkx.DiGraph
-        Labeled motif-based succession diagram to simplify. If None, the diagram
-        is generated from ar (the defaule is None).
-    include_attractors_in_diagram : bool
-        Whether attractors should be represented as nodes in the diagram (the
-        default is True).
-
-    Returns
-    -------
-    networkx.DiGraph
-        Simplified motif-based succession diagram.
-
-    """
-    if GM==None:
-        GM=networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=include_attractors_in_diagram)
-    motifs_list=get_motif_set(ar)
-    motifs_dict = dict(zip(range(len(motifs_list)),motifs_list))
-    merged_dict=motifs_dict.copy()
-    attractors_dict=dict()
-    if include_attractors_in_diagram:
-        for a_index,a in enumerate(ar.attractors):
-            merged_dict['A'+str(a_index)]=a.attractor_dict
-            attractors_dict['A'+str(a_index)]=a.attractor_dict
-    motif_keys=list(merged_dict.keys())
-    motif_values=list(merged_dict.values())
-    GMM=nx.DiGraph()
-    GMM.add_nodes_from(merged_dict)
-    for n in GMM.nodes():
-        GMM.nodes[n]['virtual_nodes']=merged_dict[n]
-    for i,j in GM.edges():
-        print(i,j)
-        source=motif_keys[motif_values.index(GM.nodes[i]['virtual_nodes'])]
-        target=motif_keys[motif_values.index(GM.nodes[j]['virtual_nodes'])]
-        GMM.add_edge(source,target)
-    return GMM
-
-def networkx_motif_attractor_bipartite_graph(ar):
-    """Produce a motif-attractor bipartite compression of the succession diagram
-    for the given attractor repertoire. There is an edge from a (conditionally)
-    stable motif to an attractor if the motif is compatible with that attractor.
-
-    Parameters
-    ----------
-    ar : AttractorRepertoire
-        Attractor repertoire object for which to build the diagram.
-
-    Returns
-    -------
-    networkx.DiGraph
-        Motif-attractor bipartite condensed succession diagram.
-
-    """
-
-    GMM=networkx_succession_diagram_motif_based_simplified(ar,include_attractors_in_diagram=True)
-
-    motifs_list=get_motif_set(ar)
-    motifs_dict = dict(zip(range(len(motifs_list)),motifs_list))
-
-    attractors_dict=dict()
-    for a_index,a in enumerate(ar.attractors):
-        attractors_dict['A'+str(a_index)]=a.attractor_dict
-
-    GM_bp=nx.DiGraph()
-    GM_bp.add_nodes_from(motifs_dict)
-    GM_bp.add_nodes_from(attractors_dict)
-    for m in motifs_dict:
-        GM_bp.nodes[m]['virtual_nodes']=motifs_dict[m]
-        for a in attractors_dict:
-            GM_bp.nodes[a]['virtual_nodes']=attractors_dict[a]
-            if nx.has_path(GMM,m,a):
-                GM_bp.add_edge(m,a)
-
-    for a in attractors_dict:
-            GM_bp.nodes[a]['virtual_nodes']=attractors_dict[a]
-
-    return GM_bp
+# def networkx_succession_diagram_motif_based_simplified(ar, GM=None, include_attractors_in_diagram=True):
+#     """Produce a compressed version of the succession diagram using the conventions
+#     of Zanudo and Albert (2015). In this compression, stable motifs (potentially
+#     ones that are only stable after some number of reductions) are represented
+#     only once. If a single motif appears more than once in the succession diagram,
+#     those nodes are merged.
+#
+#     Parameters
+#     ----------
+#     ar : AttractorRepertoire
+#         Attractor repertoire object for which to build the diagram.
+#     GM : networkx.DiGraph
+#         Labeled motif-based succession diagram to simplify. If None, the diagram
+#         is generated from ar (the defaule is None).
+#     include_attractors_in_diagram : bool
+#         Whether attractors should be represented as nodes in the diagram (the
+#         default is True).
+#
+#     Returns
+#     -------
+#     networkx.DiGraph
+#         Simplified motif-based succession diagram.
+#
+#     """
+#     if GM==None:
+#         GM=networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=include_attractors_in_diagram)
+#     motifs_list=get_motif_set(ar)
+#     motifs_dict = dict(zip(range(len(motifs_list)),motifs_list))
+#     merged_dict=motifs_dict.copy()
+#     attractors_dict=dict()
+#     if include_attractors_in_diagram:
+#         for a_index,a in enumerate(ar.attractors):
+#             merged_dict['A'+str(a_index)]=a.attractor_dict
+#             attractors_dict['A'+str(a_index)]=a.attractor_dict
+#     motif_keys=list(merged_dict.keys())
+#     motif_values=list(merged_dict.values())
+#     GMM=nx.DiGraph()
+#     GMM.add_nodes_from(merged_dict)
+#     for n in GMM.nodes():
+#         GMM.nodes[n]['virtual_nodes']=merged_dict[n]
+#     for i,j in GM.edges():
+#         print(i,j)
+#         source=motif_keys[motif_values.index(GM.nodes[i]['virtual_nodes'])]
+#         target=motif_keys[motif_values.index(GM.nodes[j]['virtual_nodes'])]
+#         GMM.add_edge(source,target)
+#     return GMM
+#
+# def networkx_motif_attractor_bipartite_graph(ar):
+#     """Produce a motif-attractor bipartite compression of the succession diagram
+#     for the given attractor repertoire. There is an edge from a (conditionally)
+#     stable motif to an attractor if the motif is compatible with that attractor.
+#
+#     Parameters
+#     ----------
+#     ar : AttractorRepertoire
+#         Attractor repertoire object for which to build the diagram.
+#
+#     Returns
+#     -------
+#     networkx.DiGraph
+#         Motif-attractor bipartite condensed succession diagram.
+#
+#     """
+#
+#     GMM=networkx_succession_diagram_motif_based_simplified(ar,include_attractors_in_diagram=True)
+#
+#     motifs_list=get_motif_set(ar)
+#     motifs_dict = dict(zip(range(len(motifs_list)),motifs_list))
+#
+#     attractors_dict=dict()
+#     for a_index,a in enumerate(ar.attractors):
+#         attractors_dict['A'+str(a_index)]=a.attractor_dict
+#
+#     GM_bp=nx.DiGraph()
+#     GM_bp.add_nodes_from(motifs_dict)
+#     GM_bp.add_nodes_from(attractors_dict)
+#     for m in motifs_dict:
+#         GM_bp.nodes[m]['virtual_nodes']=motifs_dict[m]
+#         for a in attractors_dict:
+#             GM_bp.nodes[a]['virtual_nodes']=attractors_dict[a]
+#             if nx.has_path(GMM,m,a):
+#                 GM_bp.add_edge(m,a)
+#
+#     for a in attractors_dict:
+#             GM_bp.nodes[a]['virtual_nodes']=attractors_dict[a]
+#
+#     return GM_bp
 
 def attractor_dataframe(ar):
     """Summarize the input attractor repertoire in a pandas DataFrame (requires
