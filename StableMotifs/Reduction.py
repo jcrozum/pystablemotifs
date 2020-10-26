@@ -306,7 +306,8 @@ class MotifReduction:
     time_reverse_stable_motifs : list of partial state dictionaries
         Stable motifs of the time reversed system.
     merged_source_motifs : list of partial state dictionaries
-        Description of attribute `merged_source_motifs`.
+        List of source-like stable motifs that have been merged into a single
+        motif to avoid redundancy.
     source_independent_motifs : list of partial state dictionaries
         Stable motifs that exist independent of the values of the source nodes
     merge_source_motifs : list of partial state dictionaries

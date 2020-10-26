@@ -37,20 +37,20 @@ class Attractor:
                variable must oscillate
     stg : networkx.DiGraph
         The state transition graph corresponding to the attractor (if computed)
-    fixed_nodes : type
-        Description of attribute `fixed_nodes`.
-    oscillation_fixed_nodes : type
-        Description of attribute `oscillation_fixed_nodes`.
+    fixed_nodes : partial state dictionary
+        All node states that are known to be fixed in the attractor.
+    oscillation_fixed_nodes : partial state dictionary
+        Node states that are fixed in the attractor, but that are not fixed by
+        percolation in the expanded network. These states are instead fixed by
+        up-stream oscillation.
     reduced_primes : PyBoolNet primes dictionary
         Update rules for the maximally reduced network that contains the attractor.
     n_unfixed : int
         Number of nodes that are not logically fixed.
-    size : type
-        Description of attribute `size`.
-    size_lower_bound : type
-        Description of attribute `size_lower_bound`.
-    size_upper_bound : type
-        Description of attribute `size_upper_bound`.
+    size_lower_bound : int
+        Lower bound on number of states in attractor.
+    size_upper_bound : int
+        Upper bound on number of states in attractor.
     explored : bool
         True if all attractor states and transitions are explicitly computed.
     guaranteed : bool
@@ -86,16 +86,13 @@ class Attractor:
         self.n_unfixed = len(self.attractor_dict) - len(self.fixed_nodes)
 
         if self.stg is not None:
-            self.size = len(self.stg)
-            self.size_lower_bound = self.size
-            self.size_upper_bound = self.size
+            self.size_lower_bound = len(list(self.stg.nodes()))
+            self.size_upper_bound = self.size_lower_bound
         else:
             if self.n_unfixed <= 1:
-                self.size = self.n_unfixed + 1
-                self.size_lower_bound = self.size
-                self.size_upper_bound = self.size
+                self.size_lower_bound = self.n_unfixed + 1
+                self.size_upper_bound = self.n_unfixed + 1
             else:
-                self.size = None
                 self.size_lower_bound = 2
                 self.size_upper_bound = 2**(self.n_unfixed)
 
