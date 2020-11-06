@@ -1,6 +1,10 @@
 import StableMotifs.Succession as sm_succession
 import StableMotifs.Attractor as sm_attractor
 
+import itertools as it
+import networkx as nx
+import PyBoolNet
+
 class AttractorRepertoire:
     """The class that stores information about attractors. Initialize using
     either from_primes or from_succession_diagram.
@@ -29,12 +33,14 @@ class AttractorRepertoire:
     def __init__(self):
         self.succession_diagram = None
         self.attractors = []
-        self.reduction_attractors = {} # dict with values that are lists of matching attractors
+        self.reduction_attractors = {}
         self.fewest_attractors = None
         self.most_attractors = None
         self.primes = None
 
-
+        self.succession_digraph = None
+        self.attractor_equivalence_classes = None
+        self.relevant_nodes = None
 
     @classmethod
     def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000):
@@ -61,6 +67,7 @@ class AttractorRepertoire:
         x = cls()
         x.primes = primes
         x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
+        x.simplify_diagram([], merge_equivalent_reductions = False)
         return x
 
     @classmethod
@@ -84,6 +91,7 @@ class AttractorRepertoire:
         x.primes = succession_diagram.unreduced_primes
         x._get_attractors_from_succession_diagram()
         x._count_attractors()
+        x.simplify_diagram([], merge_equivalent_reductions = False)
         return x
 
 
@@ -147,6 +155,61 @@ class AttractorRepertoire:
         self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs)
         self._get_attractors_from_succession_diagram()
         self._count_attractors()
+
+    def simplify_diagram(self, projection_nodes, merge_equivalent_reductions = True, keep_only_projection_nodes = False, condense_simple_paths = False):
+        if not keep_only_projection_nodes:
+            keep = set(self.primes.keys()) - set(projection_nodes)
+            ignore = set(projection_nodes)
+        else:
+            keep = set(projection_nodes)
+            ignore = set(self.primes.keys()) - set(projection_nodes)
+
+        G = self.succession_diagram.digraph.copy()
+
+        # Merge equivalent nodes
+        if merge_equivalent_reductions:
+            for u,v in it.combinations(self.succession_diagram.digraph.nodes(),2):
+                if u not in G.nodes(): continue # we've already merged u
+
+                ru = self.succession_diagram.motif_reduction_dict[u]
+                rv = self.succession_diagram.motif_reduction_dict[v]
+                if PyBoolNet.PrimeImplicants.are_equal(ru.reduced_primes,rv.reduced_primes):
+                    if all([ru.logically_fixed_nodes[k]==rv.logically_fixed_nodes[k] for k in keep]):
+                        G = nx.contracted_nodes(G,u,v,self_loops=False)
+
+        # If a node v has out degree = 1, then merge it into its only child u
+        if condense_simple_paths:
+            old_N = float('inf')
+            while G.number_of_nodes() < old_N:
+                old_N = G.number_of_nodes()
+                for v in G.nodes():
+                    if G.out_degree(v) == 1:
+                        u = next(G.successors(v))
+                        G = nx.contracted_nodes(G,u,v,self_loops=False)
+
+
+        self.succession_digraph = G
+
+        self.attractor_equivalence_classes = {}
+        for a in self.attractors:
+            keys = set()
+            for n in self.succession_digraph.nodes():
+                if n not in self.reduction_attractors: continue
+                for b in self.reduction_attractors[n]:
+                    if all([b.attractor_dict[k] == a.attractor_dict[k] for k in keep]):
+                        keys.add(n)
+                        break
+
+            merged = False
+            for c in self.attractor_equivalence_classes.values():
+                if c['states'].items() <= a.attractor_dict.items():
+                    c['attractors'].append(a)
+                    c['reductions'] |= keys
+                    merged = True
+            if not merged:
+                self.attractor_equivalence_classes[len(self.attractor_equivalence_classes)] = {'states':{k:v for k,v in a.attractor_dict.items() if k in keep},'attractors':[a], 'reductions':keys}
+
+        self.relevant_nodes = keep
 
     def summary(self):
         """Prints a summary of the attractors to standard output.
