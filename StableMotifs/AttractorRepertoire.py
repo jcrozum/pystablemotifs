@@ -174,7 +174,9 @@ class AttractorRepertoire:
                 ru = self.succession_diagram.motif_reduction_dict[u]
                 rv = self.succession_diagram.motif_reduction_dict[v]
                 if PyBoolNet.PrimeImplicants.are_equal(ru.reduced_primes,rv.reduced_primes):
-                    if all([ru.logically_fixed_nodes[k]==rv.logically_fixed_nodes[k] for k in keep]):
+                    rud = ru.logically_fixed_nodes
+                    rvd = rv.logically_fixed_nodes
+                    if all([rud[k]==rvd[k] for k in keep if k in rud and k in rvd]):
                         G = nx.contracted_nodes(G,u,v,self_loops=False)
 
         # If a node v has out degree = 1, then merge it into its only child u
