@@ -6,14 +6,43 @@ from uuid import uuid4
 import os
 
 class RandomBooleanNetworks:
-    """
-    Generator of random Boolean networks (RBN) and ensembles of RBN.
-    The RandomBooleanNetworks class object is a Boolean model and stores information of how the Boolean model was generated
-    The RandomBooleanNetworks class has functions that generate ensembles of RBN by generating multiple RandomBooleanNetworks objects
+    """Generator of random Boolean networks (RBN) and ensembles of RBN.
+    The RandomBooleanNetworks class object is a Boolean model and stores
+    information of how the Boolean model was generated. It has functions that
+    generate ensembles of RBN by generating multiple RandomBooleanNetworks objects.
 
-    Variables:
+    Attributes
+    ----------
+    node_names : list of str
+        List of variable names.
+    node_inputs_dictionary : dictionary
+        Each value is a (fixed order) list of the names of the nodes whose values
+        are inputs into the key variable's update function.
+    node_rules_binary_dictionary : dictionary
+        Each value is a list of outputs for the key variable's update function,
+        stored as a list in ascending order of the numerical representation of
+        the input row.
+    node_rules_decimal_dictionary : dictionary
+        Decimal conversion of node_rules_binary_dictionary.
+    node_rules_string_dictionary : dictionary
+        BooleanNet (str) conversion of node_rules_binary_dictionary values.
+    node_rules_string : str
+        BooleanNet representation of update rules.
+    random_Boolean_type : str
+        Descrpition of generative process. Currently only "Kauffman NK" is
+        implemented.
+    N : int
+        Number of nodes in the Boolean network.
+    random_Boolean_Network_parameters : list
+        For Kauffman NK generation -
+            [K,p], where K is the in-degree and p is the bias. K is a positive
+            integer less than or equal to N, and p is a float between 0 and 1
+            (inclusive).
+    random_seed : int
+        Seed for random functions.
+    filename : str
+        Path to file where network data are stored. If None, no files are written.
 
-    Functions:
     """
 
     def __init__(self):
@@ -30,6 +59,26 @@ class RandomBooleanNetworks:
         self.filename = None
 
     def Random_Boolean_Network(self,random_Boolean_type,N,rbn_parameters,seed=None,filename=None):
+        """Construct network using specified generative process.
+
+        Parameters
+        ----------
+        random_Boolean_type : str
+            Descrpition of generative process. Currently only "Kauffman NK" is
+            implemented.
+        N : int
+            Number of nodes in the Boolean network.
+        random_Boolean_Network_parameters : list
+            For Kauffman NK generation -
+                [K,p], where K is the in-degree and p is the bias. K is a positive
+                integer less than or equal to N, and p is a float between 0 and 1
+                (inclusive).
+        random_seed : int
+            Seed for random functions.
+        filename : str
+            Path to file where network data are stored. If None, no files are written.
+
+        """
         self.random_Boolean_type = random_Boolean_type
         self.random_Boolean_Network_parameters= rbn_parameters
         self.N=N
@@ -53,6 +102,10 @@ class RandomBooleanNetworks:
                 write_Boolean_network_decimal(self.node_rules_decimal_dictionary,self.filename)
 
     def Random_Boolean_Network_Rules(self):
+        """Generate various conversions of the node_rules_binary_dictionary
+        attribute.
+
+        """
         self.node_rules_string_dictionary=String_Rules_From_Binary(self.node_rules_binary_dictionary)
         self.node_rules_string=""
         for n,f in self.node_rules_string_dictionary.items():
@@ -60,10 +113,33 @@ class RandomBooleanNetworks:
         return(self.node_rules_string)
 
 def write_Boolean_network_decimal(node_rules_decimal_dictionary,filename):
+    """Write the decimal format of the Boolean rules to file.
+
+    Parameters
+    ----------
+    node_rules_decimal_dictionary : dictionary
+        Update rule truth table in decimal format.
+    filename : str
+        Path to file for csv output of the truth table.
+
+    """
     df_boolean_model=pd.DataFrame.from_dict(node_rules_decimal_dictionary,orient='index')
     df_boolean_model.to_csv(filename, header=False)
 
 def read_Boolean_network_decimal(filename):
+    """Imports rules from csv in decimal format.
+
+    Parameters
+    ----------
+    filename : str
+        Path to csv from which to import decimal-formatted rules.
+
+    Returns
+    -------
+    str
+        Rules in BooleanNet format.
+
+    """
     df_dict=pd.read_csv(filename,header=None,index_col=0).to_dict('index')
     node_rules_decimal_dictionary={key:(element[1],[x[1:-1] for x in element[2].strip('][').split(', ')])  for key,element in df_dict.items()}
     node_rules_binary_dictionary=Binary_Rules_From_Decimal(node_rules_decimal_dictionary)
@@ -75,6 +151,19 @@ def read_Boolean_network_decimal(filename):
     return(rules)
 
 def Binary_Rules_From_Decimal(node_rules_decimal_dictionary):
+    """Construct Binary format rules from decimal format rules.
+
+    Parameters
+    ----------
+    node_rules_decimal_dictionary : dictionary
+        Rules in decimal format to convert.
+
+    Returns
+    -------
+    dictionary
+        Binary rules dictionary.
+
+    """
     node_rules_binary_dictionary={node_name:
                                  (Binary_Rule_From_Decimal(node_rule_input_list[0],node_rule_input_list[1]),
                                             node_rule_input_list[1])
@@ -82,10 +171,40 @@ def Binary_Rules_From_Decimal(node_rules_decimal_dictionary):
     return(node_rules_binary_dictionary)
 
 def Binary_Rule_From_Decimal(node_rule_decimal,node_input_list):
+    """Convert single decimal rule to its binary form.
+
+    Parameters
+    ----------
+    node_rule_decimal : int
+        Decimal form of a truth table's output column.
+    node_input_list : list of str
+        Variable names that correspond to each column of the truth table.
+
+    Returns
+    -------
+    list of int
+        Binary rule list corresponding to an output column of a truth table.
+
+    """
     binary_rule=[int(binary) for binary in np.binary_repr(node_rule_decimal, width=np.power(2,len(node_input_list)))]
     return(binary_rule)
 
 def String_Rule_From_Binary(node_rule_binary,node_input_list):
+    """Convert binary rule to BooleanNet format.
+
+    Parameters
+    ----------
+    node_rule_binary : list of int
+        Binary rule list corresponding to an output column of a truth table.
+    node_input_list : list of str
+        Variable names that correspond to each column of the truth table.
+
+    Returns
+    -------
+    str
+        BooleanNet representation of rule.
+
+    """
     notConstant=False
     bit_previous=-1
     for i,bit in enumerate(node_rule_binary):
@@ -109,26 +228,48 @@ def String_Rule_From_Binary(node_rule_binary,node_input_list):
     return(rule_string)
 
 def String_Rules_From_Binary(node_rules_binary_dictionary):
+    """Convert from binary dictionary rule format to BooleanNet format.
+
+    Parameters
+    ----------
+    node_rules_binary_dictionary : dictionary
+        Binary dictionary representation of rules.
+
+    Returns
+    -------
+    str
+        BooleanNet representation of rules.
+
+    """
     node_rules_string_dictionary={node_name:String_Rule_From_Binary(node_rule_input_list[0],node_rule_input_list[1])
                                   for node_name,node_rule_input_list in node_rules_binary_dictionary.items()}
     return(node_rules_string_dictionary)
 
 def Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=1000,write_Boolean_network=False):
-    """
-    Obtain the string version of the motif_history of a reduced network
-    Given the motif_history of a reduction.from motif_reduction_dict, obtain a text version of this motif_history
+    """Generate a sample from the Kauffman NK RBN ensemble.
 
-    Inputs:
-    N - int, Number of nodes of RBN
-    K - int, Number of inputs of each node in the RBN
-    p - double, probability that each entry in the RBN is equal to 1
-    N_ensemble - int, Number of elements in the RBN ensemble
-    seed - int, random seed for generating the RBN ensemble
-    write_Boolean_network - boolean, if True, will write each network in the ensemble as a CSV file in a new directory
+    Parameters
+    ----------
+    N : int
+        Number of nodes of RBN.
+    K : int
+        Number of inputs of each node in the RBN.
+    p : float
+        Probability that each entry in each truth table output column is equal to 1.
+    N_ensemble : int
+        Number of networks to generate.
+    seed : int
+        Random seed for generating the RBN ensemble (the default is 1000).
+    write_Boolean_network : bool
+        Whether to write each network in the ensemble as a CSV file in a new
+        directory (the default is False).
 
-    Outputs:
-    RBN_ensemble_rules - List of strings, each string are the Boolea rules of an ensemble in booleannet format.
-        Each element in RBN_ensemble_rules can be used as an input for the Format.booleannet2bnet function
+    Returns
+    -------
+    RBN_ensemble_rules : list of str
+        Each string are the Boolea rules of an ensemble in booleannet format.
+        Each element in RBN_ensemble_rules can be used as an input for the
+        Format.booleannet2bnet function.
 
     """
     rd.seed(seed)
@@ -157,26 +298,38 @@ def Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=1000,write_Bo
     return(RBN_ensemble_rules)
 
 def get_criticality_K_Kauffman(p):
-    """
-    The Kauffman RBN is at criticality when S = 2p(1-p)K = 1. Given p, K = 2/(p(1-p))
+    """The Kauffman RBN is at criticality when K = 2/(p(1-p)).
 
-    Inputs:
-    p - double, probability that each entry in the RBN is equal to 1
-    Outputs:
-    K_criticality - list, Number of inputs (int) per node from which the Kauffman RBN is at criticality
+    Parameters
+    ----------
+    p : float
+        Probability that each entry in each truth table output column is equal to 1.
+
+    Returns
+    -------
+    K_criticality : int
+        Number of inputs of each node in the RBN.
+
     """
+
 
     K_criticality=[2.0/(p*(1-p))]
     return(K_criticality)
 
 def get_criticality_p_Kauffman(K):
-    """
-    The Kauffman RBN is at criticality when S = 2p(1-p)K = 1. Given p, K = 2/(p(1-p))
+    """The Kauffman RBN is at criticality when K = 2/(p(1-p)).
 
-    Inputs:
-    K - int, Number of inputs per node for Kauffman RBN
-    Outputs:
-    p_criticality - list, probability that each entry in the RBN is equal to 1 for which the Kauffman RBN is at criticality
+    Parameters
+    ----------
+    K : int
+        Number of inputs of each node in the RBN.
+
+
+    Returns
+    -------
+    p_criticality : float
+        Probability that each entry in each truth table output column is equal to 1.
+
     """
     p_criticality=[]
     if(K<2):

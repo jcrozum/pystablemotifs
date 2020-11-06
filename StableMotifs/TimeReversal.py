@@ -1,13 +1,17 @@
 def time_reverse_primes(primes):
-    """
-    Computes the time reversal of the input system (under general asynchronous update).
+    """Computes the time reversal of the input system (under general asynchronous update).
     The time reverse system has the same STG as the input system, but with each edge reversed.
 
-    Input:
-    primes - PyBoolNet prime dictionary specifying the update rules
+    Parameters
+    ----------
+    primes : PyBoolNet prime dictionary
+        System update rules.
 
-    Ouput:
-    trprimes - PyBoolNet prime dictionary specifying the update rules of the time-reversed system
+    Returns
+    -------
+    trprimes : PyBoolNet prime dictionary
+        Time-reversed system update rules.
+
     """
     trprimes = {}
     for k,v in primes.items():

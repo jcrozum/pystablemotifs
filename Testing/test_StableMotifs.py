@@ -2,6 +2,8 @@ import sys
 sys.path.append('../')
 
 import unittest
+import sys
+sys.path.insert(0,"C:/Users/jcroz/github/StableMotifs")
 import StableMotifs as sm
 import PyBoolNet
 
@@ -16,18 +18,19 @@ F*=E
 '''
     rules_pbn = sm.Format.booleannet2bnet(rules)
     primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
-    diag = sm.Succession.build_succession_diagram(primes)
+    ar = sm.AttractorRepertoire.from_primes(primes)
+    diag = ar.succession_diagram
 
     def test_nr_of_attractors(self):
-        self.assertEqual(len(self.diag.attractor_fixed_nodes_list),3)
+        self.assertEqual(len(self.ar.attractors),3)
 
     def test_booleannet2bnet(self):
         self.assertEqual(self.rules_pbn, 'A,\tB\nB,\tA\nC,\tA | !D\nD,\tC\nE,\tB & F\nF,\tE\n')
 
     def test_attractor_fixed_nodes_list(self):
-        self.assertDictEqual(self.diag.attractor_fixed_nodes_list[0], {'A': 0, 'B': 0, 'E': 0, 'F': 0})
-        self.assertDictEqual(self.diag.attractor_fixed_nodes_list[1], {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 1, 'F': 1})
-        self.assertDictEqual(self.diag.attractor_fixed_nodes_list[2], {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 0, 'F': 0})
+        self.assertDictEqual(self.ar.attractors[0].logically_fixed_nodes, {'A': 0, 'B': 0, 'E': 0, 'F': 0})
+        self.assertDictEqual(self.ar.attractors[1].logically_fixed_nodes, {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 1, 'F': 1})
+        self.assertDictEqual(self.ar.attractors[2].logically_fixed_nodes, {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 0, 'F': 0})
 
     def test_motif_reduction_dict(self):
         motif_history_list=[i.motif_history for i in self.diag.motif_reduction_dict.values()]
@@ -56,16 +59,18 @@ F*=E
     xC*= xA and xB'''
     rules_pbn_pathological = sm.Format.booleannet2bnet(rules_pathological)
     primes_pathological = PyBoolNet.FileExchange.bnet2primes(rules_pbn_pathological)
-    diag_pathological = sm.Succession.build_succession_diagram(primes_pathological)
+    ar_pathological = sm.AttractorRepertoire.from_primes(primes_pathological)
+    diag_pathological = ar_pathological.succession_diagram
 
     def test_ghost_branch(self):
         '''
         High level test of the correct identification of attractors that are not preceded by stable motif lockins.
         (ghost_branch is not a function in the module)
         '''
-
-        self.assertListEqual(self.diag_pathological.reduced_complex_attractor_list,[[{'000', '010', '100'}], None])
-        self.assertListEqual(self.diag_pathological.attractor_fixed_nodes_list,[{}, {'xA': 1, 'xB': 1, 'xC': 1}])
+        self.assertSetEqual(set(self.ar_pathological.attractors[0].stg.nodes()),set(['000', '010', '100']))
+        self.assertDictEqual(self.ar_pathological.attractors[1].logically_fixed_nodes,{'xA': 1, 'xB': 1, 'xC': 1})
+        # self.assertListEqual(self.diag_pathological.reduced_complex_attractor_list,[[{'000', '010', '100'}], None])
+        # self.assertListEqual(self.diag_pathological.attractor_fixed_nodes_list,[{}, {'xA': 1, 'xB': 1, 'xC': 1}])
 
     def test_ghost_branch_with_max_simulate_size_0(self):
         '''
@@ -162,7 +167,7 @@ F*=E
                                                          5: {'label': '{E: 0, F: 0}', 'virtual_nodes': [{'E': 0, 'F': 0}]},
                                                          6: {'label': '{E: 0, F: 0}, {A: 0, B: 0}',
                                                           'virtual_nodes': [{'E': 0, 'F': 0}, {'A': 0, 'B': 0}]}})
-        self.assertListEqual(list(GR.edges()), [(0, 1), (0, 2), (0, 5), (2, 3), (2, 4),(5,4),(5, 6)])
+        self.assertListEqual(list(GR.edges()), [(0, 1), (0, 2), (0, 5), (2, 3), (2, 4), (5, 4), (5, 6)
 
         include_attractors_in_diagram=True
         GR=ex.networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=include_attractors_in_diagram)
@@ -190,7 +195,7 @@ F*=E
                                                  (2, 4),
                                                  (3, 'A1'),
                                                  (4, 'A2'),
-                                                 (5,4),
+                                                 (5, 4),
                                                  (5, 6),
                                                  (6, 'A0')])
 
