@@ -69,10 +69,129 @@ def expanded_network(primes, single_parent_composites = False):
 
     return G
 
-def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=True):
+def networkx_succession_diagram(ar,include_attractors_in_diagram=True,use_compressed_diagram=True):
     """Label the succesion diagram and (optionally) attractors of the input attractor
-    repertoire according to the conventions of Rozum et al. (2020). Useful for
-    plotting.
+    repertoire according to the conventions of Rozum et al. (2021). This is an
+    alias for the function Export.networkx_succession_diagram_reduced_network_based.
+
+    Parameters
+    ----------
+    ar : AttractorRepertoire
+        Attractor repertoire object for which to build the diagram.
+    include_attractors_in_diagram : bool
+        Whether attractors should be represented as nodes in the diagram (the
+        default is True).
+    use_compressed_diagram : bool
+        Whether to use the (potentially compressed) succession diagram stored in
+        ar.succession_digraph instead of the complete one ar.succession_diagram.digraph.
+        These are equivelent unless ar.simplify_diagram is called. See
+        AttractorRepertoire.py for additional details. The default is True.
+
+    Returns
+    -------
+    networkx.DiGraph
+        A labeled digraph that represents the succession diagram.
+
+    """
+    return networkx_succession_diagram_reduced_network_based(ar,
+        include_attractors_in_diagram=include_attractors_in_diagram,
+        use_compressed_diagram=use_compressed_diagram)
+
+def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=True,use_compressed_diagram=True):
+    """Label the succesion diagram and (optionally) attractors of the input attractor
+    repertoire according to the conventions of Rozum et al. (2021).
+
+    Parameters
+    ----------
+    ar : AttractorRepertoire
+        Attractor repertoire object for which to build the diagram.
+    include_attractors_in_diagram : bool
+        Whether attractors should be represented as nodes in the diagram (the
+        default is True).
+    use_compressed_diagram : bool
+        Whether to use the (potentially compressed) succession diagram stored in
+        ar.succession_digraph instead of the complete one ar.succession_diagram.digraph.
+        These are equivelent unless ar.simplify_diagram is called. See
+        AttractorRepertoire.py for additional details. The default is True.
+
+    Returns
+    -------
+    networkx.DiGraph
+        A labeled digraph that represents the succession diagram.
+
+    """
+
+    if use_compressed_diagram:
+        G_reduced_network_based=ar.succession_digraph.copy()
+        relevant_nodes = ar.relevant_nodes
+    else:
+        G_reduced_network_based=ar.succession_diagram.digraph.copy()
+        relevant_nodes = ar.primes.keys()
+
+    has_nodes = False
+    for i in G_reduced_network_based.nodes():
+        has_nodes = True
+        states={}
+        for k,v in ar.succession_diagram.motif_reduction_dict[i].logically_fixed_nodes.items():
+            if k in relevant_nodes:
+                states[k]=v
+        G_reduced_network_based.nodes[i]['index'] = i
+        G_reduced_network_based.nodes[i]['states']=states
+
+        contraction_indices = [i]
+        if use_compressed_diagram and 'contraction' in ar.succession_digraph.nodes[i].keys():
+            contraction_indices += list(ar.succession_digraph.nodes[i]['contraction'].keys())
+
+        histories = []
+        for c in contraction_indices:
+            histories.append(ar.succession_diagram.motif_reduction_dict[c].motif_history)
+        G_reduced_network_based.nodes[i]['history']=histories
+
+    if not has_nodes:
+        G_reduced_network_based.add_node(0)
+        G_reduced_network_based.nodes[0]['index'] = 0
+        G_reduced_network_based.nodes[0]['states'] = {}
+        G_reduced_network_based.nodes[0]['history'] = [[]]
+
+    for u,v in G_reduced_network_based.edges():
+        ufixed = G_reduced_network_based.nodes[u]['states']
+        vfixed = G_reduced_network_based.nodes[v]['states']
+        lock_in = {}
+        for k,val in vfixed.items():
+            if k not in ufixed.keys():
+                lock_in[k] = val
+        G_reduced_network_based.edges[u,v]['states'] = lock_in
+
+    if include_attractors_in_diagram and not use_compressed_diagram:
+        for a_index,a in enumerate(ar.attractors):
+            astr = 'A'+str(a_index)
+            G_reduced_network_based.add_node(astr)
+            G_reduced_network_based.nodes[astr]['index']=astr
+            G_reduced_network_based.nodes[astr]['states']=a.attractor_dict
+
+            for r in a.reductions:
+                r_ind = list(ar.succession_diagram.motif_reduction_dict.values()).index(r)
+                r_key=list(ar.succession_diagram.motif_reduction_dict.keys())[r_ind]
+                if r_key in G_reduced_network_based.nodes():
+                    G_reduced_network_based.add_edge(r_key,astr,states='')
+    if include_attractors_in_diagram and use_compressed_diagram:
+        for a_index,a in enumerate(ar.attractor_equivalence_classes):
+            astr = 'A'+str(a_index)
+            G_reduced_network_based.add_node(astr)
+            G_reduced_network_based.nodes[astr]['index']=astr
+            G_reduced_network_based.nodes[astr]['states']=a['states']
+
+            for r_key in a['reductions']:
+                if r_key in G_reduced_network_based.nodes():
+                    G_reduced_network_based.add_edge(r_key,astr,states='')
+
+    return G_reduced_network_based
+
+def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=True):
+    """Label the succesion diagram and (optionally) attractors of the input attractor
+    repertoire according to the conventions of Zanudo and Albert (2015). If
+    attractors are not included, this is the line graph of the succession diagram
+    defined in Rozum et al. (2021). Does not support compression.
 
     Parameters
     ----------
@@ -88,33 +207,34 @@ def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_d
         A labeled digraph that represents the succession diagram.
 
     """
+    G_reduced_network_based = networkx_succession_diagram_reduced_network_based(ar,
+        include_attractors_in_diagram=False,
+        use_compressed_diagram=False)
 
-    G_reduced_network_based=ar.succession_diagram.digraph.copy()
-    has_nodes = False
-    for i in G_reduced_network_based.nodes():
-        has_nodes = True
-        G_reduced_network_based.nodes[i]['label']=format_reduction_label(str(ar.succession_diagram.motif_reduction_dict[i].motif_history))
-        G_reduced_network_based.nodes[i]['virtual_nodes']=ar.succession_diagram.motif_reduction_dict[i].motif_history
+    G_motif_based = nx.line_graph(G_reduced_network_based)
 
-    if not has_nodes:
-        G_reduced_network_based.add_node(0)
-        G_reduced_network_based.nodes[0]['label'] = '[]'
-        G_reduced_network_based.nodes[0]['virtual_nodes'] = []
+    for e in G_reduced_network_based.edges():
+        G_motif_based.nodes[e]['states'] = G_reduced_network_based.edges[e]['states']
+    for e in G_motif_based.edges():
+        G_motif_based.edges[e]['states']=''
 
     if include_attractors_in_diagram:
         for a_index,a in enumerate(ar.attractors):
-            G_reduced_network_based.add_node('A'+str(a_index))
-            G_reduced_network_based.nodes['A'+str(a_index)]['label']=format_reduction_label(str(a.attractor_dict))
-            G_reduced_network_based.nodes['A'+str(a_index)]['virtual_nodes']=a.attractor_dict
-
+            astr = 'A'+str(a_index)
+            G_motif_based.add_node(astr)
+            G_motif_based.nodes[astr]['states']=a.attractor_dict
             for r in a.reductions:
-                r_key=list(ar.succession_diagram.motif_reduction_dict.keys())[list(ar.succession_diagram.motif_reduction_dict.values()).index(r)]
-                G_reduced_network_based.add_edge(r_key,'A'+str(a_index))
+                r_ind = list(ar.succession_diagram.motif_reduction_dict.values()).index(r)
+                r_key=list(ar.succession_diagram.motif_reduction_dict.keys())[r_ind]
+                for n in G_motif_based.nodes():
+                    if type(n)==tuple:
+                        i,j=n
+                        if r_key==j:
+                            G_motif_based.add_edge((i,j),astr,states='')
+    return G_motif_based
 
-    return G_reduced_network_based
-
-def plot_nx_succession_diagram(g, fig_dimensions=[], pos='pydot', detailed_labels=True, node_size=[], node_color='grey',
-                              font_size=12, font_color='black'):
+def plot_nx_succession_diagram(G, pos=None, fig_dimensions=(None,None), nx_node_kwargs=None, nx_edge_kwargs=None,
+    draw_node_labels=True, draw_edge_labels=False, nx_node_label_kwargs=None, nx_edge_label_kwargs=None):
     """Plot the input succession diagram. Requires matplotlib. For finer control
     over plot appearance, it is recommended to plot g directly.
 
@@ -124,90 +244,64 @@ def plot_nx_succession_diagram(g, fig_dimensions=[], pos='pydot', detailed_label
         Labeled succession diagram, e.g., as is output from
         Export.networkx_succession_diagram_reduced_network_based().
     fig_dimensions : (int,int)
-        Dimensions of the output figure. If [], then the dimensions are calculated
-        based on the number of nodes in g (the default is []).
+        Dimensions of the output figure. If (None,None), then the dimensions are
+        calculated based on the number of nodes in g (the default is (None,None)).
     pos : str or graphviz_layout
-        Layout for the node labels; if 'pydot', these are automatically computed
-        using pydot (requires pydot) (the default is 'pydot').
-    detailed_labels : bool
+        Layout for the nodes; A dictionary with nodes as keys and positions as
+        values. Positions should be sequences of length 2. If none, we attempt to
+        use pydot/graphviz to construct a layout, otherwise we fall back to the
+        networkx planar_layout function (succession diagrams are always planar).
+    draw_node_labels : bool
         Whether node labels should be drawn (True) or left as metadata (False)
         (the default is True).
-    node_size : int
-        Size of the nodes. If [], the size is proportional to the number of nodes
-        in g (the default is []).
-    node_color : color or array of colors
-        Node color. Can be a single color or a sequence of colors with the same
-        length as nodelist. (the default is 'grey').
-    font_size : int
-        Font size for labels (the default is 12).
-    font_color : str
-        Color for label text (the default is 'black').
+    draw_edge_labels : bool
+        Whether edge labels should be drawn (True) or left as metadata (False)
+        (the default is True).
+    nx_node_kwargs : dictionary
+        Keword arguments passed to nx.draw_networkx_nodes (in addition to G and pos).
+        If None, we pass {'node_size':50*G.number_of_nodes()} by default.
+    nx_edge_kwargs : dictionary
+        Keword arguments passed to nx.draw_networkx_edges (in addition to G and pos).
+        If None, we pass {'arrowstyle':'-|>','width':2,'arrowsize':30} by default.
+    nx_node_label_kwargs : dictionary
+        Keword arguments passed to nx.draw_networkx_labels (in addition to G and pos).
+        If None, we pass {'font_size':16} by default.
+    nx_edge_label_kwargs : dictionary
+        Keword arguments passed to nx.draw_networkx_edge_labels (in addition to G and pos).
+        If None, we pass {'font_size':16} by default.
 
     """
-
-    from networkx.drawing.nx_agraph import graphviz_layout
     import matplotlib.pyplot as plt
 
-    if fig_dimensions==[]:
-        fig_dimensions=(2*(g.number_of_nodes()+2),g.number_of_nodes()+2)
-    if node_size==[]:
-        node_size=50*g.number_of_nodes()
+    if fig_dimensions == (None,None):
+        fig_dimensions=(2*(G.number_of_nodes()+2),G.number_of_nodes()+2)
 
-    if pos=='pydot':
-        pos=graphviz_layout(g, prog='dot')
+    if pos is None:
+        try:
+            from networkx.drawing.nx_agraph import graphviz_layout
+            pos = graphviz_layout(G, prog='dot')
+        except ImportError:
+            pos = nx.planar_layout(G)
 
     plt.figure(figsize=fig_dimensions)
-    nx.drawing.draw_networkx_nodes(g, pos,node_shape='s',node_color=node_color, node_size=node_size)
-    nx.draw_networkx_edges(g, pos, arrowstyle='fancy',arrowsize=10)
-    if detailed_labels:
-        nx.drawing.draw_networkx_labels(g,pos, labels=dict(g.nodes('label')),font_size=font_size, font_color=font_color)
-    else:
-        nx.drawing.draw_networkx_labels(g,pos,font_size=font_size, font_color=font_color)
+
+    if nx_node_kwargs is None:
+        nx_node_kwargs = {'node_size':50*G.number_of_nodes()}
+    if nx_edge_kwargs is None:
+        nx_edge_kwargs = {'arrowstyle':'-|>','width':2,'arrowsize':30}
+    if nx_node_label_kwargs is None:
+        nx_node_label_kwargs = {'font_size':16}
+    if nx_edge_label_kwargs is None:
+        nx_edge_label_kwargs = {'font_size':16}
+
+    nx.drawing.draw_networkx_nodes(G, pos,**nx_node_kwargs)
+    nx.draw_networkx_edges(G, pos,**nx_edge_kwargs)
+    if draw_node_labels:
+        nx.drawing.draw_networkx_labels(G,pos, labels=dict(G.nodes('states')),**nx_node_label_kwargs)
+    if draw_edge_labels:
+        nx.drawing.draw_networkx_edge_labels(G,pos,labels=dict(G.edges('states')),**nx_edge_label_kwargs)
     plt.axis('off')
     plt.show()
-
-def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=True):
-    """Label the succesion diagram and (optionally) attractors of the input attractor
-    repertoire according to the conventions of Zanudo and Albert (2015). Useful
-    for plotting.
-
-    Parameters
-    ----------
-    ar : AttractorRepertoire
-        Attractor repertoire object for which to build the diagram.
-    include_attractors_in_diagram : bool
-        Whether attractors should be represented as nodes in the diagram (the
-        default is True).
-
-    Returns
-    -------
-    networkx.DiGraph
-        A labeled digraph that represents the succession diagram.
-
-    """
-    G_reduced_network_based=networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=False)
-    G_motif_based = nx.line_graph(G_reduced_network_based)
-    for i,j in G_motif_based.nodes():
-
-
-        node_motif=set([frozenset(k.items()) for k in ar.succession_diagram.motif_reduction_dict[j].motif_history])-set([frozenset(k.items()) for k in ar.succession_diagram.motif_reduction_dict[i].motif_history])
-        node_label=format_reduction_label(str(dict(list(node_motif)[0])))
-        G_motif_based.nodes[(i,j)]['label']=node_label
-        G_motif_based.nodes[(i,j)]['virtual_nodes']=dict(list(node_motif)[0])
-
-    if include_attractors_in_diagram:
-        for a_index,a in enumerate(ar.attractors):
-            G_motif_based.add_node('A'+str(a_index))
-            G_motif_based.nodes['A'+str(a_index)]['label']=format_reduction_label(str(a.attractor_dict))
-            G_motif_based.nodes['A'+str(a_index)]['virtual_nodes']=a.attractor_dict
-            for r in a.reductions:
-                r_key=list(ar.succession_diagram.motif_reduction_dict.keys())[list(ar.succession_diagram.motif_reduction_dict.values()).index(r)]
-                for n in G_motif_based.nodes():
-                    if type(n)==tuple:
-                        i,j=n
-                        if r_key==j:
-                            G_motif_based.add_edge((i,j),'A'+str(a_index))
-    return G_motif_based
 
 # The next two methods are commented out because they are experimental methods
 # for compressing the succession diagram and are under development.
@@ -322,28 +416,6 @@ def attractor_dataframe(ar):
 
     return df
 
-def get_motif_set(ar):
-    """Extract the stable motifs of a system and its reduced networks from its
-    attractor repertoire. Notably, these include both the system's primary stable
-    motifs and conditionally stable motifs (see, e.g., Deritei et al. 2019).
-
-    Parameters
-    ----------
-    ar : AttractorRepertoire
-        The attractor repertoire of the system.
-
-    Returns
-    -------
-    list of dictionaries
-        Stable motifs that appear in the system or during reduction.
-
-    """
-    GM_no_attr=networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=False)
-    SM_set=set([])
-    for n in GM_no_attr.nodes(data=True):
-        SM_set.add(frozenset([i for i in n[1]['virtual_nodes'].items()]))
-    return [dict(sm) for sm in SM_set]
-
 def save_to_graphml(G,model_name):
     """Export a labeled succesion diagram to graphml format.
 
@@ -356,8 +428,12 @@ def save_to_graphml(G,model_name):
 
     """
 
-    #Graphml does not support complex attribues so we create a copy with the virtual_nodes attribute:
+    #Graphml does not support complex attribues so we create a copy and stringify everything
     G_ex=G.copy()
     for n in G_ex.nodes():
-        G_ex.nodes[n]['virtual_nodes']=str(G_ex.nodes[n]['virtual_nodes'])
+        for k,v in G_ex.nodes[n].items():
+            G_ex.nodes[n][k]=str(v)
+    for e in G_ex.edges():
+        for k,v in G_ex.edges[e].items():
+            G_ex.edges[e][k]=str(v)
     nx.write_graphml(G_ex, "%s.graphml"%model_name)

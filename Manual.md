@@ -234,6 +234,30 @@ either from_primes or from_succession_diagram.
 :   The model rules.
 
 
+**```succession_digraph```** :&ensp;<code>networkx digraph</code>
+:   Networkx digraph representation of the succession_diagram object. If
+    AttractorRepertoire.simplify_diagram, it is equivalent to
+    AttractorRepertoire.succession_diagram.digraph. Otherwise, several of its
+    nodes may be contracted (depending on input parameters).
+
+
+**```attractor_equivalence_classes```** :&ensp;<code>list</code>
+:   List of attractor equivalence classes. Each item is a dictionary with keys
+    'states', 'attractors', and 'reductions'. The 'states' value is a dictionary
+    of variable values that all attractors in the class share. The 'attractors'
+    value is a list of Attractor objects (i.e., a sublist of self.attractors);
+    all attractors in this list have all relevant nodes equivalently characterized.
+    The 'reductions' value is a list of reduction_attractor keys that collectively
+    contain all the attractors in the class (and therefore cannot differ in any
+    relevant node).
+
+
+**```relevant_nodes```** :&ensp;<code>list</code>
+:   List of nodes that are "relevant", i.e., if trap spaces differ in the values
+    of these variables, then the corresponding succession diagram nodes and
+    attractors will not be merged.
+
+
 
 
 
@@ -343,6 +367,54 @@ Build and process the succession diagram for the model.
 **```max_stable_motifs```** :&ensp;<code>int</code>
 :   Maximum number of output lines for PyBoolNet to process from the
     AspSolver (the default is 10000).
+
+
+
+    
+##### Method `simplify_diagram` {#StableMotifs.AttractorRepertoire.AttractorRepertoire.simplify_diagram}
+
+
+
+
+>     def simplify_diagram(
+>         self,
+>         projection_nodes,
+>         merge_equivalent_reductions=True,
+>         keep_only_projection_nodes=False,
+>         condense_simple_paths=False
+>     )
+
+
+Simplify the succession diagram for the model. This is done in two ways.
+First, variables can be designated ignorable using the projection_nodes
+parameter. If keep_only_projection_nodes is False, these variables are
+ignorable, otherwise, all other nodes are ignorable. When
+merge_equivalent_reductions is True, all nodes of the succession diagram
+that correspond to trap spaces whose fixed variables differ only in ignorable
+variables are contracted (in the graph theory sense). After this process,
+if condense_simple_paths is True, then all succession diagram nodes with
+in-degree equal to one are contracted with their parent node. This function
+constructs the succession_digraph and attractor_equivalence_classes attributes,
+which are described in the class documentation.
+
+###### Parameters
+
+**```projection_nodes```** :&ensp;<code>list</code> of <code>variable names</code>
+:   These nodes will be ignored if keep_only_projection_nodes is False
+    (default); otherwise, all nodes except these will be ignored.
+
+
+**```merge_equivalent_reductions```** :&ensp;<code>bool</code>
+:   Whether to contract succession diagram nodes whose reductions differ
+    only in ignorable nodes.
+
+
+**```keep_only_projection_nodes```** :&ensp;<code>bool</code>
+:   Whether projection_nodes specifies non-ignorable nodes.
+
+
+**```condense_simple_paths```** :&ensp;<code>bool</code>
+:   Whether to contract nodes with in-degree one.
 
 
 
@@ -990,29 +1062,43 @@ and square brackets from the input string.
 
 
     
-### Function `get_motif_set` {#StableMotifs.Export.get_motif_set}
+### Function `networkx_succession_diagram` {#StableMotifs.Export.networkx_succession_diagram}
 
 
 
 
->     def get_motif_set(
->         ar
+>     def networkx_succession_diagram(
+>         ar,
+>         include_attractors_in_diagram=True,
+>         use_compressed_diagram=True
 >     )
 
 
-Extract the stable motifs of a system and its reduced networks from its
-attractor repertoire. Notably, these include both the system's primary stable
-motifs and conditionally stable motifs (see, e.g., Deritei et al. 2019).
+Label the succesion diagram and (optionally) attractors of the input attractor
+repertoire according to the conventions of Rozum et al. (2021). This is an
+alias for the function Export.networkx_succession_diagram_reduced_network_based.
 
 ###### Parameters
 
 **```ar```** :&ensp;<code>AttractorRepertoire</code>
-:   The attractor repertoire of the system.
+:   Attractor repertoire object for which to build the diagram.
+
+
+**```include_attractors_in_diagram```** :&ensp;<code>bool</code>
+:   Whether attractors should be represented as nodes in the diagram (the
+    default is True).
+
+
+**```use_compressed_diagram```** :&ensp;<code>bool</code>
+:   Whether to use the (potentially compressed) succession diagram stored in
+    ar.succession_digraph instead of the complete one ar.succession_diagram.digraph.
+    These are equivelent unless ar.simplify_diagram is called. See
+    AttractorRepertoire.py for additional details. The default is True.
 
 ###### Returns
 
-<code>list</code> of <code>dictionaries</code>
-:   Stable motifs that appear in the system or during reduction.
+<code>networkx.DiGraph</code>
+:   A labeled digraph that represents the succession diagram.
 
 
 
@@ -1029,8 +1115,9 @@ motifs and conditionally stable motifs (see, e.g., Deritei et al. 2019).
 
 
 Label the succesion diagram and (optionally) attractors of the input attractor
-repertoire according to the conventions of Zanudo and Albert (2015). Useful
-for plotting.
+repertoire according to the conventions of Zanudo and Albert (2015). If
+attractors are not included, this is the line graph of the succession diagram
+defined in Rozum et al. (2021). Does not support compression.
 
 ###### Parameters
 
@@ -1057,13 +1144,13 @@ for plotting.
 
 >     def networkx_succession_diagram_reduced_network_based(
 >         ar,
->         include_attractors_in_diagram=True
+>         include_attractors_in_diagram=True,
+>         use_compressed_diagram=True
 >     )
 
 
 Label the succesion diagram and (optionally) attractors of the input attractor
-repertoire according to the conventions of Rozum et al. (2020). Useful for
-plotting.
+repertoire according to the conventions of Rozum et al. (2021).
 
 ###### Parameters
 
@@ -1074,6 +1161,13 @@ plotting.
 **```include_attractors_in_diagram```** :&ensp;<code>bool</code>
 :   Whether attractors should be represented as nodes in the diagram (the
     default is True).
+
+
+**```use_compressed_diagram```** :&ensp;<code>bool</code>
+:   Whether to use the (potentially compressed) succession diagram stored in
+    ar.succession_digraph instead of the complete one ar.succession_diagram.digraph.
+    These are equivelent unless ar.simplify_diagram is called. See
+    AttractorRepertoire.py for additional details. The default is True.
 
 ###### Returns
 
@@ -1089,14 +1183,15 @@ plotting.
 
 
 >     def plot_nx_succession_diagram(
->         g,
->         fig_dimensions=[],
->         pos='pydot',
->         detailed_labels=True,
->         node_size=[],
->         node_color='grey',
->         font_size=12,
->         font_color='black'
+>         G,
+>         pos=None,
+>         fig_dimensions=(None, None),
+>         nx_node_kwargs=None,
+>         nx_edge_kwargs=None,
+>         draw_node_labels=True,
+>         draw_edge_labels=False,
+>         nx_node_label_kwargs=None,
+>         nx_edge_label_kwargs=None
 >     )
 
 
@@ -1111,36 +1206,45 @@ over plot appearance, it is recommended to plot g directly.
 
 
 **```fig_dimensions```** :&ensp;<code>(int,int)</code>
-:   Dimensions of the output figure. If [], then the dimensions are calculated
-    based on the number of nodes in g (the default is []).
+:   Dimensions of the output figure. If (None,None), then the dimensions are
+    calculated based on the number of nodes in g (the default is (None,None)).
 
 
 **```pos```** :&ensp;<code>str</code> or <code>graphviz\_layout</code>
-:   Layout for the node labels; if 'pydot', these are automatically computed
-    using pydot (requires pydot) (the default is 'pydot').
+:   Layout for the nodes; A dictionary with nodes as keys and positions as
+    values. Positions should be sequences of length 2. If none, we attempt to
+    use pydot/graphviz to construct a layout, otherwise we fall back to the
+    networkx planar_layout function (succession diagrams are always planar).
 
 
-**```detailed_labels```** :&ensp;<code>bool</code>
+**```draw_node_labels```** :&ensp;<code>bool</code>
 :   Whether node labels should be drawn (True) or left as metadata (False)
     (the default is True).
 
 
-**```node_size```** :&ensp;<code>int</code>
-:   Size of the nodes. If [], the size is proportional to the number of nodes
-    in g (the default is []).
+**```draw_edge_labels```** :&ensp;<code>bool</code>
+:   Whether edge labels should be drawn (True) or left as metadata (False)
+    (the default is True).
 
 
-**```node_color```** :&ensp;<code>color</code> or <code>array</code> of <code>colors</code>
-:   Node color. Can be a single color or a sequence of colors with the same
-    length as nodelist. (the default is 'grey').
+**```nx_node_kwargs```** :&ensp;<code>dictionary</code>
+:   Keword arguments passed to nx.draw_networkx_nodes (in addition to G and pos).
+    If None, we pass {'node_size':50*G.number_of_nodes()} by default.
 
 
-**```font_size```** :&ensp;<code>int</code>
-:   Font size for labels (the default is 12).
+**```nx_edge_kwargs```** :&ensp;<code>dictionary</code>
+:   Keword arguments passed to nx.draw_networkx_edges (in addition to G and pos).
+    If None, we pass {'arrowstyle':'-|>','width':2,'arrowsize':30} by default.
 
 
-**```font_color```** :&ensp;<code>str</code>
-:   Color for label text (the default is 'black').
+**```nx_node_label_kwargs```** :&ensp;<code>dictionary</code>
+:   Keword arguments passed to nx.draw_networkx_labels (in addition to G and pos).
+    If None, we pass {'font_size':16} by default.
+
+
+**```nx_edge_label_kwargs```** :&ensp;<code>dictionary</code>
+:   Keword arguments passed to nx.draw_networkx_edge_labels (in addition to G and pos).
+    If None, we pass {'font_size':16} by default.
 
 
 
@@ -3174,7 +3278,7 @@ class (using, e.g., AttractorRepertoire.from_primes).
 
 
 Class describing the succession diagram of a Boolean system. See, e.g.,
-Zanudo and Albert (2015) or Rozum et al. (2020).
+Zanudo and Albert (2015) or Rozum et al. (2021).
 
 #### Attributes
 
@@ -3309,6 +3413,29 @@ reduction's index and the permutation that maps between the two histories.
 **```permutation```** :&ensp;<code>list</code> of <code>int</code>
 :   Permutation that maps the preexisting history to the input history.
     This value is None if no such history exists.
+
+
+
+    
+##### Method `get_motifs` {#StableMotifs.Succession.SuccessionDiagram.get_motifs}
+
+
+
+
+>     def get_motifs(
+>         self
+>     )
+
+
+Extract the stable motifs of a system and its reduced networks from its
+attractor repertoire. Notably, these include both the system's primary stable
+motifs and conditionally stable motifs (see, e.g., Deritei et al. 2019).
+
+###### Returns
+
+<code>list</code> of <code>dictionaries</code>
+:   Stable motifs that appear in the system or during reduction (in no
+    particular order).
 
 
 

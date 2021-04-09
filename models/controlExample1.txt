@@ -1,0 +1,7 @@
+A*= B | !C
+B*= A | F
+C*= A | D | !F & G
+D*= B & C
+E*= D & E
+F*= G
+G*= E & F

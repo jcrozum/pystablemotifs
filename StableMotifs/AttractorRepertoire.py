@@ -27,6 +27,24 @@ class AttractorRepertoire:
         An upper bound on the number of attractors in the model.
     primes : PyBoolNet primes dictionary
         The model rules.
+    succession_digraph : networkx digraph
+        Networkx digraph representation of the succession_diagram object. If
+        AttractorRepertoire.simplify_diagram, it is equivalent to
+        AttractorRepertoire.succession_diagram.digraph. Otherwise, several of its
+        nodes may be contracted (depending on input parameters).
+    attractor_equivalence_classes : list
+        List of attractor equivalence classes. Each item is a dictionary with keys
+        'states', 'attractors', and 'reductions'. The 'states' value is a dictionary
+        of variable values that all attractors in the class share. The 'attractors'
+        value is a list of Attractor objects (i.e., a sublist of self.attractors);
+        all attractors in this list have all relevant nodes equivalently characterized.
+        The 'reductions' value is a list of reduction_attractor keys that collectively
+        contain all the attractors in the class (and therefore cannot differ in any
+        relevant node).
+    relevant_nodes : list
+        List of nodes that are "relevant", i.e., if trap spaces differ in the values
+        of these variables, then the corresponding succession diagram nodes and
+        attractors will not be merged.
 
     """
 
@@ -157,6 +175,32 @@ class AttractorRepertoire:
         self._count_attractors()
 
     def simplify_diagram(self, projection_nodes, merge_equivalent_reductions = True, keep_only_projection_nodes = False, condense_simple_paths = False):
+        """Simplify the succession diagram for the model. This is done in two ways.
+        First, variables can be designated ignorable using the projection_nodes
+        parameter. If keep_only_projection_nodes is False, these variables are
+        ignorable, otherwise, all other nodes are ignorable. When
+        merge_equivalent_reductions is True, all nodes of the succession diagram
+        that correspond to trap spaces whose fixed variables differ only in ignorable
+        variables are contracted (in the graph theory sense). After this process,
+        if condense_simple_paths is True, then all succession diagram nodes with
+        in-degree equal to one are contracted with their parent node. This function
+        constructs the succession_digraph and attractor_equivalence_classes attributes,
+        which are described in the class documentation.
+
+        Parameters
+        ----------
+        projection_nodes : list of variable names
+            These nodes will be ignored if keep_only_projection_nodes is False
+            (default); otherwise, all nodes except these will be ignored.
+        merge_equivalent_reductions : bool
+            Whether to contract succession diagram nodes whose reductions differ
+            only in ignorable nodes.
+        keep_only_projection_nodes : bool
+            Whether projection_nodes specifies non-ignorable nodes.
+        condense_simple_paths : bool
+            Whether to contract nodes with in-degree one.
+        """
+
         if not keep_only_projection_nodes:
             keep = set(self.primes.keys()) - set(projection_nodes)
             ignore = set(projection_nodes)
@@ -192,7 +236,7 @@ class AttractorRepertoire:
 
         self.succession_digraph = G
 
-        self.attractor_equivalence_classes = {}
+        self.attractor_equivalence_classes = []
         for a in self.attractors:
             keys = set()
             for n in self.succession_digraph.nodes():
@@ -203,13 +247,13 @@ class AttractorRepertoire:
                         break
 
             merged = False
-            for c in self.attractor_equivalence_classes.values():
+            for c in self.attractor_equivalence_classes:
                 if c['states'].items() <= a.attractor_dict.items():
                     c['attractors'].append(a)
                     c['reductions'] |= keys
                     merged = True
             if not merged:
-                self.attractor_equivalence_classes[len(self.attractor_equivalence_classes)] = {'states':{k:v for k,v in a.attractor_dict.items() if k in keep},'attractors':[a], 'reductions':keys}
+                self.attractor_equivalence_classes.append({'states':{k:v for k,v in a.attractor_dict.items() if k in keep},'attractors':[a], 'reductions':keys})
 
         self.relevant_nodes = keep
 
