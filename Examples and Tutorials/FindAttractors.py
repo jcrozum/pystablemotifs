@@ -2,6 +2,16 @@ import PyBoolNet
 import StableMotifs as sm
 import sys
 
+"""
+Example Usage:
+python FindAttractors.py ../models/PhaseSwitch.txt
+
+The argument should be a file (path) to to a model file. The rules can be in
+either BooleanNet or BNet format.
+
+This will print the rules and a summary of the system's attractor repertoire.
+"""
+
 print("Loading network . . .")
 primes = sm.Format.import_primes(sys.argv[1],remove_constants=True)
 print("Network loaded.")
