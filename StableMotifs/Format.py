@@ -386,6 +386,39 @@ def primes2bnet(primes):
 
     return "\n".join(lines)
 
+def primes2booleannet(primes, header=""):
+    """Convert a PyBoolNet primes dictionary to a BooleanNet string reperesentation.
+
+    Parameters
+    ----------
+    primes : PyBoolNet primes dictionary
+        Update rules to convert.
+    header : str
+        Text to include at the beginning of the file, e.g., comment lines. For
+        example, the legacy Java version of StableMotifs requires rules files to
+        begin with the line "#BOOLEAN RULES".
+
+    Returns
+    -------
+    str
+        BooleanNet representation of update rules.
+
+    """
+    lines = []
+    width = max([len(x) for x in primes]) + 3
+
+    for name in primes:
+        if primes[name][0] == [] or primes[name][1] == [{}]:
+            expression = '1'
+        elif primes[name][1] == [] or primes[name][0] == [{}]:
+            expression = '0'
+        else:
+            expression = ' or '.join([' and '.join([x if term[x]==1 else 'not '+x for x in term]) for term in primes[name][1]  ])
+
+        lines+= [(name+'*=').ljust(width)+expression]
+    lines+=['']
+
+    return header + "\n".join(lines)
 
 def pretty_print_primes(primes):
     """Prints PyBoolNet a prime dictionary in a more readable format. Prints both
