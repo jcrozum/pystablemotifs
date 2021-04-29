@@ -10,6 +10,14 @@ PyBoolNet (v2.2.8+) https://github.com/hklarner/PyBoolNet
 
 Networkx (v2.4+) https://github.com/networkx/networkx/
 
+Sympy (v1.5.1+) https://www.sympy.org/en/index.html
+
+Pandas (v1.0.0+) https://pandas.pydata.org/
+
+NumPy (v1.19.2+) https://numpy.org/
+
+Matplotlib (v3.2.1+) https://matplotlib.org/
+
 # Features
 - Import networks in BooleanNet or BNet format
 
