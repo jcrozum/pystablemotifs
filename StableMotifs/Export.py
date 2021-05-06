@@ -185,6 +185,19 @@ def networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_d
                 if r_key in G_reduced_network_based.nodes():
                     G_reduced_network_based.add_edge(r_key,astr,states='')
 
+    for n in G_reduced_network_based.nodes():
+
+        if not use_compressed_diagram:
+            if str(n)[0]=='A':
+                G_reduced_network_based.nodes[n]['label']=str(G_reduced_network_based.nodes[n]['states'])
+            else:
+                G_reduced_network_based.nodes[n]['label']=str(G_reduced_network_based.nodes[n]['history'])
+        else:
+            if str(n)[0]=='A':
+                G_reduced_network_based.nodes[n]['label']=str({k:v for k,v in G_reduced_network_based.nodes[n]['states'].items() if k in ar.relevant_nodes})
+            else:
+                G_reduced_network_based.nodes[n]['label']=str([[{k:v for k,v in d.items() if k in ar.relevant_nodes} for d in h] for h in G_reduced_network_based.nodes[n]['history']])
+
     return G_reduced_network_based
 
 def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=True):
@@ -215,6 +228,7 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
 
     for e in G_reduced_network_based.edges():
         G_motif_based.nodes[e]['states'] = G_reduced_network_based.edges[e]['states']
+        G_motif_based.nodes[e]['label'] = str(G_reduced_network_based.edges[e]['states'])
     for e in G_motif_based.edges():
         G_motif_based.edges[e]['states']=''
 
@@ -234,7 +248,7 @@ def networkx_succession_diagram_motif_based(ar,include_attractors_in_diagram=Tru
     return G_motif_based
 
 def plot_nx_succession_diagram(G, pos=None, fig_dimensions=(None,None), nx_node_kwargs=None, nx_edge_kwargs=None,
-    draw_node_labels=True, draw_edge_labels=False, nx_node_label_kwargs=None, nx_edge_label_kwargs=None):
+    draw_node_labels=True, labeling_convention='label', draw_edge_labels=False, nx_node_label_kwargs=None, nx_edge_label_kwargs=None):
     """Plot the input succession diagram. Requires matplotlib. For finer control
     over plot appearance, it is recommended to plot g directly.
 
@@ -257,6 +271,9 @@ def plot_nx_succession_diagram(G, pos=None, fig_dimensions=(None,None), nx_node_
     draw_edge_labels : bool
         Whether edge labels should be drawn (True) or left as metadata (False)
         (the default is True).
+    labeling_convention : str
+        Whether edge labels should be just the stable motifs ('label') or all stabilized states ('states')
+        (the default is 'label').
     nx_node_kwargs : dictionary
         Keword arguments passed to nx.draw_networkx_nodes (in addition to G and pos).
         If None, we pass {'node_size':50*G.number_of_nodes()} by default.
@@ -297,7 +314,10 @@ def plot_nx_succession_diagram(G, pos=None, fig_dimensions=(None,None), nx_node_
     nx.drawing.draw_networkx_nodes(G, pos,**nx_node_kwargs)
     nx.draw_networkx_edges(G, pos,**nx_edge_kwargs)
     if draw_node_labels:
-        nx.drawing.draw_networkx_labels(G,pos, labels=dict(G.nodes('states')),**nx_node_label_kwargs)
+        if labeling_convention=='label':
+            nx.drawing.draw_networkx_labels(G,pos, labels=dict(G.nodes('label')),**nx_node_label_kwargs)
+        else:
+            nx.drawing.draw_networkx_labels(G,pos, labels=dict(G.nodes('states')),**nx_node_label_kwargs)
     if draw_edge_labels:
         nx.drawing.draw_networkx_edge_labels(G,pos,labels=dict(G.edges('states')),**nx_edge_label_kwargs)
     plt.axis('off')
