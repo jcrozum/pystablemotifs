@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<styles>
+  <style name="Expanded Network Labels" scope="node" selectionOnly="false">
+    <mapping>
+      <source name="label" origin="customProperty" type="string"/>
+      <target name="labelText" type="string">
+        <hints>
+          <hint type="int">0</hint>
+        </hints>
+      </target>
+      <conversion type="asIs"/>
+    </mapping>
+    <mapping>
+      <source name="type" origin="customProperty" type="string"/>
+      <target name="geometryWidth" type="double">
+        <hints/>
+      </target>
+      <conversion type="discrete">
+        <discrete>
+          <value>composite</value>
+          <result>5.0</result>
+        </discrete>
+      </conversion>
+    </mapping>
+    <mapping>
+      <source name="type" origin="customProperty" type="string"/>
+      <target name="geometryHeight" type="double">
+        <hints/>
+      </target>
+      <conversion type="discrete">
+        <discrete>
+          <value>composite</value>
+          <result>5.0</result>
+        </discrete>
+      </conversion>
+    </mapping>
+    <mapping>
+      <source name="type" origin="customProperty" type="string"/>
+      <target name="fillColor" type="color">
+        <hints/>
+      </target>
+      <conversion type="discrete">
+        <discrete>
+          <value>composite</value>
+          <result>#000000</result>
+        </discrete>
+      </conversion>
+    </mapping>
+  </style>
+  <style name="Succession Diagram Nodes" scope="node" selectionOnly="false">
+    <mapping>
+      <source name="label" origin="customProperty" type="string"/>
+      <target name="labelText" type="string">
+        <hints>
+          <hint type="int">0</hint>
+        </hints>
+      </target>
+      <conversion type="asIs"/>
+    </mapping>
+    <mapping>
+      <source name="states" origin="customProperty" type="string"/>
+      <target name="tooltip" type="string">
+        <hints/>
+      </target>
+      <conversion type="asIs"/>
+    </mapping>
+  </style>
+  <style name="Succession Diagram Edges" scope="edge" selectionOnly="false">
+    <mapping>
+      <source name="motif" origin="customProperty" type="string"/>
+      <target name="labelText" type="string">
+        <hints>
+          <hint type="int">0</hint>
+        </hints>
+      </target>
+      <conversion type="asIs"/>
+    </mapping>
+  </style>
+</styles>
