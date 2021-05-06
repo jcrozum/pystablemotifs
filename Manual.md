@@ -1189,6 +1189,7 @@ repertoire according to the conventions of Rozum et al. (2021).
 >         nx_node_kwargs=None,
 >         nx_edge_kwargs=None,
 >         draw_node_labels=True,
+>         labeling_convention='label',
 >         draw_edge_labels=False,
 >         nx_node_label_kwargs=None,
 >         nx_edge_label_kwargs=None
@@ -1200,7 +1201,7 @@ over plot appearance, it is recommended to plot g directly.
 
 ###### Parameters
 
-**```g```** :&ensp;<code>networkx.DiGraph</code>
+**```G```** :&ensp;<code>networkx.DiGraph</code>
 :   Labeled succession diagram, e.g., as is output from
     Export.networkx_succession_diagram_reduced_network_based().
 
@@ -1223,8 +1224,14 @@ over plot appearance, it is recommended to plot g directly.
 
 
 **```draw_edge_labels```** :&ensp;<code>bool</code>
-:   Whether edge labels should be drawn (True) or left as metadata (False)
-    (the default is True).
+:   Whether edge labels should be drawn (True) or left as metadata (False);
+    only affects reduced-network-based (default) succession diagrams, not
+    motif-based succession diagrams. (The default value is False.)
+
+
+**```labeling_convention```** :&ensp;<code>str</code>
+:   Whether edge labels should be just the stable motifs ('label') or all stabilized states ('states')
+    (the default is 'label').
 
 
 **```nx_node_kwargs```** :&ensp;<code>dictionary</code>

@@ -40,8 +40,9 @@ class SuccessionDiagram:
 
         """
         SM_set = set([])
-        for reduction in self.motif_reduction_dict:
-            SM_set.add(frozenset(reduction.motif_history[-1].items()))
+        for reduction in self.motif_reduction_dict.values():
+            if len(reduction.motif_history)>0:
+                SM_set.add(frozenset(reduction.motif_history[-1].items()))
         return [dict(s) for s in SM_set]
 
     def find_motif_permutation(self,motif_history):
