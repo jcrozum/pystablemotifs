@@ -40,7 +40,7 @@ class SuccessionDiagram:
 
         """
         SM_set = set([])
-        for reduction in self.motif_reduction_dict:
+        for reduction in self.motif_reduction_dict.values():
             SM_set.add(frozenset(reduction.motif_history[-1].items()))
         return [dict(s) for s in SM_set]
 

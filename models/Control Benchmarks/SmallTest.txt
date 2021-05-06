@@ -1,0 +1,7 @@
+#BOOLEAN RULES
+xA*= xB
+xB*= xA
+xC*= xA or not xD
+xD*= xC
+xE*= xB and xF
+xF*= xE
