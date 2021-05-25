@@ -80,12 +80,13 @@ def booleannet2bnet(rules):
 
 def bnetDNF2list(bnet):
     """Converts a BNet string expression to a list of prime implicant dictionaries.
-
+    Requires that the input be in disjunctive normal form, but this is not checked
+    explicitly.
 
     Parameters
     ----------
     bnet : str
-        BNET formatted rules.
+        BNET formatted expression in disjunctive normal form.
 
     Returns
     -------

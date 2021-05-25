@@ -1332,12 +1332,13 @@ Converts a BNet string expression to a sympy string expression.
 
 
 Converts a BNet string expression to a list of prime implicant dictionaries.
-
+Requires that the input be in disjunctive normal form, but this is not checked
+explicitly.
 
 ###### Parameters
 
 **```bnet```** :&ensp;<code>str</code>
-:   BNET formatted rules.
+:   BNET formatted expression in disjunctive normal form.
 
 ###### Returns
 
@@ -1612,6 +1613,38 @@ tautologies better than the PyBoolNet version though.
 
 <code>str</code>
 :   BNET representation of update rules.
+
+
+
+    
+### Function `primes2booleannet` {#StableMotifs.Format.primes2booleannet}
+
+
+
+
+>     def primes2booleannet(
+>         primes,
+>         header=''
+>     )
+
+
+Convert a PyBoolNet primes dictionary to a BooleanNet string reperesentation.
+
+###### Parameters
+
+**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+:   Update rules to convert.
+
+
+**```header```** :&ensp;<code>str</code>
+:   Text to include at the beginning of the file, e.g., comment lines. For
+    example, the legacy Java version of StableMotifs requires rules files to
+    begin with the line "#BOOLEAN RULES".
+
+###### Returns
+
+<code>str</code>
+:   BooleanNet representation of update rules.
 
 
 
