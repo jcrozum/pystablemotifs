@@ -78,6 +78,37 @@ def booleannet2bnet(rules):
     s = re.sub("True","1",s, flags=re.IGNORECASE) # True -> 1 (ignore case)
     return s
 
+# Convert rules from CellCollective format to PyBoolNet format
+def cellcollective2bnet(rules):
+    """Converts CellCollective rules to BNet format.
+    e.g., an input of
+    "A = B OR C AND NOT D"
+    returns
+    A,  B | C & !D
+
+    Also replaces ~ with !
+
+    Parameters
+    ----------
+    rules : str
+        CellCollective formatted rules.
+
+    Returns
+    -------
+    str
+        BNET formatted rules.
+
+    """
+    s = re.sub("\s*=\s*",",\t",rules) # replace "=" with ",\t"
+    s = re.sub("\s+not\s+"," !",s, flags=re.IGNORECASE) # not -> ! (ignore case)
+    s = re.sub("\(\s*not\s+","(!",s, flags=re.IGNORECASE) # not -> ! (with parens)
+    s = re.sub("\s*~\s*"," !",s) # ~ -> !
+    s = re.sub("\s+and\s+"," & ",s, flags=re.IGNORECASE) # and -> &
+    s = re.sub("\s+or\s+"," | ",s, flags=re.IGNORECASE) # or -> |
+    s = re.sub("False","0",s, flags=re.IGNORECASE) # False -> 0 (ignore case)
+    s = re.sub("True","1",s, flags=re.IGNORECASE) # True -> 1 (ignore case)
+    return s
+
 def bnetDNF2list(bnet):
     """Converts a BNet string expression to a list of prime implicant dictionaries.
 
@@ -215,9 +246,10 @@ def import_primes(fname, format='BooleanNet', remove_constants=False):
     fname : str
         Path to (plaintext) file containing Boolean rules in format specified
         by the 'format' option.
+        Path to Boolean Expressions folder in case of CellCollective format.
     format : str
-         Boolean rule format; options are 'BooleanNet' or 'BNet' (the default is
-         'BooleanNet').
+         Boolean rule format; options are 'BooleanNet' or 'BNet' or 'CellCollective'
+         (the default is 'BooleanNet').
     remove_constants : bool
          If True, variables that are constant are removed and their influence is
          percolated. Otherwise, they remain and we consider initial conditions
@@ -230,13 +262,23 @@ def import_primes(fname, format='BooleanNet', remove_constants=False):
 
     """
     # TODO: add more formats
-    rules = remove_comment_lines(open(fname))
-    if format == 'BooleanNet':
-        rules = booleannet2bnet(rules)
-    elif format == 'BNet':
-        rules = rules
+    if format == 'CellCollective':
+        rules1 = remove_comment_lines(open(fname + '/expr/expressions.ALL.txt'))
+        external = remove_comment_lines(open(fname + '/expr/external_components.ALL.txt'))
+        lines = external.splitlines()
+        for i in range(len(lines)):
+            lines[i] = lines[i] + ' = ' + lines[i]
+        rules2 = "\n".join(lines)
+        rules = rules1 + "\n" + rules2
+
     else:
-        raise ValueError('Unrecognized format',format)
+        rules = remove_comment_lines(open(fname))
+        if format == 'BooleanNet':
+            rules = booleannet2bnet(rules)
+        elif format == 'BNet':
+            rules = rules
+        else:
+            raise ValueError('Unrecognized format',format)
 
     primes = longbnet2primes(rules,remove_constants=remove_constants)
 
