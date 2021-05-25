@@ -270,6 +270,7 @@ def import_primes(fname, format='BooleanNet', remove_constants=False):
             lines[i] = lines[i] + ' = ' + lines[i]
         rules2 = "\n".join(lines)
         rules = rules1 + "\n" + rules2
+        rules = cellcollective2bnet(rules)
 
     else:
         rules = remove_comment_lines(open(fname))
