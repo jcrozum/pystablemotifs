@@ -2,6 +2,10 @@
 A set of tools for attractor and target control of Boolean systems. 
 Includes stable motif reduction with oscillation checking for attractor identification and control, and Greedy Randomized Adaptive Search Procedure and brute-force methods for target control.
 
+# Installation
+Install with pip:
+`pip install git+https://github.com/jcrozum/StableMotifs`
+
 # Documentation
 Extensive documentation is not yet available. See the basic usage example below, or the Tutorial.ipynb notebook for basic instructions. For advanced usage instructions, see comments in the code or contact the developers directly.
 
