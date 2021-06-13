@@ -7,10 +7,10 @@ Install with pip:
 `pip install git+https://github.com/jcrozum/StableMotifs`
 
 # Documentation
-Extensive documentation is not yet available. See the basic usage example below, or the Tutorial.ipynb notebook for basic instructions. For advanced usage instructions, see comments in the code or contact the developers directly.
+See the basic usage example below, or the Tutorial.ipynb notebook for basic instructions. For advanced usage instructions, see Manual.pdf or contact the developers directly.
 
 # Requirements
-PyBoolNet (v2.2.8+) https://github.com/hklarner/PyBoolNet
+PyBoolNet (v2.3.0) https://github.com/hklarner/PyBoolNet
 
 Networkx (v2.4+) https://github.com/networkx/networkx/
 
