@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name="StableMotifs",
+    name="PyStableMotifs",
     version='1.0.0',
     author="Jordan Rozum",
     author_email="jcr52@psu.edu",
@@ -9,7 +9,7 @@ setup(
     url="https://github.com/jcrozum/StableMotifs",
     license='MIT',
     python_requires='>=3.5',
-    packages=['StableMotifs'],
+    packages=['PyStableMotifs'],
     install_requires=[
     'PyBoolNet @ git+https://github.com/hklarner/PyBoolNet@2.3.0',
     "networkx >= 2.4.0",
