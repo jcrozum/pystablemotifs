@@ -3,7 +3,7 @@
 #There should be no more SMs in the SD that involve A or B
 
 import PyBoolNet
-import StableMotifs as sm
+import PyStableMotifs as sm
 
 rules='''
 xA*= xA

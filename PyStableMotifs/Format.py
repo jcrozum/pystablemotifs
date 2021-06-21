@@ -78,6 +78,26 @@ def booleannet2bnet(rules):
     s = re.sub("True","1",s, flags=re.IGNORECASE) # True -> 1 (ignore case)
     return s
 
+def create_primes(rules,remove_constants = False):
+    """Convert a BooleanNet or BNET string into a PyBoolNet primes dictionary.
+
+    Parameters
+    ----------
+    rules : str
+        BooleanNet or BNET formatted rules. Hybrid formats are accepted as well.
+    remove_constants : bool
+        Whether or not to remove and percolate constant input values (the default
+        is False).
+
+    Returns
+    -------
+    PyBoolNet primes dictionary
+        Update rules in PyBoolNet format.
+
+    """
+
+    return longbnet2primes(booleannet2bnet(rules), remove_constants = False)
+
 # Convert rules from CellCollective format to PyBoolNet format
 def cellcollective2bnet(rules):
     """Converts CellCollective rules to BNet format.

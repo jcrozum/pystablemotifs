@@ -4,10 +4,10 @@ import networkx as nx
 import re
 import sympy
 
-import StableMotifs.TimeReversal as sm_time
-import StableMotifs.RestrictSpace as sm_rspace
-import StableMotifs.Format as sm_format
-import StableMotifs.DomainOfInfluence as sm_doi
+import PyStableMotifs.TimeReversal as sm_time
+import PyStableMotifs.RestrictSpace as sm_rspace
+import PyStableMotifs.Format as sm_format
+import PyStableMotifs.DomainOfInfluence as sm_doi
 
 def simplify_primes(primes):
     """Simplifies PyBoolNet primes (e.g., A | A & B becomes A)

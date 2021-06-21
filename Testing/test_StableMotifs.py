@@ -4,7 +4,7 @@ sys.path.append('../')
 import unittest
 import sys
 sys.path.insert(0,"C:/Users/jcroz/github/StableMotifs")
-import StableMotifs as sm
+import PyStableMotifs as sm
 import PyBoolNet
 
 class test_StableMotifs(unittest.TestCase):
@@ -116,7 +116,7 @@ F*=E
 
 
     def test_networkx_succession_diagram_reduced_network_based(self):
-        import StableMotifs.Export as ex
+        import PyStableMotifs.Export as ex
         rules='''A*=B
                 B*=A
                 C*=A or not D
@@ -143,7 +143,7 @@ F*=E
         self.assertListEqual(list(GR.edges()), [(0, 1), (0, 2), (0, 5), (2, 3), (2, 4), (5, 6)])
 
     def test_networkx_succession_diagram_reduced_network_based(self):
-        import StableMotifs.Export as ex
+        import PyStableMotifs.Export as ex
         rules='''A*=B
                 B*=A
                 C*=A or not D
@@ -200,7 +200,7 @@ F*=E
                                                  (6, 'A0')])
 
     def test_networkx_succession_diagram_motif_based(self):
-        import StableMotifs.Export as ex
+        import PyStableMotifs.Export as ex
         rules='''A*=B
                 B*=A
                 C*=A or not D
@@ -249,7 +249,7 @@ F*=E
                                              ((5, 6), 'A0')])
 
         def test_networkx_succession_diagram_reduced_network_based_pathological_example(self):
-            import StableMotifs.Export as ex
+            import PyStableMotifs.Export as ex
             rules='''
             xA*= not xA and not xB or xC
             xB*= not xA and not xB or xC

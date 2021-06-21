@@ -2,7 +2,7 @@
 #primes = sm.Format.import_primes(sys.argv[1],remove_constants=True)
 
 import PyBoolNet
-import StableMotifs as sm
+import PyStableMotifs as sm
 
 rules="""PDGF*= 0
 IL15*=1

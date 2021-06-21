@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 
 from copy import deepcopy
 
-import StableMotifs.Reduction as sm_reduction
-import StableMotifs.Format as sm_format
-import StableMotifs.DomainOfInfluence as sm_doi
+import PyStableMotifs.Reduction as sm_reduction
+import PyStableMotifs.Format as sm_format
+import PyStableMotifs.DomainOfInfluence as sm_doi
 
 class SuccessionDiagram:
     """Class describing the succession diagram of a Boolean system. See, e.g.,

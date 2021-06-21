@@ -1,5 +1,5 @@
 import PyBoolNet
-import StableMotifs as sm
+import PyStableMotifs as sm
 import networkx as nx
 print("Loading network . . .")
 primes = sm.Format.import_primes('./models/TLGL_Small.txt',remove_constants=True)

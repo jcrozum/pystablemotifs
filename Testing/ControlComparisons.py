@@ -2,7 +2,7 @@
 # GRASP methods do not give determinstic results.
 
 import PyBoolNet
-import StableMotifs as sm
+import PyStableMotifs as sm
 from timeit import default_timer
 
 

@@ -1,4 +1,4 @@
-import StableMotifs as sm
+import PyStableMotifs as sm
 import networkx as nx
 
 def format_reduction_label(s):

@@ -1,7 +1,7 @@
 #check if the network reduction numbers are correct.
 
 import PyBoolNet
-import StableMotifs as sm
+import PyStableMotifs as sm
 
 rules='''
 xA* = xB

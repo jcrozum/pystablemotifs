@@ -1,4 +1,4 @@
-import StableMotifs as sm
+import PyStableMotifs as sm
 import PyBoolNet as pbn
 
 import atexit
@@ -13,7 +13,7 @@ from timeit import default_timer
 # The old Java version of StableMotifs relies on Nashorn, which is removed from recent
 # Java versions. As a result, we need to specify a path to an old version of Java.
 java_path = "C:\\Users\\jcroz\\Documents\\Work\\StableMotifsJavaVersion\\OLDJAVA\\bin\\java.exe"
-jar_path = "C:\\Users\\jcroz\\Documents\\Work\\StableMotifsJavaVersion\\dist\\StableMotifs.jar"
+jar_path = "C:\\Users\\jcroz\\Documents\\Work\\StableMotifsJavaVersion\\dist\\PyStableMotifs.jar"
 
 
 def JavaMotifTimes(filepath,verbose=False):

@@ -1,8 +1,8 @@
 import PyBoolNet
 import re
 
-from StableMotifs.DomainOfInfluence import single_drivers, logical_domain_of_influence
-import StableMotifs.DomainOfInfluence as sm_doi
+from PyStableMotifs.DomainOfInfluence import single_drivers, logical_domain_of_influence
+import PyStableMotifs.DomainOfInfluence as sm_doi
 
 def attractor_space_candidates(maxts,trmaxts):
     """Merge the maximum trap spaces maxts and time-reverse maximum trap spaces
