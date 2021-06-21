@@ -2,11 +2,11 @@ from setuptools import setup
 
 setup(
     name="PyStableMotifs",
-    version='1.0.0',
+    version='2.0.0',
     author="Jordan Rozum",
     author_email="jcr52@psu.edu",
     description="Python package for analyzing Boolean Netowrk",
-    url="https://github.com/jcrozum/StableMotifs",
+    url="https://github.com/jcrozum/PyStableMotifs",
     license='MIT',
     python_requires='>=3.5',
     packages=['PyStableMotifs'],

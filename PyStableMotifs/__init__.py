@@ -10,3 +10,5 @@ from PyStableMotifs import RandomBooleanNetworks
 from PyStableMotifs.Attractor import Attractor
 from PyStableMotifs.AttractorRepertoire import AttractorRepertoire
 from PyStableMotifs import Export
+
+__version__ = '2.0.0'
