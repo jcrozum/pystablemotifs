@@ -70,8 +70,9 @@ The output is as follows:
 Alternatively, it is possible to import the Boolean rules from a string, as follows:
 
     rules="""xA* = !xA & !xB | xC
-        xB* = !xA & !xB | xC
-        xC* = xA & xB"""
+    xB* = !xA & !xB | xC
+    xC* = xA & xB"""
+    
     primes = sm.Format.create_primes(rules)
 
 For further examples, see the IPython notebook Tutorial.ipynb.
