@@ -3,8 +3,12 @@ A set of tools for attractor and target control of Boolean systems.
 Includes stable motif reduction with oscillation checking for attractor identification and control, and Greedy Randomized Adaptive Search Procedure and brute-force methods for target control.
 
 # Installation
-Install with pip:
+Install with pip from GitHub (***recommended***):
 `pip install git+https://github.com/jcrozum/PyStableMotifs`
+
+Install with pip from PyPI (***not recommended***, unless PyBoolNet is already installed): `pip install PyStableMotifs`
+
+If you install from PyPI, you will need to install PyBoolNet separately (instructions at https://github.com/hklarner/PyBoolNet). This is because PyPI (apparently) does not support dependencies that are not also on PyPI.
 
 # Documentation
 See the basic usage example below, or the Tutorial.ipynb notebook for basic instructions. For advanced usage instructions, see Manual.pdf or contact the developers directly.
