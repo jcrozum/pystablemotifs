@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="PyStableMotifs",
-    version='2.0.0',
+    version='2.1.0',
     author="Jordan Rozum",
     author_email="jcr52@psu.edu",
     description="Python package for analyzing Boolean Netowrk",
@@ -11,7 +11,7 @@ setup(
     python_requires='>=3.5',
     packages=['PyStableMotifs'],
     install_requires=[
-    'PyBoolNet @ git+https://github.com/hklarner/PyBoolNet@2.3.0',
+    "PyBoolNet @ git+https://github.com/hklarner/PyBoolNet@2.3.0",
     "networkx >= 2.4.0",
     "sympy >= 1.5.1",
     "pandas >= 1.0.0",
