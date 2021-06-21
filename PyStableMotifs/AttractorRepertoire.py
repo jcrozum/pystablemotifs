@@ -1,6 +1,5 @@
 import PyStableMotifs.Succession as sm_succession
-import PyStableMotifs.Attractor as sm_attractor
-
+import PyStableMotifs.Attractor as Attractor
 import itertools as it
 import networkx as nx
 import PyBoolNet
@@ -132,7 +131,7 @@ class AttractorRepertoire:
             if duplicate: continue
 
             for id,att in enumerate(reduction.attractor_dict_list):
-                new_attractor = sm_attractor.Attractor(reduction,id)
+                new_attractor = Attractor(reduction,id)
                 self.attractors.append(new_attractor)
                 self.reduction_attractors[ri].append(new_attractor)
 

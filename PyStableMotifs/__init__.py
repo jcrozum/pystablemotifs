@@ -7,6 +7,6 @@ from PyStableMotifs import TimeReversal
 from PyStableMotifs import RestrictSpace
 from PyStableMotifs import Succession
 from PyStableMotifs import RandomBooleanNetworks
-from PyStableMotifs import Attractor
+from PyStableMotifs.Attractor import Attractor
 from PyStableMotifs.AttractorRepertoire import AttractorRepertoire
 from PyStableMotifs import Export
