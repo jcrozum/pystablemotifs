@@ -4,7 +4,7 @@ Includes stable motif reduction with oscillation checking for attractor identifi
 
 # Installation
 Install with pip:
-`pip install git+https://github.com/jcrozum/StableMotifs`
+`pip install git+https://github.com/jcrozum/PyStableMotifs`
 
 # Documentation
 See the basic usage example below, or the Tutorial.ipynb notebook for basic instructions. For advanced usage instructions, see Manual.pdf or contact the developers directly.
