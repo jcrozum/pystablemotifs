@@ -1,4 +1,4 @@
-import StableMotifs.Reduction as sm_reduction
+import PyStableMotifs.Reduction as sm_reduction
 
 
 class Attractor:

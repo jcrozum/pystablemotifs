@@ -1,5 +1,5 @@
 import PyBoolNet
-import StableMotifs as sm
+import PyStableMotifs as sm
 from timeit import default_timer
 
 print("Generating ensemble of 100 Kauffman RBN with K=2 and N=500 at criticality (p=0.5) . . .")

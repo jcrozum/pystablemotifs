@@ -44,7 +44,7 @@ Matplotlib (v3.2.1+) https://matplotlib.org/
 # Basic usage example
 In the example below, we import the Boolean model specified by the file test1.txt provided in the models folder. We then print its rules and finds its attractors, which are displayed in a condensed summary form.
     
-    import StableMotifs as sm
+    import PyStableMotifs as sm
     
     relative_path_to_model = "./models/test1.txt"
     primes = sm.Format.import_primes(relative_path_to_model)

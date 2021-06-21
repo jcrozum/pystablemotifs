@@ -1,6 +1,6 @@
 ---
 description: |
-    API documentation for modules: StableMotifs, StableMotifs.Attractor, StableMotifs.AttractorRepertoire, StableMotifs.DomainOfInfluence, StableMotifs.Export, StableMotifs.Format, StableMotifs.RandomBooleanNetworks, StableMotifs.Reduction, StableMotifs.RestrictSpace, StableMotifs.Succession, StableMotifs.TimeReversal.
+    API documentation for modules: StableMotifs, PyStableMotifs.Attractor, PyStableMotifs.AttractorRepertoire, PyStableMotifs.DomainOfInfluence, PyStableMotifs.Export, PyStableMotifs.Format, PyStableMotifs.RandomBooleanNetworks, PyStableMotifs.Reduction, PyStableMotifs.RestrictSpace, PyStableMotifs.Succession, PyStableMotifs.TimeReversal.
 
 lang: en
 
@@ -22,16 +22,16 @@ links-as-notes: true
     
 ## Sub-modules
 
-* [StableMotifs.Attractor](#StableMotifs.Attractor)
-* [StableMotifs.AttractorRepertoire](#StableMotifs.AttractorRepertoire)
-* [StableMotifs.DomainOfInfluence](#StableMotifs.DomainOfInfluence)
-* [StableMotifs.Export](#StableMotifs.Export)
-* [StableMotifs.Format](#StableMotifs.Format)
-* [StableMotifs.RandomBooleanNetworks](#StableMotifs.RandomBooleanNetworks)
-* [StableMotifs.Reduction](#StableMotifs.Reduction)
-* [StableMotifs.RestrictSpace](#StableMotifs.RestrictSpace)
-* [StableMotifs.Succession](#StableMotifs.Succession)
-* [StableMotifs.TimeReversal](#StableMotifs.TimeReversal)
+* [PyStableMotifs.Attractor](#PyStableMotifs.Attractor)
+* [PyStableMotifs.AttractorRepertoire](#PyStableMotifs.AttractorRepertoire)
+* [PyStableMotifs.DomainOfInfluence](#PyStableMotifs.DomainOfInfluence)
+* [PyStableMotifs.Export](#PyStableMotifs.Export)
+* [PyStableMotifs.Format](#PyStableMotifs.Format)
+* [PyStableMotifs.RandomBooleanNetworks](#PyStableMotifs.RandomBooleanNetworks)
+* [PyStableMotifs.Reduction](#PyStableMotifs.Reduction)
+* [PyStableMotifs.RestrictSpace](#PyStableMotifs.RestrictSpace)
+* [PyStableMotifs.Succession](#PyStableMotifs.Succession)
+* [PyStableMotifs.TimeReversal](#PyStableMotifs.TimeReversal)
 
 
 
@@ -39,7 +39,7 @@ links-as-notes: true
 
 
     
-# Module `StableMotifs.Attractor` {#StableMotifs.Attractor}
+# Module `PyStableMotifs.Attractor` {#PyStableMotifs.Attractor}
 
 
 
@@ -52,7 +52,7 @@ links-as-notes: true
 
 
     
-### Class `Attractor` {#StableMotifs.Attractor.Attractor}
+### Class `Attractor` {#PyStableMotifs.Attractor.Attractor}
 
 
 
@@ -157,7 +157,7 @@ the AttractorRepertoire class.
 
 
     
-##### Method `add_reduction` {#StableMotifs.Attractor.Attractor.add_reduction}
+##### Method `add_reduction` {#PyStableMotifs.Attractor.Attractor.add_reduction}
 
 
 
@@ -180,7 +180,7 @@ Add a reduction to the attractor. Does not check for compatibility.
 
 
     
-# Module `StableMotifs.AttractorRepertoire` {#StableMotifs.AttractorRepertoire}
+# Module `PyStableMotifs.AttractorRepertoire` {#PyStableMotifs.AttractorRepertoire}
 
 
 
@@ -193,7 +193,7 @@ Add a reduction to the attractor. Does not check for compatibility.
 
 
     
-### Class `AttractorRepertoire` {#StableMotifs.AttractorRepertoire.AttractorRepertoire}
+### Class `AttractorRepertoire` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire}
 
 
 
@@ -269,7 +269,7 @@ either from_primes or from_succession_diagram.
 
 
     
-##### `Method from_primes` {#StableMotifs.AttractorRepertoire.AttractorRepertoire.from_primes}
+##### `Method from_primes` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire.from_primes}
 
 
 
@@ -301,13 +301,13 @@ formatted update rules rules.
 
 ###### Returns
 
-<code>[AttractorRepertoire](#StableMotifs.AttractorRepertoire.AttractorRepertoire "StableMotifs.AttractorRepertoire.AttractorRepertoire")</code>
+<code>[AttractorRepertoire](#PyStableMotifs.AttractorRepertoire.AttractorRepertoire "PyStableMotifs.AttractorRepertoire.AttractorRepertoire")</code>
 :   AttractorRepertoire object for the input primes.
 
 
 
     
-##### `Method from_succession_diagram` {#StableMotifs.AttractorRepertoire.AttractorRepertoire.from_succession_diagram}
+##### `Method from_succession_diagram` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire.from_succession_diagram}
 
 
 
@@ -327,7 +327,7 @@ precomputed succession diagram.
 
 ###### Returns
 
-<code>[AttractorRepertoire](#StableMotifs.AttractorRepertoire.AttractorRepertoire "StableMotifs.AttractorRepertoire.AttractorRepertoire")</code>
+<code>[AttractorRepertoire](#PyStableMotifs.AttractorRepertoire.AttractorRepertoire "PyStableMotifs.AttractorRepertoire.AttractorRepertoire")</code>
 :   AttractorRepertoire object for the input succession diagram.
 
 
@@ -338,7 +338,7 @@ precomputed succession diagram.
 
 
     
-##### Method `analyze_system` {#StableMotifs.AttractorRepertoire.AttractorRepertoire.analyze_system}
+##### Method `analyze_system` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire.analyze_system}
 
 
 
@@ -371,7 +371,7 @@ Build and process the succession diagram for the model.
 
 
     
-##### Method `simplify_diagram` {#StableMotifs.AttractorRepertoire.AttractorRepertoire.simplify_diagram}
+##### Method `simplify_diagram` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire.simplify_diagram}
 
 
 
@@ -419,7 +419,7 @@ which are described in the class documentation.
 
 
     
-##### Method `summary` {#StableMotifs.AttractorRepertoire.AttractorRepertoire.summary}
+##### Method `summary` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire.summary}
 
 
 
@@ -434,7 +434,7 @@ Prints a summary of the attractors to standard output.
 
 
     
-# Module `StableMotifs.DomainOfInfluence` {#StableMotifs.DomainOfInfluence}
+# Module `PyStableMotifs.DomainOfInfluence` {#PyStableMotifs.DomainOfInfluence}
 
 
 
@@ -446,7 +446,7 @@ Prints a summary of the attractors to standard output.
 
 
     
-### Function `GRASP` {#StableMotifs.DomainOfInfluence.GRASP}
+### Function `GRASP` {#PyStableMotifs.DomainOfInfluence.GRASP}
 
 
 
@@ -493,7 +493,7 @@ Search for drivers of target in primes using the method of Yang et al. 2018.
 
 
     
-### Function `GRASP_default_scores` {#StableMotifs.DomainOfInfluence.GRASP_default_scores}
+### Function `GRASP_default_scores` {#PyStableMotifs.DomainOfInfluence.GRASP_default_scores}
 
 
 
@@ -531,7 +531,7 @@ Helper function for GRASP driver search. Scores candidate driver nodes.
 
 
     
-### Function `all_drivers_of_size` {#StableMotifs.DomainOfInfluence.all_drivers_of_size}
+### Function `all_drivers_of_size` {#PyStableMotifs.DomainOfInfluence.all_drivers_of_size}
 
 
 
@@ -578,7 +578,7 @@ Short summary.
 
 
     
-### Function `construct_GRASP_solution` {#StableMotifs.DomainOfInfluence.construct_GRASP_solution}
+### Function `construct_GRASP_solution` {#PyStableMotifs.DomainOfInfluence.construct_GRASP_solution}
 
 
 
@@ -623,7 +623,7 @@ using the GRASP search method.
 
 
     
-### Function `fixed_excludes_implicant` {#StableMotifs.DomainOfInfluence.fixed_excludes_implicant}
+### Function `fixed_excludes_implicant` {#PyStableMotifs.DomainOfInfluence.fixed_excludes_implicant}
 
 
 
@@ -655,7 +655,7 @@ contradicts the implicant.
 
 
     
-### Function `fixed_implies_implicant` {#StableMotifs.DomainOfInfluence.fixed_implies_implicant}
+### Function `fixed_implies_implicant` {#PyStableMotifs.DomainOfInfluence.fixed_implies_implicant}
 
 
 
@@ -687,7 +687,7 @@ the implicant.
 
 
     
-### Function `initial_GRASP_candidates` {#StableMotifs.DomainOfInfluence.initial_GRASP_candidates}
+### Function `initial_GRASP_candidates` {#PyStableMotifs.DomainOfInfluence.initial_GRASP_candidates}
 
 
 
@@ -723,7 +723,7 @@ for driver nodes.
 
 
     
-### Function `internal_drivers` {#StableMotifs.DomainOfInfluence.internal_drivers}
+### Function `internal_drivers` {#PyStableMotifs.DomainOfInfluence.internal_drivers}
 
 
 
@@ -761,7 +761,7 @@ Find internal (logical) driver nodes of target through brute-force.
 
 
     
-### Function `knock_to_partial_state` {#StableMotifs.DomainOfInfluence.knock_to_partial_state}
+### Function `knock_to_partial_state` {#PyStableMotifs.DomainOfInfluence.knock_to_partial_state}
 
 
 
@@ -810,7 +810,7 @@ nodes in the forbidden list.
 
 
     
-### Function `local_GRASP_reduction` {#StableMotifs.DomainOfInfluence.local_GRASP_reduction}
+### Function `local_GRASP_reduction` {#PyStableMotifs.DomainOfInfluence.local_GRASP_reduction}
 
 
 
@@ -846,7 +846,7 @@ attempt to remove redundancies.
 
 
     
-### Function `logical_domain_of_influence` {#StableMotifs.DomainOfInfluence.logical_domain_of_influence}
+### Function `logical_domain_of_influence` {#PyStableMotifs.DomainOfInfluence.logical_domain_of_influence}
 
 
 
@@ -890,7 +890,7 @@ Computes the logical domain of influence (LDOI) (see Yang et al. 2018)
 
 
     
-### Function `minimal_drivers` {#StableMotifs.DomainOfInfluence.minimal_drivers}
+### Function `minimal_drivers` {#PyStableMotifs.DomainOfInfluence.minimal_drivers}
 
 
 
@@ -930,7 +930,7 @@ nodes.
 
 
     
-### Function `single_drivers` {#StableMotifs.DomainOfInfluence.single_drivers}
+### Function `single_drivers` {#PyStableMotifs.DomainOfInfluence.single_drivers}
 
 
 
@@ -965,7 +965,7 @@ by primes.
 
 
     
-# Module `StableMotifs.Export` {#StableMotifs.Export}
+# Module `PyStableMotifs.Export` {#PyStableMotifs.Export}
 
 
 
@@ -977,7 +977,7 @@ by primes.
 
 
     
-### Function `attractor_dataframe` {#StableMotifs.Export.attractor_dataframe}
+### Function `attractor_dataframe` {#PyStableMotifs.Export.attractor_dataframe}
 
 
 
@@ -1003,7 +1003,7 @@ pandas).
 
 
     
-### Function `expanded_network` {#StableMotifs.Export.expanded_network}
+### Function `expanded_network` {#PyStableMotifs.Export.expanded_network}
 
 
 
@@ -1036,7 +1036,7 @@ Produce the expanded network for given input update rules.
 
 
     
-### Function `format_reduction_label` {#StableMotifs.Export.format_reduction_label}
+### Function `format_reduction_label` {#PyStableMotifs.Export.format_reduction_label}
 
 
 
@@ -1062,7 +1062,7 @@ and square brackets from the input string.
 
 
     
-### Function `networkx_succession_diagram` {#StableMotifs.Export.networkx_succession_diagram}
+### Function `networkx_succession_diagram` {#PyStableMotifs.Export.networkx_succession_diagram}
 
 
 
@@ -1103,7 +1103,7 @@ alias for the function Export.networkx_succession_diagram_reduced_network_based.
 
 
     
-### Function `networkx_succession_diagram_motif_based` {#StableMotifs.Export.networkx_succession_diagram_motif_based}
+### Function `networkx_succession_diagram_motif_based` {#PyStableMotifs.Export.networkx_succession_diagram_motif_based}
 
 
 
@@ -1137,7 +1137,7 @@ defined in Rozum et al. (2021). Does not support compression.
 
 
     
-### Function `networkx_succession_diagram_reduced_network_based` {#StableMotifs.Export.networkx_succession_diagram_reduced_network_based}
+### Function `networkx_succession_diagram_reduced_network_based` {#PyStableMotifs.Export.networkx_succession_diagram_reduced_network_based}
 
 
 
@@ -1177,7 +1177,7 @@ repertoire according to the conventions of Rozum et al. (2021).
 
 
     
-### Function `plot_nx_succession_diagram` {#StableMotifs.Export.plot_nx_succession_diagram}
+### Function `plot_nx_succession_diagram` {#PyStableMotifs.Export.plot_nx_succession_diagram}
 
 
 
@@ -1256,7 +1256,7 @@ over plot appearance, it is recommended to plot g directly.
 
 
     
-### Function `save_to_graphml` {#StableMotifs.Export.save_to_graphml}
+### Function `save_to_graphml` {#PyStableMotifs.Export.save_to_graphml}
 
 
 
@@ -1284,7 +1284,7 @@ Export a labeled succesion diagram to graphml format.
 
 
     
-# Module `StableMotifs.Format` {#StableMotifs.Format}
+# Module `PyStableMotifs.Format` {#PyStableMotifs.Format}
 
 
 
@@ -1296,7 +1296,7 @@ Export a labeled succesion diagram to graphml format.
 
 
     
-### Function `bnet2sympy` {#StableMotifs.Format.bnet2sympy}
+### Function `bnet2sympy` {#PyStableMotifs.Format.bnet2sympy}
 
 
 
@@ -1321,7 +1321,7 @@ Converts a BNet string expression to a sympy string expression.
 
 
     
-### Function `bnetDNF2list` {#StableMotifs.Format.bnetDNF2list}
+### Function `bnetDNF2list` {#PyStableMotifs.Format.bnetDNF2list}
 
 
 
@@ -1349,7 +1349,7 @@ explicitly.
 
 
     
-### Function `booleannet2bnet` {#StableMotifs.Format.booleannet2bnet}
+### Function `booleannet2bnet` {#PyStableMotifs.Format.booleannet2bnet}
 
 
 
@@ -1380,7 +1380,7 @@ Also replaces ~ with !
 
 
     
-### Function `build_rule_using_bnetDNFs` {#StableMotifs.Format.build_rule_using_bnetDNFs}
+### Function `build_rule_using_bnetDNFs` {#PyStableMotifs.Format.build_rule_using_bnetDNFs}
 
 
 
@@ -1413,7 +1413,7 @@ between expr0 and expr1.
 
 
     
-### Function `implicant2bnet` {#StableMotifs.Format.implicant2bnet}
+### Function `implicant2bnet` {#PyStableMotifs.Format.implicant2bnet}
 
 
 
@@ -1439,7 +1439,7 @@ e.g., {'A':1,'B':0} returns 'A & !B'
 
 
     
-### Function `import_primes` {#StableMotifs.Format.import_primes}
+### Function `import_primes` {#PyStableMotifs.Format.import_primes}
 
 
 
@@ -1478,7 +1478,7 @@ Import boolean rules from file and return PyBoolNet formatted primes list.
 
 
     
-### Function `longbnet2primes` {#StableMotifs.Format.longbnet2primes}
+### Function `longbnet2primes` {#PyStableMotifs.Format.longbnet2primes}
 
 
 
@@ -1511,7 +1511,7 @@ bnet string, not a file.
 
 
     
-### Function `pretty_print_prime_rules` {#StableMotifs.Format.pretty_print_prime_rules}
+### Function `pretty_print_prime_rules` {#PyStableMotifs.Format.pretty_print_prime_rules}
 
 
 
@@ -1533,7 +1533,7 @@ A* = B & C | !D, for example.
 
 
     
-### Function `pretty_print_primes` {#StableMotifs.Format.pretty_print_primes}
+### Function `pretty_print_primes` {#PyStableMotifs.Format.pretty_print_primes}
 
 
 
@@ -1554,7 +1554,7 @@ state updates (1 and 0).
 
 
     
-### Function `pretty_print_rspace` {#StableMotifs.Format.pretty_print_rspace}
+### Function `pretty_print_rspace` {#PyStableMotifs.Format.pretty_print_rspace}
 
 
 
@@ -1590,7 +1590,7 @@ rspace L (see RestrictSpace.rspace).
 
 
     
-### Function `primes2bnet` {#StableMotifs.Format.primes2bnet}
+### Function `primes2bnet` {#PyStableMotifs.Format.primes2bnet}
 
 
 
@@ -1617,7 +1617,7 @@ tautologies better than the PyBoolNet version though.
 
 
     
-### Function `primes2booleannet` {#StableMotifs.Format.primes2booleannet}
+### Function `primes2booleannet` {#PyStableMotifs.Format.primes2booleannet}
 
 
 
@@ -1649,7 +1649,7 @@ Convert a PyBoolNet primes dictionary to a BooleanNet string reperesentation.
 
 
     
-### Function `remove_comment_lines` {#StableMotifs.Format.remove_comment_lines}
+### Function `remove_comment_lines` {#PyStableMotifs.Format.remove_comment_lines}
 
 
 
@@ -1679,7 +1679,7 @@ Removes commented out lines from stream, e.g., those starting with '#'.
 
 
     
-### Function `rule2bnet` {#StableMotifs.Format.rule2bnet}
+### Function `rule2bnet` {#PyStableMotifs.Format.rule2bnet}
 
 
 
@@ -1705,7 +1705,7 @@ e.g., [{'A':1,'B':0},{'C':0}] returns 'A & !B | !C'
 
 
     
-### Function `statedict2str` {#StableMotifs.Format.statedict2str}
+### Function `statedict2str` {#PyStableMotifs.Format.statedict2str}
 
 
 
@@ -1732,7 +1732,7 @@ Converts a state dictionary to a statestring using alphabetical sorting.
 
 
     
-### Function `statelist2dict` {#StableMotifs.Format.statelist2dict}
+### Function `statelist2dict` {#PyStableMotifs.Format.statelist2dict}
 
 
 
@@ -1766,7 +1766,7 @@ Converts a collection of statestrings to a dictionary.
 
 
     
-### Function `statestring2dict` {#StableMotifs.Format.statestring2dict}
+### Function `statestring2dict` {#PyStableMotifs.Format.statestring2dict}
 
 
 
@@ -1799,7 +1799,7 @@ corresponding dictionary representation.
 
 
     
-### Function `sympy2bnet` {#StableMotifs.Format.sympy2bnet}
+### Function `sympy2bnet` {#PyStableMotifs.Format.sympy2bnet}
 
 
 
@@ -1827,7 +1827,7 @@ Converts a sympy string expression to a BNET string expression.
 
 
     
-# Module `StableMotifs.RandomBooleanNetworks` {#StableMotifs.RandomBooleanNetworks}
+# Module `PyStableMotifs.RandomBooleanNetworks` {#PyStableMotifs.RandomBooleanNetworks}
 
 
 
@@ -1839,7 +1839,7 @@ Converts a sympy string expression to a BNET string expression.
 
 
     
-### Function `Binary_Rule_From_Decimal` {#StableMotifs.RandomBooleanNetworks.Binary_Rule_From_Decimal}
+### Function `Binary_Rule_From_Decimal` {#PyStableMotifs.RandomBooleanNetworks.Binary_Rule_From_Decimal}
 
 
 
@@ -1869,7 +1869,7 @@ Convert single decimal rule to its binary form.
 
 
     
-### Function `Binary_Rules_From_Decimal` {#StableMotifs.RandomBooleanNetworks.Binary_Rules_From_Decimal}
+### Function `Binary_Rules_From_Decimal` {#PyStableMotifs.RandomBooleanNetworks.Binary_Rules_From_Decimal}
 
 
 
@@ -1894,7 +1894,7 @@ Construct Binary format rules from decimal format rules.
 
 
     
-### Function `Random_Boolean_Network_Ensemble_Kauffman` {#StableMotifs.RandomBooleanNetworks.Random_Boolean_Network_Ensemble_Kauffman}
+### Function `Random_Boolean_Network_Ensemble_Kauffman` {#PyStableMotifs.RandomBooleanNetworks.Random_Boolean_Network_Ensemble_Kauffman}
 
 
 
@@ -1947,7 +1947,7 @@ Generate a sample from the Kauffman NK RBN ensemble.
 
 
     
-### Function `String_Rule_From_Binary` {#StableMotifs.RandomBooleanNetworks.String_Rule_From_Binary}
+### Function `String_Rule_From_Binary` {#PyStableMotifs.RandomBooleanNetworks.String_Rule_From_Binary}
 
 
 
@@ -1977,7 +1977,7 @@ Convert binary rule to BooleanNet format.
 
 
     
-### Function `String_Rules_From_Binary` {#StableMotifs.RandomBooleanNetworks.String_Rules_From_Binary}
+### Function `String_Rules_From_Binary` {#PyStableMotifs.RandomBooleanNetworks.String_Rules_From_Binary}
 
 
 
@@ -2002,7 +2002,7 @@ Convert from binary dictionary rule format to BooleanNet format.
 
 
     
-### Function `get_criticality_K_Kauffman` {#StableMotifs.RandomBooleanNetworks.get_criticality_K_Kauffman}
+### Function `get_criticality_K_Kauffman` {#PyStableMotifs.RandomBooleanNetworks.get_criticality_K_Kauffman}
 
 
 
@@ -2027,7 +2027,7 @@ The Kauffman RBN is at criticality when K = 2/(p(1-p)).
 
 
     
-### Function `get_criticality_p_Kauffman` {#StableMotifs.RandomBooleanNetworks.get_criticality_p_Kauffman}
+### Function `get_criticality_p_Kauffman` {#PyStableMotifs.RandomBooleanNetworks.get_criticality_p_Kauffman}
 
 
 
@@ -2052,7 +2052,7 @@ The Kauffman RBN is at criticality when K = 2/(p(1-p)).
 
 
     
-### Function `read_Boolean_network_decimal` {#StableMotifs.RandomBooleanNetworks.read_Boolean_network_decimal}
+### Function `read_Boolean_network_decimal` {#PyStableMotifs.RandomBooleanNetworks.read_Boolean_network_decimal}
 
 
 
@@ -2077,7 +2077,7 @@ Imports rules from csv in decimal format.
 
 
     
-### Function `write_Boolean_network_decimal` {#StableMotifs.RandomBooleanNetworks.write_Boolean_network_decimal}
+### Function `write_Boolean_network_decimal` {#PyStableMotifs.RandomBooleanNetworks.write_Boolean_network_decimal}
 
 
 
@@ -2107,7 +2107,7 @@ Write the decimal format of the Boolean rules to file.
 
 
     
-### Class `RandomBooleanNetworks` {#StableMotifs.RandomBooleanNetworks.RandomBooleanNetworks}
+### Class `RandomBooleanNetworks` {#PyStableMotifs.RandomBooleanNetworks.RandomBooleanNetworks}
 
 
 
@@ -2185,7 +2185,7 @@ generate ensembles of RBN by generating multiple RandomBooleanNetworks objects.
 
 
     
-##### Method `Random_Boolean_Network` {#StableMotifs.RandomBooleanNetworks.RandomBooleanNetworks.Random_Boolean_Network}
+##### Method `Random_Boolean_Network` {#PyStableMotifs.RandomBooleanNetworks.RandomBooleanNetworks.Random_Boolean_Network}
 
 
 
@@ -2230,7 +2230,7 @@ Construct network using specified generative process.
 
 
     
-##### Method `Random_Boolean_Network_Rules` {#StableMotifs.RandomBooleanNetworks.RandomBooleanNetworks.Random_Boolean_Network_Rules}
+##### Method `Random_Boolean_Network_Rules` {#PyStableMotifs.RandomBooleanNetworks.RandomBooleanNetworks.Random_Boolean_Network_Rules}
 
 
 
@@ -2246,7 +2246,7 @@ attribute.
 
 
     
-# Module `StableMotifs.Reduction` {#StableMotifs.Reduction}
+# Module `PyStableMotifs.Reduction` {#PyStableMotifs.Reduction}
 
 
 
@@ -2258,7 +2258,7 @@ attribute.
 
 
     
-### Function `delete_node` {#StableMotifs.Reduction.delete_node}
+### Function `delete_node` {#PyStableMotifs.Reduction.delete_node}
 
 
 
@@ -2296,7 +2296,7 @@ deletion.
 
 
     
-### Function `deletion_reduction` {#StableMotifs.Reduction.deletion_reduction}
+### Function `deletion_reduction` {#PyStableMotifs.Reduction.deletion_reduction}
 
 
 
@@ -2334,7 +2334,7 @@ removal. Deletion proceeds until all remaining nodes have self-loops.
 
 
     
-### Function `mediator_reduction` {#StableMotifs.Reduction.mediator_reduction}
+### Function `mediator_reduction` {#PyStableMotifs.Reduction.mediator_reduction}
 
 
 
@@ -2366,7 +2366,7 @@ restrictive version of the deletion reduction method of Veliz-Cuba (2011).
 
 
     
-### Function `reduce_primes` {#StableMotifs.Reduction.reduce_primes}
+### Function `reduce_primes` {#PyStableMotifs.Reduction.reduce_primes}
 
 
 
@@ -2400,7 +2400,7 @@ Simplifies boolean rules when some nodes are held fixed
 
 
     
-### Function `remove_outdag` {#StableMotifs.Reduction.remove_outdag}
+### Function `remove_outdag` {#PyStableMotifs.Reduction.remove_outdag}
 
 
 
@@ -2430,7 +2430,7 @@ part of the network does not influence the attractor repertoire.
 
 
     
-### Function `simplify_primes` {#StableMotifs.Reduction.simplify_primes}
+### Function `simplify_primes` {#PyStableMotifs.Reduction.simplify_primes}
 
 
 
@@ -2455,7 +2455,7 @@ Simplifies PyBoolNet primes (e.g., A | A & B becomes A)
 
 
     
-### Function `simplify_using_expression_and_negation` {#StableMotifs.Reduction.simplify_using_expression_and_negation}
+### Function `simplify_using_expression_and_negation` {#PyStableMotifs.Reduction.simplify_using_expression_and_negation}
 
 
 
@@ -2501,7 +2501,7 @@ node = expr1 = !expr0 (does not check that expr1=!expr0)
 
 
     
-### Class `MotifReduction` {#StableMotifs.Reduction.MotifReduction}
+### Class `MotifReduction` {#PyStableMotifs.Reduction.MotifReduction}
 
 
 
@@ -2682,7 +2682,7 @@ during the stable motif succession diagram construction algorithm.
 
 
     
-##### Method `build_K0` {#StableMotifs.Reduction.MotifReduction.build_K0}
+##### Method `build_K0` {#PyStableMotifs.Reduction.MotifReduction.build_K0}
 
 
 
@@ -2703,7 +2703,7 @@ that are not part of any motif-avoidant attractor.
 
 
     
-##### Method `build_deletion_STG` {#StableMotifs.Reduction.MotifReduction.build_deletion_STG}
+##### Method `build_deletion_STG` {#PyStableMotifs.Reduction.MotifReduction.build_deletion_STG}
 
 
 
@@ -2727,7 +2727,7 @@ found here may be spurious.
 
 
     
-##### Method `build_inspace` {#StableMotifs.Reduction.MotifReduction.build_inspace}
+##### Method `build_inspace` {#PyStableMotifs.Reduction.MotifReduction.build_inspace}
 
 
 
@@ -2765,7 +2765,7 @@ motifs to which (partial) state ss belongs.
 
 
     
-##### Method `build_partial_STG` {#StableMotifs.Reduction.MotifReduction.build_partial_STG}
+##### Method `build_partial_STG` {#PyStableMotifs.Reduction.MotifReduction.build_partial_STG}
 
 
 
@@ -2779,7 +2779,7 @@ Build a piece of the STG that is guaranteed to contain all
 motif-avoidant attractors of the reduction.
 
     
-##### Method `find_constants_in_complex_attractor` {#StableMotifs.Reduction.MotifReduction.find_constants_in_complex_attractor}
+##### Method `find_constants_in_complex_attractor` {#PyStableMotifs.Reduction.MotifReduction.find_constants_in_complex_attractor}
 
 
 
@@ -2807,7 +2807,7 @@ that are constant in the full complex attractor.
 
 
     
-##### Method `find_deletion_no_motif_attractors` {#StableMotifs.Reduction.MotifReduction.find_deletion_no_motif_attractors}
+##### Method `find_deletion_no_motif_attractors` {#PyStableMotifs.Reduction.MotifReduction.find_deletion_no_motif_attractors}
 
 
 
@@ -2829,7 +2829,7 @@ Identify motif-avoidant attractors in the deletion projection.
 
 
     
-##### Method `find_no_motif_attractors` {#StableMotifs.Reduction.MotifReduction.find_no_motif_attractors}
+##### Method `find_no_motif_attractors` {#PyStableMotifs.Reduction.MotifReduction.find_no_motif_attractors}
 
 
 
@@ -2843,7 +2843,7 @@ Find attractors of the reduction that are not present in any of its
 subreductions.
 
     
-##### Method `generate_attr_dict` {#StableMotifs.Reduction.MotifReduction.generate_attr_dict}
+##### Method `generate_attr_dict` {#PyStableMotifs.Reduction.MotifReduction.generate_attr_dict}
 
 
 
@@ -2872,7 +2872,7 @@ not in any of its subreductions.
 
 
     
-##### Method `in_motif` {#StableMotifs.Reduction.MotifReduction.in_motif}
+##### Method `in_motif` {#PyStableMotifs.Reduction.MotifReduction.in_motif}
 
 
 
@@ -2903,7 +2903,7 @@ Tests whether the (partial) state ss is in any stable motifs
 
 
     
-##### Method `merge_source_motifs` {#StableMotifs.Reduction.MotifReduction.merge_source_motifs}
+##### Method `merge_source_motifs` {#PyStableMotifs.Reduction.MotifReduction.merge_source_motifs}
 
 
 
@@ -2927,7 +2927,7 @@ If A* = A or X (i.e., A=1 is a stable motif), then A- = ~(~A | X) = A & ~X, so A
 argument applies for the A=0 stable motif. Thus, a motif is only a source motif if it is also a time-reverse motif.
 
     
-##### Method `summary` {#StableMotifs.Reduction.MotifReduction.summary}
+##### Method `summary` {#PyStableMotifs.Reduction.MotifReduction.summary}
 
 
 
@@ -2960,7 +2960,7 @@ Print a summary of the reduction.
 
 
     
-# Module `StableMotifs.RestrictSpace` {#StableMotifs.RestrictSpace}
+# Module `PyStableMotifs.RestrictSpace` {#PyStableMotifs.RestrictSpace}
 
 
 
@@ -2972,7 +2972,7 @@ Print a summary of the reduction.
 
 
     
-### Function `attractor_space_candidates` {#StableMotifs.RestrictSpace.attractor_space_candidates}
+### Function `attractor_space_candidates` {#PyStableMotifs.RestrictSpace.attractor_space_candidates}
 
 
 
@@ -2998,13 +2998,13 @@ function of these is also conserved in attractors.
 
 ###### Returns
 
-<code>[rspace()](#StableMotifs.RestrictSpace.rspace "StableMotifs.RestrictSpace.rspace") list</code>
+<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
 :   Restrict space list (see RestrictSpace.rspace for details).
 
 
 
     
-### Function `fixed_rspace_nodes` {#StableMotifs.RestrictSpace.fixed_rspace_nodes}
+### Function `fixed_rspace_nodes` {#PyStableMotifs.RestrictSpace.fixed_rspace_nodes}
 
 
 
@@ -3021,7 +3021,7 @@ constraint L to be satisfied in the system given by primes.
 
 ###### Parameters
 
-**```L```** :&ensp;<code>[rspace()](#StableMotifs.RestrictSpace.rspace "StableMotifs.RestrictSpace.rspace") list</code>
+**```L```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
 :   Restrict space list (see RestrictSpace.rspace for details).
 
 
@@ -3037,7 +3037,7 @@ constraint L to be satisfied in the system given by primes.
 
 
     
-### Function `partial_state_contradicts_rspace` {#StableMotifs.RestrictSpace.partial_state_contradicts_rspace}
+### Function `partial_state_contradicts_rspace` {#PyStableMotifs.RestrictSpace.partial_state_contradicts_rspace}
 
 
 
@@ -3056,7 +3056,7 @@ Tests to see if state lies entirely outside the rspace L.
 :   State, or partial state to test.
 
 
-**```L```** :&ensp;<code>[rspace()](#StableMotifs.RestrictSpace.rspace "StableMotifs.RestrictSpace.rspace") list</code>
+**```L```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
 :   Restrict space list (see RestrictSpace.rspace for details).
 
 ###### Returns
@@ -3067,7 +3067,7 @@ Tests to see if state lies entirely outside the rspace L.
 
 
     
-### Function `reduce_rspace` {#StableMotifs.RestrictSpace.reduce_rspace}
+### Function `reduce_rspace` {#PyStableMotifs.RestrictSpace.reduce_rspace}
 
 
 
@@ -3084,7 +3084,7 @@ specify these trivially fixed nodes (i.e., they are factored on the left).
 
 ###### Parameters
 
-**```L```** :&ensp;<code>[rspace()](#StableMotifs.RestrictSpace.rspace "StableMotifs.RestrictSpace.rspace") list</code>
+**```L```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
 :   Restrict space list (see RestrictSpace.rspace for details).
 
 
@@ -3093,13 +3093,13 @@ specify these trivially fixed nodes (i.e., they are factored on the left).
 
 ###### Returns
 
-**```L2```** :&ensp;<code>[rspace()](#StableMotifs.RestrictSpace.rspace "StableMotifs.RestrictSpace.rspace") list</code>
+**```L2```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
 :   Reduced restrict space list (see RestrictSpace.rspace for details).
 
 
 
     
-### Function `reduce_rspace_string` {#StableMotifs.RestrictSpace.reduce_rspace_string}
+### Function `reduce_rspace_string` {#PyStableMotifs.RestrictSpace.reduce_rspace_string}
 
 
 
@@ -3134,7 +3134,7 @@ Replaces variables in the string s with the fixed values given by the dictionary
 
 
     
-### Function `rspace` {#StableMotifs.RestrictSpace.rspace}
+### Function `rspace` {#PyStableMotifs.RestrictSpace.rspace}
 
 
 
@@ -3182,13 +3182,13 @@ should be read as L = (!A&B | !C) & (!B & D | A)
 
 ###### Returns
 
-**```L```** :&ensp;<code>[rspace()](#StableMotifs.RestrictSpace.rspace "StableMotifs.RestrictSpace.rspace") list</code>
+**```L```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
 :   Description of rspace in list form (see summary above for details).
 
 
 
     
-### Function `state_in_rspace` {#StableMotifs.RestrictSpace.state_in_rspace}
+### Function `state_in_rspace` {#PyStableMotifs.RestrictSpace.state_in_rspace}
 
 
 
@@ -3207,7 +3207,7 @@ Tests to see if state is in the rspace L.
 :   State, or partial state to test.
 
 
-**```L```** :&ensp;<code>[rspace()](#StableMotifs.RestrictSpace.rspace "StableMotifs.RestrictSpace.rspace") list</code>
+**```L```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
 :   Restrict space list (see RestrictSpace.rspace for details).
 
 ###### Returns
@@ -3221,7 +3221,7 @@ Tests to see if state is in the rspace L.
 
 
     
-# Module `StableMotifs.Succession` {#StableMotifs.Succession}
+# Module `PyStableMotifs.Succession` {#PyStableMotifs.Succession}
 
 
 
@@ -3233,7 +3233,7 @@ Tests to see if state is in the rspace L.
 
 
     
-### Function `build_succession_diagram` {#StableMotifs.Succession.build_succession_diagram}
+### Function `build_succession_diagram` {#PyStableMotifs.Succession.build_succession_diagram}
 
 
 
@@ -3270,7 +3270,7 @@ class (using, e.g., AttractorRepertoire.from_primes).
     network to be added to the diagram.
 
 
-**```diagram```** :&ensp;<code>[SuccessionDiagram](#StableMotifs.Succession.SuccessionDiagram "StableMotifs.Succession.SuccessionDiagram")</code>
+**```diagram```** :&ensp;<code>[SuccessionDiagram](#PyStableMotifs.Succession.SuccessionDiagram "PyStableMotifs.Succession.SuccessionDiagram")</code>
 :   Used only for recursion. The SuccessionDiagram object that is under
     construction.
 
@@ -3298,7 +3298,7 @@ class (using, e.g., AttractorRepertoire.from_primes).
 
 ###### Returns
 
-<code>[SuccessionDiagram](#StableMotifs.Succession.SuccessionDiagram "StableMotifs.Succession.SuccessionDiagram")</code>
+<code>[SuccessionDiagram](#PyStableMotifs.Succession.SuccessionDiagram "PyStableMotifs.Succession.SuccessionDiagram")</code>
 :   The succession diagram for the input update rules.
 
 
@@ -3309,7 +3309,7 @@ class (using, e.g., AttractorRepertoire.from_primes).
 
 
     
-### Class `SuccessionDiagram` {#StableMotifs.Succession.SuccessionDiagram}
+### Class `SuccessionDiagram` {#PyStableMotifs.Succession.SuccessionDiagram}
 
 
 
@@ -3343,7 +3343,7 @@ Zanudo and Albert (2015) or Rozum et al. (2021).
 
 
     
-##### Method `add_motif_permutation` {#StableMotifs.Succession.SuccessionDiagram.add_motif_permutation}
+##### Method `add_motif_permutation` {#PyStableMotifs.Succession.SuccessionDiagram.add_motif_permutation}
 
 
 
@@ -3370,7 +3370,7 @@ MotifReduction object.
 
 
     
-##### Method `add_motif_reduction` {#StableMotifs.Succession.SuccessionDiagram.add_motif_reduction}
+##### Method `add_motif_reduction` {#PyStableMotifs.Succession.SuccessionDiagram.add_motif_reduction}
 
 
 
@@ -3393,7 +3393,7 @@ into the correct place in the diagram.
 
 
     
-##### Method `find_equivalent_reduction` {#StableMotifs.Succession.SuccessionDiagram.find_equivalent_reduction}
+##### Method `find_equivalent_reduction` {#PyStableMotifs.Succession.SuccessionDiagram.find_equivalent_reduction}
 
 
 
@@ -3422,7 +3422,7 @@ specified by fixed, if such an object exists (returns None otherwise).
 
 
     
-##### Method `find_motif_permutation` {#StableMotifs.Succession.SuccessionDiagram.find_motif_permutation}
+##### Method `find_motif_permutation` {#PyStableMotifs.Succession.SuccessionDiagram.find_motif_permutation}
 
 
 
@@ -3457,7 +3457,7 @@ reduction's index and the permutation that maps between the two histories.
 
 
     
-##### Method `get_motifs` {#StableMotifs.Succession.SuccessionDiagram.get_motifs}
+##### Method `get_motifs` {#PyStableMotifs.Succession.SuccessionDiagram.get_motifs}
 
 
 
@@ -3480,7 +3480,7 @@ motifs and conditionally stable motifs (see, e.g., Deritei et al. 2019).
 
 
     
-##### Method `reduction_drivers` {#StableMotifs.Succession.SuccessionDiagram.reduction_drivers}
+##### Method `reduction_drivers` {#PyStableMotifs.Succession.SuccessionDiagram.reduction_drivers}
 
 
 
@@ -3531,7 +3531,7 @@ not be used directly. Instead, use reprogram_to_trap_spaces.
 
 
     
-##### Method `reductions_indices_with_states` {#StableMotifs.Succession.SuccessionDiagram.reductions_indices_with_states}
+##### Method `reductions_indices_with_states` {#PyStableMotifs.Succession.SuccessionDiagram.reductions_indices_with_states}
 
 
 
@@ -3565,7 +3565,7 @@ logically fixed.
 
 
     
-##### Method `reprogram_to_trap_spaces` {#StableMotifs.Succession.SuccessionDiagram.reprogram_to_trap_spaces}
+##### Method `reprogram_to_trap_spaces` {#PyStableMotifs.Succession.SuccessionDiagram.reprogram_to_trap_spaces}
 
 
 
@@ -3679,7 +3679,7 @@ using the GRASP algorithm using GRASP_iterations iterations.
 
 
     
-# Module `StableMotifs.TimeReversal` {#StableMotifs.TimeReversal}
+# Module `PyStableMotifs.TimeReversal` {#PyStableMotifs.TimeReversal}
 
 
 
@@ -3691,7 +3691,7 @@ using the GRASP algorithm using GRASP_iterations iterations.
 
 
     
-### Function `time_reverse_primes` {#StableMotifs.TimeReversal.time_reverse_primes}
+### Function `time_reverse_primes` {#PyStableMotifs.TimeReversal.time_reverse_primes}
 
 
 

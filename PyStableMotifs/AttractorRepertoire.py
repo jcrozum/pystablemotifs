@@ -1,5 +1,5 @@
-import StableMotifs.Succession as sm_succession
-import StableMotifs.Attractor as sm_attractor
+import PyStableMotifs.Succession as sm_succession
+import PyStableMotifs.Attractor as sm_attractor
 
 import itertools as it
 import networkx as nx

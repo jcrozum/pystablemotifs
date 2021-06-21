@@ -1,5 +1,5 @@
 import PyBoolNet
-import StableMotifs as sm
+import PyStableMotifs as sm
 import sys
 from timeit import default_timer
 
