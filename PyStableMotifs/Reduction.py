@@ -291,6 +291,8 @@ class MotifReduction:
     max_stable_motifs : int
         Maximum number of output lines for PyBoolNet to process from the
         AspSolver (the default is 10000).
+    MPBN_update : bool
+        Whether MBPN update is used instead of general asynchronous update.
 
     Attributes
     ----------
@@ -369,7 +371,7 @@ class MotifReduction:
         an upper bound on the number of motif avoidant attractors in the reduction.
     """
 
-    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000):
+    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000,MPBN_update=False):
         if motif_history is None:
             self.motif_history = []
         else:
@@ -377,14 +379,19 @@ class MotifReduction:
         self.merged_history_permutations = []
         self.logically_fixed_nodes = fixed
         self.reduced_primes = reduced_primes.copy()
-        self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
+        if MPBN_update==False:
+            self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
         self.stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.reduced_primes, "max",MaxOutput=max_stable_motifs)
-        self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max",MaxOutput=max_stable_motifs)
+        if MPBN_update==False:
+            self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max",MaxOutput=max_stable_motifs)
 
         self.merged_source_motifs=None
         self.source_independent_motifs=None
         if self.motif_history == [] and prioritize_source_motifs:
-            self.merge_source_motifs()
+            if MPBN_update==False:
+                self.merge_source_motifs()
+            else:
+                self.simple_merge_source_motifs(reduced_primes)
 
         self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
         # These may or may not get calculated.
@@ -509,6 +516,51 @@ class MotifReduction:
         self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
 
         source_vars = list(set([next(iter(x.keys())) for x in source_motifs])) # a list of source nodes
+
+        self.merged_source_motifs = []
+        for state in it.product([0,1],repeat=len(source_vars)):
+            self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
+
+    def simple_merge_source_motifs(self,primes):
+        """Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
+        avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
+        merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+        source nodes all stabilize simultaneously.
+
+        Assumes that stable motifs have already been computed.
+
+        To be used in the case of MBPN update.
+
+        Parameters
+        ----------
+        primes : dictionary of lists of lists of dictionaries
+            PyBoolNet Update rules.
+            A, A|B
+            B, B
+            {'A':[[{'A':0,'B':0}],[{'A':1},{'B':1}]],'B':[[{'B':0}],[{'B':1}]]}
+
+        Returns
+        -------
+        self.source_independent_motifs : list of dictionaries
+            list of stable motifs that are not source motifs
+            [{'node1':bool,'node2':bool, ...}, {'node3':bool,'node4':bool, ...}, ...]
+        self.merged_source_motifs : list
+
+        """
+        # source nodes will have update rule of the form 'A':[[{'A':0}],[{'A':1}]]
+        source_vars = []
+        for x in primes.keys():
+            if primes[x] == [[{x:0}],[{x:1}]]:
+                source_vars.append(x)
+
+        source_motifs = []
+        for x in source_vars:
+            source_motifs.append({x:0})
+            source_motifs.append({x:1})
+
+        if source_motifs == []:
+            return
+        self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
 
         self.merged_source_motifs = []
         for state in it.product([0,1],repeat=len(source_vars)):
