@@ -286,6 +286,8 @@ def import_primes(fname, format='BooleanNet', remove_constants=False):
     if format == 'CellCollective':
         rules1 = remove_comment_lines(open(fname + '/expr/expressions.ALL.txt'))
         external = remove_comment_lines(open(fname + '/expr/external_components.ALL.txt'))
+        # In the case of CellCollective format, external components are given
+        # rules of the form "A = A"
         lines = external.splitlines()
         for i in range(len(lines)):
             lines[i] = lines[i] + ' = ' + lines[i]
