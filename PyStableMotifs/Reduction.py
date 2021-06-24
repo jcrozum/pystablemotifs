@@ -292,7 +292,8 @@ class MotifReduction:
         Maximum number of output lines for PyBoolNet to process from the
         AspSolver (the default is 10000).
     MPBN_update : bool
-        Whether MBPN update is used instead of general asynchronous update.
+        Whether MBPN update is used instead of general asynchronous update
+        (the default is False).
 
     Attributes
     ----------
@@ -527,7 +528,8 @@ class MotifReduction:
         merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
         source nodes all stabilize simultaneously.
 
-        Assumes that stable motifs have already been computed.
+        Assumes that stable_motifs have already been computed,
+        but time_reverse_primes and time_reverse_stable_motifs are not.
 
         To be used in the case of MBPN update.
 
@@ -535,8 +537,10 @@ class MotifReduction:
         ----------
         primes : dictionary of lists of lists of dictionaries
             PyBoolNet Update rules.
+            e.g following rules,
             A, A|B
             B, B
+            are described as
             {'A':[[{'A':0,'B':0}],[{'A':1},{'B':1}]],'B':[[{'B':0}],[{'B':1}]]}
 
         Returns
@@ -544,7 +548,9 @@ class MotifReduction:
         self.source_independent_motifs : list of dictionaries
             list of stable motifs that are not source motifs
             [{'node1':bool,'node2':bool, ...}, {'node3':bool,'node4':bool, ...}, ...]
-        self.merged_source_motifs : list
+        self.merged_source_motifs : list of dictionaries
+            list of group of source motifs fixed at the same time
+            [{'source_node1':bool,'source_node2':bool, ...}, ...]
 
         """
         # source nodes will have update rule of the form 'A':[[{'A':0}],[{'A':1}]]
@@ -560,6 +566,7 @@ class MotifReduction:
 
         if source_motifs == []:
             return
+
         self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
 
         self.merged_source_motifs = []
