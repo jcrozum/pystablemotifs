@@ -380,12 +380,10 @@ class MotifReduction:
         self.merged_history_permutations = []
         self.logically_fixed_nodes = fixed
         self.reduced_primes = reduced_primes.copy()
-        if MPBN_update==False:
-            self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
         self.stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.reduced_primes, "max",MaxOutput=max_stable_motifs)
         if MPBN_update==False:
+            self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
             self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max",MaxOutput=max_stable_motifs)
-
         self.merged_source_motifs=None
         self.source_independent_motifs=None
         if self.motif_history == [] and prioritize_source_motifs:
@@ -393,6 +391,15 @@ class MotifReduction:
                 self.merge_source_motifs()
             else:
                 self.simple_merge_source_motifs(reduced_primes)
+
+        # skips finding motif avoidant attractors when using MPBN_update
+        if MPBN_update:
+            if len(self.stable_motifs) == 0: # terminal reduction iff no more stable motifs
+                self.terminal = "yes"
+            else:
+                self.terminal = "no"
+            self.attractor_dict_list = self.generate_attr_dict()
+            return
 
         self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
         # These may or may not get calculated.
