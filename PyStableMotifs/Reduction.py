@@ -390,7 +390,7 @@ class MotifReduction:
             if MPBN_update==False:
                 self.merge_source_motifs()
             else:
-                self.simple_merge_source_motifs(reduced_primes)
+                self.simple_merge_source_motifs(reduced_primes,MPBN_update=MPBN_update)
 
         # skips finding motif avoidant attractors when using MPBN_update
         if MPBN_update:
@@ -398,7 +398,7 @@ class MotifReduction:
                 self.terminal = "yes"
             else:
                 self.terminal = "no"
-            self.attractor_dict_list = self.generate_attr_dict()
+            self.attractor_dict_list = self.simple_generate_attr_dict(MPBN_update=MPBN_update)
             return
 
         self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
@@ -529,7 +529,7 @@ class MotifReduction:
         for state in it.product([0,1],repeat=len(source_vars)):
             self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
 
-    def simple_merge_source_motifs(self,primes):
+    def simple_merge_source_motifs(self,primes,MPBN_update=False):
         """Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
         avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
         merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
@@ -560,6 +560,8 @@ class MotifReduction:
             [{'source_node1':bool,'source_node2':bool, ...}, ...]
 
         """
+        assert MPBN_update == True, "This function is for MPBN update only"
+
         # source nodes will have update rule of the form 'A':[[{'A':0}],[{'A':1}]]
         source_vars = []
         for x in primes.keys():
@@ -1000,6 +1002,43 @@ class MotifReduction:
                 #
                 # attr_list.append(node_state_dict)
             return attr_list
+
+    def simple_generate_attr_dict(self, MPBN_update=False):
+        """Generate a list of an attractor that is present in the reduction, in the case of MBPN update.
+
+        Returns
+        -------
+        list of a dictionary
+            Dictionary corresponding to an attractor that is in this reduction.
+            The node states in the attractor are described as follows
+            1 variable is "ON"
+            0 variable is "OFF"
+            X variable is known to oscillate
+        """
+        assert MPBN_update == True, "This function is for MPBN update only"
+
+        attractors_dict={}
+
+        # the reduction is not terminal --> no attractor
+        if self.terminal == 'no':
+            return [] #'not terminal reduction' #I should replace this with an empty dict
+
+        # self.terminal == 'yes' (in MPBN update, terminal is either yes or no)
+        # check steady state
+        nodes_sorted = sorted(list(set(self.logically_fixed_nodes.keys()) | set(self.reduced_primes.keys())))
+        node_state_dict = self.logically_fixed_nodes.copy()
+
+        if len(node_state_dict) == len(nodes_sorted):
+            node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+            return [node_state_dict]
+
+        # in case of non-steady state, all non-fixed nodes oscillate
+        non_fixed_nodes = [x for x in nodes_sorted if x not in node_state_dict]
+
+        for n in non_fixed_nodes:
+            node_state_dict[n]='X'
+        node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+        return [node_state_dict]
 
     def find_constants_in_complex_attractor(self,c):
         """Given a set of strings representing the states of a complex attractor the function finds the nodes
