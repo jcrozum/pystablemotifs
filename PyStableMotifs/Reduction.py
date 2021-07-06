@@ -392,16 +392,6 @@ class MotifReduction:
             else:
                 self.simple_merge_source_motifs(reduced_primes,MPBN_update=MPBN_update)
 
-        # skips finding motif avoidant attractors when using MPBN_update
-        if MPBN_update:
-            if len(self.stable_motifs) == 0: # terminal reduction iff no more stable motifs
-                self.terminal = "yes"
-            else:
-                self.terminal = "no"
-            self.attractor_dict_list = self.simple_generate_attr_dict(MPBN_update=MPBN_update)
-            return
-
-        self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
         # These may or may not get calculated.
         # Sensible default values are in comments, but we will just use None for now.
         self.fixed_rspace_nodes=None # {}
@@ -417,6 +407,17 @@ class MotifReduction:
         self.attractor_constants = None
         self.attractor_dict_list=None # []
         # self.attractor_dict={}
+
+        # skips finding motif avoidant attractors when using MPBN_update
+        if MPBN_update:
+            if len(self.stable_motifs) == 0: # terminal reduction iff no more stable motifs
+                self.terminal = "yes"
+            else:
+                self.terminal = "no"
+            self.attractor_dict_list = self.simple_generate_attr_dict(MPBN_update=MPBN_update)
+            return
+
+        self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
 
         study_possible_oscillation = False
 
