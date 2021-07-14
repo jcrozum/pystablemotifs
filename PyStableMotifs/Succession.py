@@ -531,5 +531,6 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
                 diagram, merge_equivalent_motifs=merge_equivalent_motifs,
                 max_simulate_size=max_simulate_size,
                 max_stable_motifs=max_stable_motifs,
-                prioritize_source_motifs=prioritize_source_motifs)
+                prioritize_source_motifs=prioritize_source_motifs,
+                MPBN_update=MPBN_update)
     return diagram
