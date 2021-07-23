@@ -2,11 +2,14 @@ import PyBoolNet
 import PyStableMotifs as sm
 import networkx as nx
 print("Loading network . . .")
-primes = sm.Format.import_primes('./models/MPBN_test1.txt')
+primes = sm.Format.import_primes('./models/test2.txt')
 print("Network loaded.")
 print()
 print("RULES")
 sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
+
+stable_motifs = PyBoolNet.AspSolver.trap_spaces(primes, "max",MaxOutput=10000)
+print(stable_motifs)
 
 import time
 start_time = time.time()
