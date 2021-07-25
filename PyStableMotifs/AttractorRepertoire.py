@@ -76,6 +76,7 @@ class AttractorRepertoire:
             AspSolver (the default is 10000).
         MPBN_update : bool
             Whether MBPN update is used instead of general asynchronous update
+            (see L Pauleve, J Kolcak, T Chatain, S Haar, "Reconciling qualitative, abstract, and scalable modeling of biological networks." Nat. Com. vol. 11, no. 4256 (2020))
             (the default is False).
 
         Returns
@@ -173,7 +174,7 @@ class AttractorRepertoire:
             AspSolver (the default is 10000).
         MPBN_update : bool
             Whether MBPN update is used instead of general asynchronous update
-            (the default is False).
+            (see Pauleve et al. 2020)(the default is False).
 
         """
         self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)

@@ -293,7 +293,7 @@ class MotifReduction:
         AspSolver (the default is 10000).
     MPBN_update : bool
         Whether MPBN update is used instead of general asynchronous update
-        (the default is False).
+        (see Pauleve et al. 2020)(the default is False).
 
     Attributes
     ----------
@@ -545,6 +545,10 @@ class MotifReduction:
         ----------
         primes : PyBoolNet primes dictionary
             PyBoolNet update rules whose source node stable motifs are to be merged.
+
+        MPBN_update : bool
+            Whether MPBN update is used instead of general asynchronous update
+            (see Pauleve et al. 2020)(the default is False).
 
         Returns
         -------
@@ -935,7 +939,7 @@ class MotifReduction:
         ----------
         MPBN_update : bool
             Whether MPBN update is used instead of general asynchronous update
-            (the default is False).
+            (see Pauleve et al. 2020)(the default is False).
 
         Returns
         -------
