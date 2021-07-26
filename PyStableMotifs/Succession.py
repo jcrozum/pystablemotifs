@@ -452,7 +452,7 @@ class SuccessionDiagram:
 
         return nonredundant_drivers
 
-def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000):
+def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=None, merge_equivalent_motifs=True,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000, MPBN_update=False):
     """Recursively construct a succession diagram from the input update rules.
     Generally, it is preferable to construct this from within the AttractorRepertoire
     class (using, e.g., AttractorRepertoire.from_primes).
@@ -484,6 +484,9 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     max_stable_motifs : int
         Maximum number of output lines for PyBoolNet to process from the
         AspSolver (the default is 10000).
+    MPBN_update : bool
+        Whether MBPN update is used instead of general asynchronous update
+        (the default is False).
 
     Returns
     -------
@@ -501,7 +504,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     myMotifReductionToCopy = diagram.find_equivalent_reduction(fixed)
 
     if myMotifReductionToCopy is None:
-        myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,max_simulate_size=max_simulate_size,prioritize_source_motifs=prioritize_source_motifs,max_stable_motifs=max_stable_motifs)
+        myMotifReduction=sm_reduction.MotifReduction(motif_history,fixed.copy(),primes,max_simulate_size=max_simulate_size,prioritize_source_motifs=prioritize_source_motifs,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
     else:
         myMotifReduction = deepcopy(myMotifReductionToCopy)
         myMotifReduction.motif_history = motif_history.copy()
@@ -528,5 +531,6 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
                 diagram, merge_equivalent_motifs=merge_equivalent_motifs,
                 max_simulate_size=max_simulate_size,
                 max_stable_motifs=max_stable_motifs,
-                prioritize_source_motifs=prioritize_source_motifs)
+                prioritize_source_motifs=prioritize_source_motifs,
+                MPBN_update=MPBN_update)
     return diagram

@@ -1,0 +1,5 @@
+A* = (not A and not B) or C
+B* = (not A and not B) or C
+C* = (A and B) or D
+D* = E
+E* = D

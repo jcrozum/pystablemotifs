@@ -291,6 +291,9 @@ class MotifReduction:
     max_stable_motifs : int
         Maximum number of output lines for PyBoolNet to process from the
         AspSolver (the default is 10000).
+    MPBN_update : bool
+        Whether MPBN update is used instead of general asynchronous update
+        (see Pauleve et al. 2020)(the default is False).
 
     Attributes
     ----------
@@ -369,7 +372,7 @@ class MotifReduction:
         an upper bound on the number of motif avoidant attractors in the reduction.
     """
 
-    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000):
+    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000,MPBN_update=False):
         if motif_history is None:
             self.motif_history = []
         else:
@@ -377,16 +380,18 @@ class MotifReduction:
         self.merged_history_permutations = []
         self.logically_fixed_nodes = fixed
         self.reduced_primes = reduced_primes.copy()
-        self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
         self.stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.reduced_primes, "max",MaxOutput=max_stable_motifs)
-        self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max",MaxOutput=max_stable_motifs)
-
+        if MPBN_update==False:
+            self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
+            self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max",MaxOutput=max_stable_motifs)
         self.merged_source_motifs=None
         self.source_independent_motifs=None
         if self.motif_history == [] and prioritize_source_motifs:
-            self.merge_source_motifs()
+            if MPBN_update==False:
+                self.merge_source_motifs()
+            else:
+                self.simple_merge_source_motifs(reduced_primes,MPBN_update=MPBN_update)
 
-        self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
         # These may or may not get calculated.
         # Sensible default values are in comments, but we will just use None for now.
         self.fixed_rspace_nodes=None # {}
@@ -402,6 +407,17 @@ class MotifReduction:
         self.attractor_constants = None
         self.attractor_dict_list=None # []
         # self.attractor_dict={}
+
+        # skips finding motif avoidant attractors when using MPBN_update
+        if MPBN_update:
+            if len(self.stable_motifs) == 0: # terminal reduction iff no more stable motifs
+                self.terminal = "yes"
+            else:
+                self.terminal = "no"
+            self.attractor_dict_list = self.generate_attr_dict_list(MPBN_update=MPBN_update)
+            return
+
+        self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
 
         study_possible_oscillation = False
 
@@ -475,7 +491,7 @@ class MotifReduction:
                     if sat:
                         self.terminal = "no"
                         #print("The reduction indicates that the branch is not terminal. No need to simulate.")
-                        self.attractor_dict_list = self.generate_attr_dict()
+                        self.attractor_dict_list = self.generate_attr_dict_list()
                         return
                 if len(self.delprimes) < max_simulate_size:
                     #print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
@@ -487,7 +503,7 @@ class MotifReduction:
                 else:
                     print("The STG is still too large ("+str(len(self.delprimes))+").")
                     print("Further analysis of this branch is needed.")
-        self.attractor_dict_list = self.generate_attr_dict()
+        self.attractor_dict_list = self.generate_attr_dict_list()
 
     def merge_source_motifs(self):
         """Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
@@ -509,6 +525,58 @@ class MotifReduction:
         self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
 
         source_vars = list(set([next(iter(x.keys())) for x in source_motifs])) # a list of source nodes
+
+        self.merged_source_motifs = []
+        for state in it.product([0,1],repeat=len(source_vars)):
+            self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
+
+    def simple_merge_source_motifs(self,primes,MPBN_update=False):
+        """Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
+        avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
+        merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+        source nodes all stabilize simultaneously.
+
+        Assumes that stable_motifs have already been computed,
+        but time_reverse_primes and time_reverse_stable_motifs are not.
+
+        To be used in the case of MPBN update.
+
+        Parameters
+        ----------
+        primes : PyBoolNet primes dictionary
+            PyBoolNet update rules whose source node stable motifs are to be merged.
+
+        MPBN_update : bool
+            Whether MPBN update is used instead of general asynchronous update
+            (see Pauleve et al. 2020)(the default is False).
+
+        Returns
+        -------
+        self.source_independent_motifs : list of dictionaries
+            list of stable motifs that are not source motifs
+            [{'node1':bool,'node2':bool, ...}, {'node3':bool,'node4':bool, ...}, ...]
+        self.merged_source_motifs : list of dictionaries
+            list of group of source motifs fixed at the same time
+            [{'source_node1':bool,'source_node2':bool, ...}, ...]
+
+        """
+        assert MPBN_update == True, "This function is for MPBN update only"
+
+        # source nodes will have update rule of the form 'A':[[{'A':0}],[{'A':1}]]
+        source_vars = []
+        for x in primes.keys():
+            if primes[x] == [[{x:0}],[{x:1}]]:
+                source_vars.append(x)
+
+        source_motifs = []
+        for x in source_vars:
+            source_motifs.append({x:0})
+            source_motifs.append({x:1})
+
+        if source_motifs == []:
+            return
+
+        self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
 
         self.merged_source_motifs = []
         for state in it.product([0,1],repeat=len(source_vars)):
@@ -863,9 +931,15 @@ class MotifReduction:
         else:
             self.no_motif_attractors = []
 
-    def generate_attr_dict(self):
+    def generate_attr_dict_list(self, MPBN_update=False):
         """Generate a list of attractors that are present in the reduction, but
         not in any of its subreductions.
+
+        Parameters
+        ----------
+        MPBN_update : bool
+            Whether MPBN update is used instead of general asynchronous update
+            (see Pauleve et al. 2020)(the default is False).
 
         Returns
         -------
@@ -910,8 +984,16 @@ class MotifReduction:
         #the reduction is definitely terminal
         elif self.terminal=='yes':
             #the reduction is terminal, not all nodes are fixed
+            #and it is MPBN update.
+            if MPBN_update == True:
+                for n in non_fixed_nodes:
+                    node_state_dict[n]='X'
+                node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+                return [node_state_dict]
+
+            #the reduction is terminal, not all nodes are fixed
             #and there is NO complex attractor mapped out
-            if self.no_motif_attractors is None:
+            elif self.no_motif_attractors is None:
                 for n in non_fixed_nodes:
                     node_state_dict[n]='?'
                 node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
