@@ -119,7 +119,7 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
         if not states_added or len(primes_to_search) == 0: break
     return implied, contradicted
 
-def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None):
+def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
     """
     Computes the domain of influence (DOI) of the seed set.
 
@@ -130,11 +130,19 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     primes : PyBoolNet primes dictionary
         Update rules.
 
-    (OPTIONAL)
     implied_hint : partial state dictionary
         Known subset of the DOI; used during optimization.
     contradicted_hint : partial state dictionary
         Known subset of the contradiction boundary; used during optimization.
+    max_simulate_size : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph (the default is 20).
+    max_stable_motifs : int
+        Maximum number of output lines for PyBoolNet to process from the
+        AspSolver (the default is 10000).
+    MPBN_update : bool
+        Whether MBPN update is used instead of general asynchronous update
+        (see Pauleve et al. 2020)(the default is False).
 
     Returns
     -------
@@ -145,7 +153,6 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     unknown : partial state dictionary
         Nodes that are possibly in the domain of influence.
     """
-
     # optional optimization values
     if implied_hint is None:
         implied_hint = {}
@@ -184,10 +191,13 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     primes_to_search = sm.Reduction.simplify_primes(primes_to_search)
 
     # Finding the attractor repertoire of this modified network
-    ar = sm.AttractorRepertoire.from_primes(primes_to_search)
+    ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
 
     # Determining which node values are shared by all attractors in the reduction
     if ar.fewest_attractors == 0:   # there is no attractor
+        implied.update(LDOI)
+        contradicted.update(LDOI_contra)
+        unknown = {}
         print("Unable to properly count attractors.")
         return implied, contradicted, unknown
 

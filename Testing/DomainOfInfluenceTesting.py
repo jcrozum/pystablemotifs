@@ -2,7 +2,7 @@ import PyBoolNet
 import PyStableMotifs as sm
 import copy
 
-def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None):
+def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
     """
     Computes the domain of influence (DOI) of the seed set.
 
@@ -22,11 +22,20 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
                                                                                 are described as
                                                                                 {'A':[[{'A':0,'B':0}],[{'A':1},{'B':1}]],'B':[[{'B':0}],[{'B':1}]]}
 
-    (OPTIONAL)
     implied_hint : partial state dictionary
         Known subset of the DOI; used during optimization.
     contradicted_hint : partial state dictionary
         Known subset of the contradiction boundary; used during optimization.
+    max_simulate_size : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph (the default is 20).
+    max_stable_motifs : int
+        Maximum number of output lines for PyBoolNet to process from the
+        AspSolver (the default is 10000).
+    MPBN_update : bool
+        Whether MBPN update is used instead of general asynchronous update
+        (see Pauleve et al. 2020)(the default is False).
+
 
     Returns
     -------
@@ -94,7 +103,7 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     print()
 
     # Finding the attractor repertoire of this modified network
-    ar = sm.AttractorRepertoire.from_primes(primes_to_search)
+    ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
 
     ar.summary()
 
@@ -252,14 +261,14 @@ def fixed_implies_implicant(fixed,implicant):
 
 def main():
     print("Loading network . . .")
-    primes = sm.Format.import_primes('./models/test5.txt')
+    primes = sm.Format.import_primes('./models/DOI_test_PhaseSwitch.txt')
     print("Network loaded.")
     print()
     print("RULES")
     sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
     print()
 
-    fixed = {'ABA':1}
+    fixed = {'CyclinB':0}
     print('fixed: ',fixed)
 
     LDOI, LDOI_contra = logical_domain_of_influence(fixed,primes)
@@ -267,15 +276,10 @@ def main():
     print('LDOI: ',LDOI)
     print('LDOI_contra: ',LDOI_contra)
 
-    DOI, DOI_contra, unknown = domain_of_influence(fixed,primes)
+    DOI, DOI_contra, unknown = domain_of_influence(fixed,primes,MPBN_update=True)
 
     print('DOI: ',DOI)
     print('DOI_contra: ',DOI_contra)
     print('unknown: ',unknown)
-
-    print()
-    print("RULES")
-    sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
-    print()
 
 main()
