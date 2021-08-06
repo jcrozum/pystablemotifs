@@ -121,7 +121,7 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
 
 def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
     """
-    Computes the domain of influence (DOI) of the seed set.
+    Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
 
     Parameters
     ----------
@@ -152,6 +152,10 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
         The contradiction boundary.
     unknown : partial state dictionary
         Nodes that are possibly in the domain of influence.
+    unknown_contra : partial state dictionary
+        Nodes that are possibly in the contradiction boundary.
+    ar : AttractorRepertoire
+        The class that stores information about attractors.
     """
     # optional optimization values
     if implied_hint is None:
@@ -162,6 +166,7 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     implied = implied_hint # the DOI
     contradicted = contradicted_hint # states implied by partial_state that contradict partial_state
     unknown = {}
+    unknown_contra = {}
     primes_to_search = copy.deepcopy(primes)
     for node in implied_hint: del primes_to_search[node]
     for node in contradicted_hint: del primes_to_search[node]
@@ -195,11 +200,8 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
 
     # Determining which node values are shared by all attractors in the reduction
     if ar.fewest_attractors == 0:   # there is no attractor
-        implied.update(LDOI)
-        contradicted.update(LDOI_contra)
-        unknown = {}
         print("Unable to properly count attractors.")
-        return implied, contradicted, unknown
+        return
 
     att = ar.attractors[0]  # there is at least one attractor.
     for node in att.attractor_dict:
@@ -250,8 +252,11 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
             if sink_nodes[node] != implied[node]:
                 contradicted[node] = implied[node]
                 del implied[node]
+        elif node in unknown:
+            if sink_nodes[node] != unknown[node]:
+                unknown_contra[node] = unknown[node]
 
-    return dict(sorted(implied.items())), dict(sorted(contradicted.items())), dict(sorted(unknown.items()))
+    return dict(sorted(implied.items())), dict(sorted(contradicted.items())), dict(sorted(unknown.items())), dict(sorted(unknown_contra.items())), ar
 
 def single_drivers(target,primes):
     """Finds all 1-node (logical) drivers of target under the rules given

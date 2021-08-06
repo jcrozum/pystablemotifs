@@ -1,10 +1,11 @@
 import PyBoolNet
 import PyStableMotifs as sm
 import copy
+import itertools as it
 
 def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
     """
-    Computes the domain of influence (DOI) of the seed set.
+    Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
 
     Parameters
     ----------
@@ -45,6 +46,11 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
         The contradiction boundary.
     unknown : partial state dictionary
         Nodes that are possibly in the domain of influence.
+    unknown_contra : partial state dictionary
+        Nodes that are possibly in the contradiction boundary.
+
+    ar : AttractorRepertoire
+        The class that stores information about attractors.
 
     Calculating the LDOI and reducing the primes by this LDOI
     Adding the seed nodes that are not in the LDOI as sinks in the reduced network
@@ -61,6 +67,7 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     implied = implied_hint # the DOI
     contradicted = contradicted_hint # states implied by partial_state that contradict partial_state
     unknown = {}
+    unknown_contra = {}
     primes_to_search = copy.deepcopy(primes)
     for node in implied_hint: del primes_to_search[node]
     for node in contradicted_hint: del primes_to_search[node]
@@ -72,7 +79,7 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     implied.update(LDOI)
     contradicted.update(LDOI_contra)
 
-    print("updated fixed: ",fixed)
+    # print("updated fixed: ",fixed)
 
     # reducing the primes by the LDOI
     primes_to_search, ps = sm.Reduction.reduce_primes(fixed,primes_to_search)
@@ -83,41 +90,38 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
         if node not in LDOI:
             sink_nodes[node] = value
 
-    print('sink_nodes: ',sink_nodes)
-    print()
+    # print('sink_nodes: ',sink_nodes)
+    # print()
 
     # Adding back the simplifed rules for the sink_nodes
     rules_to_add = {}
     for node in sink_nodes:
         rules_to_add[node] = copy.deepcopy(primes[node])
-    print("rules to add: ",rules_to_add)
+    # print("rules to add: ",rules_to_add)
     for node in sink_nodes:
         PyBoolNet.PrimeImplicants._substitute(rules_to_add,node,fixed)
-    print("rules to add: ",rules_to_add)
+    # print("rules to add: ",rules_to_add)
     primes_to_search.update(rules_to_add)
 
     primes_to_search = sm.Reduction.simplify_primes(primes_to_search)
 
-    print("MODIFIED RULES")
-    sm.Format.pretty_print_prime_rules({k:primes_to_search[k] for k in sorted(primes_to_search)})
-    print()
+    # print("MODIFIED RULES")
+    # sm.Format.pretty_print_prime_rules({k:primes_to_search[k] for k in sorted(primes_to_search)})
+    # print()
 
     # Finding the attractor repertoire of this modified network
     ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
 
-    ar.summary()
+    # ar.summary()
 
     # Determining which node values are shared by all attractors in the reduction
     if ar.fewest_attractors == 0:   # there is no attractor
-        implied.update(LDOI)
-        contradicted.update(LDOI_contra)
-        unknown = {}
         print("Unable to properly count attractors.")
-        return implied, contradicted, unknown
+        return
 
     att = ar.attractors[0]  # there is at least one attractor.
 
-    print("attractor: ", att.attractor_dict)
+    # print("attractor: ", att.attractor_dict)
 
     for node in att.attractor_dict:
         value = None
@@ -167,8 +171,11 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
             if sink_nodes[node] != implied[node]:
                 contradicted[node] = implied[node]
                 del implied[node]
+        elif node in unknown:
+            if sink_nodes[node] != unknown[node]:
+                unknown_contra[node] = unknown[node]
 
-    return dict(sorted(implied.items())), dict(sorted(contradicted.items())), dict(sorted(unknown.items()))
+    return dict(sorted(implied.items())), dict(sorted(contradicted.items())), dict(sorted(unknown.items())), dict(sorted(unknown_contra.items())), ar
 
 def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None):
     """Computes the logical domain of influence (LDOI) (see Yang et al. 2018)
@@ -258,28 +265,158 @@ def fixed_implies_implicant(fixed,implicant):
             break
     return rval
 
+def source_sets(primes, min_set_size=None, max_set_size=None, forbidden=None, fixed=None):
+    """Short summary.
+
+    Parameters
+    ----------
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    min_set_size : int
+        Minimum size of source set to consider.
+        If None, is set to the size of the fixed set + 1.
+    max_drivers : int
+        Maximum size of source set to consider.
+        If None, is set to the number of all the nodes in the prime that are not in the forbidden - 1.
+    forbidden : set of str variable names
+        Variables to be considered uncontrollable (the default is None).
+    fixed : partial state dictionaries
+        Node set that should be included in all the source sets (the default is None).
+
+    Returns
+    -------
+    source_sets : list of partial state dictionaries
+        Each state dictionary in the list is a possible source set.
+
+    """
+    if forbidden is None:
+        forbidden = set()
+    if fixed is None:
+        fixed = {}
+
+    # consistency check
+    for node in forbidden:
+        if node in fixed.keys():
+            print("The forbidden nodes are inconsistent with the fixed nodes.")
+            return
+        if node not in primes.keys():
+            print("The forbidden nodes are inconsistent with the primes.")
+            return
+    for node in fixed.keys():
+        if node not in primes.keys():
+            print("The fixed nodes are inconsistent with the primes.")
+            return
+
+    if min_set_size is None:
+        min_set_size = len(fixed) + 1
+    if max_set_size is None:
+        max_set_size = len(primes) - len(forbidden) - 1
+
+    # consistency check
+    if min_set_size < len(fixed):
+        print("min set size is inconsistent with the fixed nodes")
+        return
+    if max_set_size < min_set_size:
+        print("min set size is inconsistent with the max set size")
+        return
+
+
+    nodes = []
+    source_sets = []
+
+    for node in primes.keys():
+        if node not in forbidden:
+            if node not in fixed.keys():
+                nodes.append(node)
+
+    for source_set_size in range(min_set_size-len(fixed), max_set_size+1-len(fixed)):
+        for add_nodes in it.combinations(nodes,source_set_size):
+            for s in it.product([0,1],repeat=len(add_nodes)):
+                source_set = {k:s for k,s in zip(add_nodes,s)}
+                source_set.update(fixed)
+                source_sets.append(source_set)
+
+    return source_sets
 
 def main():
     print("Loading network . . .")
-    primes = sm.Format.import_primes('./models/DOI_test_PhaseSwitch.txt')
+    primes = sm.Format.import_primes('./models/PhaseSwitch.txt')
     print("Network loaded.")
     print()
     print("RULES")
     sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
     print()
 
-    fixed = {'CyclinB':0}
-    print('fixed: ',fixed)
+    fixed_sets = source_sets(primes,min_set_size=4, max_set_size=4)
+    print("there are "+str(len(fixed_sets))+" source sets")
+    print(fixed_sets)
 
-    LDOI, LDOI_contra = logical_domain_of_influence(fixed,primes)
+    for source_set in fixed_sets:
+        print("- - - - - - - - - -")
+        print("fixed: ",source_set)
+        GAU_DOI, GAU_DOI_contra, GAU_unknown, GAU_unknown_contra, GAU_ar = domain_of_influence(source_set,primes,MPBN_update=False)
+        GAU_ar.summary()
+    # for node in primes:
+    #     for i in [0,1]:
+    #         fixed = {}
+    #         fixed[node] = i
+    #         print('- - - - - - - - - -')
+    #         print('fixed: ',fixed)
+    #
+    #         LDOI, LDOI_contra = logical_domain_of_influence(fixed,primes)
+    #         GAU_DOI, GAU_DOI_contra, GAU_unknown, GAU_unknown_contra, GAU_ar = domain_of_influence(fixed,primes,MPBN_update=False)
+    #         # MPBN_DOI, MPBN_DOI_contra, MPBN_unknown, MPBN_unknown_contra, MPBN_ar = domain_of_influence(fixed,primes,MPBN_update=True)
+    #
+    #         set1 = set(LDOI.items())
+    #         set2 = set(GAU_DOI.items())
+    #         # set3 = set(MPBN_DOI.items())
+    #
+    #         # check the difference between DOI and LDOI in GAU
+    #         if not len(set1) == 0:
+    #             print('LDOI: ',LDOI)
+    #             print('LDOI_contra: ',LDOI_contra)
+    #         if not len(set1 ^ set2) == 0:
+    #             print()
+    #             print('GAU_DOI: ',GAU_DOI)
+    #             print('GAU_DOI_contra: ',GAU_DOI_contra)
+    #             print('GAU_unknown: ',GAU_unknown)
+    #             print('GAU_unknown_contra: ',GAU_unknown_contra)
+    #             print('difference between LDOI and GAU_DOI:', sorted(set1 ^ set2))
 
-    print('LDOI: ',LDOI)
-    print('LDOI_contra: ',LDOI_contra)
 
-    DOI, DOI_contra, unknown = domain_of_influence(fixed,primes,MPBN_update=True)
-
-    print('DOI: ',DOI)
-    print('DOI_contra: ',DOI_contra)
-    print('unknown: ',unknown)
+            # check the difference between GAU and MPBN
+            # if not len(set2 ^ set3) == 0:
+            #     print('LDOI: ',LDOI)
+            #     print('LDOI_contra: ',LDOI_contra)
+            #     print()
+            #     print('GAU_DOI: ',GAU_DOI)
+            #     print('GAU_DOI_contra: ',GAU_DOI_contra)
+            #     print('GAU_unknown: ',GAU_unknown)
+            #     print('GAU_unknown_contra: ',GAU_unknown_contra)
+            #     print('difference between LDOI and GAU_DOI:', sorted(set1 ^ set2))
+            #     print()
+            #     print('MPBN_DOI: ',MPBN_DOI)
+            #     print('MPBN_DOI_contra: ',MPBN_DOI_contra)
+            #     print('MPBN_unknown: ',MPBN_unknown)
+            #     print('MPBN_unknown_contra: ',MPBN_unknown_contra)
+            #     print('difference between LDOI and MPBN_DOI:', sorted(set1 ^ set3))
+            #     print()
+            #     print('difference between GAU and MPBN:', sorted(set2 ^ set3))
+            #
+            #     check1 = False
+            #     if len(set(GAU_unknown.items())-set3) == 0:
+            #         check1 = True
+            #     print('is GAU_unknown included in MPBN_DOI?: ', check1)
+            #     if check1 == False:
+            #         print('Only in the GAU_unknown:', sorted(set(GAU_unknown.items())-set3))
+            #
+            #     check2 = False
+            #     if len(set2-set3) == 0:
+            #         check2 = True
+            #     print('is GAU_DOI included in MPBN_DOI?: ', check2)
+            #     if check2 == False:
+            #         print('Only in the GAU_DOI:', sorted(set2-set3))
+            #
+            #     print('Only in the MPBN_DOI:', sorted(set3-set2-set(GAU_unknown.items())))
 
 main()
