@@ -2,6 +2,14 @@
 A set of tools for attractor and target control of Boolean systems.
 Includes stable motif reduction with oscillation checking for attractor identification and control, and Greedy Randomized Adaptive Search Procedure and brute-force methods for target control.
 
+The attractor identification algorithm is described in detail in 
+
+> J. C.  Rozum,  J. Gómez  Tejeda  Zañudo,  X. Gan,  D. Deritei,  R. Albert,  Parity  and  time reversal  elucidate  both  decision-making  in  empirical  models  and  attractor  scaling  in  critical  Boolean networks. Sci. Adv. 7 , eabf8124 (2021),
+
+which is freely available here: https://advances.sciencemag.org/content/7/29/eabf8124.
+
+A manuscript detailing the various control algorithms is in preparation. In the meantime, please see the documentation or contact the maintainers of this repository for details about these methods.
+
 # Installation
 Install with pip from GitHub (***recommended***):
 `pip install git+https://github.com/jcrozum/PyStableMotifs`
