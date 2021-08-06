@@ -1,5 +1,6 @@
 import PyBoolNet
 import PyStableMotifs as sm
+from PyStableMotifs.DomainOfInfluence import logical_domain_of_influence, domain_of_influence, fixed_implies_implicant
 
 def source_sets(primes, min_set_size=None, max_set_size=None, forbidden=None, fixed=None):
     """Short summary.
