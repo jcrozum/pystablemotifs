@@ -1,3 +1,6 @@
+import PyBoolNet
+import PyStableMotifs as sm
+import copy
 import itertools as it
 import random
 
@@ -115,6 +118,142 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
         for k in set(deletion_list): del primes_to_search[k]
         if not states_added or len(primes_to_search) == 0: break
     return implied, contradicted
+
+def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    """
+    Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
+    Parameters
+    ----------
+    partial_state : partial state dictionary
+        PyBoolNet implicant that defines fixed nodes (seed set).
+    primes : PyBoolNet primes dictionary
+        Update rules.
+    implied_hint : partial state dictionary
+        Known subset of the DOI; used during optimization.
+    contradicted_hint : partial state dictionary
+        Known subset of the contradiction boundary; used during optimization.
+    max_simulate_size : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph (the default is 20).
+    max_stable_motifs : int
+        Maximum number of output lines for PyBoolNet to process from the
+        AspSolver (the default is 10000).
+    MPBN_update : bool
+        Whether MBPN update is used instead of general asynchronous update
+        (see Pauleve et al. 2020)(the default is False).
+    Returns
+    -------
+    implied : partial state dictionary
+        Nodes that are certain to be in the domain of influence.
+    contradicted : partial state dictionary
+        The contradiction boundary.
+    unknown : partial state dictionary
+        Nodes that are possibly in the domain of influence.
+    unknown_contra : partial state dictionary
+        Nodes that are possibly in the contradiction boundary.
+    ar : AttractorRepertoire
+        The class that stores information about attractors.
+    """
+    # optional optimization values
+    if implied_hint is None:
+        implied_hint = {}
+    if contradicted_hint is None:
+        contradicted_hint = {}
+
+    implied = implied_hint # the DOI
+    contradicted = contradicted_hint # states implied by partial_state that contradict partial_state
+    unknown = {}
+    unknown_contra = {}
+    primes_to_search = copy.deepcopy(primes)
+    for node in implied_hint: del primes_to_search[node]
+    for node in contradicted_hint: del primes_to_search[node]
+
+    # fixed will be partial_state + its LDOI
+    fixed = partial_state.copy()
+    LDOI,LDOI_contra = logical_domain_of_influence(partial_state,primes)
+    fixed.update(LDOI)
+    implied.update(LDOI)
+    contradicted.update(LDOI_contra)
+
+    # reducing the primes by the LDOI
+    primes_to_search, ps = sm.Reduction.reduce_primes(fixed,primes_to_search)
+
+    # Adding the seed nodes that are not in the LDOI as sinks in the reduced network
+    sink_nodes = {}
+    for node,value in fixed.items():
+        if node not in LDOI:
+            sink_nodes[node] = value
+
+    # Adding back the simplifed rules for the sink_nodes
+    rules_to_add = {}
+    for node in sink_nodes:
+        rules_to_add[node] = copy.deepcopy(primes[node])
+        PyBoolNet.PrimeImplicants._substitute(rules_to_add,node,fixed)
+    primes_to_search.update(rules_to_add)
+    primes_to_search = sm.Reduction.simplify_primes(primes_to_search)
+
+    # Finding the attractor repertoire of this modified network
+    ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+
+    # Determining which node values are shared by all attractors in the reduction
+    if ar.fewest_attractors == 0:   # there is no attractor
+        print("Unable to properly count attractors.")
+        return
+
+    att = ar.attractors[0]  # there is at least one attractor.
+    for node in att.attractor_dict:
+        value = None
+        value_implied = None
+        value_unknown = None
+        if node in LDOI:    # if the node is in the LDOI, it is in the DOI.
+            implied[node] = att.attractor_dict[node]
+            continue    # this node is in the DOI. Move on to the next.
+        elif att.attractor_dict[node] == 'X':
+            continue    # this node is not in the DOI. Move on to the next.
+        elif att.attractor_dict[node] == '?' or att.attractor_dict[node] == '!':
+            value_unknown = True
+        else:   # in case the node has a Boolean value
+            value = att.attractor_dict[node]
+
+        for other in ar.attractors: # check the other attractors
+            if node in other.attractor_dict:
+                if other.attractor_dict[node] == 'X':
+                    value_implied = False
+                    break
+                elif other.attractor_dict[node] == '?' or other.attractor_dict[node] == '!':
+                    value_unknown = True
+                else:   # the node in the other attractor has a Boolean value.
+                    if value == None:
+                        value = other.attractor_dict[node]
+                    elif int(value) == int(other.attractor_dict[node]):
+                        continue
+                    else:
+                        value_implied = False
+                        break
+            else:   # the node is not in the other attractor.
+                value_implied = False
+                break
+
+        if value_implied == False:
+            continue    # this node is not in the DOI, move on to the next node.
+        elif value_unknown == True:
+            if value == None:
+                unknown[node] = 'Unknown'
+            else:
+                unknown[node] = int(value)
+        else:
+            implied[node] = int(value)
+
+    for node in sink_nodes:
+        if node in implied:
+            if sink_nodes[node] != implied[node]:
+                contradicted[node] = implied[node]
+                del implied[node]
+        elif node in unknown:
+            if sink_nodes[node] != unknown[node]:
+                unknown_contra[node] = unknown[node]
+
+    return dict(sorted(implied.items())), dict(sorted(contradicted.items())), dict(sorted(unknown.items())), dict(sorted(unknown_contra.items())), ar
 
 def single_drivers(target,primes):
     """Finds all 1-node (logical) drivers of target under the rules given

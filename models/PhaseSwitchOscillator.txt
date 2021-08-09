@@ -1,0 +1,8 @@
+Cdc25C*  = CyclinA or (CyclinB and Cdk1)
+Cdh1*    = (not CyclinA and not CyclinB) or (not CyclinA and not Cdk1)
+Cdk1*    = (Cdc25C and CyclinA) or (Cdc25C and CyclinB)
+CyclinA* = (not pAPC and not Cdh1) or (not pAPC and not UbcH10)
+CyclinB* = (not pAPC and not Cdh1) or (not Cdc20 and not Cdh1)
+pAPC*    = (pAPC and Cdc20) or (CyclinB and Cdk1)
+Cdc20*   = pAPC and not Cdh1
+UbcH10*  = not Cdh1 or (UbcH10 and Cdc20) or (UbcH10 and CyclinA) or (UbcH10 and CyclinB)
