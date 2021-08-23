@@ -3,6 +3,7 @@ import itertools as it
 import networkx as nx
 import re
 import sympy
+import mpbn
 
 import PyStableMotifs.TimeReversal as sm_time
 import PyStableMotifs.RestrictSpace as sm_rspace
@@ -415,6 +416,14 @@ class MotifReduction:
             else:
                 self.terminal = "no"
             self.attractor_dict_list = self.generate_attr_dict_list(MPBN_update=MPBN_update)
+            # build STG for MPBN update
+            if self.terminal == "yes" and max_simulate_size > len(self.reduced_primes):
+                if len(self.reduced_primes) > 0:
+                    bnet = sm_format.primes2bnet(self.reduced_primes)
+                    network = mpbn.MPBooleanNetwork(bnet)
+                    self.partial_STG = network.dynamics()
+                    for n in self.partial_STG.nodes():
+                        self.partial_STG.nodes[n]["label"]=n
             return
 
         self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
