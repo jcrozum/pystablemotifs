@@ -68,6 +68,8 @@ class Attractor:
 
         if reduction.no_motif_attractors is not None:
             self.stg = reduction.partial_STG.subgraph(reduction.no_motif_attractors[reduction_attractor_id])
+        elif reduction.MPBN_update == True and reduction.partial_STG is not None:
+            self.stg = reduction.partial_STG
         else:
             self.stg = None
 

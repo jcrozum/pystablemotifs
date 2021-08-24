@@ -371,6 +371,9 @@ class MotifReduction:
     deletion_no_motif_attractors : list of str
         Motif avoidant attractors of the deletion projection. The number of these is
         an upper bound on the number of motif avoidant attractors in the reduction.
+    MPBN_update : bool
+        Whether MPBN update is used instead of general asynchronous update
+        (see Pauleve et al. 2020)(the default is False).
     """
 
     def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000,MPBN_update=False):
@@ -382,6 +385,7 @@ class MotifReduction:
         self.logically_fixed_nodes = fixed
         self.reduced_primes = reduced_primes.copy()
         self.stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.reduced_primes, "max",MaxOutput=max_stable_motifs)
+        self.MPBN_update = MPBN_update
         if MPBN_update==False:
             self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
             self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max",MaxOutput=max_stable_motifs)
