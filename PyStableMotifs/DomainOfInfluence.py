@@ -195,7 +195,13 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     # Finding the attractors of this modified network
     if MPBN_update == True:
         attractor_dict_list = PyBoolNet.AspSolver.trap_spaces(primes_to_search, "min", MaxOutput=10000)
-        ar = attractor_dict_list
+        sorted_attractor_dict_list = []
+        for attractor in attractor_dict_list:
+            for node in primes_to_search:
+                if node not in attractor:
+                    attractor[node] = 'X'
+            sorted_attractor_dict_list.append(dict(sorted(attractor.items())))
+        ar = sorted_attractor_dict_list
     else:
         ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
         attractor_dict_list = []
