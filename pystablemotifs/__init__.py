@@ -7,7 +7,7 @@ except ImportError as e:
 pyboolnet can be installed via
 pip install git+https://github.com/hklarner/pyboolnet
 or, for a specific version, via
-pip install git+https://github.com/hklarner/pyboolnet@3.0.1
+pip install git+https://github.com/hklarner/pyboolnet@3.0.2
 """)
     raise
 

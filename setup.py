@@ -11,7 +11,7 @@ setup(
     python_requires='>=3.5',
     packages=['pystablemotifs'],
     install_requires=[
-    "pyboolnet @ git+https://github.com/hklarner/pyboolnet@3.0.1",
+    "pyboolnet @ git+https://github.com/hklarner/pyboolnet@3.0.2",
     "networkx >= 2.4.0",
     "sympy >= 1.5.1",
     "pandas >= 1.0.0",
