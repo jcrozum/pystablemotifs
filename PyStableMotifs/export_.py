@@ -1,4 +1,4 @@
-import PyStableMotifs as sm
+import pystablemotifs as sm
 import networkx as nx
 
 def format_reduction_label(s):
@@ -23,7 +23,7 @@ def expanded_network(primes, single_parent_composites = False):
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         The update rules for which to construct the expanded network.
     single_parent_composites : bool
         Whether to insert composite nodes between virtual nodes when one is a prime
@@ -72,7 +72,7 @@ def expanded_network(primes, single_parent_composites = False):
 def networkx_succession_diagram(ar,include_attractors_in_diagram=True,use_compressed_diagram=True):
     """Label the succesion diagram and (optionally) attractors of the input attractor
     repertoire according to the conventions of Rozum et al. (2021). This is an
-    alias for the function Export.networkx_succession_diagram_reduced_network_based.
+    alias for the function export.networkx_succession_diagram_reduced_network_based.
 
     Parameters
     ----------
@@ -268,7 +268,7 @@ def plot_nx_succession_diagram(G, pos=None, fig_dimensions=(None,None), nx_node_
     ----------
     G : networkx.DiGraph
         Labeled succession diagram, e.g., as is output from
-        Export.networkx_succession_diagram_reduced_network_based().
+        export.networkx_succession_diagram_reduced_network_based().
     fig_dimensions : (int,int)
         Dimensions of the output figure. If (None,None), then the dimensions are
         calculated based on the number of nodes in g (the default is (None,None)).

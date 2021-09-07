@@ -1,8 +1,8 @@
 #test this function with a model with inputs
-#primes = sm.Format.import_primes(sys.argv[1],remove_constants=True)
+#primes = sm.format.import_primes(sys.argv[1],remove_constants=True)
 
-import PyBoolNet
-import PyStableMotifs as sm
+import pyboolnet
+import pystablemotifs as sm
 
 rules="""PDGF*= 0
 IL15*=1
@@ -66,12 +66,12 @@ SPHK1*=PDGFR
 S1P*=SPHK1 and not Ceramide"""
 
 
-rules_pbn = sm.Format.booleannet2bnet(rules)
-primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
-primes = sm.Reduction.reduce_primes({},primes)[0] # Get rid of constants
+rules_pbn = sm.format.booleannet2bnet(rules)
+primes = pyboolnet.file_exchange.bnet2primes(rules_pbn)
+primes = sm.reduction.reduce_primes({},primes)[0] # Get rid of constants
 print("TLGL Network (Fixed Inputs):")
-sm.Format.pretty_print_prime_rules(primes)
+sm.format.pretty_print_prime_rules(primes)
 print()
 
-diag = sm.Succession.build_succession_diagram(primes)
+diag = sm.succession.build_succession_diagram(primes)
 diag.attractor_candidate_summary()

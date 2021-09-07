@@ -4,12 +4,12 @@ def time_reverse_primes(primes):
 
     Parameters
     ----------
-    primes : PyBoolNet prime dictionary
+    primes : pyboolnet prime dictionary
         System update rules.
 
     Returns
     -------
-    trprimes : PyBoolNet prime dictionary
+    trprimes : pyboolnet prime dictionary
         Time-reversed system update rules.
 
     """

@@ -1,18 +1,19 @@
-import PyBoolNet
+import pyboolnet
 import re
 import subprocess
 import os
 import ast
 import datetime
+import configparser
 
-BASE = os.path.join(os.path.dirname(PyBoolNet.__file__))
-config = PyBoolNet.Utility.Misc.myconfigparser.SafeConfigParser()
-config.read(os.path.join(BASE, "Dependencies", "settings.cfg"))
+ROOT_DIR = os.path.join(os.path.dirname(pyboolnet.__file__))
+config = configparser.SafeConfigParser()
+config.read(os.path.join(ROOT_DIR, "binaries", "settings.cfg"))
 
-CMD_BNET2PRIMES = os.path.normpath(os.path.join(BASE, "Dependencies", config.get("Executables", "bnet2prime")))
+CMD_BNET2PRIMES = os.path.normpath(os.path.join(ROOT_DIR, "binaries", config.get("Executables", "bnet2prime")))
 
 def longbnet2primes(BNET, remove_constants = False):
-    """A modified version of PyBoolNet's bnet2primes that does not do path-checking,
+    """A modified version of pyboolnet's bnet2primes that does not do path-checking,
     as this can cause errors if the bnet rules are very long. Assumes BNET is a
     bnet string, not a file.
 
@@ -26,15 +27,14 @@ def longbnet2primes(BNET, remove_constants = False):
 
     Returns
     -------
-    primes : PyBoolNet primes dictionary
-        Update rules in PyBoolNet format.
+    primes : pyboolnet primes dictionary
+        Update rules in pyboolnet format.
 
     """
     cmd = [CMD_BNET2PRIMES]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate( input=BNET.encode() )
     proc.stdin.close()
-    PyBoolNet.FileExchange._bnet2primes_error(proc, out, err, cmd)
     out = out.decode()
 
     out = out.replace('\x08','') # remove backspaces
@@ -43,11 +43,11 @@ def longbnet2primes(BNET, remove_constants = False):
     primes = ast.literal_eval(out)
 
     if remove_constants:
-        PyBoolNet.PrimeImplicants._percolation(primes,True)
+        pyboolnet.prime_implicants.percolation(primes,True)
 
     return primes
 
-# Convert rules from BooleanNet format to PyBoolNet format
+# Convert rules from BooleanNet format to pyboolnet format
 def booleannet2bnet(rules):
     """Converts BooleanNet rules to BNet format.
     e.g., an input of
@@ -79,7 +79,7 @@ def booleannet2bnet(rules):
     return s
 
 def create_primes(rules,remove_constants = False):
-    """Convert a BooleanNet or BNET string into a PyBoolNet primes dictionary.
+    """Convert a BooleanNet or BNET string into a pyboolnet primes dictionary.
 
     Parameters
     ----------
@@ -91,14 +91,14 @@ def create_primes(rules,remove_constants = False):
 
     Returns
     -------
-    PyBoolNet primes dictionary
-        Update rules in PyBoolNet format.
+    pyboolnet primes dictionary
+        Update rules in pyboolnet format.
 
     """
 
     return longbnet2primes(booleannet2bnet(rules), remove_constants = False)
 
-# Convert rules from CellCollective format to PyBoolNet format
+# Convert rules from CellCollective format to pyboolnet format
 def cellcollective2bnet(rules):
     """Converts CellCollective rules to BNet format.
     e.g., an input of
@@ -177,7 +177,7 @@ def bnetDNF2list(bnet):
 
 def build_rule_using_bnetDNFs(expr0,expr1):
     """Converts a BNet string expression (expr1) and its negation (expr0) to
-    a PyBoolNet rule list. Note that this function does not test for consistency
+    a pyboolnet rule list. Note that this function does not test for consistency
     between expr0 and expr1.
 
     Parameters
@@ -189,8 +189,8 @@ def build_rule_using_bnetDNFs(expr0,expr1):
 
     Returns
     -------
-    PyBoolNet rule list
-        The complementary expressions as they would appear in a PyBoolNet primes
+    pyboolnet rule list
+        The complementary expressions as they would appear in a pyboolnet primes
         dictionary for a variable whose update rule is given by expr1.
 
     """
@@ -260,7 +260,7 @@ def remove_comment_lines(stream, comment_char="#"):
     return rules
 
 def import_primes(fname, format='BooleanNet', remove_constants=False):
-    """Import boolean rules from file and return PyBoolNet formatted primes list.
+    """Import boolean rules from file and return pyboolnet formatted primes list.
 
     Parameters
     ----------
@@ -278,8 +278,8 @@ def import_primes(fname, format='BooleanNet', remove_constants=False):
 
     Returns
     -------
-    PyBoolNet primes dictionary
-        Update rules in PyBoolNet format.
+    pyboolnet primes dictionary
+        Update rules in pyboolnet format.
 
     """
     # TODO: add more formats
@@ -314,7 +314,7 @@ def statelist2dict(names,statestrings):
     Parameters
     ----------
     names : list of str
-        An ordered list of variable names; (alphabetical order is PyBoolNet's
+        An ordered list of variable names; (alphabetical order is pyboolnet's
         default, e.g. sorted(primes)).
     c : iterable of str
         Each element should be a binary string, with each position corresponding
@@ -348,7 +348,7 @@ def statestring2dict(statestring,names):
     statestring : str
         A binary string, e.g., '01101'.
     names : list of str
-        An ordered list of variable names; (alphabetical order is PyBoolNet's
+        An ordered list of variable names; (alphabetical order is pyboolnet's
         default, e.g. sorted(primes)).
 
     Returns
@@ -399,12 +399,12 @@ def implicant2bnet(partial_state):
     return ' & '.join(["!"+k for k in partial_state if not partial_state[k]]+[k for k in partial_state if partial_state[k]])
 
 def rule2bnet(rule):
-    """Converts a PyBoolNet prime rule into a BNet string.
+    """Converts a pyboolnet prime rule into a BNet string.
     e.g., [{'A':1,'B':0},{'C':0}] returns 'A & !B | !C'
 
     Parameters
     ----------
-    rule : list of PyBoolNet partial states
+    rule : list of pyboolnet partial states
         Update rule to convert.
 
     Returns
@@ -421,13 +421,13 @@ def rule2bnet(rule):
     else: return ' | '.join([implicant2bnet(imp) for imp in rule])
 
 def primes2bnet(primes):
-    """A simpler version of PyBoolNet's FileExchange.primes2bnet function with
+    """A simpler version of pyboolnet's file_exchange.primes2bnet function with
     fewer options and less organized output. Should handle prime rules with
-    tautologies better than the PyBoolNet version though.
+    tautologies better than the pyboolnet version though.
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules to convert.
 
     Returns
@@ -453,11 +453,11 @@ def primes2bnet(primes):
     return "\n".join(lines)
 
 def primes2booleannet(primes, header=""):
-    """Convert a PyBoolNet primes dictionary to a BooleanNet string reperesentation.
+    """Convert a pyboolnet primes dictionary to a BooleanNet string reperesentation.
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules to convert.
     header : str
         Text to include at the beginning of the file, e.g., comment lines. For
@@ -487,12 +487,12 @@ def primes2booleannet(primes, header=""):
     return header + "\n".join(lines)
 
 def pretty_print_primes(primes):
-    """Prints PyBoolNet a prime dictionary in a more readable format. Prints both
+    """Prints pyboolnet a prime dictionary in a more readable format. Prints both
     state updates (1 and 0).
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules to print.
 
     """
@@ -501,13 +501,13 @@ def pretty_print_primes(primes):
         for p in v[1]: print(p,"=>  "+k)
 
 def pretty_print_prime_rules(primes):
-    """Prints PyBoolNet a prime dictionary as Boolean rules
+    """Prints pyboolnet a prime dictionary as Boolean rules
     The output format is of the form:
     A* = B & C | !D, for example.
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules to print.
 
     """
@@ -536,12 +536,12 @@ def pretty_print_prime_rules(primes):
 
 def pretty_print_rspace(L,simplify=True,silent=True):
     """Produces string representation of the Boolean rule describing the input
-    rspace L (see RestrictSpace.rspace).
+    rspace L (see restrict_space.rspace).
 
     Parameters
     ----------
     L : rspace list
-        Restrict space list (see RestrictSpace.rspace for details).
+        Restrict space list (see restrict_space.rspace for details).
     simplify : bool
         Whether to simplify the rule (the default is True).
     silent : bool
@@ -566,7 +566,7 @@ def pretty_print_rspace(L,simplify=True,silent=True):
         if len(t) > 0: u.append('( '+' | '.join(t)+' )')
     s=' & '.join(u)
     if simplify:
-        s = PyBoolNet.BooleanLogic.minimize_espresso(s)
+        s = pyboolnet.boolean_logic.minimize_espresso(s)
     if not silent:
         print(s)
 

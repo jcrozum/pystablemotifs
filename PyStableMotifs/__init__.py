@@ -1,25 +1,25 @@
 
 try:
-    import PyBoolNet
+    import pyboolnet
 except ImportError as e:
     print(e)
     print("""
-PyBoolNet can be installed via
-pip install git+https://github.com/hklarner/PyBoolNet
+pyboolnet can be installed via
+pip install git+https://github.com/hklarner/pyboolnet
 or, for a specific version, via
-pip install git+https://github.com/hklarner/PyBoolNet@2.30.0
+pip install git+https://github.com/hklarner/pyboolnet@3.0.1
 """)
     raise
 
-from PyStableMotifs import Format
-from PyStableMotifs import DomainOfInfluence
-from PyStableMotifs import Reduction
-from PyStableMotifs import TimeReversal
-from PyStableMotifs import RestrictSpace
-from PyStableMotifs import Succession
-from PyStableMotifs import RandomBooleanNetworks
-from PyStableMotifs.Attractor import Attractor
-from PyStableMotifs.AttractorRepertoire import AttractorRepertoire
-from PyStableMotifs import Export
+from pystablemotifs import format
+from pystablemotifs import drivers
+from pystablemotifs import reduction
+from pystablemotifs import time_reversal
+from pystablemotifs import restrict_space
+from pystablemotifs import succession
+from pystablemotifs import random_boolean_networks
+from pystablemotifs.Attractor import Attractor
+from pystablemotifs.AttractorRepertoire import AttractorRepertoire
+from pystablemotifs import export
 
 __version__ = '2.1.0'

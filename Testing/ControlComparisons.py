@@ -1,8 +1,8 @@
 # This tests 6 attractor control methods and 2 target control methods.
 # GRASP methods do not give determinstic results.
 
-import PyBoolNet
-import PyStableMotifs as sm
+import pyboolnet
+import pystablemotifs as sm
 from timeit import default_timer
 
 
@@ -11,7 +11,7 @@ def compare_control_methods(ar,target):
 
     print("Brute-force search for knockout/knockins that achieve",target,". . .")
     start=default_timer()
-    koki = sm.DomainOfInfluence.knock_to_partial_state(target,ar.primes,max_drivers=2)
+    koki = sm.drivers.knock_to_partial_state(target,ar.primes,max_drivers=2)
     end=default_timer()
     print("Time running brute-force search method:",end-start)
     print("Sets found:")
@@ -20,7 +20,7 @@ def compare_control_methods(ar,target):
     print()
     print("GRASP search for knockout/knockins that achieve",target,". . .")
     start=default_timer()
-    sols = sm.DomainOfInfluence.GRASP(target,ar.primes,2000)
+    sols = sm.drivers.GRASP(target,ar.primes,2000)
     end=default_timer()
     print("Time running GRASP search method:",end-start)
     print("Control sets that fix",target)
@@ -94,7 +94,7 @@ def compare_control_methods(ar,target):
 
 print("Control comparisions: driving the T-LGL network to apoptosis.")
 print('. . .')
-primes = sm.Format.import_primes("../models/Control Benchmarks/TLGL_Large_Fixed_Inputs.txt",remove_constants=True)
+primes = sm.format.import_primes("../models/Control Benchmarks/TLGL_Large_Fixed_Inputs.txt",remove_constants=True)
 ar = sm.AttractorRepertoire.from_primes(primes)
 print("Attractor repertoire constructed.")
 print('-'*10)
@@ -105,7 +105,7 @@ print('='*20)
 
 print("Control comparisions: driving the EMT network to the epithelial state.")
 print('. . .')
-primes = sm.Format.import_primes("../models/EMT.txt",remove_constants=True)
+primes = sm.format.import_primes("../models/EMT.txt",remove_constants=True)
 ar = sm.AttractorRepertoire.from_primes(primes)
 print("Attractor repertoire constructed.")
 print('-'*10)

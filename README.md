@@ -1,4 +1,4 @@
-# PyStableMotifs
+# pystablemotifs
 A set of tools for attractor and target control of Boolean systems.
 Includes stable motif reduction with oscillation checking for attractor identification and control, and Greedy Randomized Adaptive Search Procedure and brute-force methods for target control.
 
@@ -12,17 +12,17 @@ A manuscript detailing the various control algorithms is in preparation. In the 
 
 # Installation
 Install with pip from GitHub (***recommended***):
-`pip install git+https://github.com/jcrozum/PyStableMotifs`
+`pip install git+https://github.com/jcrozum/pystablemotifs`
 
-Install with pip from PyPI (***not recommended***, unless PyBoolNet is already installed): `pip install PyStableMotifs`
+Install with pip from PyPI (***not recommended***, unless pyboolnet is already installed): `pip install pystablemotifs`
 
-If you install from PyPI, you will need to install PyBoolNet separately (instructions at https://github.com/hklarner/PyBoolNet). This is because PyPI (apparently) does not support dependencies that are not also on PyPI.
+If you install from PyPI, you will need to install pyboolnet separately (instructions at https://github.com/hklarner/pyboolnet). This is because PyPI (apparently) does not support dependencies that are not also on PyPI.
 
 # Documentation
 See the basic usage example below, or the Tutorial.ipynb notebook for basic instructions. For advanced usage instructions, see Manual.pdf or contact the developers directly.
 
 # Requirements
-PyBoolNet (v2.3.0) https://github.com/hklarner/PyBoolNet
+pyboolnet (v2.3.0) https://github.com/hklarner/pyboolnet
 
 Networkx (v2.4+) https://github.com/networkx/networkx/
 
@@ -37,7 +37,7 @@ Matplotlib (v3.2.1+) https://matplotlib.org/
 # Features
 - Import networks in BooleanNet or BNet format
 
-- Integration with PyBoolNet
+- Integration with pyboolnet
 
 - Find and explore all attractors of a general asynchronous update Boolean system using the succession diagram method
 
@@ -56,13 +56,13 @@ Matplotlib (v3.2.1+) https://matplotlib.org/
 # Basic usage example
 In the example below, we import the Boolean model specified by the file test1.txt provided in the models folder. We then print its rules and finds its attractors, which are displayed in a condensed summary form.
 
-    import PyStableMotifs as sm
+    import pystablemotifs as sm
 
     relative_path_to_model = "./models/test1.txt"
-    primes = sm.Format.import_primes(relative_path_to_model)
+    primes = sm.format.import_primes(relative_path_to_model)
 
     print("RULES")
-    sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
+    sm.format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
     print()
 
     ar = sm.AttractorRepertoire.from_primes(primes)
@@ -85,6 +85,6 @@ Alternatively, it is possible to import the Boolean rules from a string, as foll
     xB* = !xA & !xB | xC
     xC* = xA & xB"""
     
-    primes = sm.Format.create_primes(rules)
+    primes = sm.format.create_primes(rules)
 
 For further examples, see the IPython notebook Tutorial.ipynb.

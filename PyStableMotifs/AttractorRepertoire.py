@@ -1,8 +1,8 @@
-import PyStableMotifs.Succession as sm_succession
-import PyStableMotifs.Attractor as Attractor
+import pystablemotifs.succession as sm_succession
+import pystablemotifs.Attractor as Attractor
 import itertools as it
 import networkx as nx
-import PyBoolNet
+import pyboolnet
 
 class AttractorRepertoire:
     """The class that stores information about attractors. Initialize using
@@ -10,7 +10,7 @@ class AttractorRepertoire:
 
     Attributes
     ----------
-    succession_diagram : Succession.SuccessionDiagram
+    succession_diagram : succession.SuccessionDiagram
         Succession diagram summarizing the stable motif structure of the model.
     attractors : list of Attractor.Attractor
         List of (possible) attractors in the model.
@@ -24,7 +24,7 @@ class AttractorRepertoire:
         A lower bound on the number of attractors in the model.
     most_attractors : int
         An upper bound on the number of attractors in the model.
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         The model rules.
     succession_digraph : networkx digraph
         Networkx digraph representation of the succession_diagram object. If
@@ -61,18 +61,18 @@ class AttractorRepertoire:
 
     @classmethod
     def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
-        """Build the succession diagram and attractor repertoire from PyBoolNet
+        """Build the succession diagram and attractor repertoire from pyboolnet
         formatted update rules rules.
 
         Parameters
         ----------
-        primes : PyBoolNet primes dictionary
+        primes : pyboolnet primes dictionary
             The model rules.
         max_simulate_size : int
             Maximum number of variables for which to brute-force build a state
             transition graph (the default is 20).
         max_stable_motifs : int
-            Maximum number of output lines for PyBoolNet to process from the
+            Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
         MPBN_update : bool
             Whether MBPN update is used instead of general asynchronous update
@@ -98,7 +98,7 @@ class AttractorRepertoire:
 
         Parameters
         ----------
-        succession_diagram : Succession.SuccessionDiagram
+        succession_diagram : succession.SuccessionDiagram
             Succession diagram summarizing the stable motif structure of the model.
 
         Returns
@@ -164,13 +164,13 @@ class AttractorRepertoire:
 
         Parameters
         ----------
-        primes : PyBoolNet primes dictionary
+        primes : pyboolnet primes dictionary
             The model rules.
         max_simulate_size : int
             Maximum number of variables for which to brute-force build a state
             transition graph (the default is 20).
         max_stable_motifs : int
-            Maximum number of output lines for PyBoolNet to process from the
+            Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
         MPBN_update : bool
             Whether MBPN update is used instead of general asynchronous update
@@ -224,7 +224,7 @@ class AttractorRepertoire:
 
                 ru = self.succession_diagram.motif_reduction_dict[u]
                 rv = self.succession_diagram.motif_reduction_dict[v]
-                if PyBoolNet.PrimeImplicants.are_equal(ru.reduced_primes,rv.reduced_primes):
+                if pyboolnet.prime_implicants.primes_are_equal(ru.reduced_primes,rv.reduced_primes):
                     rud = ru.logically_fixed_nodes
                     rvd = rv.logically_fixed_nodes
                     if all([rud[k]==rvd[k] for k in keep if k in rud and k in rvd]):

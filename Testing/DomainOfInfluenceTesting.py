@@ -1,6 +1,6 @@
-import PyBoolNet
-import PyStableMotifs as sm
-from PyStableMotifs.DomainOfInfluence import logical_domain_of_influence, domain_of_influence, fixed_implies_implicant
+import pyboolnet
+import pystablemotifs as sm
+from pystablemotifs.drivers import logical_domain_of_influence, domain_of_influence, fixed_implies_implicant
 
 import itertools as it
 
@@ -8,7 +8,7 @@ def source_sets(primes, min_set_size=None, max_set_size=None, forbidden=None, fi
     """Short summary.
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules.
     min_set_size : int
         Minimum size of source set to consider.
@@ -76,11 +76,11 @@ def source_sets(primes, min_set_size=None, max_set_size=None, forbidden=None, fi
 
 if __name__ == "__main__":
     print("Loading network . . .")
-    primes = sm.Format.import_primes('./models/PhaseSwitch.txt')
+    primes = sm.format.import_primes('./models/PhaseSwitch.txt')
     print("Network loaded.")
     print()
     print("RULES")
-    sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
+    sm.format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
     print()
 
     fixed_sets = source_sets(primes,min_set_size=4, max_set_size=4)

@@ -1,7 +1,7 @@
 #check if the network reduction numbers are correct.
 
-import PyBoolNet
-import PyStableMotifs as sm
+import pyboolnet
+import pystablemotifs as sm
 
 rules='''
 xA* = xB
@@ -13,20 +13,20 @@ xE* = xE or xC
 
 
 
-rules_pbn = sm.Format.booleannet2bnet(rules)
-primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
+rules_pbn = sm.format.booleannet2bnet(rules)
+primes = pyboolnet.file_exchange.bnet2primes(rules_pbn)
 print("Source Node Example:")
-sm.Format.pretty_print_prime_rules(primes)
+sm.format.pretty_print_prime_rules(primes)
 print()
 print("DIAGRAM SUMMARY (UNMERGED)")
-diag_unmerge = sm.Succession.build_succession_diagram(primes, merge_equivalent_motifs=False)
+diag_unmerge = sm.succession.build_succession_diagram(primes, merge_equivalent_motifs=False)
 diag_unmerge.summary()
 print()
 print()
 print()
 print("DIAGRAM SUMMARY (MERGED)")
-diag = sm.Succession.build_succession_diagram(primes)
-diag = sm.Succession.build_succession_diagram(primes)
+diag = sm.succession.build_succession_diagram(primes)
+diag = sm.succession.build_succession_diagram(primes)
 diag.summary()
 
 # The attractor summaries should both contain six attractors:

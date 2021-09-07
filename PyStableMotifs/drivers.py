@@ -1,5 +1,5 @@
-import PyBoolNet
-import PyStableMotifs as sm
+import pyboolnet
+import pystablemotifs as sm
 import copy
 import itertools as it
 import random
@@ -65,8 +65,8 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
     Parameters
     ----------
     partial_state : partial state dictionary
-        PyBoolNet implicant that defines fixed nodes.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines fixed nodes.
+    primes : pyboolnet primes dictionary
         Update rules.
     implied_hint : partial state dictionary
          Known subset of the LDOI; used during optimization.
@@ -125,8 +125,8 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     Parameters
     ----------
     partial_state : partial state dictionary
-        PyBoolNet implicant that defines fixed nodes (seed set).
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines fixed nodes (seed set).
+    primes : pyboolnet primes dictionary
         Update rules.
     implied_hint : partial state dictionary
         Known subset of the DOI; used during optimization.
@@ -136,7 +136,7 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
         Maximum number of variables for which to brute-force build a state
         transition graph (the default is 20).
     max_stable_motifs : int
-        Maximum number of output lines for PyBoolNet to process from the
+        Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
     MPBN_update : bool
         Whether MBPN update is used instead of general asynchronous update
@@ -176,7 +176,7 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     contradicted.update(LDOI_contra)
 
     # reducing the primes by the LDOI
-    primes_to_search, ps = sm.Reduction.reduce_primes(fixed,primes_to_search)
+    primes_to_search, ps = sm.reduction.reduce_primes(fixed,primes_to_search)
 
     # Adding the seed nodes that are not in the LDOI as sinks in the reduced network
     sink_nodes = {}
@@ -188,9 +188,9 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     rules_to_add = {}
     for node in sink_nodes:
         rules_to_add[node] = copy.deepcopy(primes[node])
-        PyBoolNet.PrimeImplicants._substitute(rules_to_add,node,fixed)
+        pyboolnet.prime_implicants._substitute(rules_to_add,node,fixed)
     primes_to_search.update(rules_to_add)
-    primes_to_search = sm.Reduction.simplify_primes(primes_to_search)
+    primes_to_search = sm.reduction.simplify_primes(primes_to_search)
 
     # Finding the attractor repertoire of this modified network
     ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
@@ -262,8 +262,8 @@ def single_drivers(target,primes):
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
 
     Returns
@@ -290,8 +290,8 @@ def all_drivers_of_size(driver_set_size,target, primes, external_search_vars=Non
     driver_set_size : int
         The number of driver nodes to try to find.
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     external_search_vars : set of str variable names
         Node set not in target to consider as potential drivers. If None,
@@ -351,8 +351,8 @@ def internal_drivers(target,primes,max_drivers=None):
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     max_drivers : int
         Maximum size of driver set to consider. If None, is set to the size of
@@ -388,8 +388,8 @@ def minimal_drivers(target,primes,max_drivers=None):
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     max_drivers : int
         Maximum size of driver set to consider. If None, is set to the size of
@@ -426,8 +426,8 @@ def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None,forbidde
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     min_drivers : int
         Minimum size of driver set to consider. (the default is 1).
@@ -477,8 +477,8 @@ def initial_GRASP_candidates(target,primes,forbidden):
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     forbidden : set of str variable names
         Variables to be considered uncontrollable (the default is None).
@@ -504,8 +504,8 @@ def GRASP_default_scores(target,primes,candidates):
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     candidates : list of partial state dictionaries
         List of variable states that can potentially lead to the target.
@@ -546,8 +546,8 @@ def construct_GRASP_solution(target,primes,candidates,scores):
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     candidates : list of partial state dictionaries
         List of variable states that can potentially lead to the target.
@@ -606,8 +606,8 @@ def local_GRASP_reduction(solution,target,primes):
     solution : partial state dictionary
         Solution to be reduced; must contain the target in its LDOI.
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
 
     Returns
@@ -637,8 +637,8 @@ def GRASP(target, primes, GRASP_iterations, forbidden=None, GRASP_scores=GRASP_d
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     GRASP_iterations : int
         The number of times to run the GRASP method.

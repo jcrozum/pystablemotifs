@@ -4,8 +4,8 @@ sys.path.append('../')
 import unittest
 import sys
 sys.path.insert(0,"C:/Users/jcroz/github/StableMotifs")
-import PyStableMotifs as sm
-import PyBoolNet
+import pystablemotifs as sm
+import pyboolnet
 
 class test_StableMotifs(unittest.TestCase):
 
@@ -16,8 +16,8 @@ D*=C
 E*=B and F
 F*=E
 '''
-    rules_pbn = sm.Format.booleannet2bnet(rules)
-    primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
+    rules_pbn = sm.format.booleannet2bnet(rules)
+    primes = pyboolnet.file_exchange.bnet2primes(rules_pbn)
     ar = sm.AttractorRepertoire.from_primes(primes)
     diag = ar.succession_diagram
 
@@ -57,8 +57,8 @@ F*=E
     rules_pathological='''xA*= not xA and not xB or xC
     xB*= not xA and not xB or xC
     xC*= xA and xB'''
-    rules_pbn_pathological = sm.Format.booleannet2bnet(rules_pathological)
-    primes_pathological = PyBoolNet.FileExchange.bnet2primes(rules_pbn_pathological)
+    rules_pbn_pathological = sm.format.booleannet2bnet(rules_pathological)
+    primes_pathological = pyboolnet.file_exchange.bnet2primes(rules_pbn_pathological)
     ar_pathological = sm.AttractorRepertoire.from_primes(primes_pathological)
     diag_pathological = ar_pathological.succession_diagram
 
@@ -95,8 +95,8 @@ F*=E
                 Z* = ~(A & B & ~C)
                 Y* = ~(a & b & ~c)
                 '''
-        rules_pbn = sm.Format.booleannet2bnet(rules)
-        primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
+        rules_pbn = sm.format.booleannet2bnet(rules)
+        primes = pyboolnet.file_exchange.bnet2primes(rules_pbn)
 
         max_simulate_size=20
         ar = sm.AttractorRepertoire.from_primes(primes, max_simulate_size=max_simulate_size)
@@ -112,11 +112,11 @@ F*=E
             attractors_dict_list.append(a.attractor_dict)
         self.assertListEqual(attractors_dict_list, [{'A': '?', 'B': '?', 'C': '?', 'Y': '?', 'Z': '?', 'a': '?', 'b': '?', 'c': '?'}])
 
-#Testing functions of Export.py
+#Testing functions of export.py
 
 
     def test_networkx_succession_diagram_reduced_network_based(self):
-        import PyStableMotifs.Export as ex
+        import pystablemotifs.export as ex
         rules='''A*=B
                 B*=A
                 C*=A or not D
@@ -124,8 +124,8 @@ F*=E
                 E*=B and F
                 F*=E'''
 
-        rules_pbn = sm.Format.booleannet2bnet(rules)
-        primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
+        rules_pbn = sm.format.booleannet2bnet(rules)
+        primes = pyboolnet.file_exchange.bnet2primes(rules_pbn)
         max_simulate_size=20
         include_attractors_in_diagram=False
         ar = sm.AttractorRepertoire.from_primes(primes, max_simulate_size=max_simulate_size)
@@ -143,7 +143,7 @@ F*=E
         self.assertListEqual(list(GR.edges()), [(0, 1), (0, 2), (0, 5), (2, 3), (2, 4), (5, 6)])
 
     def test_networkx_succession_diagram_reduced_network_based(self):
-        import PyStableMotifs.Export as ex
+        import pystablemotifs.export as ex
         rules='''A*=B
                 B*=A
                 C*=A or not D
@@ -151,8 +151,8 @@ F*=E
                 E*=B and F
                 F*=E'''
 
-        rules_pbn = sm.Format.booleannet2bnet(rules)
-        primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
+        rules_pbn = sm.format.booleannet2bnet(rules)
+        primes = pyboolnet.file_exchange.bnet2primes(rules_pbn)
         max_simulate_size=20
         include_attractors_in_diagram=False
         ar = sm.AttractorRepertoire.from_primes(primes, max_simulate_size=max_simulate_size)
@@ -200,7 +200,7 @@ F*=E
                                                  (6, 'A0')])
 
     def test_networkx_succession_diagram_motif_based(self):
-        import PyStableMotifs.Export as ex
+        import pystablemotifs.export as ex
         rules='''A*=B
                 B*=A
                 C*=A or not D
@@ -208,8 +208,8 @@ F*=E
                 E*=B and F
                 F*=E'''
 
-        rules_pbn = sm.Format.booleannet2bnet(rules)
-        primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
+        rules_pbn = sm.format.booleannet2bnet(rules)
+        primes = pyboolnet.file_exchange.bnet2primes(rules_pbn)
         max_simulate_size=20
         include_attractors_in_diagram=False
         ar = sm.AttractorRepertoire.from_primes(primes, max_simulate_size=max_simulate_size)
@@ -249,14 +249,14 @@ F*=E
                                              ((5, 6), 'A0')])
 
         def test_networkx_succession_diagram_reduced_network_based_pathological_example(self):
-            import PyStableMotifs.Export as ex
+            import pystablemotifs.export as ex
             rules='''
             xA*= not xA and not xB or xC
             xB*= not xA and not xB or xC
             xC*= xA and xB
             '''
-            rules_pbn = sm.Format.booleannet2bnet(rules)
-            primes = PyBoolNet.FileExchange.bnet2primes(rules_pbn)
+            rules_pbn = sm.format.booleannet2bnet(rules)
+            primes = pyboolnet.file_exchange.bnet2primes(rules_pbn)
             max_simulate_size=20
             include_attractors_in_diagram=False
             ar = sm.AttractorRepertoire.from_primes(primes, max_simulate_size=max_simulate_size)

@@ -269,7 +269,7 @@ def Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=1000,write_Bo
     RBN_ensemble_rules : list of str
         Each string are the Boolea rules of an ensemble in booleannet format.
         Each element in RBN_ensemble_rules can be used as an input for the
-        Format.booleannet2bnet function.
+        format.booleannet2bnet function.
 
     """
     rd.seed(seed)
