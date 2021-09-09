@@ -1,0 +1,22 @@
+#BOOLEAN RULES
+GF*= GF
+CyclinD1*= not Replication and ((E2F1 or CyclinD1) or (Myc and GF))
+CyclinE *= (Cdh1 or (not Metaphase)) and (E2F1 and (not (p27Kip1 or pRB)))
+Myc*= GF or E2F1
+E2F1 *= (not CyclinA or pRB) and (E2F1 or Myc)
+p27Kip1 *= (not (CyclinB and Cdk1)) and (not (CyclinD1 or (CyclinA and CyclinE)))
+pRB*= not (CyclinB and Cdk1) and (not CyclinD1) and (p27Kip1 or not (CyclinA or CyclinE))
+Cdc20 *= pAPC and (not Cdh1) and (not Mad2)
+Cdc25A*= (E2F1 and (CyclinE or CyclinA)) or ((not Cdh1) and CyclinE and CyclinA)
+Cdc25C *= CyclinA or (CyclinB and Cdk1)
+Cdh1*= (not (CyclinB and Cdk1)) and (not CyclinA)
+Cdk1*= Cdc25C and (CyclinA or CyclinB) and (Cdk1 or (not Wee1))
+CyclinA*= ((E2F1 and Cdc25A) or CyclinA) and (not (pAPC or (Cdh1 and UbcH10)))
+CyclinB *= not (pAPC and Cdc20) and (not Cdh1)
+Mad2*= n4NDNA and CyclinB and Cdk1 and not ((pAPC and Cdc20) or Metaphase)
+pAPC *= (pAPC and Cdc20) or (CyclinB and Cdk1)
+UbcH10 *= (not Cdh1) or (UbcH10 and (Cdc20 or CyclinA or CyclinB))
+Wee1*= Replication and (not ((CyclinA or CyclinB) and Cdk1))
+Metaphase *= n4NDNA and CyclinB and Cdk1 and not (pAPC and Cdc20)
+Replication *= CyclinE and Cdc25A and (not n4NDNA)
+n4NDNA*= (not Cdh1) and (n4NDNA or (CyclinA and Replication))
