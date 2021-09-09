@@ -192,40 +192,53 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     primes_to_search.update(rules_to_add)
     primes_to_search = sm.reduction.simplify_primes(primes_to_search)
 
-    # Finding the attractor repertoire of this modified network
-    ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+    # Finding the attractors of this modified network
+    if MPBN_update == True:
+        attractor_dict_list = pyboolnet.trap_spaces.trap_spaces(primes_to_search, "min", max_output=10000)
+        sorted_attractor_dict_list = []
+        for attractor in attractor_dict_list:
+            for node in primes_to_search:
+                if node not in attractor:
+                    attractor[node] = 'X'
+            sorted_attractor_dict_list.append(dict(sorted(attractor.items())))
+        ar = sorted_attractor_dict_list
+    else:
+        ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        attractor_dict_list = []
+        for attractor in ar.attractors:
+            attractor_dict_list.append(attractor.attractor_dict)
 
     # Determining which node values are shared by all attractors in the reduction
-    if ar.fewest_attractors == 0:   # there is no attractor
+    if len(attractor_dict_list) == 0:   # there is no attractor
         print("Unable to properly count attractors.")
         return
 
-    att = ar.attractors[0]  # there is at least one attractor.
-    for node in att.attractor_dict:
+    att = attractor_dict_list[0]  # there is at least one attractor.
+    for node in att:
         value = None
         value_implied = None
         value_unknown = None
         if node in LDOI:    # if the node is in the LDOI, it is in the DOI.
-            implied[node] = att.attractor_dict[node]
+            implied[node] = att[node]
             continue    # this node is in the DOI. Move on to the next.
-        elif att.attractor_dict[node] == 'X':
+        elif att[node] == 'X':
             continue    # this node is not in the DOI. Move on to the next.
-        elif att.attractor_dict[node] == '?' or att.attractor_dict[node] == '!':
+        elif att[node] == '?' or att[node] == '!':
             value_unknown = True
         else:   # in case the node has a Boolean value
-            value = att.attractor_dict[node]
+            value = att[node]
 
-        for other in ar.attractors: # check the other attractors
-            if node in other.attractor_dict:
-                if other.attractor_dict[node] == 'X':
+        for other in attractor_dict_list: # check the other attractors
+            if node in other:
+                if other[node] == 'X':
                     value_implied = False
                     break
-                elif other.attractor_dict[node] == '?' or other.attractor_dict[node] == '!':
+                elif other[node] == '?' or other[node] == '!':
                     value_unknown = True
                 else:   # the node in the other attractor has a Boolean value.
                     if value == None:
-                        value = other.attractor_dict[node]
-                    elif int(value) == int(other.attractor_dict[node]):
+                        value = other[node]
+                    elif int(value) == int(other[node]):
                         continue
                     else:
                         value_implied = False
