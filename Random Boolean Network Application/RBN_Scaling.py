@@ -1,4 +1,4 @@
-import pyboolnet
+import pyboolnet.prime_implicants
 from pyboolnet.external.bnet2primes import bnet_text2primes
 import pystablemotifs as sm
 import multiprocessing as mp

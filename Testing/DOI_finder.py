@@ -1,6 +1,3 @@
-import pyboolnet
-import pyboolnet.prime_implicants
-import pyboolnet.trap_spaces
 import pystablemotifs as sm
 from pystablemotifs.drivers import logical_domain_of_influence, domain_of_influence, fixed_implies_implicant
 import itertools as it
@@ -86,7 +83,7 @@ if __name__ == "__main__":
     sm.format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
     print()
 
-    fixed_sets = source_sets(primes,min_set_size=5,max_set_size=5,forbidden=['Closure'], fixed = {'ABA':0})
+    fixed_sets = source_sets(primes,min_set_size=2,max_set_size=2,forbidden=['Closure'], fixed = {'ABA':0})
     # fixed_sets = [{'ABA':0}, {'ABA':1}]
     print("there are "+str(len(fixed_sets))+" source sets")
     print(fixed_sets)

@@ -1,4 +1,4 @@
-import pyboolnet
+import pyboolnet.state_transition_graphs
 import pystablemotifs as sm
 import networkx as nx
 print("Loading network . . .")

@@ -1,4 +1,3 @@
-import pyboolnet
 import pystablemotifs as sm
 import sys
 from timeit import default_timer

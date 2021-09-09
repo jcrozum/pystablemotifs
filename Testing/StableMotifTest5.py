@@ -1,6 +1,6 @@
 #check if the network reduction numbers are correct.
 
-import pyboolnet
+import pyboolnet.file_exchange
 import pystablemotifs as sm
 
 rules='''

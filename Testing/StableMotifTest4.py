@@ -2,7 +2,7 @@
 #The children of the root node in the SD should be the value combinations of the input nodes
 #There should be no more SMs in the SD that involve A or B
 
-import pyboolnet
+import pyboolnet.file_exchange
 import pystablemotifs as sm
 
 rules='''

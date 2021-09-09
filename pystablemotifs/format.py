@@ -1,4 +1,5 @@
-import pyboolnet
+import pyboolnet.prime_implicants
+import pyboolnet.boolean_logic
 from pyboolnet.external.bnet2primes import bnet_text2primes
 import re
 import subprocess

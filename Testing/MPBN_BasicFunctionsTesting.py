@@ -1,9 +1,9 @@
-import pyboolnet
+import pyboolnet.trap_spaces
 import pystablemotifs as sm
 import networkx as nx
 
 print("Loading network . . .")
-model = 'test5'
+model = 'test1'
 primes = sm.format.import_primes('./models/'+model+'.txt')
 print("Network loaded.")
 print()
@@ -23,20 +23,6 @@ print("Analysis complete.")
 print()
 ar.summary()
 
-for i in range(0,len(ar.attractors)):
-    if ar.attractors[i].stg is not None:
-        print("stg format information")
-        print("1. attractor")
-        print(ar.attractors[i].attractor_dict)
-        print("2. type of the stg object")
-        print(type(ar.attractors[i].stg))
-        print("3. attribute's name, type, and value.")
-        for attribute in ar.attractors[i].stg.__dict__.keys():
-            print(str(attribute)+" : "+str(type(ar.attractors[i].stg.__dict__[attribute])))
-            print(ar.attractors[i].stg.__dict__[attribute])
-
-        nx.write_graphml(ar.attractors[i].stg, model+"_"+str(i)+"_GAU.graphml")
-
 print("--- %s seconds for non-MBPN ---" % (time.time() - start_time))
 start_time = time.time()
 
@@ -46,20 +32,6 @@ ax = sm.AttractorRepertoire.from_primes(primes,max_simulate_size=20,MPBN_update=
 print("Analysis complete.")
 print()
 ax.summary()
-
-for i in range(0,len(ax.attractors)):
-    if ax.attractors[i].stg is not None:
-        print("stg format information")
-        print("1. attractor")
-        print(ax.attractors[i].attractor_dict)
-        print("2. type of the stg object")
-        print(type(ax.attractors[i].stg))
-        print("3. attribute's name, type, and value.")
-        for attribute in ax.attractors[i].stg.__dict__.keys():
-            print(str(attribute)+" : "+str(type(ax.attractors[i].stg.__dict__[attribute])))
-            print(ax.attractors[i].stg.__dict__[attribute])
-
-        nx.write_graphml(ax.attractors[i].stg, model+"_"+str(i)+"_MPBN.graphml")
 
 print("--- %s seconds for MPBN ---" % (time.time() - start_time))
 

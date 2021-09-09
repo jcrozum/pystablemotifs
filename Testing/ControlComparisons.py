@@ -1,7 +1,6 @@
 # This tests 6 attractor control methods and 2 target control methods.
 # GRASP methods do not give determinstic results.
 
-import pyboolnet
 import pystablemotifs as sm
 from timeit import default_timer
 

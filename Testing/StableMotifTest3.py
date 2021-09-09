@@ -1,7 +1,7 @@
 #test this function with a model with inputs
 #primes = sm.format.import_primes(sys.argv[1],remove_constants=True)
 
-import pyboolnet
+import pyboolnet.file_exchange
 import pystablemotifs as sm
 
 rules="""PDGF*= 0

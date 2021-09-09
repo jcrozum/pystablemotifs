@@ -1,4 +1,4 @@
-import pyboolnet
+import pyboolnet.prime_implicants
 import pystablemotifs as sm
 import copy
 import itertools as it

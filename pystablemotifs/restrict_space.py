@@ -1,4 +1,4 @@
-import pyboolnet
+import pyboolnet.boolean_logic
 import re
 
 from pystablemotifs.drivers import single_drivers, logical_domain_of_influence

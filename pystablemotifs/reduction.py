@@ -1,4 +1,7 @@
-import pyboolnet
+import pyboolnet.trap_spaces
+import pyboolnet.prime_implicants
+import pyboolnet.interaction_graphs
+import pyboolnet.digraphs
 from pyboolnet.external.bnet2primes import bnet_text2primes
 import itertools as it
 import networkx as nx

@@ -2,7 +2,7 @@ import pystablemotifs.succession as sm_succession
 import pystablemotifs.Attractor as Attractor
 import itertools as it
 import networkx as nx
-import pyboolnet
+import pyboolnet.prime_implicants
 
 class AttractorRepertoire:
     """The class that stores information about attractors. Initialize using

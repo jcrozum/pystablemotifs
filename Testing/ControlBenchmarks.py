@@ -1,5 +1,5 @@
 import pystablemotifs as sm
-import pyboolnet as pbn
+import pyboolnet.prime_implicants
 from pyboolnet.external.bnet2primes import bnet_text2primes
 
 import atexit
@@ -51,7 +51,7 @@ def CompareTimes(filepath,display=True):
     a2013,c2013 = JavaMotifTimes(filepath)
 
     start=default_timer()
-    pbn.prime_implicants.percolate_and_remove_constants(p) # modifies p in-place
+    pyboolnet.prime_implicants.percolate_and_remove_constants(p) # modifies p in-place
     ar = sm.AttractorRepertoire.from_primes(p,max_simulate_size=0) # max_simulate_size = 0 ensures equivalence with Java method
     end=default_timer()
     a2021 = end-start

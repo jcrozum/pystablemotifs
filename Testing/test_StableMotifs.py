@@ -5,7 +5,7 @@ import unittest
 import sys
 sys.path.insert(0,"C:/Users/jcroz/github/StableMotifs")
 import pystablemotifs as sm
-import pyboolnet
+import pyboolnet.file_exchange
 
 class test_StableMotifs(unittest.TestCase):
 
