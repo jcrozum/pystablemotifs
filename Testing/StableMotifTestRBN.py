@@ -1,4 +1,5 @@
 import pyboolnet
+from pyboolnet.external.bnet2primes import bnet_text2primes
 import pystablemotifs as sm
 from timeit import default_timer
 
@@ -51,7 +52,7 @@ rules=rbn_ensemble_rules_K3_pcrit[0]
 print("\nOriginal rules:")
 print(rules)
 rules = sm.format.booleannet2bnet(rules)
-primes = sm.format.longbnet2primes(rules)
+primes = bnet_text2primes(rules)
 pyboolnet.prime_implicants.percolation(primes,True)
 print("\nReduced prime implicant rules:")
 sm.format.pretty_print_prime_rules(primes)

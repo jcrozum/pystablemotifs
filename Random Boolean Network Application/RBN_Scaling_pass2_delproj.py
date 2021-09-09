@@ -1,4 +1,5 @@
 import pyboolnet
+from pyboolnet.external.bnet2primes import bnet_text2primes
 import pystablemotifs as sm
 import multiprocessing as mp
 import time
@@ -25,7 +26,8 @@ def primify_rbn(rbn_ensemble_rules):
     prime_dict = {}
     for i,x in enumerate(rbn_ensemble_rules):
         rules = sm.format.booleannet2bnet(x)
-        primes = sm.format.longbnet2primes(rules, remove_constants = True)
+        primes = bnet_text2primes(rules)
+        pyboolnet.prime_implicants.percolation(primes,True)
         primes, constants = sm.reduction.remove_outdag(primes)
         prime_dict[i] = primes
     return prime_dict

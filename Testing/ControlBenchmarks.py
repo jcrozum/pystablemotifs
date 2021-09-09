@@ -1,5 +1,6 @@
 import pystablemotifs as sm
 import pyboolnet as pbn
+from pyboolnet.external.bnet2primes import bnet_text2primes
 
 import atexit
 import os
@@ -77,7 +78,7 @@ for N in Ns:
     rbns=sm.random_boolean_networks.Random_Boolean_Network_Ensemble_Kauffman(N,K,bias,N_ensemble,seed=seed)
     for i,rbn in enumerate(rbns):
         rbn_bnet = sm.format.booleannet2bnet(rbn)
-        p = sm.format.longbnet2primes(rbn_bnet,remove_constants=False)
+        p = bnet_text2primes(rbn_bnet)
         fname = "../models/Control Benchmarks/RBNs_seed="+str(seed)+"/"+str(N)+"_"+str(i)+".txt"
         rbn_fnames.append(fname)
         f = open(fname,"w")

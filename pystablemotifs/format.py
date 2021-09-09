@@ -1,4 +1,5 @@
 import pyboolnet
+from pyboolnet.external.bnet2primes import bnet_text2primes
 import re
 import subprocess
 import os
@@ -95,8 +96,10 @@ def create_primes(rules,remove_constants = False):
         Update rules in pyboolnet format.
 
     """
-
-    return longbnet2primes(booleannet2bnet(rules), remove_constants = False)
+    primes = bnet_text2primes(booleannet2bnet(rules))
+    if remove_constants:
+        pyboolnet.prime_implicants.percolation(primes,True)
+    return primes
 
 # Convert rules from CellCollective format to pyboolnet format
 def cellcollective2bnet(rules):
@@ -304,8 +307,9 @@ def import_primes(fname, format='BooleanNet', remove_constants=False):
         else:
             raise ValueError('Unrecognized format',format)
 
-    primes = longbnet2primes(rules,remove_constants=remove_constants)
-
+    primes = bnet_text2primes(rules)
+    if remove_constants:
+        pyboolnet.prime_implicants.percolation(primes,True)
     return primes
 
 def statelist2dict(names,statestrings):

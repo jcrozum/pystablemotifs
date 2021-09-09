@@ -1,4 +1,5 @@
 import pyboolnet
+from pyboolnet.external.bnet2primes import bnet_text2primes
 import itertools as it
 import networkx as nx
 import re
@@ -26,7 +27,7 @@ def simplify_primes(primes):
 
     # reimport to force simplification
     if len(primes) > 0:
-        return sm_format.longbnet2primes(sm_format.primes2bnet(primes))
+        return bnet_text2primes(sm_format.primes2bnet(primes))
     else:
         return primes
 
