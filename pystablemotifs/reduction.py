@@ -116,7 +116,7 @@ def delete_node(primes, node):
         crule1 = simplify_using_expression_and_negation(node,expr0,expr1,crule1)
         crule0 = sm_format.rule2bnet(primes[child][0])
         crule0 = simplify_using_expression_and_negation(node,expr0,expr1,crule0)
-        new_primes[child] = sm_format.build_rule_using_bnetDNFs(crule0,crule1)
+        new_primes[child] = sm_format._build_rule_using_bnet_dnfs(crule0,crule1)
 
         nc = pyboolnet.prime_implicants.percolation(new_primes,False)
         constants.update(nc)

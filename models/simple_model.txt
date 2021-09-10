@@ -1,3 +1,4 @@
+# A simple example
 xA*= xB
 xB*= xA
 xC*= xA or not xD

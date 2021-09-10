@@ -1,7 +1,7 @@
 import pystablemotifs as sm
 import networkx as nx
 
-def format_reduction_label(s):
+def _format_reduction_label(s):
     """Helper function to make graph labels more readable. Removes single quotes
     and square brackets from the input string.
 

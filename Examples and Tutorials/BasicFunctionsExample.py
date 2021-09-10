@@ -35,10 +35,3 @@ for n in H.nodes():
     H.nodes[n]["label"]=n
 nx.write_graphml(H,"Fig3STG.graphml")
 print("done.")
-
-# print("Producing and exporting expanded network . . .")
-# K = sm.export.expanded_network(primes)
-# KTR = sm.export.expanded_network(sm.time_reversal.time_reverse_primes(primes))
-# nx.write_graphml(K,"EN_PhaseSwitch.graphml")
-# nx.write_graphml(KTR,"EN_PhaseSwitch_TR.graphml")
-# print("done.")

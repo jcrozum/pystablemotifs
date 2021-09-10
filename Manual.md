@@ -1122,12 +1122,12 @@ Produce the expanded network for given input update rules.
 
 
 
-### Function `format_reduction_label` {#pystablemotifs.export.format_reduction_label}
+### Function `_format_reduction_label` {#pystablemotifs.export._format_reduction_label}
 
 
 
 
->     def format_reduction_label(
+>     def _format_reduction_label(
 >         s
 >     )
 
@@ -1407,12 +1407,12 @@ Converts a BNet string expression to a sympy string expression.
 
 
 
-### Function `bnetDNF2list` {#pystablemotifs.format.bnetDNF2list}
+### Function `_bnetDNF2list` {#pystablemotifs.format._bnetDNF2list}
 
 
 
 
->     def bnetDNF2list(
+>     def _bnetDNF2list(
 >         bnet
 >     )
 
@@ -1466,12 +1466,12 @@ Also replaces ~ with !
 
 
 
-### Function `build_rule_using_bnetDNFs` {#pystablemotifs.format.build_rule_using_bnetDNFs}
+### Function `_build_rule_using_bnet_dnfs` {#pystablemotifs.format._build_rule_using_bnet_dnfs}
 
 
 
 
->     def build_rule_using_bnetDNFs(
+>     def _build_rule_using_bnet_dnfs(
 >         expr0,
 >         expr1
 >     )
@@ -2043,18 +2043,18 @@ Construct Binary format rules from decimal format rules.
 
 
 
-### Function `Random_Boolean_Network_Ensemble_Kauffman` {#pystablemotifs.random_boolean_networks.Random_Boolean_Network_Ensemble_Kauffman}
+### Function `random_boolean_network_ensemble_kauffman` {#pystablemotifs.random_boolean_networks.random_boolean_network_ensemble_kauffman}
 
 
 
 
->     def Random_Boolean_Network_Ensemble_Kauffman(
+>     def random_boolean_network_ensemble_kauffman(
 >         N,
 >         K,
 >         p,
 >         N_ensemble,
 >         seed=1000,
->         write_Boolean_network=False
+>         write_boolean_network=False
 >     )
 
 
@@ -2082,7 +2082,7 @@ Generate a sample from the Kauffman NK RBN ensemble.
 :   Random seed for generating the RBN ensemble (the default is 1000).
 
 
-**```write_Boolean_network```** :&ensp;<code>bool</code>
+**```write_boolean_network```** :&ensp;<code>bool</code>
 :   Whether to write each network in the ensemble as a CSV file in a new
     directory (the default is False).
 
@@ -2201,12 +2201,12 @@ The Kauffman RBN is at criticality when K = 2/(p(1-p)).
 
 
 
-### Function `read_Boolean_network_decimal` {#pystablemotifs.random_boolean_networks.read_Boolean_network_decimal}
+### Function `read_boolean_network_decimal` {#pystablemotifs.random_boolean_networks.read_boolean_network_decimal}
 
 
 
 
->     def read_Boolean_network_decimal(
+>     def read_boolean_network_decimal(
 >         filename
 >     )
 
@@ -2226,12 +2226,12 @@ Imports rules from csv in decimal format.
 
 
 
-### Function `write_Boolean_network_decimal` {#pystablemotifs.random_boolean_networks.write_Boolean_network_decimal}
+### Function `write_boolean_network_decimal` {#pystablemotifs.random_boolean_networks.write_boolean_network_decimal}
 
 
 
 
->     def write_Boolean_network_decimal(
+>     def write_boolean_network_decimal(
 >         node_rules_decimal_dictionary,
 >         filename
 >     )
@@ -2298,7 +2298,7 @@ generate ensembles of RBN by generating multiple RandomBooleanNetworks objects.
 :   BooleanNet representation of update rules.
 
 
-**```random_Boolean_type```** :&ensp;<code>str</code>
+**```random_boolean_type```** :&ensp;<code>str</code>
 :   Descrpition of generative process. Currently only "Kauffman NK" is
     implemented.
 
@@ -2307,7 +2307,7 @@ generate ensembles of RBN by generating multiple RandomBooleanNetworks objects.
 :   Number of nodes in the Boolean network.
 
 
-**```random_Boolean_Network_parameters```** :&ensp;<code>list</code>
+**```random_boolean_Network_parameters```** :&ensp;<code>list</code>
 :   For Kauffman NK generation -
         [K,p], where K is the in-degree and p is the bias. K is a positive
         integer less than or equal to N, and p is a float between 0 and 1
@@ -2334,14 +2334,14 @@ generate ensembles of RBN by generating multiple RandomBooleanNetworks objects.
 
 
 
-##### Method `Random_Boolean_Network` {#pystablemotifs.random_boolean_networks.RandomBooleanNetworks.Random_Boolean_Network}
+##### Method `random_boolean_network` {#pystablemotifs.random_boolean_networks.RandomBooleanNetworks.random_boolean_network}
 
 
 
 
->     def Random_Boolean_Network(
+>     def random_boolean_network(
 >         self,
->         random_Boolean_type,
+>         random_boolean_type,
 >         N,
 >         rbn_parameters,
 >         seed=None,
@@ -2353,7 +2353,7 @@ Construct network using specified generative process.
 
 ###### Parameters
 
-**```random_Boolean_type```** :&ensp;<code>str</code>
+**```random_boolean_type```** :&ensp;<code>str</code>
 :   Descrpition of generative process. Currently only "Kauffman NK" is
     implemented.
 
@@ -2362,7 +2362,7 @@ Construct network using specified generative process.
 :   Number of nodes in the Boolean network.
 
 
-**```random_Boolean_Network_parameters```** :&ensp;<code>list</code>
+**```random_boolean_Network_parameters```** :&ensp;<code>list</code>
 :   For Kauffman NK generation -
         [K,p], where K is the in-degree and p is the bias. K is a positive
         integer less than or equal to N, and p is a float between 0 and 1
@@ -2379,12 +2379,12 @@ Construct network using specified generative process.
 
 
 
-##### Method `Random_Boolean_Network_Rules` {#pystablemotifs.random_boolean_networks.RandomBooleanNetworks.Random_Boolean_Network_Rules}
+##### Method `random_boolean_network_Rules` {#pystablemotifs.random_boolean_networks.RandomBooleanNetworks.random_boolean_network_Rules}
 
 
 
 
->     def Random_Boolean_Network_Rules(
+>     def random_boolean_network_Rules(
 >         self
 >     )
 

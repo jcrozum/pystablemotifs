@@ -280,3 +280,97 @@ class AttractorRepertoire:
         for att in self.attractors:
             print(att.attractor_dict)
             print()
+
+    def reprogram_to_trap_spaces(self,logically_fixed,
+        target_method='history',driver_method='internal',
+        max_drivers=None,GRASP_iterations=None,GRASP_score_override=None):
+        """Find driver sets that lead to fixing the node states specified.
+
+        Parameters
+        ----------
+        logically_fixed : partial state dictionary
+            Targeted fixed nodes.
+        target_method : str
+            Either 'history' or 'merge'; see Notes below for details.
+        driver_method : str
+            Either 'internal', 'minimal', or 'GRASP' see Notes below for details.
+        max_drivers : int
+            Maximum number of driver nodes to consider (not used in GRASP methods).
+            If none, the upper limit is given by the number of free variables
+            (the default is None).
+        GRASP_iterations : int
+            Number of times to construct GRASP driver sets; only used in GRASP
+            methods. If none, the number of iterations is chosen based on the
+            network size (the default is None).
+        GRASP_score_override : function
+            Optional heuristic score function override (see drivers.GRASP
+            for details). Only used in GRASP methods (the default is None).
+
+        Returns
+        -------
+        list
+            Control strategies found; interpretation depends on method selected
+            See Notes below for details.
+
+        Notes
+        -----
+        The various combinations of target_method and driver_method options result
+        in different control strategies, which are outlined below.
+
+        target_method = history, driver_method = internal:
+        Finds all shortest stable motif histories that result in the target node states
+        being logically fixed. Each stable motif is searched for internal driver nodes.
+        The resulting internal drivers are combined into a single  control set. The
+        return value consists of all such control sets for all  stable motif histories.
+        Each control set eventually becomes self-sustaining.
+
+        target_method = history, driver_method = minimal:
+        Similar to the history method, except the search for stable motif drivers
+        includes external driver nodes for the motif and does not extend to driver sets
+        of larger size once one driver set has been found for a motif. Because the
+        search includes external driver nodes, special care must be taken in interpreting
+        the effect of the drivers, as their influence may impact the effect of motifs
+        stabilizing. Thus, the control is only guaranteed to work if the interventions
+        are temporary and implemented in the order specified by the motif history.
+
+        For this reason, the output consists of lists of ordered interventions.
+        Each element of the return value is a list of lists of dictionaries. Each
+        element of the return value represents a control strategy. To implement such
+        a strategy, select a dictionary from the first element of the strategy and
+        fix the node states it specifies until their influence has propagated through
+        the system. Then repeat this process iteratively for each element of the strategy
+        list, in order. For example, if
+        nonredundant_drivers = [ [[{'xD':1,'xE=1'}]], [[{'xA':1},{'xB':1}],[{'xC':1}]] ]
+        then there are two control strategies available:
+        1) fix xD=xE=1 temporarily and
+        2) first fix either xA=1 or xB=1 temporarily, then fix xC=1 temporarily.
+
+        target_method = history, driver_method = GRASP:
+        The same as history, minimal, except external driver nodes are searched for
+        using the GRASP algorithm using GRASP_iterations iterations.
+
+        target_method = merge, driver_method = internal:
+        Finds all shortest stable motif histories that result in the target node states
+        being logically fixed. All node states in the motifs in the history are merged
+        into a stable module dictionary. This is then searched for internal driver
+        nodes. Each element of the return value is a dictionary corresponding to a
+        control set. Each control set eventually becomes self-sustaining.
+
+        target_method = merge, driver_method = minimal:
+        Similar to the merge method, except the search for drivers is conducted over
+        all nodes, not just those internal to the merged stable module. Furthermore,
+        the search is truncated when a control set is found such that the search does
+        not proceed to driver sets larger than the smallest found. Each element of
+        the return value is a dictionary corresponding to a control set. The control
+        sets are only guaranteed to result in activation of the target if they are
+        temporary interventions.
+
+        target_method = merge, driver_method = GRASP:
+        The same as merge, minimal, except external driver nodes are searched for
+        using the GRASP algorithm using GRASP_iterations iterations.
+
+        """
+        return self.succession_diagram.reprogram_to_trap_spaces(logically_fixed,
+            target_method=target_method,driver_method=driver_method,
+            max_drivers=max_drivers,
+            GRASP_iterations=GRASP_iterations,GRASP_score_override=GRASP_score_override)

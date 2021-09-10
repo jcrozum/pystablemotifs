@@ -75,7 +75,7 @@ N_ensemble=10
 seed = 0
 rbn_fnames = []
 for N in Ns:
-    rbns=sm.random_boolean_networks.Random_Boolean_Network_Ensemble_Kauffman(N,K,bias,N_ensemble,seed=seed)
+    rbns=sm.random_boolean_networks.random_boolean_network_ensemble_kauffman(N,K,bias,N_ensemble,seed=seed)
     for i,rbn in enumerate(rbns):
         rbn_bnet = sm.format.booleannet2bnet(rbn)
         p = bnet_text2primes(rbn_bnet)

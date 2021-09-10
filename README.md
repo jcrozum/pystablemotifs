@@ -2,7 +2,7 @@
 A set of tools for attractor and target control of Boolean systems.
 Includes stable motif reduction with oscillation checking for attractor identification and control, and Greedy Randomized Adaptive Search Procedure and brute-force methods for target control.
 
-The attractor identification algorithm is described in detail in 
+The attractor identification algorithm is described in detail in
 
 > J. C.  Rozum,  J. Gómez  Tejeda  Zañudo,  X. Gan,  D. Deritei,  R. Albert,  Parity  and  time reversal  elucidate  both  decision-making  in  empirical  models  and  attractor  scaling  in  critical  Boolean networks. Sci. Adv. 7 , eabf8124 (2021),
 
@@ -22,7 +22,9 @@ If you install from PyPI, you will need to install pyboolnet separately (instruc
 See the basic usage example below, or the Tutorial.ipynb notebook for basic instructions. For advanced usage instructions, see Manual.pdf or contact the developers directly.
 
 # Requirements
-pyboolnet (v2.3.0) https://github.com/hklarner/pyboolnet
+pyboolnet (v3.0.5+) https://github.com/hklarner/pyboolnet
+(note: pyboolnet requires pyeda, which can be difficult to install in Windows;
+    it is recommended to obtain a pyeda Windows wheel from https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyeda)
 
 Networkx (v2.4+) https://github.com/networkx/networkx/
 
@@ -84,7 +86,7 @@ Alternatively, it is possible to import the Boolean rules from a string, as foll
     rules="""xA* = !xA & !xB | xC
     xB* = !xA & !xB | xC
     xC* = xA & xB"""
-    
+
     primes = sm.format.create_primes(rules)
 
 For further examples, see the IPython notebook Tutorial.ipynb.

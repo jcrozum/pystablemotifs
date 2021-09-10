@@ -3,6 +3,7 @@ import pystablemotifs as sm
 import copy
 import itertools as it
 import random
+from collections import namedtuple
 
 def fixed_implies_implicant(fixed,implicant):
     """Returns True if and only if the (possibly partial) state "fixed" implies
@@ -60,7 +61,9 @@ def fixed_excludes_implicant(fixed,implicant):
     return not rval
 
 def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None):
-    """Computes the logical domain of influence (LDOI) (see Yang et al. 2018)
+    """Computes the logical domain of influence (LDOI) (see Yang et al. 2018).
+    In general, the LDOI is a subset of the full domain of influence (DOI), but it
+    is much more easily (and quickly) computed.
 
     Parameters
     ----------
@@ -119,9 +122,10 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
         if not states_added or len(primes_to_search) == 0: break
     return implied, contradicted
 
-def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
-    """
-    Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
+def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,
+    max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    """Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
+
     Parameters
     ----------
     partial_state : partial state dictionary
@@ -143,15 +147,17 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
         (see Pauleve et al. 2020)(the default is False).
     Returns
     -------
+    data : namedtuple
+        A namedtuple that contains the entries listed below.
     implied : partial state dictionary
         Nodes that are certain to be in the domain of influence.
     contradicted : partial state dictionary
         The contradiction boundary.
-    unknown : partial state dictionary
+    possibly_implied : partial state dictionary
         Nodes that are possibly in the domain of influence.
-    unknown_contra : partial state dictionary
+    possibly_contradicted : partial state dictionary
         Nodes that are possibly in the contradiction boundary.
-    ar : AttractorRepertoire
+    attractor_repertoire : AttractorRepertoire
         The class that stores information about attractors.
     """
     # optional optimization values
@@ -203,7 +209,8 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
             sorted_attractor_dict_list.append(dict(sorted(attractor.items())))
         ar = sorted_attractor_dict_list
     else:
-        ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,
+            max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
         attractor_dict_list = []
         for attractor in ar.attractors:
             attractor_dict_list.append(attractor.attractor_dict)
@@ -266,7 +273,12 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
             if sink_nodes[node] != unknown[node]:
                 unknown_contra[node] = unknown[node]
 
-    return dict(sorted(implied.items())), dict(sorted(contradicted.items())), dict(sorted(unknown.items())), dict(sorted(unknown_contra.items())), ar
+    doi_data = namedtuple('doi_data',
+        'implied contradicted possibly_implied possibly_contradicted attractor_repertoire')
+    data = doi_data(dict(sorted(implied.items())), dict(sorted(contradicted.items())),
+        dict(sorted(unknown.items())), dict(sorted(unknown_contra.items())), ar)
+
+    return data
 
 def single_drivers(target,primes):
     """Finds all 1-node (logical) drivers of target under the rules given
@@ -483,7 +495,12 @@ def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None,forbidde
         n += 1
     return knocked_nodes
 
-def initial_GRASP_candidates(target,primes,forbidden):
+################################################################################
+# Below are Greedy Random Adaptive Search Program (GRASP) methods.
+# These were developed in Yang et al. 2018.
+################################################################################
+
+def _initial_GRASP_candidates(target,primes,forbidden):
     """Helper function for GRASP driver search. Constructs initial candidates
     for driver nodes.
 
@@ -511,7 +528,7 @@ def initial_GRASP_candidates(target,primes,forbidden):
         candidates += [{k:st} for k in candidate_vars]
     return candidates
 
-def GRASP_default_scores(target,primes,candidates):
+def _GRASP_default_scores(target,primes,candidates):
     """Helper function for GRASP driver search. Scores candidate driver nodes.
 
     Parameters
@@ -552,7 +569,7 @@ def GRASP_default_scores(target,primes,candidates):
 
     return scores
 
-def construct_GRASP_solution(target,primes,candidates,scores):
+def _construct_GRASP_solution(target,primes,candidates,scores):
     """Helper funciton for GRASP driver search. Constructs individual driver set
     using the GRASP search method.
 
@@ -610,7 +627,7 @@ def construct_GRASP_solution(target,primes,candidates,scores):
 
     return {}
 
-def local_GRASP_reduction(solution,target,primes):
+def _local_GRASP_reduction(solution,target,primes):
     """A helper funciton for GRASP driver search. Reduces valid solutions to
     attempt to remove redundancies.
 
@@ -644,7 +661,7 @@ def local_GRASP_reduction(solution,target,primes):
 
     return old_solution
 
-def GRASP(target, primes, GRASP_iterations, forbidden=None, GRASP_scores=GRASP_default_scores):
+def GRASP(target, primes, GRASP_iterations, forbidden=None, GRASP_scores=_GRASP_default_scores):
     """Search for drivers of target in primes using the method of Yang et al. 2018.
 
     Parameters
@@ -658,7 +675,7 @@ def GRASP(target, primes, GRASP_iterations, forbidden=None, GRASP_scores=GRASP_d
     forbidden : set of str variable names
         Variables to be considered uncontrollable (the default is None).
     GRASP_scores : function
-        Function to score candiates (the default is GRASP_default_scores; see
+        Function to score candiates (the default is _GRASP_default_scores; see
         that function for required inputs and outputs of the scoring function).
 
     Returns
@@ -669,11 +686,11 @@ def GRASP(target, primes, GRASP_iterations, forbidden=None, GRASP_scores=GRASP_d
 
     """
     solutions = []
-    candidates = initial_GRASP_candidates(target,primes,forbidden)
+    candidates = _initial_GRASP_candidates(target,primes,forbidden)
     scores = GRASP_scores(target,primes,candidates)
     for iter in range(GRASP_iterations):
-        solution_big = construct_GRASP_solution(target,primes,candidates,scores)
-        solution = local_GRASP_reduction(solution_big,target,primes)
+        solution_big = _construct_GRASP_solution(target,primes,candidates,scores)
+        solution = _local_GRASP_reduction(solution_big,target,primes)
         if not solution is None and len(solution) > 0 and not solution in solutions:
             solutions.append(solution)
 

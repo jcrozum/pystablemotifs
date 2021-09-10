@@ -82,7 +82,7 @@ if __name__ == '__main__':
     # Main loop
     for N,N_ensemble in N_ensemble_dict.items(): # N = Number of nodes (before reduction)
         print("Generating ensemble Kauffman RBNs for N =",N,". . .")
-        rbn_ensemble_rules=sm.random_boolean_networks.Random_Boolean_Network_Ensemble_Kauffman(N,K,p_bias,N_ensemble,seed=seed,write_Boolean_network=False)
+        rbn_ensemble_rules=sm.random_boolean_networks.random_boolean_network_ensemble_kauffman(N,K,p_bias,N_ensemble,seed=seed,write_boolean_network=False)
         rbn_primes = primify_rbn(rbn_ensemble_rules)
         rbn_primes = prune_primes(rbn_primes,prev_data,N)
         print("Ensemble generated.")
