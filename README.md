@@ -57,36 +57,48 @@ Matplotlib (v3.2.1+) https://matplotlib.org/
 
 # Basic usage example
 In the example below, we import the Boolean model specified by the file test1.txt provided in the models folder. We then print its rules and finds its attractors, which are displayed in a condensed summary form.
+```python
+import pystablemotifs as sm
 
-    import pystablemotifs as sm
+relative_path_to_model = "./models/simple_model.txt"
+primes = sm.format.import_primes(relative_path_to_model)
 
-    relative_path_to_model = "./models/test1.txt"
-    primes = sm.format.import_primes(relative_path_to_model)
+print("RULES")
+sm.format.pretty_print_prime_rules(primes)
+print()
 
-    print("RULES")
-    sm.format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
-    print()
-
-    ar = sm.AttractorRepertoire.from_primes(primes)
-    ar.summary()
-
+ar = sm.AttractorRepertoire.from_primes(primes)
+ar.summary()
+```
 The output is as follows:
+```
+RULES
+xA* = xB
+xB* = xA
+xC* = !xD | xA
+xD* = xC
+xE* = xB & xF
+xF* = xE
 
-    RULES
-    xA* = !xA & !xB | xC
-    xB* = !xA & !xB | xC
-    xC* = xA & xB
+There are 3 attractors.
+{'xA': 0, 'xB': 0, 'xC': 'X', 'xD': 'X', 'xE': 0, 'xF': 0}
 
-    There are 2 attractors.
-    {'xA': 'X', 'xB': 'X', 'xC': 0}
-    {'xA': 1, 'xB': 1, 'xC': 1}
+{'xA': 1, 'xB': 1, 'xC': 1, 'xD': 1, 'xE': 1, 'xF': 1}
 
+{'xA': 1, 'xB': 1, 'xC': 1, 'xD': 1, 'xE': 0, 'xF': 0}
+```
 Alternatively, it is possible to import the Boolean rules from a string, as follows:
+```python
+rules="""xA* = !xA & !xB | xC
+xB* = !xA & !xB | xC
+xC* = xA & xB"""
 
-    rules="""xA* = !xA & !xB | xC
-    xB* = !xA & !xB | xC
-    xC* = xA & xB"""
+primes = sm.format.create_primes(rules)
+```
+It is also possible to compute attractors and control interventions using default parameters and methods using the command line:
+```cmd
+python -m pystablemotifs "./models/simple_model.txt"
+```
+In this command, "./models/simple_model.txt" is the relative path to a model file containing Boolean rules.
 
-    primes = sm.format.create_primes(rules)
-
-For further examples, see the IPython notebook Tutorial.ipynb.
+For further examples, see the IPython notebooks in the "Examples and Tutorials" folder.
