@@ -1,0 +1,1354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>pystablemotifs.AttractorRepertoire API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pystablemotifs.AttractorRepertoire</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import pystablemotifs.succession as sm_succession
+import pystablemotifs.Attractor as Attractor
+import itertools as it
+import networkx as nx
+import pyboolnet.prime_implicants
+
+class AttractorRepertoire:
+    &#34;&#34;&#34;The class that stores information about attractors. Initialize using
+    either from_primes or from_succession_diagram.
+
+    Attributes
+    ----------
+    succession_diagram : succession.SuccessionDiagram
+        Succession diagram summarizing the stable motif structure of the model.
+    attractors : list of Attractor.Attractor
+        List of (possible) attractors in the model.
+    reduction_attractors : dictionary
+        A dictionary with integer keys that correspond to the
+        succession_diagram.digraph nodes. The dictionary values are lists of
+        Attractor.Attractor objects that correspond to attractors that exist in
+        the region of statespace corresponding to the reduced network
+        represented by the key in the succession diagram.
+    fewest_attractors : int
+        A lower bound on the number of attractors in the model.
+    most_attractors : int
+        An upper bound on the number of attractors in the model.
+    primes : pyboolnet primes dictionary
+        The model rules.
+    succession_digraph : networkx digraph
+        Networkx digraph representation of the succession_diagram object. If
+        AttractorRepertoire.simplify_diagram, it is equivalent to
+        AttractorRepertoire.succession_diagram.digraph. Otherwise, several of its
+        nodes may be contracted (depending on input parameters).
+    attractor_equivalence_classes : list
+        List of attractor equivalence classes. Each item is a dictionary with keys
+        &#39;states&#39;, &#39;attractors&#39;, and &#39;reductions&#39;. The &#39;states&#39; value is a dictionary
+        of variable values that all attractors in the class share. The &#39;attractors&#39;
+        value is a list of Attractor objects (i.e., a sublist of self.attractors);
+        all attractors in this list have all relevant nodes equivalently characterized.
+        The &#39;reductions&#39; value is a list of reduction_attractor keys that collectively
+        contain all the attractors in the class (and therefore cannot differ in any
+        relevant node).
+    relevant_nodes : list
+        List of nodes that are &#34;relevant&#34;, i.e., if trap spaces differ in the values
+        of these variables, then the corresponding succession diagram nodes and
+        attractors will not be merged.
+
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        self.succession_diagram = None
+        self.attractors = []
+        self.reduction_attractors = {}
+        self.fewest_attractors = None
+        self.most_attractors = None
+        self.primes = None
+
+        self.succession_digraph = None
+        self.attractor_equivalence_classes = None
+        self.relevant_nodes = None
+
+    @classmethod
+    def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+        &#34;&#34;&#34;Build the succession diagram and attractor repertoire from pyboolnet
+        formatted update rules rules.
+
+        Parameters
+        ----------
+        primes : pyboolnet primes dictionary
+            The model rules.
+        max_simulate_size : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph (the default is 20).
+        max_stable_motifs : int
+            Maximum number of output lines for pyboolnet to process from the
+            AspSolver (the default is 10000).
+        MPBN_update : bool
+            Whether MBPN update is used instead of general asynchronous update
+            (see L Pauleve, J Kolcak, T Chatain, S Haar, &#34;Reconciling qualitative, abstract, and scalable modeling of biological networks.&#34; Nat. Com. vol. 11, no. 4256 (2020))
+            (the default is False).
+
+        Returns
+        -------
+        AttractorRepertoire
+            AttractorRepertoire object for the input primes.
+
+        &#34;&#34;&#34;
+        x = cls()
+        x.primes = primes
+        x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        x.simplify_diagram([], merge_equivalent_reductions = False)
+        return x
+
+    @classmethod
+    def from_succession_diagram(cls,succession_diagram):
+        &#34;&#34;&#34;Build the succession diagram and attractor repertoire from a
+        precomputed succession diagram.
+
+        Parameters
+        ----------
+        succession_diagram : succession.SuccessionDiagram
+            Succession diagram summarizing the stable motif structure of the model.
+
+        Returns
+        -------
+        AttractorRepertoire
+            AttractorRepertoire object for the input succession diagram.
+
+        &#34;&#34;&#34;
+        x = cls()
+        x.succession_diagram = succession_diagram
+        x.primes = succession_diagram.unreduced_primes
+        x._get_attractors_from_succession_diagram()
+        x._count_attractors()
+        x.simplify_diagram([], merge_equivalent_reductions = False)
+        return x
+
+
+    def _get_attractors_from_succession_diagram(self):
+        &#34;&#34;&#34;Extract attractors from the succession diagram of the model.
+
+        &#34;&#34;&#34;
+        for ri, reduction in self.succession_diagram.motif_reduction_dict.items():
+            if reduction.terminal == &#34;no&#34;: continue
+
+            self.reduction_attractors[ri] = []
+
+            duplicate = False # have we added the attractors for this reduciton yet?
+            for attractor in self.attractors:
+                if attractor.logically_fixed_nodes == reduction.logically_fixed_nodes:
+                    duplicate = True
+                    attractor.add_reduction(reduction)
+                    self.reduction_attractors[ri].append(attractor)
+
+            if duplicate: continue
+
+            for id,att in enumerate(reduction.attractor_dict_list):
+                new_attractor = Attractor(reduction,id)
+                self.attractors.append(new_attractor)
+                self.reduction_attractors[ri].append(new_attractor)
+
+    def _count_attractors(self):
+        &#34;&#34;&#34;Place upper and lower bounds on the number of attractors.
+
+        &#34;&#34;&#34;
+        self.fewest_attractors = 0
+        self.most_attractors = 0
+        for attractor in self.attractors:
+            if attractor.guaranteed:
+                self.fewest_attractors += 1
+            # else: self.fewest_attractors += 0
+
+            if attractor.explored:
+                self.most_attractors += 1
+            else:
+                if attractor.representative[0].deletion_no_motif_attractors is not None:
+                    self.most_attractors += len(attractor.representative[0].deletion_no_motif_attractors)
+                else:
+                    # ludicrously conservative upper bound; assumes STG is all 2-cycles
+                    self.most_attractors += 2**(attractor.n_unfixed - 1)
+
+    def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+        &#34;&#34;&#34;Build and process the succession diagram for the model.
+
+        Parameters
+        ----------
+        primes : pyboolnet primes dictionary
+            The model rules.
+        max_simulate_size : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph (the default is 20).
+        max_stable_motifs : int
+            Maximum number of output lines for pyboolnet to process from the
+            AspSolver (the default is 10000).
+        MPBN_update : bool
+            Whether MBPN update is used instead of general asynchronous update
+            (see Pauleve et al. 2020)(the default is False).
+
+        &#34;&#34;&#34;
+        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        self._get_attractors_from_succession_diagram()
+        self._count_attractors()
+
+    def simplify_diagram(self, projection_nodes, merge_equivalent_reductions = True, keep_only_projection_nodes = False, condense_simple_paths = False):
+        &#34;&#34;&#34;Simplify the succession diagram for the model. This is done in two ways.
+        First, variables can be designated ignorable using the projection_nodes
+        parameter. If keep_only_projection_nodes is False, these variables are
+        ignorable, otherwise, all other nodes are ignorable. When
+        merge_equivalent_reductions is True, all nodes of the succession diagram
+        that correspond to trap spaces whose fixed variables differ only in ignorable
+        variables are contracted (in the graph theory sense). After this process,
+        if condense_simple_paths is True, then all succession diagram nodes with
+        in-degree equal to one are contracted with their parent node. This function
+        constructs the succession_digraph and attractor_equivalence_classes attributes,
+        which are described in the class documentation.
+
+        Parameters
+        ----------
+        projection_nodes : list of variable names
+            These nodes will be ignored if keep_only_projection_nodes is False
+            (default); otherwise, all nodes except these will be ignored.
+        merge_equivalent_reductions : bool
+            Whether to contract succession diagram nodes whose reductions differ
+            only in ignorable nodes.
+        keep_only_projection_nodes : bool
+            Whether projection_nodes specifies non-ignorable nodes.
+        condense_simple_paths : bool
+            Whether to contract nodes with in-degree one.
+        &#34;&#34;&#34;
+
+        if not keep_only_projection_nodes:
+            keep = set(self.primes.keys()) - set(projection_nodes)
+            ignore = set(projection_nodes)
+        else:
+            keep = set(projection_nodes)
+            ignore = set(self.primes.keys()) - set(projection_nodes)
+
+        G = self.succession_diagram.digraph.copy()
+
+        # Merge equivalent nodes
+        if merge_equivalent_reductions:
+            for u,v in it.combinations(self.succession_diagram.digraph.nodes(),2):
+                if u not in G.nodes(): continue # we&#39;ve already merged u
+
+                ru = self.succession_diagram.motif_reduction_dict[u]
+                rv = self.succession_diagram.motif_reduction_dict[v]
+                if pyboolnet.prime_implicants.primes_are_equal(ru.reduced_primes,rv.reduced_primes):
+                    rud = ru.logically_fixed_nodes
+                    rvd = rv.logically_fixed_nodes
+                    if all([rud[k]==rvd[k] for k in keep if k in rud and k in rvd]):
+                        G = nx.contracted_nodes(G,u,v,self_loops=False)
+
+        # If a node v has out degree = 1, then merge it into its only child u
+        if condense_simple_paths:
+            old_N = float(&#39;inf&#39;)
+            while G.number_of_nodes() &lt; old_N:
+                old_N = G.number_of_nodes()
+                for v in G.nodes():
+                    if G.out_degree(v) == 1:
+                        u = next(G.successors(v))
+                        G = nx.contracted_nodes(G,u,v,self_loops=False)
+
+
+        self.succession_digraph = G
+
+        self.attractor_equivalence_classes = []
+        for a in self.attractors:
+            keys = set()
+            for n in self.succession_digraph.nodes():
+                if n not in self.reduction_attractors: continue
+                for b in self.reduction_attractors[n]:
+                    if all([b.attractor_dict[k] == a.attractor_dict[k] for k in keep]):
+                        keys.add(n)
+                        break
+
+            merged = False
+            for c in self.attractor_equivalence_classes:
+                if c[&#39;states&#39;].items() &lt;= a.attractor_dict.items():
+                    c[&#39;attractors&#39;].append(a)
+                    c[&#39;reductions&#39;] |= keys
+                    merged = True
+            if not merged:
+                self.attractor_equivalence_classes.append({&#39;states&#39;:{k:v for k,v in a.attractor_dict.items() if k in keep},&#39;attractors&#39;:[a], &#39;reductions&#39;:keys})
+
+        self.relevant_nodes = keep
+
+    def summary(self):
+        &#34;&#34;&#34;Prints a summary of the attractors to standard output.
+
+        &#34;&#34;&#34;
+        if self.fewest_attractors == 0:
+            print(&#34;Unable to properly count attractors.&#34;)
+        elif self.fewest_attractors == self.most_attractors:
+            if self.fewest_attractors == 1:
+                print(&#34;There is 1 attractor.&#34;)
+            else:
+                print(&#34;There are&#34;,self.fewest_attractors,&#34;attractors.&#34;)
+        else:
+            print(&#34;There are between&#34;,self.fewest_attractors,&#34;and&#34;,self.most_attractors,&#34;attractors.&#34;)
+        for att in self.attractors:
+            print(att.attractor_dict)
+            print()
+
+    def reprogram_to_trap_spaces(self,logically_fixed,
+        target_method=&#39;history&#39;,driver_method=&#39;internal&#39;,
+        max_drivers=None,GRASP_iterations=None,GRASP_score_override=None):
+        &#34;&#34;&#34;Find driver sets that lead to fixing the node states specified.
+
+        Parameters
+        ----------
+        logically_fixed : partial state dictionary
+            Targeted fixed nodes.
+        target_method : str
+            Either &#39;history&#39; or &#39;merge&#39;; see Notes below for details.
+        driver_method : str
+            Either &#39;internal&#39;, &#39;minimal&#39;, or &#39;GRASP&#39; see Notes below for details.
+        max_drivers : int
+            Maximum number of driver nodes to consider (not used in GRASP methods).
+            If none, the upper limit is given by the number of free variables
+            (the default is None).
+        GRASP_iterations : int
+            Number of times to construct GRASP driver sets; only used in GRASP
+            methods. If none, the number of iterations is chosen based on the
+            network size (the default is None).
+        GRASP_score_override : function
+            Optional heuristic score function override (see drivers.GRASP
+            for details). Only used in GRASP methods (the default is None).
+
+        Returns
+        -------
+        list
+            Control strategies found; interpretation depends on method selected
+            See Notes below for details.
+
+        Notes
+        -----
+        The various combinations of target_method and driver_method options result
+        in different control strategies, which are outlined below.
+
+        target_method = history, driver_method = internal:
+        Finds all shortest stable motif histories that result in the target node states
+        being logically fixed. Each stable motif is searched for internal driver nodes.
+        The resulting internal drivers are combined into a single  control set. The
+        return value consists of all such control sets for all  stable motif histories.
+        Each control set eventually becomes self-sustaining.
+
+        target_method = history, driver_method = minimal:
+        Similar to the history method, except the search for stable motif drivers
+        includes external driver nodes for the motif and does not extend to driver sets
+        of larger size once one driver set has been found for a motif. Because the
+        search includes external driver nodes, special care must be taken in interpreting
+        the effect of the drivers, as their influence may impact the effect of motifs
+        stabilizing. Thus, the control is only guaranteed to work if the interventions
+        are temporary and implemented in the order specified by the motif history.
+
+        For this reason, the output consists of lists of ordered interventions.
+        Each element of the return value is a list of lists of dictionaries. Each
+        element of the return value represents a control strategy. To implement such
+        a strategy, select a dictionary from the first element of the strategy and
+        fix the node states it specifies until their influence has propagated through
+        the system. Then repeat this process iteratively for each element of the strategy
+        list, in order. For example, if
+        nonredundant_drivers = [ [[{&#39;xD&#39;:1,&#39;xE=1&#39;}]], [[{&#39;xA&#39;:1},{&#39;xB&#39;:1}],[{&#39;xC&#39;:1}]] ]
+        then there are two control strategies available:
+        1) fix xD=xE=1 temporarily and
+        2) first fix either xA=1 or xB=1 temporarily, then fix xC=1 temporarily.
+
+        target_method = history, driver_method = GRASP:
+        The same as history, minimal, except external driver nodes are searched for
+        using the GRASP algorithm using GRASP_iterations iterations.
+
+        target_method = merge, driver_method = internal:
+        Finds all shortest stable motif histories that result in the target node states
+        being logically fixed. All node states in the motifs in the history are merged
+        into a stable module dictionary. This is then searched for internal driver
+        nodes. Each element of the return value is a dictionary corresponding to a
+        control set. Each control set eventually becomes self-sustaining.
+
+        target_method = merge, driver_method = minimal:
+        Similar to the merge method, except the search for drivers is conducted over
+        all nodes, not just those internal to the merged stable module. Furthermore,
+        the search is truncated when a control set is found such that the search does
+        not proceed to driver sets larger than the smallest found. Each element of
+        the return value is a dictionary corresponding to a control set. The control
+        sets are only guaranteed to result in activation of the target if they are
+        temporary interventions.
+
+        target_method = merge, driver_method = GRASP:
+        The same as merge, minimal, except external driver nodes are searched for
+        using the GRASP algorithm using GRASP_iterations iterations.
+
+        &#34;&#34;&#34;
+        return self.succession_diagram.reprogram_to_trap_spaces(logically_fixed,
+            target_method=target_method,driver_method=driver_method,
+            max_drivers=max_drivers,
+            GRASP_iterations=GRASP_iterations,GRASP_score_override=GRASP_score_override)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pystablemotifs.AttractorRepertoire.AttractorRepertoire"><code class="flex name class">
+<span>class <span class="ident">AttractorRepertoire</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>The class that stores information about attractors. Initialize using
+either from_primes or from_succession_diagram.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>succession_diagram</code></strong> :&ensp;<code>succession.SuccessionDiagram</code></dt>
+<dd>Succession diagram summarizing the stable motif structure of the model.</dd>
+<dt><strong><code>attractors</code></strong> :&ensp;<code>list</code> of <code>Attractor.Attractor</code></dt>
+<dd>List of (possible) attractors in the model.</dd>
+<dt><strong><code>reduction_attractors</code></strong> :&ensp;<code>dictionary</code></dt>
+<dd>A dictionary with integer keys that correspond to the
+succession_diagram.digraph nodes. The dictionary values are lists of
+Attractor.Attractor objects that correspond to attractors that exist in
+the region of statespace corresponding to the reduced network
+represented by the key in the succession diagram.</dd>
+<dt><strong><code>fewest_attractors</code></strong> :&ensp;<code>int</code></dt>
+<dd>A lower bound on the number of attractors in the model.</dd>
+<dt><strong><code>most_attractors</code></strong> :&ensp;<code>int</code></dt>
+<dd>An upper bound on the number of attractors in the model.</dd>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>The model rules.</dd>
+<dt><strong><code>succession_digraph</code></strong> :&ensp;<code>networkx digraph</code></dt>
+<dd>Networkx digraph representation of the succession_diagram object. If
+AttractorRepertoire.simplify_diagram, it is equivalent to
+AttractorRepertoire.succession_diagram.digraph. Otherwise, several of its
+nodes may be contracted (depending on input parameters).</dd>
+<dt><strong><code>attractor_equivalence_classes</code></strong> :&ensp;<code>list</code></dt>
+<dd>List of attractor equivalence classes. Each item is a dictionary with keys
+'states', 'attractors', and 'reductions'. The 'states' value is a dictionary
+of variable values that all attractors in the class share. The 'attractors'
+value is a list of Attractor objects (i.e., a sublist of self.attractors);
+all attractors in this list have all relevant nodes equivalently characterized.
+The 'reductions' value is a list of reduction_attractor keys that collectively
+contain all the attractors in the class (and therefore cannot differ in any
+relevant node).</dd>
+<dt><strong><code>relevant_nodes</code></strong> :&ensp;<code>list</code></dt>
+<dd>List of nodes that are "relevant", i.e., if trap spaces differ in the values
+of these variables, then the corresponding succession diagram nodes and
+attractors will not be merged.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AttractorRepertoire:
+    &#34;&#34;&#34;The class that stores information about attractors. Initialize using
+    either from_primes or from_succession_diagram.
+
+    Attributes
+    ----------
+    succession_diagram : succession.SuccessionDiagram
+        Succession diagram summarizing the stable motif structure of the model.
+    attractors : list of Attractor.Attractor
+        List of (possible) attractors in the model.
+    reduction_attractors : dictionary
+        A dictionary with integer keys that correspond to the
+        succession_diagram.digraph nodes. The dictionary values are lists of
+        Attractor.Attractor objects that correspond to attractors that exist in
+        the region of statespace corresponding to the reduced network
+        represented by the key in the succession diagram.
+    fewest_attractors : int
+        A lower bound on the number of attractors in the model.
+    most_attractors : int
+        An upper bound on the number of attractors in the model.
+    primes : pyboolnet primes dictionary
+        The model rules.
+    succession_digraph : networkx digraph
+        Networkx digraph representation of the succession_diagram object. If
+        AttractorRepertoire.simplify_diagram, it is equivalent to
+        AttractorRepertoire.succession_diagram.digraph. Otherwise, several of its
+        nodes may be contracted (depending on input parameters).
+    attractor_equivalence_classes : list
+        List of attractor equivalence classes. Each item is a dictionary with keys
+        &#39;states&#39;, &#39;attractors&#39;, and &#39;reductions&#39;. The &#39;states&#39; value is a dictionary
+        of variable values that all attractors in the class share. The &#39;attractors&#39;
+        value is a list of Attractor objects (i.e., a sublist of self.attractors);
+        all attractors in this list have all relevant nodes equivalently characterized.
+        The &#39;reductions&#39; value is a list of reduction_attractor keys that collectively
+        contain all the attractors in the class (and therefore cannot differ in any
+        relevant node).
+    relevant_nodes : list
+        List of nodes that are &#34;relevant&#34;, i.e., if trap spaces differ in the values
+        of these variables, then the corresponding succession diagram nodes and
+        attractors will not be merged.
+
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        self.succession_diagram = None
+        self.attractors = []
+        self.reduction_attractors = {}
+        self.fewest_attractors = None
+        self.most_attractors = None
+        self.primes = None
+
+        self.succession_digraph = None
+        self.attractor_equivalence_classes = None
+        self.relevant_nodes = None
+
+    @classmethod
+    def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+        &#34;&#34;&#34;Build the succession diagram and attractor repertoire from pyboolnet
+        formatted update rules rules.
+
+        Parameters
+        ----------
+        primes : pyboolnet primes dictionary
+            The model rules.
+        max_simulate_size : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph (the default is 20).
+        max_stable_motifs : int
+            Maximum number of output lines for pyboolnet to process from the
+            AspSolver (the default is 10000).
+        MPBN_update : bool
+            Whether MBPN update is used instead of general asynchronous update
+            (see L Pauleve, J Kolcak, T Chatain, S Haar, &#34;Reconciling qualitative, abstract, and scalable modeling of biological networks.&#34; Nat. Com. vol. 11, no. 4256 (2020))
+            (the default is False).
+
+        Returns
+        -------
+        AttractorRepertoire
+            AttractorRepertoire object for the input primes.
+
+        &#34;&#34;&#34;
+        x = cls()
+        x.primes = primes
+        x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        x.simplify_diagram([], merge_equivalent_reductions = False)
+        return x
+
+    @classmethod
+    def from_succession_diagram(cls,succession_diagram):
+        &#34;&#34;&#34;Build the succession diagram and attractor repertoire from a
+        precomputed succession diagram.
+
+        Parameters
+        ----------
+        succession_diagram : succession.SuccessionDiagram
+            Succession diagram summarizing the stable motif structure of the model.
+
+        Returns
+        -------
+        AttractorRepertoire
+            AttractorRepertoire object for the input succession diagram.
+
+        &#34;&#34;&#34;
+        x = cls()
+        x.succession_diagram = succession_diagram
+        x.primes = succession_diagram.unreduced_primes
+        x._get_attractors_from_succession_diagram()
+        x._count_attractors()
+        x.simplify_diagram([], merge_equivalent_reductions = False)
+        return x
+
+
+    def _get_attractors_from_succession_diagram(self):
+        &#34;&#34;&#34;Extract attractors from the succession diagram of the model.
+
+        &#34;&#34;&#34;
+        for ri, reduction in self.succession_diagram.motif_reduction_dict.items():
+            if reduction.terminal == &#34;no&#34;: continue
+
+            self.reduction_attractors[ri] = []
+
+            duplicate = False # have we added the attractors for this reduciton yet?
+            for attractor in self.attractors:
+                if attractor.logically_fixed_nodes == reduction.logically_fixed_nodes:
+                    duplicate = True
+                    attractor.add_reduction(reduction)
+                    self.reduction_attractors[ri].append(attractor)
+
+            if duplicate: continue
+
+            for id,att in enumerate(reduction.attractor_dict_list):
+                new_attractor = Attractor(reduction,id)
+                self.attractors.append(new_attractor)
+                self.reduction_attractors[ri].append(new_attractor)
+
+    def _count_attractors(self):
+        &#34;&#34;&#34;Place upper and lower bounds on the number of attractors.
+
+        &#34;&#34;&#34;
+        self.fewest_attractors = 0
+        self.most_attractors = 0
+        for attractor in self.attractors:
+            if attractor.guaranteed:
+                self.fewest_attractors += 1
+            # else: self.fewest_attractors += 0
+
+            if attractor.explored:
+                self.most_attractors += 1
+            else:
+                if attractor.representative[0].deletion_no_motif_attractors is not None:
+                    self.most_attractors += len(attractor.representative[0].deletion_no_motif_attractors)
+                else:
+                    # ludicrously conservative upper bound; assumes STG is all 2-cycles
+                    self.most_attractors += 2**(attractor.n_unfixed - 1)
+
+    def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+        &#34;&#34;&#34;Build and process the succession diagram for the model.
+
+        Parameters
+        ----------
+        primes : pyboolnet primes dictionary
+            The model rules.
+        max_simulate_size : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph (the default is 20).
+        max_stable_motifs : int
+            Maximum number of output lines for pyboolnet to process from the
+            AspSolver (the default is 10000).
+        MPBN_update : bool
+            Whether MBPN update is used instead of general asynchronous update
+            (see Pauleve et al. 2020)(the default is False).
+
+        &#34;&#34;&#34;
+        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        self._get_attractors_from_succession_diagram()
+        self._count_attractors()
+
+    def simplify_diagram(self, projection_nodes, merge_equivalent_reductions = True, keep_only_projection_nodes = False, condense_simple_paths = False):
+        &#34;&#34;&#34;Simplify the succession diagram for the model. This is done in two ways.
+        First, variables can be designated ignorable using the projection_nodes
+        parameter. If keep_only_projection_nodes is False, these variables are
+        ignorable, otherwise, all other nodes are ignorable. When
+        merge_equivalent_reductions is True, all nodes of the succession diagram
+        that correspond to trap spaces whose fixed variables differ only in ignorable
+        variables are contracted (in the graph theory sense). After this process,
+        if condense_simple_paths is True, then all succession diagram nodes with
+        in-degree equal to one are contracted with their parent node. This function
+        constructs the succession_digraph and attractor_equivalence_classes attributes,
+        which are described in the class documentation.
+
+        Parameters
+        ----------
+        projection_nodes : list of variable names
+            These nodes will be ignored if keep_only_projection_nodes is False
+            (default); otherwise, all nodes except these will be ignored.
+        merge_equivalent_reductions : bool
+            Whether to contract succession diagram nodes whose reductions differ
+            only in ignorable nodes.
+        keep_only_projection_nodes : bool
+            Whether projection_nodes specifies non-ignorable nodes.
+        condense_simple_paths : bool
+            Whether to contract nodes with in-degree one.
+        &#34;&#34;&#34;
+
+        if not keep_only_projection_nodes:
+            keep = set(self.primes.keys()) - set(projection_nodes)
+            ignore = set(projection_nodes)
+        else:
+            keep = set(projection_nodes)
+            ignore = set(self.primes.keys()) - set(projection_nodes)
+
+        G = self.succession_diagram.digraph.copy()
+
+        # Merge equivalent nodes
+        if merge_equivalent_reductions:
+            for u,v in it.combinations(self.succession_diagram.digraph.nodes(),2):
+                if u not in G.nodes(): continue # we&#39;ve already merged u
+
+                ru = self.succession_diagram.motif_reduction_dict[u]
+                rv = self.succession_diagram.motif_reduction_dict[v]
+                if pyboolnet.prime_implicants.primes_are_equal(ru.reduced_primes,rv.reduced_primes):
+                    rud = ru.logically_fixed_nodes
+                    rvd = rv.logically_fixed_nodes
+                    if all([rud[k]==rvd[k] for k in keep if k in rud and k in rvd]):
+                        G = nx.contracted_nodes(G,u,v,self_loops=False)
+
+        # If a node v has out degree = 1, then merge it into its only child u
+        if condense_simple_paths:
+            old_N = float(&#39;inf&#39;)
+            while G.number_of_nodes() &lt; old_N:
+                old_N = G.number_of_nodes()
+                for v in G.nodes():
+                    if G.out_degree(v) == 1:
+                        u = next(G.successors(v))
+                        G = nx.contracted_nodes(G,u,v,self_loops=False)
+
+
+        self.succession_digraph = G
+
+        self.attractor_equivalence_classes = []
+        for a in self.attractors:
+            keys = set()
+            for n in self.succession_digraph.nodes():
+                if n not in self.reduction_attractors: continue
+                for b in self.reduction_attractors[n]:
+                    if all([b.attractor_dict[k] == a.attractor_dict[k] for k in keep]):
+                        keys.add(n)
+                        break
+
+            merged = False
+            for c in self.attractor_equivalence_classes:
+                if c[&#39;states&#39;].items() &lt;= a.attractor_dict.items():
+                    c[&#39;attractors&#39;].append(a)
+                    c[&#39;reductions&#39;] |= keys
+                    merged = True
+            if not merged:
+                self.attractor_equivalence_classes.append({&#39;states&#39;:{k:v for k,v in a.attractor_dict.items() if k in keep},&#39;attractors&#39;:[a], &#39;reductions&#39;:keys})
+
+        self.relevant_nodes = keep
+
+    def summary(self):
+        &#34;&#34;&#34;Prints a summary of the attractors to standard output.
+
+        &#34;&#34;&#34;
+        if self.fewest_attractors == 0:
+            print(&#34;Unable to properly count attractors.&#34;)
+        elif self.fewest_attractors == self.most_attractors:
+            if self.fewest_attractors == 1:
+                print(&#34;There is 1 attractor.&#34;)
+            else:
+                print(&#34;There are&#34;,self.fewest_attractors,&#34;attractors.&#34;)
+        else:
+            print(&#34;There are between&#34;,self.fewest_attractors,&#34;and&#34;,self.most_attractors,&#34;attractors.&#34;)
+        for att in self.attractors:
+            print(att.attractor_dict)
+            print()
+
+    def reprogram_to_trap_spaces(self,logically_fixed,
+        target_method=&#39;history&#39;,driver_method=&#39;internal&#39;,
+        max_drivers=None,GRASP_iterations=None,GRASP_score_override=None):
+        &#34;&#34;&#34;Find driver sets that lead to fixing the node states specified.
+
+        Parameters
+        ----------
+        logically_fixed : partial state dictionary
+            Targeted fixed nodes.
+        target_method : str
+            Either &#39;history&#39; or &#39;merge&#39;; see Notes below for details.
+        driver_method : str
+            Either &#39;internal&#39;, &#39;minimal&#39;, or &#39;GRASP&#39; see Notes below for details.
+        max_drivers : int
+            Maximum number of driver nodes to consider (not used in GRASP methods).
+            If none, the upper limit is given by the number of free variables
+            (the default is None).
+        GRASP_iterations : int
+            Number of times to construct GRASP driver sets; only used in GRASP
+            methods. If none, the number of iterations is chosen based on the
+            network size (the default is None).
+        GRASP_score_override : function
+            Optional heuristic score function override (see drivers.GRASP
+            for details). Only used in GRASP methods (the default is None).
+
+        Returns
+        -------
+        list
+            Control strategies found; interpretation depends on method selected
+            See Notes below for details.
+
+        Notes
+        -----
+        The various combinations of target_method and driver_method options result
+        in different control strategies, which are outlined below.
+
+        target_method = history, driver_method = internal:
+        Finds all shortest stable motif histories that result in the target node states
+        being logically fixed. Each stable motif is searched for internal driver nodes.
+        The resulting internal drivers are combined into a single  control set. The
+        return value consists of all such control sets for all  stable motif histories.
+        Each control set eventually becomes self-sustaining.
+
+        target_method = history, driver_method = minimal:
+        Similar to the history method, except the search for stable motif drivers
+        includes external driver nodes for the motif and does not extend to driver sets
+        of larger size once one driver set has been found for a motif. Because the
+        search includes external driver nodes, special care must be taken in interpreting
+        the effect of the drivers, as their influence may impact the effect of motifs
+        stabilizing. Thus, the control is only guaranteed to work if the interventions
+        are temporary and implemented in the order specified by the motif history.
+
+        For this reason, the output consists of lists of ordered interventions.
+        Each element of the return value is a list of lists of dictionaries. Each
+        element of the return value represents a control strategy. To implement such
+        a strategy, select a dictionary from the first element of the strategy and
+        fix the node states it specifies until their influence has propagated through
+        the system. Then repeat this process iteratively for each element of the strategy
+        list, in order. For example, if
+        nonredundant_drivers = [ [[{&#39;xD&#39;:1,&#39;xE=1&#39;}]], [[{&#39;xA&#39;:1},{&#39;xB&#39;:1}],[{&#39;xC&#39;:1}]] ]
+        then there are two control strategies available:
+        1) fix xD=xE=1 temporarily and
+        2) first fix either xA=1 or xB=1 temporarily, then fix xC=1 temporarily.
+
+        target_method = history, driver_method = GRASP:
+        The same as history, minimal, except external driver nodes are searched for
+        using the GRASP algorithm using GRASP_iterations iterations.
+
+        target_method = merge, driver_method = internal:
+        Finds all shortest stable motif histories that result in the target node states
+        being logically fixed. All node states in the motifs in the history are merged
+        into a stable module dictionary. This is then searched for internal driver
+        nodes. Each element of the return value is a dictionary corresponding to a
+        control set. Each control set eventually becomes self-sustaining.
+
+        target_method = merge, driver_method = minimal:
+        Similar to the merge method, except the search for drivers is conducted over
+        all nodes, not just those internal to the merged stable module. Furthermore,
+        the search is truncated when a control set is found such that the search does
+        not proceed to driver sets larger than the smallest found. Each element of
+        the return value is a dictionary corresponding to a control set. The control
+        sets are only guaranteed to result in activation of the target if they are
+        temporary interventions.
+
+        target_method = merge, driver_method = GRASP:
+        The same as merge, minimal, except external driver nodes are searched for
+        using the GRASP algorithm using GRASP_iterations iterations.
+
+        &#34;&#34;&#34;
+        return self.succession_diagram.reprogram_to_trap_spaces(logically_fixed,
+            target_method=target_method,driver_method=driver_method,
+            max_drivers=max_drivers,
+            GRASP_iterations=GRASP_iterations,GRASP_score_override=GRASP_score_override)</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="pystablemotifs.AttractorRepertoire.AttractorRepertoire.from_primes"><code class="name flex">
+<span>def <span class="ident">from_primes</span></span>(<span>primes, max_simulate_size=20, max_stable_motifs=10000, MPBN_update=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Build the succession diagram and attractor repertoire from pyboolnet
+formatted update rules rules.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>The model rules.</dd>
+<dt><strong><code>max_simulate_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of variables for which to brute-force build a state
+transition graph (the default is 20).</dd>
+<dt><strong><code>max_stable_motifs</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of output lines for pyboolnet to process from the
+AspSolver (the default is 10000).</dd>
+<dt><strong><code>MPBN_update</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether MBPN update is used instead of general asynchronous update
+(see L Pauleve, J Kolcak, T Chatain, S Haar, "Reconciling qualitative, abstract, and scalable modeling of biological networks." Nat. Com. vol. 11, no. 4256 (2020))
+(the default is False).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="pystablemotifs.AttractorRepertoire.AttractorRepertoire" href="#pystablemotifs.AttractorRepertoire.AttractorRepertoire">AttractorRepertoire</a></code></dt>
+<dd>AttractorRepertoire object for the input primes.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    &#34;&#34;&#34;Build the succession diagram and attractor repertoire from pyboolnet
+    formatted update rules rules.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        The model rules.
+    max_simulate_size : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph (the default is 20).
+    max_stable_motifs : int
+        Maximum number of output lines for pyboolnet to process from the
+        AspSolver (the default is 10000).
+    MPBN_update : bool
+        Whether MBPN update is used instead of general asynchronous update
+        (see L Pauleve, J Kolcak, T Chatain, S Haar, &#34;Reconciling qualitative, abstract, and scalable modeling of biological networks.&#34; Nat. Com. vol. 11, no. 4256 (2020))
+        (the default is False).
+
+    Returns
+    -------
+    AttractorRepertoire
+        AttractorRepertoire object for the input primes.
+
+    &#34;&#34;&#34;
+    x = cls()
+    x.primes = primes
+    x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+    x.simplify_diagram([], merge_equivalent_reductions = False)
+    return x</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.AttractorRepertoire.AttractorRepertoire.from_succession_diagram"><code class="name flex">
+<span>def <span class="ident">from_succession_diagram</span></span>(<span>succession_diagram)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Build the succession diagram and attractor repertoire from a
+precomputed succession diagram.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>succession_diagram</code></strong> :&ensp;<code>succession.SuccessionDiagram</code></dt>
+<dd>Succession diagram summarizing the stable motif structure of the model.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="pystablemotifs.AttractorRepertoire.AttractorRepertoire" href="#pystablemotifs.AttractorRepertoire.AttractorRepertoire">AttractorRepertoire</a></code></dt>
+<dd>AttractorRepertoire object for the input succession diagram.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_succession_diagram(cls,succession_diagram):
+    &#34;&#34;&#34;Build the succession diagram and attractor repertoire from a
+    precomputed succession diagram.
+
+    Parameters
+    ----------
+    succession_diagram : succession.SuccessionDiagram
+        Succession diagram summarizing the stable motif structure of the model.
+
+    Returns
+    -------
+    AttractorRepertoire
+        AttractorRepertoire object for the input succession diagram.
+
+    &#34;&#34;&#34;
+    x = cls()
+    x.succession_diagram = succession_diagram
+    x.primes = succession_diagram.unreduced_primes
+    x._get_attractors_from_succession_diagram()
+    x._count_attractors()
+    x.simplify_diagram([], merge_equivalent_reductions = False)
+    return x</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="pystablemotifs.AttractorRepertoire.AttractorRepertoire.analyze_system"><code class="name flex">
+<span>def <span class="ident">analyze_system</span></span>(<span>self, primes, max_simulate_size=20, max_stable_motifs=10000, MPBN_update=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Build and process the succession diagram for the model.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>The model rules.</dd>
+<dt><strong><code>max_simulate_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of variables for which to brute-force build a state
+transition graph (the default is 20).</dd>
+<dt><strong><code>max_stable_motifs</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of output lines for pyboolnet to process from the
+AspSolver (the default is 10000).</dd>
+<dt><strong><code>MPBN_update</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether MBPN update is used instead of general asynchronous update
+(see Pauleve et al. 2020)(the default is False).</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    &#34;&#34;&#34;Build and process the succession diagram for the model.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        The model rules.
+    max_simulate_size : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph (the default is 20).
+    max_stable_motifs : int
+        Maximum number of output lines for pyboolnet to process from the
+        AspSolver (the default is 10000).
+    MPBN_update : bool
+        Whether MBPN update is used instead of general asynchronous update
+        (see Pauleve et al. 2020)(the default is False).
+
+    &#34;&#34;&#34;
+    self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+    self._get_attractors_from_succession_diagram()
+    self._count_attractors()</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.AttractorRepertoire.AttractorRepertoire.reprogram_to_trap_spaces"><code class="name flex">
+<span>def <span class="ident">reprogram_to_trap_spaces</span></span>(<span>self, logically_fixed, target_method='history', driver_method='internal', max_drivers=None, GRASP_iterations=None, GRASP_score_override=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find driver sets that lead to fixing the node states specified.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>logically_fixed</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Targeted fixed nodes.</dd>
+<dt><strong><code>target_method</code></strong> :&ensp;<code>str</code></dt>
+<dd>Either 'history' or 'merge'; see Notes below for details.</dd>
+<dt><strong><code>driver_method</code></strong> :&ensp;<code>str</code></dt>
+<dd>Either 'internal', 'minimal', or 'GRASP' see Notes below for details.</dd>
+<dt><strong><code>max_drivers</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of driver nodes to consider (not used in GRASP methods).
+If none, the upper limit is given by the number of free variables
+(the default is None).</dd>
+<dt><strong><code>GRASP_iterations</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of times to construct GRASP driver sets; only used in GRASP
+methods. If none, the number of iterations is chosen based on the
+network size (the default is None).</dd>
+<dt><strong><code>GRASP_score_override</code></strong> :&ensp;<code>function</code></dt>
+<dd>Optional heuristic score function override (see drivers.GRASP
+for details). Only used in GRASP methods (the default is None).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>Control strategies found; interpretation depends on method selected
+See Notes below for details.</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>The various combinations of target_method and driver_method options result
+in different control strategies, which are outlined below.</p>
+<p>target_method = history, driver_method = internal:
+Finds all shortest stable motif histories that result in the target node states
+being logically fixed. Each stable motif is searched for internal driver nodes.
+The resulting internal drivers are combined into a single
+control set. The
+return value consists of all such control sets for all
+stable motif histories.
+Each control set eventually becomes self-sustaining.</p>
+<p>target_method = history, driver_method = minimal:
+Similar to the history method, except the search for stable motif drivers
+includes external driver nodes for the motif and does not extend to driver sets
+of larger size once one driver set has been found for a motif. Because the
+search includes external driver nodes, special care must be taken in interpreting
+the effect of the drivers, as their influence may impact the effect of motifs
+stabilizing. Thus, the control is only guaranteed to work if the interventions
+are temporary and implemented in the order specified by the motif history.</p>
+<p>For this reason, the output consists of lists of ordered interventions.
+Each element of the return value is a list of lists of dictionaries. Each
+element of the return value represents a control strategy. To implement such
+a strategy, select a dictionary from the first element of the strategy and
+fix the node states it specifies until their influence has propagated through
+the system. Then repeat this process iteratively for each element of the strategy
+list, in order. For example, if
+nonredundant_drivers = [ [[{'xD':1,'xE=1'}]], [[{'xA':1},{'xB':1}],[{'xC':1}]] ]
+then there are two control strategies available:
+1) fix xD=xE=1 temporarily and
+2) first fix either xA=1 or xB=1 temporarily, then fix xC=1 temporarily.</p>
+<p>target_method = history, driver_method = GRASP:
+The same as history, minimal, except external driver nodes are searched for
+using the GRASP algorithm using GRASP_iterations iterations.</p>
+<p>target_method = merge, driver_method = internal:
+Finds all shortest stable motif histories that result in the target node states
+being logically fixed. All node states in the motifs in the history are merged
+into a stable module dictionary. This is then searched for internal driver
+nodes. Each element of the return value is a dictionary corresponding to a
+control set. Each control set eventually becomes self-sustaining.</p>
+<p>target_method = merge, driver_method = minimal:
+Similar to the merge method, except the search for drivers is conducted over
+all nodes, not just those internal to the merged stable module. Furthermore,
+the search is truncated when a control set is found such that the search does
+not proceed to driver sets larger than the smallest found. Each element of
+the return value is a dictionary corresponding to a control set. The control
+sets are only guaranteed to result in activation of the target if they are
+temporary interventions.</p>
+<p>target_method = merge, driver_method = GRASP:
+The same as merge, minimal, except external driver nodes are searched for
+using the GRASP algorithm using GRASP_iterations iterations.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reprogram_to_trap_spaces(self,logically_fixed,
+    target_method=&#39;history&#39;,driver_method=&#39;internal&#39;,
+    max_drivers=None,GRASP_iterations=None,GRASP_score_override=None):
+    &#34;&#34;&#34;Find driver sets that lead to fixing the node states specified.
+
+    Parameters
+    ----------
+    logically_fixed : partial state dictionary
+        Targeted fixed nodes.
+    target_method : str
+        Either &#39;history&#39; or &#39;merge&#39;; see Notes below for details.
+    driver_method : str
+        Either &#39;internal&#39;, &#39;minimal&#39;, or &#39;GRASP&#39; see Notes below for details.
+    max_drivers : int
+        Maximum number of driver nodes to consider (not used in GRASP methods).
+        If none, the upper limit is given by the number of free variables
+        (the default is None).
+    GRASP_iterations : int
+        Number of times to construct GRASP driver sets; only used in GRASP
+        methods. If none, the number of iterations is chosen based on the
+        network size (the default is None).
+    GRASP_score_override : function
+        Optional heuristic score function override (see drivers.GRASP
+        for details). Only used in GRASP methods (the default is None).
+
+    Returns
+    -------
+    list
+        Control strategies found; interpretation depends on method selected
+        See Notes below for details.
+
+    Notes
+    -----
+    The various combinations of target_method and driver_method options result
+    in different control strategies, which are outlined below.
+
+    target_method = history, driver_method = internal:
+    Finds all shortest stable motif histories that result in the target node states
+    being logically fixed. Each stable motif is searched for internal driver nodes.
+    The resulting internal drivers are combined into a single  control set. The
+    return value consists of all such control sets for all  stable motif histories.
+    Each control set eventually becomes self-sustaining.
+
+    target_method = history, driver_method = minimal:
+    Similar to the history method, except the search for stable motif drivers
+    includes external driver nodes for the motif and does not extend to driver sets
+    of larger size once one driver set has been found for a motif. Because the
+    search includes external driver nodes, special care must be taken in interpreting
+    the effect of the drivers, as their influence may impact the effect of motifs
+    stabilizing. Thus, the control is only guaranteed to work if the interventions
+    are temporary and implemented in the order specified by the motif history.
+
+    For this reason, the output consists of lists of ordered interventions.
+    Each element of the return value is a list of lists of dictionaries. Each
+    element of the return value represents a control strategy. To implement such
+    a strategy, select a dictionary from the first element of the strategy and
+    fix the node states it specifies until their influence has propagated through
+    the system. Then repeat this process iteratively for each element of the strategy
+    list, in order. For example, if
+    nonredundant_drivers = [ [[{&#39;xD&#39;:1,&#39;xE=1&#39;}]], [[{&#39;xA&#39;:1},{&#39;xB&#39;:1}],[{&#39;xC&#39;:1}]] ]
+    then there are two control strategies available:
+    1) fix xD=xE=1 temporarily and
+    2) first fix either xA=1 or xB=1 temporarily, then fix xC=1 temporarily.
+
+    target_method = history, driver_method = GRASP:
+    The same as history, minimal, except external driver nodes are searched for
+    using the GRASP algorithm using GRASP_iterations iterations.
+
+    target_method = merge, driver_method = internal:
+    Finds all shortest stable motif histories that result in the target node states
+    being logically fixed. All node states in the motifs in the history are merged
+    into a stable module dictionary. This is then searched for internal driver
+    nodes. Each element of the return value is a dictionary corresponding to a
+    control set. Each control set eventually becomes self-sustaining.
+
+    target_method = merge, driver_method = minimal:
+    Similar to the merge method, except the search for drivers is conducted over
+    all nodes, not just those internal to the merged stable module. Furthermore,
+    the search is truncated when a control set is found such that the search does
+    not proceed to driver sets larger than the smallest found. Each element of
+    the return value is a dictionary corresponding to a control set. The control
+    sets are only guaranteed to result in activation of the target if they are
+    temporary interventions.
+
+    target_method = merge, driver_method = GRASP:
+    The same as merge, minimal, except external driver nodes are searched for
+    using the GRASP algorithm using GRASP_iterations iterations.
+
+    &#34;&#34;&#34;
+    return self.succession_diagram.reprogram_to_trap_spaces(logically_fixed,
+        target_method=target_method,driver_method=driver_method,
+        max_drivers=max_drivers,
+        GRASP_iterations=GRASP_iterations,GRASP_score_override=GRASP_score_override)</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.AttractorRepertoire.AttractorRepertoire.simplify_diagram"><code class="name flex">
+<span>def <span class="ident">simplify_diagram</span></span>(<span>self, projection_nodes, merge_equivalent_reductions=True, keep_only_projection_nodes=False, condense_simple_paths=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simplify the succession diagram for the model. This is done in two ways.
+First, variables can be designated ignorable using the projection_nodes
+parameter. If keep_only_projection_nodes is False, these variables are
+ignorable, otherwise, all other nodes are ignorable. When
+merge_equivalent_reductions is True, all nodes of the succession diagram
+that correspond to trap spaces whose fixed variables differ only in ignorable
+variables are contracted (in the graph theory sense). After this process,
+if condense_simple_paths is True, then all succession diagram nodes with
+in-degree equal to one are contracted with their parent node. This function
+constructs the succession_digraph and attractor_equivalence_classes attributes,
+which are described in the class documentation.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>projection_nodes</code></strong> :&ensp;<code>list</code> of <code>variable names</code></dt>
+<dd>These nodes will be ignored if keep_only_projection_nodes is False
+(default); otherwise, all nodes except these will be ignored.</dd>
+<dt><strong><code>merge_equivalent_reductions</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to contract succession diagram nodes whose reductions differ
+only in ignorable nodes.</dd>
+<dt><strong><code>keep_only_projection_nodes</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether projection_nodes specifies non-ignorable nodes.</dd>
+<dt><strong><code>condense_simple_paths</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to contract nodes with in-degree one.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simplify_diagram(self, projection_nodes, merge_equivalent_reductions = True, keep_only_projection_nodes = False, condense_simple_paths = False):
+    &#34;&#34;&#34;Simplify the succession diagram for the model. This is done in two ways.
+    First, variables can be designated ignorable using the projection_nodes
+    parameter. If keep_only_projection_nodes is False, these variables are
+    ignorable, otherwise, all other nodes are ignorable. When
+    merge_equivalent_reductions is True, all nodes of the succession diagram
+    that correspond to trap spaces whose fixed variables differ only in ignorable
+    variables are contracted (in the graph theory sense). After this process,
+    if condense_simple_paths is True, then all succession diagram nodes with
+    in-degree equal to one are contracted with their parent node. This function
+    constructs the succession_digraph and attractor_equivalence_classes attributes,
+    which are described in the class documentation.
+
+    Parameters
+    ----------
+    projection_nodes : list of variable names
+        These nodes will be ignored if keep_only_projection_nodes is False
+        (default); otherwise, all nodes except these will be ignored.
+    merge_equivalent_reductions : bool
+        Whether to contract succession diagram nodes whose reductions differ
+        only in ignorable nodes.
+    keep_only_projection_nodes : bool
+        Whether projection_nodes specifies non-ignorable nodes.
+    condense_simple_paths : bool
+        Whether to contract nodes with in-degree one.
+    &#34;&#34;&#34;
+
+    if not keep_only_projection_nodes:
+        keep = set(self.primes.keys()) - set(projection_nodes)
+        ignore = set(projection_nodes)
+    else:
+        keep = set(projection_nodes)
+        ignore = set(self.primes.keys()) - set(projection_nodes)
+
+    G = self.succession_diagram.digraph.copy()
+
+    # Merge equivalent nodes
+    if merge_equivalent_reductions:
+        for u,v in it.combinations(self.succession_diagram.digraph.nodes(),2):
+            if u not in G.nodes(): continue # we&#39;ve already merged u
+
+            ru = self.succession_diagram.motif_reduction_dict[u]
+            rv = self.succession_diagram.motif_reduction_dict[v]
+            if pyboolnet.prime_implicants.primes_are_equal(ru.reduced_primes,rv.reduced_primes):
+                rud = ru.logically_fixed_nodes
+                rvd = rv.logically_fixed_nodes
+                if all([rud[k]==rvd[k] for k in keep if k in rud and k in rvd]):
+                    G = nx.contracted_nodes(G,u,v,self_loops=False)
+
+    # If a node v has out degree = 1, then merge it into its only child u
+    if condense_simple_paths:
+        old_N = float(&#39;inf&#39;)
+        while G.number_of_nodes() &lt; old_N:
+            old_N = G.number_of_nodes()
+            for v in G.nodes():
+                if G.out_degree(v) == 1:
+                    u = next(G.successors(v))
+                    G = nx.contracted_nodes(G,u,v,self_loops=False)
+
+
+    self.succession_digraph = G
+
+    self.attractor_equivalence_classes = []
+    for a in self.attractors:
+        keys = set()
+        for n in self.succession_digraph.nodes():
+            if n not in self.reduction_attractors: continue
+            for b in self.reduction_attractors[n]:
+                if all([b.attractor_dict[k] == a.attractor_dict[k] for k in keep]):
+                    keys.add(n)
+                    break
+
+        merged = False
+        for c in self.attractor_equivalence_classes:
+            if c[&#39;states&#39;].items() &lt;= a.attractor_dict.items():
+                c[&#39;attractors&#39;].append(a)
+                c[&#39;reductions&#39;] |= keys
+                merged = True
+        if not merged:
+            self.attractor_equivalence_classes.append({&#39;states&#39;:{k:v for k,v in a.attractor_dict.items() if k in keep},&#39;attractors&#39;:[a], &#39;reductions&#39;:keys})
+
+    self.relevant_nodes = keep</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.AttractorRepertoire.AttractorRepertoire.summary"><code class="name flex">
+<span>def <span class="ident">summary</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints a summary of the attractors to standard output.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def summary(self):
+    &#34;&#34;&#34;Prints a summary of the attractors to standard output.
+
+    &#34;&#34;&#34;
+    if self.fewest_attractors == 0:
+        print(&#34;Unable to properly count attractors.&#34;)
+    elif self.fewest_attractors == self.most_attractors:
+        if self.fewest_attractors == 1:
+            print(&#34;There is 1 attractor.&#34;)
+        else:
+            print(&#34;There are&#34;,self.fewest_attractors,&#34;attractors.&#34;)
+    else:
+        print(&#34;There are between&#34;,self.fewest_attractors,&#34;and&#34;,self.most_attractors,&#34;attractors.&#34;)
+    for att in self.attractors:
+        print(att.attractor_dict)
+        print()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pystablemotifs" href="index.html">pystablemotifs</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pystablemotifs.AttractorRepertoire.AttractorRepertoire" href="#pystablemotifs.AttractorRepertoire.AttractorRepertoire">AttractorRepertoire</a></code></h4>
+<ul class="">
+<li><code><a title="pystablemotifs.AttractorRepertoire.AttractorRepertoire.analyze_system" href="#pystablemotifs.AttractorRepertoire.AttractorRepertoire.analyze_system">analyze_system</a></code></li>
+<li><code><a title="pystablemotifs.AttractorRepertoire.AttractorRepertoire.from_primes" href="#pystablemotifs.AttractorRepertoire.AttractorRepertoire.from_primes">from_primes</a></code></li>
+<li><code><a title="pystablemotifs.AttractorRepertoire.AttractorRepertoire.from_succession_diagram" href="#pystablemotifs.AttractorRepertoire.AttractorRepertoire.from_succession_diagram">from_succession_diagram</a></code></li>
+<li><code><a title="pystablemotifs.AttractorRepertoire.AttractorRepertoire.reprogram_to_trap_spaces" href="#pystablemotifs.AttractorRepertoire.AttractorRepertoire.reprogram_to_trap_spaces">reprogram_to_trap_spaces</a></code></li>
+<li><code><a title="pystablemotifs.AttractorRepertoire.AttractorRepertoire.simplify_diagram" href="#pystablemotifs.AttractorRepertoire.AttractorRepertoire.simplify_diagram">simplify_diagram</a></code></li>
+<li><code><a title="pystablemotifs.AttractorRepertoire.AttractorRepertoire.summary" href="#pystablemotifs.AttractorRepertoire.AttractorRepertoire.summary">summary</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,3481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>pystablemotifs.reduction API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pystablemotifs.reduction</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import pyboolnet.trap_spaces
+import pyboolnet.prime_implicants
+import pyboolnet.interaction_graphs
+import pyboolnet.digraphs
+from pyboolnet.external.bnet2primes import bnet_text2primes
+import itertools as it
+import networkx as nx
+import re
+import sympy
+
+import pystablemotifs.time_reversal as sm_time
+import pystablemotifs.restrict_space as sm_rspace
+import pystablemotifs.format as sm_format
+import pystablemotifs.drivers as sm_doi
+
+def simplify_primes(primes):
+    &#34;&#34;&#34;Simplifies pyboolnet primes (e.g., A | A &amp; B becomes A)
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Rules to simplify.
+
+    Returns
+    -------
+    pyboolnet primes dictionary
+        Simplified rules.
+
+    &#34;&#34;&#34;
+
+    # reimport to force simplification
+    if len(primes) &gt; 0:
+        return bnet_text2primes(sm_format.primes2bnet(primes))
+    else:
+        return primes
+
+def reduce_primes(fixed,primes):
+    &#34;&#34;&#34;Simplifies boolean rules when some nodes are held fixed
+
+    Parameters
+    ----------
+    fixed : partial state dictionary
+        Node states to be held fixed.
+    primes : pyboolnet primes dictionary
+        Update rules.
+
+    Returns
+    -------
+    reduced_primes : pyboolnet primes dictionary
+        Simplified update rules
+    percolated_states : partial state dictionary
+        Fixed node states (including inputs) that were simplified and removed.
+
+    &#34;&#34;&#34;
+    reduced_primes = pyboolnet.prime_implicants.create_constants(primes,fixed,copy=True)
+    percolated_states = pyboolnet.prime_implicants.percolation(reduced_primes,True)
+    percolated_states.update(fixed)
+
+
+    return simplify_primes(reduced_primes), percolated_states
+
+def delete_node(primes, node):
+    &#34;&#34;&#34;Reduces Boolean rules given by primes by deleting the variable specified by
+    node. The deleted node may not appear in its own update function. Any update
+    rules depending on the deleted node will have that dependence replaced by
+    the update function of the deleted node. The rules are simplified after node
+    deletion.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules.
+    node : str
+        Name of the node to delete.
+
+    Returns
+    -------
+    new_primes : pyboolnet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during simplification.
+
+
+    &#34;&#34;&#34;
+    succ = set()
+    for p in primes:
+        p_is_succ = False
+        for v in [0,1]:
+            for term in primes[p][v]:
+                if node in term:
+                    succ.add(p)
+                    p_is_succ = True
+                    break
+            if p_is_succ:
+                break
+
+
+    # uncomment for additional (and hopefully unnecessary), but slow safety checks.
+    #G = pyboolnet.interaction_graphs.primes2igraph(primes)
+    #assert not G.has_edge(node,node), &#39; &#39;.join([&#34;Node&#34;,str(node),&#34;has a self-loop and cannot be deleted.&#34;])
+
+    assert not node in succ, &#39; &#39;.join([&#34;Node&#34;,str(node),&#34;has a self-loop and cannot be deleted.&#34;])
+    new_primes = {k:v for k,v in primes.items() if not k == node}
+    constants = {}
+
+    neg = &#34;!&#34;+node
+
+    expr0 = sm_format.rule2bnet(primes[node][0])
+    expr1 = sm_format.rule2bnet(primes[node][1])
+
+    for child in succ:#G.successors(node):
+        # If we have already simplified this child node, skip it
+        if child in constants:
+            continue
+        crule1 = sm_format.rule2bnet(primes[child][1])
+        crule1 = simplify_using_expression_and_negation(node,expr0,expr1,crule1)
+        crule0 = sm_format.rule2bnet(primes[child][0])
+        crule0 = simplify_using_expression_and_negation(node,expr0,expr1,crule0)
+        new_primes[child] = sm_format._build_rule_using_bnet_dnfs(crule0,crule1)
+
+        nc = pyboolnet.prime_implicants.percolation(new_primes,False)
+        constants.update(nc)
+
+    nc = pyboolnet.prime_implicants.percolation(new_primes,True)
+    constants.update(nc)
+    new_primes = simplify_primes(new_primes)
+    return new_primes, constants
+
+def simplify_using_expression_and_negation(node,expr0,expr1,bnet):
+    &#34;&#34;&#34;Simplify the expression bnet by substituting the value for node given by
+    node = expr1 = !expr0 (does not check that expr1=!expr0)
+
+    Parameters
+    ----------
+    node : str
+        Name of node to substitute
+    expr0 : str
+        Expression to substitute for !node
+    expr1 : str
+        Expression to substitute for node
+    bnet : str
+        BNET expression in which to perform the substitutions.
+
+    Returns
+    -------
+    str
+        Simplified BNET expression after substitutions are performed.
+
+    &#34;&#34;&#34;
+
+    neg = &#34;!&#34;+node
+    crule = re.sub(rf&#39;\b{neg}\b&#39;,&#34;(&#34;+expr0+&#34;)&#34;,bnet)
+    crule = re.sub(rf&#39;\b{node}\b&#39;,&#34;(&#34;+expr1+&#34;)&#34;,crule)
+    crule = sm_format.bnet2sympy(crule)
+    crule = str(sympy.to_dnf(sympy.simplify(sympy.sympify(crule))))
+    crule = sm_format.sympy2bnet(crule)
+    return crule
+
+def remove_outdag(primes):
+    &#34;&#34;&#34;Removes the terminal directed acyclic part of the regulatory network. This
+    part of the network does not influence the attractor repertoire.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules.
+
+    Returns
+    -------
+    reduced : pyboolnet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during reduction.
+
+    &#34;&#34;&#34;
+    if len(primes) == 0:
+        return primes, {}
+    G = pyboolnet.interaction_graphs.primes2igraph(primes)
+    od = pyboolnet.digraphs.find_outdag(G)
+    reduced = primes.copy()
+    constants = {}
+    for node in od:
+        if node in reduced:
+            reduced, nc = delete_node(reduced, node)
+            constants.update(nc)
+    return reduced, constants
+
+def deletion_reduction(primes, max_in_degree = float(&#39;inf&#39;)):
+    &#34;&#34;&#34;Implements the reduction method of Veliz-Cuba (2011).
+    Deletion order is such that nodes with low in-degree are prioritized for
+    removal. Deletion proceeds until all remaining nodes have self-loops.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules.
+    max_in_degree : int or float
+        Will not try to delete nodes with in-degree larger than this. Deleting
+        nodes with large in-degree can be computationally expensive (the default
+        is float(&#39;inf&#39;)).
+
+    Returns
+    -------
+    reduced : pyboolnet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during reduction.
+
+    &#34;&#34;&#34;
+
+    reduced, constants = remove_outdag(primes)
+    G = pyboolnet.interaction_graphs.primes2igraph(reduced)
+    cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
+
+    change = True
+    while change and len(reduced) &gt; 0:
+        change = False
+        for node in cur_order:
+            retry_node = True
+            if not node in reduced or G.in_degree(node) &gt; max_in_degree:
+                continue
+            elif not any(node in p for p in reduced[node][1]):
+                reduced, nc = delete_node(reduced, node)
+                constants.update(nc)
+                if len(reduced) &gt; 0:
+                    G = pyboolnet.interaction_graphs.primes2igraph(reduced)
+                else:
+                    G = nx.DiGraph()
+                change = True
+                # print(&#34;\n\n\nNEW PRIMES&#34;)
+                # sm_format.pretty_print_prime_rules(reduced)
+                break
+        cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
+
+        pyboolnet.prime_implicants.create_constants(reduced,constants)
+        nc = pyboolnet.prime_implicants.percolation(reduced,True)
+        constants.update(nc)
+    return reduced, constants
+
+def mediator_reduction(primes):
+    &#34;&#34;&#34;Network reduction method of Saadadtpour, Albert, Reluga (2013)
+    Preserves fixed points. Number of complex attractors is often, but
+    not always conserved (despite inital claims). Can be viewed as a more
+    restrictive version of the deletion reduction method of Veliz-Cuba (2011).
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules.
+
+    Returns
+    -------
+    reduced : pyboolnet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during reduction.
+
+    &#34;&#34;&#34;
+    return primes, {}
+    reduced, constants = remove_outdag(primes)
+    cur_order = sorted(reduced)
+    G = pyboolnet.interaction_graphs.primes2igraph(reduced)
+    candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
+
+    for node in candidates:
+        u = list(G.predecessors(node))[0]
+        w = list(G.successors(node))[0]
+        if not w in G.successors(u) and not w in G.predecessors(u):
+            reduced, nc = delete_node(reduced, node)
+            constants.update(nc)
+            G = pyboolnet.interaction_graphs.primes2igraph(reduced)
+            candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
+
+    return reduced, constants
+
+
+class MotifReduction:
+    &#34;&#34;&#34;Class to generate and store data about a network reduction that arises
+    during the stable motif succession diagram construction algorithm.
+
+    Parameters
+    ----------
+    motif_history : list of partial state dictionaries
+        Stable motifs that can lock in to give the reduced network (in order).
+    fixed : partial state dictionary
+        Nodes values that have been fixed and reduced by stable motifs and their
+        logical domain of influence.
+    reduced_primes : pyboolnet primes dictionary
+        Update rules for the reduced network.
+    max_simulate_size : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph (the default is 20).
+    prioritize_source_motifs : bool
+        Whether source nodes should be considered first (the default is True).
+    max_stable_motifs : int
+        Maximum number of output lines for pyboolnet to process from the
+        AspSolver (the default is 10000).
+    MPBN_update : bool
+        Whether MPBN update is used instead of general asynchronous update
+        (see Pauleve et al. 2020)(the default is False).
+
+    Attributes
+    ----------
+    merged_history_permutations : list of lists of int
+        Permutations of motif_history (by index) that also yield this reduction.
+    logically_fixed_nodes : partial state dictionary
+        Nodes values that have been fixed and reduced by stable motifs and their
+        logical domain of influence.
+    time_reverse_primes : pyboolnet primes dictionary
+        Update rules of the time reversed reduced system.
+    stable_motifs : list of partial state dictionaries
+        Stable motifs of the reduced system.
+    time_reverse_stable_motifs : list of partial state dictionaries
+        Stable motifs of the time reversed system.
+    merged_source_motifs : list of partial state dictionaries
+        List of source-like stable motifs that have been merged into a single
+        motif to avoid redundancy.
+    source_independent_motifs : list of partial state dictionaries
+        Stable motifs that exist independent of the values of the source nodes
+    merge_source_motifs : list of partial state dictionaries
+        Stable motifs generated by merging the stable motifs corresponding to
+        source nodes.
+    rspace : rspace list
+        The rspace, or &#34;restrict space&#34; of the reduced network, describing a
+        necessary condition for the system to avoid activating additional
+        stable motifs (see restrict_space.py for further details).
+    motif_history : list of partial state dictionaries
+        Stable motifs that can lock in to give the reduced network (in order)
+    reduced_primes : pyboolnet primes dictionary
+        Update rules for the reduced network.
+    fixed_rspace_nodes : partial state dictionary
+        Nodes values that are fixed in the rspace.
+    rspace_constraint : str
+        BNET expression that is true in and only in the rspace.
+    reduced_rspace_constraint : str
+        S simplification of the rspace_constraint given the fixed_rspace_nodes
+        states are satisfied
+    rspace_update_primes : pyboolnet primes dictionary
+        The update rules obtained from simplifying under the assumption that the
+        fixed_rspace_nodes are fixed
+    conserved_functions : list of pyboolnet expressions
+        Boolean functions that are constant within every attractor, in pyboolnet
+        update rule format
+    rspace_attractor_candidates : list of str
+        Attractors (lists of statestrings) in the rspace_update_primes that
+        satisfy the reduced_rspace_constraint
+    partial_STG : networkx.DiGraph
+        Subgraph of the state transition graph of the reduced network that
+        contains any and all attractors that do not lie in any of the reduced
+        network&#39;s stable motifs.
+    no_motif_attractors : list of str
+        Complex attractors that do not &#34;lock in&#34; any additional stable motifs,
+        stored as collections of state strings.
+    attractor_dict_list : list of dictionaries
+        Dictionaries corresponding to attractors that are in this reductions, but
+        not in any of its subreductions (if it has any). Each describes the node
+        states in the attractors according to the following
+        1 variable is &#34;ON&#34;
+        0 variable is &#34;OFF&#34;
+        X variable is known to oscillate
+        ? at least one such variable must oscillate
+        ! the attractor may be false; if it is genuine, at least
+          one such variable must oscillate
+    terminal : str
+        One of &#34;yes&#34;, &#34;no&#34;, or &#34;possible&#34;, indicating whether the reduction contains
+        attractors that are not in any of its subreductions.
+    delprimes : pyboolnet prime dictionary
+        Update rules for the system&#39;s deletion projection. Steady states and stable
+        motif activation are preserved. These rules may yield additional, spurious
+        complex attractors.
+    deletion_STG : networkx.DiGraph
+        Portion of the deletion projection&#39;s STG that contains all motif-avoidant
+        attractors.
+    deletion_no_motif_attractors : list of str
+        Motif avoidant attractors of the deletion projection. The number of these is
+        an upper bound on the number of motif avoidant attractors in the reduction.
+    &#34;&#34;&#34;
+
+    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000,MPBN_update=False):
+        if motif_history is None:
+            self.motif_history = []
+        else:
+            self.motif_history = motif_history.copy()
+        self.merged_history_permutations = []
+        self.logically_fixed_nodes = fixed
+        self.reduced_primes = reduced_primes.copy()
+        self.stable_motifs = pyboolnet.trap_spaces.trap_spaces(self.reduced_primes, &#34;max&#34;,max_output=max_stable_motifs)
+        if MPBN_update==False:
+            self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
+            self.time_reverse_stable_motifs = pyboolnet.trap_spaces.trap_spaces(self.time_reverse_primes, &#34;max&#34;,max_output=max_stable_motifs)
+        self.merged_source_motifs=None
+        self.source_independent_motifs=None
+        if self.motif_history == [] and prioritize_source_motifs:
+            if MPBN_update==False:
+                self.merge_source_motifs()
+            else:
+                self.simple_merge_source_motifs(reduced_primes,MPBN_update=MPBN_update)
+
+        # These may or may not get calculated.
+        # Sensible default values are in comments, but we will just use None for now.
+        self.fixed_rspace_nodes=None # {}
+        self.rspace_constraint=None # &#34;&#34;
+        self.reduced_rspace_constraint=None # &#34;&#34;
+        self.rspace_update_primes=None # {}
+        self.conserved_functions=None # [[{}]]
+        self.rspace_attractor_candidates=None # []
+        self.partial_STG=None # nx.DiGraph()
+        self.no_motif_attractors=None # []
+        self.deletion_STG = None
+        self.deletion_no_motif_attractors = None
+        self.attractor_constants = None
+        self.attractor_dict_list=None # []
+        # self.attractor_dict={}
+
+        # skips finding motif avoidant attractors when using MPBN_update
+        if MPBN_update:
+            if len(self.stable_motifs) == 0: # terminal reduction iff no more stable motifs
+                self.terminal = &#34;yes&#34;
+            else:
+                self.terminal = &#34;no&#34;
+            self.attractor_dict_list = self.generate_attr_dict_list(MPBN_update=MPBN_update)
+            return
+
+        self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
+
+        study_possible_oscillation = False
+
+        if not self.merged_source_motifs is None:
+            self.terminal = &#34;no&#34;
+        elif self.rspace == [[{&#39;0&#39;:1}]] and len(self.stable_motifs) &gt; 0: # a stable motif must lock in
+            self.terminal = &#34;no&#34;
+        elif self.rspace == [[{}]] and len(self.stable_motifs) &gt; 0: # could not find 1-node drivers
+            self.terminal = &#34;possible&#34;
+            study_possible_oscillation = True
+        elif len(self.stable_motifs) == 0: # necessarily terminal
+            self.terminal = &#34;yes&#34;
+            if len(self.reduced_primes) &gt; 0: # Terminates in oscillation, else, fixed point
+                study_possible_oscillation = True
+        else: # found 1-node drivers, so we can investigate further
+            self.terminal = &#34;possible&#34; # TODO: implement case-checking based on rspace
+
+            #self.fixed_rspace_nodes =sm_rspace.fixed_rspace_nodes(self.rspace,self.reduced_primes)
+            self.rspace = sm_rspace.reduce_rspace(self.rspace,self.reduced_primes)
+            self.fixed_rspace_nodes = self.rspace[0][0]
+
+            for motif in self.stable_motifs:
+                if motif.items() &lt;= self.fixed_rspace_nodes.items():
+                    self.terminal = &#34;no&#34;
+                    break
+            if self.terminal == &#34;possible&#34;:
+                self.rspace_constraint = sm_format.pretty_print_rspace(self.rspace,simplify=False)
+                #self.reduced_rspace_constraint = sm_rspace.reduce_rspace_string(self.rspace_constraint,self.fixed_rspace_nodes,simplify=False)
+                self.reduced_rspace_constraint=sm_format.pretty_print_rspace(self.rspace[1:],simplify=False)
+                self.rspace_update_primes = reduce_primes(self.fixed_rspace_nodes,self.reduced_primes)[0]
+                #self.test_rspace(search_partial_STGs = search_partial_STGs)
+            study_possible_oscillation = self.terminal == &#34;possible&#34; # value may be changed by test_rspace
+
+        if study_possible_oscillation and max_simulate_size &gt; 0:
+            # Now, we check to see if we can afford to simulate the proper STG
+            # to actually find the attractors. If we can&#39;t, we&#39;ll simulate the
+            # reduction, which will give bounds on the number of motif-free
+            # complex attractors.
+            if self.rspace_update_primes is not None:
+                simulate_size = len(self.rspace_update_primes)
+            else:
+                simulate_size = len(self.reduced_primes)
+
+            if simulate_size &lt; max_simulate_size:
+                self.find_no_motif_attractors()
+                if len(self.no_motif_attractors) == 0:
+                    self.terminal = &#34;no&#34;
+                else:
+                    self.terminal = &#34;yes&#34;
+                    self.conserved_functions = sm_rspace.attractor_space_candidates(self.stable_motifs,
+                                                                         self.time_reverse_stable_motifs)
+            else:
+                #print(&#34;STG is too large to simulate (&#34;+
+                #str(simulate_size)+&#34;/&#34;+str(max_simulate_size)+
+                #&#34;). We will attempt reduction methods. Increase max_simulate_size to force simulation.&#34;)
+                self.delprimes, self.attractor_constants = mediator_reduction(self.reduced_primes)
+                self.delprimes, nc = deletion_reduction(self.delprimes)
+                self.attractor_constants.update(nc)
+
+                # Before building any STGs, let&#39;s see if we&#39;ve already identified
+                # that a stable motif must stabilize based on the reduction.
+                for sm in self.stable_motifs:
+                    sat = True
+                    for k,v in sm.items():
+                        if (k,v) in self.attractor_constants.items():
+                            continue
+                        elif k not in self.delprimes:
+                            continue
+                        sat = False
+                        break
+                    if sat:
+                        self.terminal = &#34;no&#34;
+                        #print(&#34;The reduction indicates that the branch is not terminal. No need to simulate.&#34;)
+                        self.attractor_dict_list = self.generate_attr_dict_list()
+                        return
+                if len(self.delprimes) &lt; max_simulate_size:
+                    #print(&#34;Simulating deletion reduction (&#34;+str(len(self.delprimes))+&#34; nodes)...&#34;)
+                    self.find_deletion_no_motif_attractors(max_stable_motifs=max_stable_motifs)
+                    if len(self.deletion_no_motif_attractors) == 0 and self.terminal != &#34;yes&#34;:
+                        self.terminal = &#34;no&#34;
+                    # else:
+                    #     self.terminal = &#34;possible&#34;
+                else:
+                    print(&#34;The STG is still too large (&#34;+str(len(self.delprimes))+&#34;).&#34;)
+                    print(&#34;Further analysis of this branch is needed.&#34;)
+        self.attractor_dict_list = self.generate_attr_dict_list()
+
+    def merge_source_motifs(self):
+        &#34;&#34;&#34;Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
+        avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
+        merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+        source nodes all stabilize simultaneously.
+
+        We will assume that stable motifs and time reverse stable motifs have already been computed.
+
+        Note that a source node in the forward time system is a source node in the time reverse system as well.
+        This follows from A* = A =&gt; A- = ~(A*(A=~A)) = ~(~A) = A.
+
+        If A* = A or X (i.e., A=1 is a stable motif), then A- = ~(~A | X) = A &amp; ~X, so A=0 is a time-reverse stable motif. A similar
+        argument applies for the A=0 stable motif. Thus, a motif is only a source motif if it is also a time-reverse motif.
+        &#34;&#34;&#34;
+        source_motifs = [x for x in self.stable_motifs if len(x) == 1 and x in self.time_reverse_stable_motifs]
+        if source_motifs == []:
+            return
+        self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
+
+        source_vars = list(set([next(iter(x.keys())) for x in source_motifs])) # a list of source nodes
+
+        self.merged_source_motifs = []
+        for state in it.product([0,1],repeat=len(source_vars)):
+            self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
+
+    def simple_merge_source_motifs(self,primes,MPBN_update=False):
+        &#34;&#34;&#34;Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
+        avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
+        merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+        source nodes all stabilize simultaneously.
+
+        Assumes that stable_motifs have already been computed,
+        but time_reverse_primes and time_reverse_stable_motifs are not.
+
+        To be used in the case of MPBN update.
+
+        Parameters
+        ----------
+        primes : pyboolnet primes dictionary
+            pyboolnet update rules whose source node stable motifs are to be merged.
+
+        MPBN_update : bool
+            Whether MPBN update is used instead of general asynchronous update
+            (see Pauleve et al. 2020)(the default is False).
+
+        Returns
+        -------
+        self.source_independent_motifs : list of dictionaries
+            list of stable motifs that are not source motifs
+            [{&#39;node1&#39;:bool,&#39;node2&#39;:bool, ...}, {&#39;node3&#39;:bool,&#39;node4&#39;:bool, ...}, ...]
+        self.merged_source_motifs : list of dictionaries
+            list of group of source motifs fixed at the same time
+            [{&#39;source_node1&#39;:bool,&#39;source_node2&#39;:bool, ...}, ...]
+
+        &#34;&#34;&#34;
+        assert MPBN_update == True, &#34;This function is for MPBN update only&#34;
+
+        # source nodes will have update rule of the form &#39;A&#39;:[[{&#39;A&#39;:0}],[{&#39;A&#39;:1}]]
+        source_vars = []
+        for x in primes.keys():
+            if primes[x] == [[{x:0}],[{x:1}]]:
+                source_vars.append(x)
+
+        source_motifs = []
+        for x in source_vars:
+            source_motifs.append({x:0})
+            source_motifs.append({x:1})
+
+        if source_motifs == []:
+            return
+
+        self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
+
+        self.merged_source_motifs = []
+        for state in it.product([0,1],repeat=len(source_vars)):
+            self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
+
+    # def test_rspace(self, search_partial_STGs=True):
+    #     STG=pyboolnet.state_transition_graphs.primes2stg(self.rspace_update_primes,&#34;asynchronous&#34;)
+    #     steady_states,complex_attractors=pyboolnet.attractors.compute_attractors_tarjan(STG)
+    #     names = sorted(self.rspace_update_primes)
+    #     attractors = complex_attractors+[[s] for s in steady_states]
+    #     self.build_rspace_attractor_candidates(attractors)
+
+    # def build_rspace_attractor_candidates(self,attractors):
+    #     self.rspace_attractor_candidates = []
+    #     for attractor in attractors:
+    #         possible_rspace_attractor = True
+    #         for state in attractor:
+    #             # state_dict = {** sm_format.statestring2dict(state,names),**self.fixed_rspace_nodes}
+    #             # if pyboolnet.boolean_logic.are_mutually_exclusive(self.rspace_constraint,
+    #             #                                                  sm_format.implicant2bnet(state_dict)):
+    #             if sm_rspace.partial_state_contradicts_rspace(sm_format.statestring2dict(state,names),self.rspace):
+    #                 possible_rspace_attractor = False
+    #                 break
+    #         if possible_rspace_attractor:
+    #             self.rspace_attractor_candidates.append(attractor)
+    #
+    #     if len(self.rspace_attractor_candidates) == 0:
+    #         self.terminal = &#34;no&#34;
+
+    def build_K0(self):
+        &#34;&#34;&#34;Helper function for smart STG building. Builds initial set of nodes
+        that are not part of any motif-avoidant attractor.
+
+        Returns
+        -------
+        set of str
+            Statestrings that do not belong to any motif-avoidant attractor.
+
+        &#34;&#34;&#34;
+        K = set()
+        for sm in self.stable_motifs:
+            fill_vars = [k for k in self.reduced_primes if not k in sm]
+            for fills in it.product([&#39;0&#39;,&#39;1&#39;],repeat = len(fill_vars)):
+                s = &#39;&#39;
+                fi = 0
+                for k in self.reduced_primes:
+                    if k in sm:
+                        s += str(sm[k])
+                    else:
+                        s += fills[fi]
+                        fi += 1
+                K.add(s)
+        return K
+
+    def in_motif(self,ss,names):
+        &#34;&#34;&#34;Tests whether the (partial) state ss is in any stable motifs
+
+        Parameters
+        ----------
+        ss : str
+            Statestring (possibly on a subspace).
+        names : list of str
+            Variable names ordered to correspond to the positions of ss.
+
+        Returns
+        -------
+        bool
+            Whether ss is in any stable motif of the reduced system.
+
+        &#34;&#34;&#34;
+        for sm in self.stable_motifs:
+            smin = True
+            for i,r in enumerate(names):
+                if r in sm and not int(ss[i]) == sm[r]:
+                    smin = False
+            if smin: return True
+        return False
+
+    def build_inspace(self,ss,names, tr_stable_motifs = None):
+        &#34;&#34;&#34;Helper function for smart STG building. List all time reversal stable
+        motifs to which (partial) state ss belongs.
+
+        Parameters
+        ----------
+        ss : str
+            Statestring (possibly on a subspace).
+        names : list of str
+            Variable names ordered to correspond to the positions of ss.
+        tr_stable_motifs : list of partial state dictionaries
+            Time reverse stable motifs. If None, use all time reverse stable
+            motifs in the reduced system (the default is None).
+
+        Returns
+        -------
+        list of partial state dictionaries
+            Time reverse stable motifs that are active in the state ss.
+
+        &#34;&#34;&#34;
+        inspaces = []
+        if tr_stable_motifs is None:
+            tr_stable_motifs = self.time_reverse_stable_motifs
+
+        for ts in tr_stable_motifs:
+            tsin = True
+            for i,r in enumerate(names):
+                if r in ts and not int(ss[i]) == ts[r]:
+                    tsin = False
+            if tsin: inspaces.append(ts)
+        return inspaces
+
+    def build_deletion_STG(self,max_stable_motifs=10000):
+        &#34;&#34;&#34;Build a piece of the STG that is guaranteed to contain all
+        motif-avoidant attractors of the deletion projection. Complex attractors
+        found here may be spurious.
+
+        Parameters
+        ----------
+        max_stable_motifs : int
+            Maximum number of output lines for pyboolnet to process from the
+            AspSolver (the default is 10000).
+
+        &#34;&#34;&#34;
+        names = sorted(self.delprimes)
+        name_ind = {n:i for i,n in enumerate(names)}
+        trprimes = sm_time.time_reverse_primes(self.delprimes)
+        trsms = pyboolnet.trap_spaces.trap_spaces(trprimes,&#34;max&#34;,max_output=max_stable_motifs)
+
+        if self.rspace_update_primes is not None:
+            delrnames = [x for x in sorted(self.rspace_update_primes) if x in self.delprimes]
+            rname_ind = {n:i for i,n in enumerate(names) if n in delrnames}
+            fixed = {k:v for k,v in self.fixed_rspace_nodes.items()}
+        else:
+            rnames = names.copy()
+            rname_ind = name_ind.copy()
+            fixed = {}
+        sim_names = [x for x in names if not x in fixed]
+
+        #K = self.build_K0()
+        K = set()
+        self.deletion_STG = nx.DiGraph()
+
+        inspace_dict = {}
+        t = 0
+        T = 1
+        # note: product order gives s counting up in binary from 00..0 to 11..1
+        for s in it.product([&#39;0&#39;,&#39;1&#39;],repeat=len(sim_names)):
+            sl = [&#39;&#39;]*len(names)
+            j = 0
+            for i in range(len(names)):
+                if names[i] in fixed:
+                    sl[i] = str(fixed[names[i]])
+                else:
+                    sl[i] = s[j]
+                    j += 1
+
+            ss = &#39;&#39;.join(sl)
+
+            if ss in K: continue
+            if self.in_motif(ss,names): continue
+
+            simstate = True
+
+            inspace = self.build_inspace(ss,names,tr_stable_motifs = trsms)
+            inspace_dict[ss] = inspace
+
+            self.deletion_STG.add_node(ss) # might end up removing the node later
+            for i,r in enumerate(names):
+                nri = int(not int(ss[i]))
+                # if any p below is satisfied, we get a change of state
+                # the value of the new r will be equal to nri
+                for p in self.delprimes[r][nri]:
+                    psat = True
+                    for k,v in p.items():
+                        if not int(ss[name_ind[k]]) == v:
+                            psat = False
+                            break
+                    if psat: # state change verified
+                        child_state_list = list(ss)
+                        child_state_list[i] = str(nri)
+                        child_state = &#39;&#39;.join(child_state_list)
+
+                        # Check if changed something that should be fixed or landed in K
+                        # If not, check if we left a TR stable motif
+                        prune = r in fixed or child_state in K
+                        # next we check to see if we&#39;ve left the rspace
+                        # note that we don&#39;t have to check rspace[0], as this
+                        # is handled by checking r in fixed
+                        if not prune:
+                            stdict = sm_format.statestring2dict(child_state,names)
+                            prune = not sm_rspace.partial_state_contradicts_rspace(stdict, self.rspace[1:])
+
+                        # next, we check to see if we left a TR motif
+                        if not prune:
+                            if not child_state in inspace_dict:
+                                inspace_dict[child_state] = self.build_inspace(child_state,names,tr_stable_motifs = trsms)
+                            prune = not inspace_dict[child_state] == inspace
+
+
+                        # By here, prune is TRUE if we left a TR motif or are in K
+                        if prune:
+                            # prune the STG and stop simulating ss
+                            simstate = False
+                            rnodes = list(nx.bfs_tree(self.deletion_STG,ss,reverse=True).nodes())
+                            K.update(rnodes)
+                            self.deletion_STG.remove_nodes_from(rnodes)
+                        else:
+                            self.deletion_STG.add_edge(ss,child_state)
+                        break # we know the ss at r changed, no need to check more primes
+                if not simstate: break # don&#39;t check other vars: already found ss -&gt; K
+
+    def find_deletion_no_motif_attractors(self,max_stable_motifs=10000):
+        &#34;&#34;&#34;Identify motif-avoidant attractors in the deletion projection.
+
+        Parameters
+        ----------
+        max_stable_motifs : int
+            Maximum number of output lines for pyboolnet to process from the
+            AspSolver (the default is 10000).
+
+        &#34;&#34;&#34;
+        if self.deletion_STG is None:
+            self.build_deletion_STG(max_stable_motifs=max_stable_motifs)
+
+        # Note: fixed points of the deletion system are fixed points of the
+        # undeleted system, so we ignore these as they must contain stable motifs
+        if len(list(self.deletion_STG.nodes())) &gt; 0:
+            candidates = [x for x in nx.attracting_components(self.deletion_STG) if len(x) &gt; 1]
+        else:
+            candidates = []
+        self.deletion_no_motif_attractors = []
+
+        # next, we see if any of these activate stable motifs
+        names = sorted(self.delprimes)
+        for att in candidates:
+            no_motif = True
+            for s in att:
+                # The following check stems from the result that a stable motif
+                # is active in an attractor of the original system iff its projection
+                # is active in the projected attractor in the deletion-reduced system
+                st = sm_format.statestring2dict(s,names)
+                st.update(self.attractor_constants)
+                if any(not sm_doi.fixed_excludes_implicant(st,sm) for sm in self.stable_motifs):
+                    no_motif = False
+                    break
+
+            if no_motif:
+                self.deletion_no_motif_attractors.append(att)
+
+    def build_partial_STG(self):
+        &#34;&#34;&#34;Build a piece of the STG that is guaranteed to contain all
+        motif-avoidant attractors of the reduction.
+
+        &#34;&#34;&#34;
+        names = sorted(self.reduced_primes)
+        name_ind = {n:i for i,n in enumerate(names)}
+
+        if self.rspace_update_primes is not None:
+            rnames = sorted(self.rspace_update_primes)
+            rname_ind = {n:i for i,n in enumerate(names) if n in rnames}
+            fixed = self.fixed_rspace_nodes
+        else:
+            rnames = names.copy()
+            rname_ind = name_ind.copy()
+            fixed = {}
+
+        sim_names = [x for x in names if not x in fixed]
+
+
+        #K = self.build_K0()
+        K = set()
+        self.partial_STG = nx.DiGraph()
+
+        inspace_dict = {}
+        t = 0
+        T = 1
+        # note: product order gives s counting up in binary from 00..0 to 11..1
+        for s in it.product([&#39;0&#39;,&#39;1&#39;],repeat=len(sim_names)):
+            sl = [&#39;&#39;]*len(names)
+            j = 0
+            for i in range(len(names)):
+                if names[i] in fixed:
+                    sl[i] = str(fixed[names[i]])
+                else:
+                    sl[i] = s[j]
+                    j += 1
+
+            ss = &#39;&#39;.join(sl)
+
+            if ss in K: continue
+            if self.in_motif(ss,names): continue
+
+            simstate = True
+
+            inspace = self.build_inspace(ss,names)
+            inspace_dict[ss] = inspace
+
+            self.partial_STG.add_node(ss) # might end up removing ss later
+            for i,r in enumerate(names):
+                nri = int(not int(ss[i]))
+                # if any p below is satisfied, we get a change of state
+                # the value of the new r will be equal to nri
+                for p in self.reduced_primes[r][nri]:
+                    psat = True
+                    for k,v in p.items():
+                        if not int(ss[name_ind[k]]) == v:
+                            psat = False
+                            break
+                    if psat: # state change verified
+                        child_state_list = list(ss)
+                        child_state_list[i] = str(nri)
+                        child_state = &#39;&#39;.join(child_state_list)
+
+                        # Check if changed something that should be fixed or landed in K
+                        # If not, check if we left a TR stable motif
+                        prune = r in fixed or child_state in K
+
+                        # next we check to see if we&#39;ve left the rspace
+                        # note that we don&#39;t have to check rspace[0], as this
+                        # is handled by checking r in fixed
+                        if not prune:
+                            stdict = sm_format.statestring2dict(child_state,names)
+                            prune = not sm_rspace.state_in_rspace(stdict, self.rspace[1:])
+
+                        # next, we check to see if we left a TR motif
+                        if not prune:
+                            if not child_state in inspace_dict:
+                                inspace_dict[child_state] = self.build_inspace(child_state,names)
+                            prune = not inspace_dict[child_state] == inspace
+
+
+                        # By here, prune is TRUE if we left a TR motif or are in K
+                        if prune:
+                            # prune the STG and stop simulating ss
+                            simstate = False
+                            rnodes = list(nx.bfs_tree(self.partial_STG,ss,reverse=True).nodes())
+                            K.update(rnodes)
+                            self.partial_STG.remove_nodes_from(rnodes)
+                        else:
+                            self.partial_STG.add_edge(ss,child_state)
+                        break # we know the ss at r changed, no need to check more primes
+                if not simstate: break # don&#39;t check other vars: already found ss -&gt; K
+
+    def find_no_motif_attractors(self):
+        &#34;&#34;&#34;Find attractors of the reduction that are not present in any of its
+        subreductions.
+
+        &#34;&#34;&#34;
+        if self.partial_STG is None:
+            self.build_partial_STG()
+        if len(list(self.partial_STG.nodes())) &gt; 0:
+            self.no_motif_attractors = list(nx.attracting_components(self.partial_STG))
+        else:
+            self.no_motif_attractors = []
+
+    def generate_attr_dict_list(self, MPBN_update=False):
+        &#34;&#34;&#34;Generate a list of attractors that are present in the reduction, but
+        not in any of its subreductions.
+
+        Parameters
+        ----------
+        MPBN_update : bool
+            Whether MPBN update is used instead of general asynchronous update
+            (see Pauleve et al. 2020)(the default is False).
+
+        Returns
+        -------
+        list of dictionaries
+            Dictionaries corresponding to attractors that are in this reductions, but
+            not in any of its subreductions (if it has any). Each describes the node
+            states in the attractors according to the following
+            1 variable is &#34;ON&#34;
+            0 variable is &#34;OFF&#34;
+            X variable is known to oscillate
+            ? at least one such variable must oscillate
+            ! the attractor may be false; if it is genuine, at least
+              one such variable must oscillate
+        &#34;&#34;&#34;
+        attractors_dict={}
+
+        #the reduction is not terminal --&gt; no attractor
+        if self.terminal == &#39;no&#39;:
+            return []#&#39;not terminal reduction&#39; #I should replace this with an empty dict
+
+        nodes_sorted = sorted(list(set(self.logically_fixed_nodes.keys()) | set(self.reduced_primes.keys()))) #steady state
+
+        node_state_dict = self.logically_fixed_nodes.copy()
+        if self.fixed_rspace_nodes is not None:
+            node_state_dict.update(self.fixed_rspace_nodes)
+
+        # Found a steady state (will always be terminal)
+        if len(node_state_dict) == len(nodes_sorted):
+            assert self.terminal == &#39;yes&#39;, &#34;Found non-terminal steady state. This should not be possible!&#34;
+            node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+            return [node_state_dict]
+        #non_fixed_nodes = sorted(list(set(nodes_sorted)-set(node_state_dict.keys())))
+        non_fixed_nodes = [x for x in nodes_sorted if x not in node_state_dict]
+
+        #the reduction is only possibly terminal
+        if self.terminal==&#39;possible&#39;:
+            for n in non_fixed_nodes: #non-stabilized nodes
+                node_state_dict[n] = &#39;!&#39;
+                node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+            return [node_state_dict]
+
+        #the reduction is definitely terminal
+        elif self.terminal==&#39;yes&#39;:
+            #the reduction is terminal, not all nodes are fixed
+            #and it is MPBN update.
+            if MPBN_update == True:
+                for n in non_fixed_nodes:
+                    node_state_dict[n]=&#39;X&#39;
+                node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+                return [node_state_dict]
+
+            #the reduction is terminal, not all nodes are fixed
+            #and there is NO complex attractor mapped out
+            elif self.no_motif_attractors is None:
+                for n in non_fixed_nodes:
+                    node_state_dict[n]=&#39;?&#39;
+                node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+                return [node_state_dict]
+
+            #the reduction is terminal, not all nodes are fixed
+            #there are complex attractors mapped out:
+            attr_list=[]
+            for complex_attractor in self.no_motif_attractors:
+                ca_dict = sm_format.statelist2dict(non_fixed_nodes,complex_attractor)
+                ns = node_state_dict.copy()
+                ns.update(ca_dict)
+                ns = {k:v for k,v in sorted(ns.items())}
+                attr_list.append(ns)
+                # # we check if there are stabilized nodes within the complex attractor
+                # ca=self.find_constants_in_complex_attractor(complex_attractor)
+                # node_state_dict=self.logically_fixed_nodes.copy()
+                # for i in range(len(non_fixed_nodes)): #non-stabilized nodes
+                #     node_state_dict[non_fixed_nodes[i]]=ca[i]
+                #
+                # attr_list.append(node_state_dict)
+            return attr_list
+
+    def find_constants_in_complex_attractor(self,c):
+        &#34;&#34;&#34;Given a set of strings representing the states of a complex attractor the function finds the nodes
+        that are constant in the full complex attractor.
+
+        Parameters
+        ----------
+        c : a set of binary strings
+            Set of statestrings, e.g. set([&#39;000&#39;, &#39;010&#39;, &#39;100&#39;]).
+
+        Returns
+        -------
+        list of str
+            An array consisting of 0s, 1s, and Xs. X represents an oscillating
+            node, and the 0s and 1s represent nodes stabilized to those states.
+
+        &#34;&#34;&#34;
+        import numpy as np
+        ca=np.array([np.fromiter(i, int, count=len(i)) for i in c])
+        attr=np.array([&#39;X&#39; for i in range(len(ca[0]))])
+        sum_a0=ca.sum(axis=0)
+        attr[np.where(sum_a0==0)[0]]=0
+        attr[np.where(sum_a0==len(ca))[0]]=1
+        return attr
+
+    def summary(self,show_original_rules=True,hide_rules=False,show_explicit_permutations=False):
+        &#34;&#34;&#34;Print a summary of the reduction.
+
+        Parameters
+        ----------
+        show_original_rules : bool
+            Show rules of the unreduced system (the default is True)?
+        hide_rules : bool
+            Hide rules of the reduced system (the default is False)?
+        show_explicit_permutations : bool
+            Show motif permutations explicitly, instead of by index (the default is False)?
+
+        &#34;&#34;&#34;
+        print(&#34;Motif History:&#34;,self.motif_history)
+        print()
+        print(&#34;Logically Fixed Nodes:&#34;,self.logically_fixed_nodes)
+        print()
+        if hide_rules:
+            pass
+        elif not self.motif_history == []:
+            print(&#34;Reduced Update Rules:&#34;)
+            sm_format.pretty_print_prime_rules(self.reduced_primes)
+        else:
+            if show_original_rules:
+                print(&#34;Original Update Rules:&#34;)
+                sm_format.pretty_print_prime_rules(self.reduced_primes)
+            else:
+                print(&#34;The update rules are not reduced.&#34;)
+        print()
+        if self.terminal == &#34;no&#34;:
+            if self.merged_source_motifs is None:
+                print(&#34;At least one additional stable motif must stabilize.&#34;)
+                print()
+                print(&#34;Stable motifs:&#34;, self.stable_motifs)
+            else:
+                print(&#34;Source node values are not yet specified for the following nodes:&#34;,
+                       &#39;, &#39;.join(sorted([k for k in self.merged_source_motifs[0]])))
+                print()
+                if self.source_independent_motifs == []:
+                    print(&#34;There are no source-independent stable motifs.&#34;)
+                else:
+                    print(&#34;The following stable motifs exist independently of the source configuration:&#34;)
+                    print(self.source_independent_motifs)
+        elif self.terminal == &#34;yes&#34;:
+            if len(self.reduced_primes) &gt; 0:
+                print(&#34;There is a complex attractor in this reduced system in which no additional stable motifs activate.&#34;)
+                print(&#34;At least some of the following must oscillate in such an attractor:&#34;)
+                print(list(self.reduced_primes.keys()))
+            else:
+                print(&#34;This branch terminates in a steady state.&#34;)
+        elif self.terminal == &#34;possible&#34;:
+            print(&#34;Some or none of these stable motifs may stabilize:&#34;,
+                  self.stable_motifs)
+            print()
+            if not self.fixed_rspace_nodes is None:
+                print(&#34;If no more stable motifs stabilize, these node states must be fixed:&#34;,
+                      self.fixed_rspace_nodes)
+                print()
+                print(&#34;In addition, the following must stabilize to TRUE:&#34;)
+                print(self.reduced_rspace_constraint)
+                print()
+                print(&#34;In this case, the unfixed nodes update according to the following rules:&#34;)
+                sm_format.pretty_print_prime_rules(self.rspace_update_primes)
+
+        if not self.conserved_functions is None:
+            print()
+            if len(self.conserved_functions) &gt; 0:
+                print(&#34;Found the following functions that are constant on attractors in this branch:&#34;)
+                for x in self.conserved_functions:
+                    if len(x) &gt; 0:
+                        sm_format.pretty_print_rspace([x],silent=False)
+                        print()
+            else:
+                print(&#34;Unable to find non-trivial conserved functions for attractors in this branch.&#34;)
+                print()
+            if not self.no_motif_attractors is None:
+                if len(self.no_motif_attractors) &gt; 0:
+                    print(&#34;Found the following complex attractors that do not lock in additional stable motifs:&#34;)
+                    for x in self.no_motif_attractors:
+                        print(x)
+
+        if len(self.merged_history_permutations) &gt; 0:
+            print()
+            print(&#34;This branch contains the following motif_history permutation(s):&#34;)
+            if show_explicit_permutations:
+                for x in self.merged_history_permutations: print([self.motif_history[i] for i in x])
+            else:
+                for x in self.merged_history_permutations: print(x)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pystablemotifs.reduction.delete_node"><code class="name flex">
+<span>def <span class="ident">delete_node</span></span>(<span>primes, node)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reduces Boolean rules given by primes by deleting the variable specified by
+node. The deleted node may not appear in its own update function. Any update
+rules depending on the deleted node will have that dependence replaced by
+the update function of the deleted node. The rules are simplified after node
+deletion.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules.</dd>
+<dt><strong><code>node</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of the node to delete.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>new_primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>The reduced primes.</dd>
+<dt><strong><code>constants</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Node states that became logically fixed during simplification.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def delete_node(primes, node):
+    &#34;&#34;&#34;Reduces Boolean rules given by primes by deleting the variable specified by
+    node. The deleted node may not appear in its own update function. Any update
+    rules depending on the deleted node will have that dependence replaced by
+    the update function of the deleted node. The rules are simplified after node
+    deletion.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules.
+    node : str
+        Name of the node to delete.
+
+    Returns
+    -------
+    new_primes : pyboolnet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during simplification.
+
+
+    &#34;&#34;&#34;
+    succ = set()
+    for p in primes:
+        p_is_succ = False
+        for v in [0,1]:
+            for term in primes[p][v]:
+                if node in term:
+                    succ.add(p)
+                    p_is_succ = True
+                    break
+            if p_is_succ:
+                break
+
+
+    # uncomment for additional (and hopefully unnecessary), but slow safety checks.
+    #G = pyboolnet.interaction_graphs.primes2igraph(primes)
+    #assert not G.has_edge(node,node), &#39; &#39;.join([&#34;Node&#34;,str(node),&#34;has a self-loop and cannot be deleted.&#34;])
+
+    assert not node in succ, &#39; &#39;.join([&#34;Node&#34;,str(node),&#34;has a self-loop and cannot be deleted.&#34;])
+    new_primes = {k:v for k,v in primes.items() if not k == node}
+    constants = {}
+
+    neg = &#34;!&#34;+node
+
+    expr0 = sm_format.rule2bnet(primes[node][0])
+    expr1 = sm_format.rule2bnet(primes[node][1])
+
+    for child in succ:#G.successors(node):
+        # If we have already simplified this child node, skip it
+        if child in constants:
+            continue
+        crule1 = sm_format.rule2bnet(primes[child][1])
+        crule1 = simplify_using_expression_and_negation(node,expr0,expr1,crule1)
+        crule0 = sm_format.rule2bnet(primes[child][0])
+        crule0 = simplify_using_expression_and_negation(node,expr0,expr1,crule0)
+        new_primes[child] = sm_format._build_rule_using_bnet_dnfs(crule0,crule1)
+
+        nc = pyboolnet.prime_implicants.percolation(new_primes,False)
+        constants.update(nc)
+
+    nc = pyboolnet.prime_implicants.percolation(new_primes,True)
+    constants.update(nc)
+    new_primes = simplify_primes(new_primes)
+    return new_primes, constants</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.deletion_reduction"><code class="name flex">
+<span>def <span class="ident">deletion_reduction</span></span>(<span>primes, max_in_degree=inf)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements the reduction method of Veliz-Cuba (2011).
+Deletion order is such that nodes with low in-degree are prioritized for
+removal. Deletion proceeds until all remaining nodes have self-loops.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules.</dd>
+<dt><strong><code>max_in_degree</code></strong> :&ensp;<code>int</code> or <code>float</code></dt>
+<dd>Will not try to delete nodes with in-degree larger than this. Deleting
+nodes with large in-degree can be computationally expensive (the default
+is float('inf')).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>reduced</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>The reduced primes.</dd>
+<dt><strong><code>constants</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Node states that became logically fixed during reduction.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deletion_reduction(primes, max_in_degree = float(&#39;inf&#39;)):
+    &#34;&#34;&#34;Implements the reduction method of Veliz-Cuba (2011).
+    Deletion order is such that nodes with low in-degree are prioritized for
+    removal. Deletion proceeds until all remaining nodes have self-loops.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules.
+    max_in_degree : int or float
+        Will not try to delete nodes with in-degree larger than this. Deleting
+        nodes with large in-degree can be computationally expensive (the default
+        is float(&#39;inf&#39;)).
+
+    Returns
+    -------
+    reduced : pyboolnet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during reduction.
+
+    &#34;&#34;&#34;
+
+    reduced, constants = remove_outdag(primes)
+    G = pyboolnet.interaction_graphs.primes2igraph(reduced)
+    cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
+
+    change = True
+    while change and len(reduced) &gt; 0:
+        change = False
+        for node in cur_order:
+            retry_node = True
+            if not node in reduced or G.in_degree(node) &gt; max_in_degree:
+                continue
+            elif not any(node in p for p in reduced[node][1]):
+                reduced, nc = delete_node(reduced, node)
+                constants.update(nc)
+                if len(reduced) &gt; 0:
+                    G = pyboolnet.interaction_graphs.primes2igraph(reduced)
+                else:
+                    G = nx.DiGraph()
+                change = True
+                # print(&#34;\n\n\nNEW PRIMES&#34;)
+                # sm_format.pretty_print_prime_rules(reduced)
+                break
+        cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
+
+        pyboolnet.prime_implicants.create_constants(reduced,constants)
+        nc = pyboolnet.prime_implicants.percolation(reduced,True)
+        constants.update(nc)
+    return reduced, constants</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.mediator_reduction"><code class="name flex">
+<span>def <span class="ident">mediator_reduction</span></span>(<span>primes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Network reduction method of Saadadtpour, Albert, Reluga (2013)
+Preserves fixed points. Number of complex attractors is often, but
+not always conserved (despite inital claims). Can be viewed as a more
+restrictive version of the deletion reduction method of Veliz-Cuba (2011).</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>reduced</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>The reduced primes.</dd>
+<dt><strong><code>constants</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Node states that became logically fixed during reduction.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mediator_reduction(primes):
+    &#34;&#34;&#34;Network reduction method of Saadadtpour, Albert, Reluga (2013)
+    Preserves fixed points. Number of complex attractors is often, but
+    not always conserved (despite inital claims). Can be viewed as a more
+    restrictive version of the deletion reduction method of Veliz-Cuba (2011).
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules.
+
+    Returns
+    -------
+    reduced : pyboolnet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during reduction.
+
+    &#34;&#34;&#34;
+    return primes, {}
+    reduced, constants = remove_outdag(primes)
+    cur_order = sorted(reduced)
+    G = pyboolnet.interaction_graphs.primes2igraph(reduced)
+    candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
+
+    for node in candidates:
+        u = list(G.predecessors(node))[0]
+        w = list(G.successors(node))[0]
+        if not w in G.successors(u) and not w in G.predecessors(u):
+            reduced, nc = delete_node(reduced, node)
+            constants.update(nc)
+            G = pyboolnet.interaction_graphs.primes2igraph(reduced)
+            candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
+
+    return reduced, constants</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.reduce_primes"><code class="name flex">
+<span>def <span class="ident">reduce_primes</span></span>(<span>fixed, primes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simplifies boolean rules when some nodes are held fixed</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>fixed</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Node states to be held fixed.</dd>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>reduced_primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Simplified update rules</dd>
+<dt><strong><code>percolated_states</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Fixed node states (including inputs) that were simplified and removed.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reduce_primes(fixed,primes):
+    &#34;&#34;&#34;Simplifies boolean rules when some nodes are held fixed
+
+    Parameters
+    ----------
+    fixed : partial state dictionary
+        Node states to be held fixed.
+    primes : pyboolnet primes dictionary
+        Update rules.
+
+    Returns
+    -------
+    reduced_primes : pyboolnet primes dictionary
+        Simplified update rules
+    percolated_states : partial state dictionary
+        Fixed node states (including inputs) that were simplified and removed.
+
+    &#34;&#34;&#34;
+    reduced_primes = pyboolnet.prime_implicants.create_constants(primes,fixed,copy=True)
+    percolated_states = pyboolnet.prime_implicants.percolation(reduced_primes,True)
+    percolated_states.update(fixed)
+
+
+    return simplify_primes(reduced_primes), percolated_states</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.remove_outdag"><code class="name flex">
+<span>def <span class="ident">remove_outdag</span></span>(<span>primes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Removes the terminal directed acyclic part of the regulatory network. This
+part of the network does not influence the attractor repertoire.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>reduced</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>The reduced primes.</dd>
+<dt><strong><code>constants</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Node states that became logically fixed during reduction.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_outdag(primes):
+    &#34;&#34;&#34;Removes the terminal directed acyclic part of the regulatory network. This
+    part of the network does not influence the attractor repertoire.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules.
+
+    Returns
+    -------
+    reduced : pyboolnet primes dictionary
+        The reduced primes.
+    constants : partial state dictionary
+        Node states that became logically fixed during reduction.
+
+    &#34;&#34;&#34;
+    if len(primes) == 0:
+        return primes, {}
+    G = pyboolnet.interaction_graphs.primes2igraph(primes)
+    od = pyboolnet.digraphs.find_outdag(G)
+    reduced = primes.copy()
+    constants = {}
+    for node in od:
+        if node in reduced:
+            reduced, nc = delete_node(reduced, node)
+            constants.update(nc)
+    return reduced, constants</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.simplify_primes"><code class="name flex">
+<span>def <span class="ident">simplify_primes</span></span>(<span>primes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simplifies pyboolnet primes (e.g., A | A &amp; B becomes A)</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Rules to simplify.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pyboolnet primes dictionary</code></dt>
+<dd>Simplified rules.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simplify_primes(primes):
+    &#34;&#34;&#34;Simplifies pyboolnet primes (e.g., A | A &amp; B becomes A)
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Rules to simplify.
+
+    Returns
+    -------
+    pyboolnet primes dictionary
+        Simplified rules.
+
+    &#34;&#34;&#34;
+
+    # reimport to force simplification
+    if len(primes) &gt; 0:
+        return bnet_text2primes(sm_format.primes2bnet(primes))
+    else:
+        return primes</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.simplify_using_expression_and_negation"><code class="name flex">
+<span>def <span class="ident">simplify_using_expression_and_negation</span></span>(<span>node, expr0, expr1, bnet)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simplify the expression bnet by substituting the value for node given by
+node = expr1 = !expr0 (does not check that expr1=!expr0)</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>node</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of node to substitute</dd>
+<dt><strong><code>expr0</code></strong> :&ensp;<code>str</code></dt>
+<dd>Expression to substitute for !node</dd>
+<dt><strong><code>expr1</code></strong> :&ensp;<code>str</code></dt>
+<dd>Expression to substitute for node</dd>
+<dt><strong><code>bnet</code></strong> :&ensp;<code>str</code></dt>
+<dd>BNET expression in which to perform the substitutions.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>Simplified BNET expression after substitutions are performed.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simplify_using_expression_and_negation(node,expr0,expr1,bnet):
+    &#34;&#34;&#34;Simplify the expression bnet by substituting the value for node given by
+    node = expr1 = !expr0 (does not check that expr1=!expr0)
+
+    Parameters
+    ----------
+    node : str
+        Name of node to substitute
+    expr0 : str
+        Expression to substitute for !node
+    expr1 : str
+        Expression to substitute for node
+    bnet : str
+        BNET expression in which to perform the substitutions.
+
+    Returns
+    -------
+    str
+        Simplified BNET expression after substitutions are performed.
+
+    &#34;&#34;&#34;
+
+    neg = &#34;!&#34;+node
+    crule = re.sub(rf&#39;\b{neg}\b&#39;,&#34;(&#34;+expr0+&#34;)&#34;,bnet)
+    crule = re.sub(rf&#39;\b{node}\b&#39;,&#34;(&#34;+expr1+&#34;)&#34;,crule)
+    crule = sm_format.bnet2sympy(crule)
+    crule = str(sympy.to_dnf(sympy.simplify(sympy.sympify(crule))))
+    crule = sm_format.sympy2bnet(crule)
+    return crule</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pystablemotifs.reduction.MotifReduction"><code class="flex name class">
+<span>class <span class="ident">MotifReduction</span></span>
+<span>(</span><span>motif_history, fixed, reduced_primes, max_simulate_size=20, prioritize_source_motifs=True, max_stable_motifs=10000, MPBN_update=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class to generate and store data about a network reduction that arises
+during the stable motif succession diagram construction algorithm.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>motif_history</code></strong> :&ensp;<code>list</code> of <code>partial state dictionaries</code></dt>
+<dd>Stable motifs that can lock in to give the reduced network (in order).</dd>
+<dt><strong><code>fixed</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Nodes values that have been fixed and reduced by stable motifs and their
+logical domain of influence.</dd>
+<dt><strong><code>reduced_primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules for the reduced network.</dd>
+<dt><strong><code>max_simulate_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of variables for which to brute-force build a state
+transition graph (the default is 20).</dd>
+<dt><strong><code>prioritize_source_motifs</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether source nodes should be considered first (the default is True).</dd>
+<dt><strong><code>max_stable_motifs</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of output lines for pyboolnet to process from the
+AspSolver (the default is 10000).</dd>
+<dt><strong><code>MPBN_update</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether MPBN update is used instead of general asynchronous update
+(see Pauleve et al. 2020)(the default is False).</dd>
+</dl>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>merged_history_permutations</code></strong> :&ensp;<code>list</code> of <code>lists</code> of <code>int</code></dt>
+<dd>Permutations of motif_history (by index) that also yield this reduction.</dd>
+<dt><strong><code>logically_fixed_nodes</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Nodes values that have been fixed and reduced by stable motifs and their
+logical domain of influence.</dd>
+<dt><strong><code>time_reverse_primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules of the time reversed reduced system.</dd>
+<dt><strong><code>stable_motifs</code></strong> :&ensp;<code>list</code> of <code>partial state dictionaries</code></dt>
+<dd>Stable motifs of the reduced system.</dd>
+<dt><strong><code>time_reverse_stable_motifs</code></strong> :&ensp;<code>list</code> of <code>partial state dictionaries</code></dt>
+<dd>Stable motifs of the time reversed system.</dd>
+<dt><strong><code>merged_source_motifs</code></strong> :&ensp;<code>list</code> of <code>partial state dictionaries</code></dt>
+<dd>List of source-like stable motifs that have been merged into a single
+motif to avoid redundancy.</dd>
+<dt><strong><code>source_independent_motifs</code></strong> :&ensp;<code>list</code> of <code>partial state dictionaries</code></dt>
+<dd>Stable motifs that exist independent of the values of the source nodes</dd>
+<dt><strong><code>merge_source_motifs</code></strong> :&ensp;<code>list</code> of <code>partial state dictionaries</code></dt>
+<dd>Stable motifs generated by merging the stable motifs corresponding to
+source nodes.</dd>
+<dt><strong><code>rspace</code></strong> :&ensp;<code>rspace list</code></dt>
+<dd>The rspace, or "restrict space" of the reduced network, describing a
+necessary condition for the system to avoid activating additional
+stable motifs (see restrict_space.py for further details).</dd>
+<dt><strong><code>motif_history</code></strong> :&ensp;<code>list</code> of <code>partial state dictionaries</code></dt>
+<dd>Stable motifs that can lock in to give the reduced network (in order)</dd>
+<dt><strong><code>reduced_primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules for the reduced network.</dd>
+<dt><strong><code>fixed_rspace_nodes</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Nodes values that are fixed in the rspace.</dd>
+<dt><strong><code>rspace_constraint</code></strong> :&ensp;<code>str</code></dt>
+<dd>BNET expression that is true in and only in the rspace.</dd>
+<dt><strong><code>reduced_rspace_constraint</code></strong> :&ensp;<code>str</code></dt>
+<dd>S simplification of the rspace_constraint given the fixed_rspace_nodes
+states are satisfied</dd>
+<dt><strong><code>rspace_update_primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>The update rules obtained from simplifying under the assumption that the
+fixed_rspace_nodes are fixed</dd>
+<dt><strong><code>conserved_functions</code></strong> :&ensp;<code>list</code> of <code>pyboolnet expressions</code></dt>
+<dd>Boolean functions that are constant within every attractor, in pyboolnet
+update rule format</dd>
+<dt><strong><code>rspace_attractor_candidates</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>Attractors (lists of statestrings) in the rspace_update_primes that
+satisfy the reduced_rspace_constraint</dd>
+<dt><strong><code>partial_STG</code></strong> :&ensp;<code>networkx.DiGraph</code></dt>
+<dd>Subgraph of the state transition graph of the reduced network that
+contains any and all attractors that do not lie in any of the reduced
+network's stable motifs.</dd>
+<dt><strong><code>no_motif_attractors</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>Complex attractors that do not "lock in" any additional stable motifs,
+stored as collections of state strings.</dd>
+<dt><strong><code>attractor_dict_list</code></strong> :&ensp;<code>list</code> of <code>dictionaries</code></dt>
+<dd>Dictionaries corresponding to attractors that are in this reductions, but
+not in any of its subreductions (if it has any). Each describes the node
+states in the attractors according to the following
+1 variable is "ON"
+0 variable is "OFF"
+X variable is known to oscillate
+? at least one such variable must oscillate
+! the attractor may be false; if it is genuine, at least
+one such variable must oscillate</dd>
+<dt><strong><code>terminal</code></strong> :&ensp;<code>str</code></dt>
+<dd>One of "yes", "no", or "possible", indicating whether the reduction contains
+attractors that are not in any of its subreductions.</dd>
+<dt><strong><code>delprimes</code></strong> :&ensp;<code>pyboolnet prime dictionary</code></dt>
+<dd>Update rules for the system's deletion projection. Steady states and stable
+motif activation are preserved. These rules may yield additional, spurious
+complex attractors.</dd>
+<dt><strong><code>deletion_STG</code></strong> :&ensp;<code>networkx.DiGraph</code></dt>
+<dd>Portion of the deletion projection's STG that contains all motif-avoidant
+attractors.</dd>
+<dt><strong><code>deletion_no_motif_attractors</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>Motif avoidant attractors of the deletion projection. The number of these is
+an upper bound on the number of motif avoidant attractors in the reduction.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MotifReduction:
+    &#34;&#34;&#34;Class to generate and store data about a network reduction that arises
+    during the stable motif succession diagram construction algorithm.
+
+    Parameters
+    ----------
+    motif_history : list of partial state dictionaries
+        Stable motifs that can lock in to give the reduced network (in order).
+    fixed : partial state dictionary
+        Nodes values that have been fixed and reduced by stable motifs and their
+        logical domain of influence.
+    reduced_primes : pyboolnet primes dictionary
+        Update rules for the reduced network.
+    max_simulate_size : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph (the default is 20).
+    prioritize_source_motifs : bool
+        Whether source nodes should be considered first (the default is True).
+    max_stable_motifs : int
+        Maximum number of output lines for pyboolnet to process from the
+        AspSolver (the default is 10000).
+    MPBN_update : bool
+        Whether MPBN update is used instead of general asynchronous update
+        (see Pauleve et al. 2020)(the default is False).
+
+    Attributes
+    ----------
+    merged_history_permutations : list of lists of int
+        Permutations of motif_history (by index) that also yield this reduction.
+    logically_fixed_nodes : partial state dictionary
+        Nodes values that have been fixed and reduced by stable motifs and their
+        logical domain of influence.
+    time_reverse_primes : pyboolnet primes dictionary
+        Update rules of the time reversed reduced system.
+    stable_motifs : list of partial state dictionaries
+        Stable motifs of the reduced system.
+    time_reverse_stable_motifs : list of partial state dictionaries
+        Stable motifs of the time reversed system.
+    merged_source_motifs : list of partial state dictionaries
+        List of source-like stable motifs that have been merged into a single
+        motif to avoid redundancy.
+    source_independent_motifs : list of partial state dictionaries
+        Stable motifs that exist independent of the values of the source nodes
+    merge_source_motifs : list of partial state dictionaries
+        Stable motifs generated by merging the stable motifs corresponding to
+        source nodes.
+    rspace : rspace list
+        The rspace, or &#34;restrict space&#34; of the reduced network, describing a
+        necessary condition for the system to avoid activating additional
+        stable motifs (see restrict_space.py for further details).
+    motif_history : list of partial state dictionaries
+        Stable motifs that can lock in to give the reduced network (in order)
+    reduced_primes : pyboolnet primes dictionary
+        Update rules for the reduced network.
+    fixed_rspace_nodes : partial state dictionary
+        Nodes values that are fixed in the rspace.
+    rspace_constraint : str
+        BNET expression that is true in and only in the rspace.
+    reduced_rspace_constraint : str
+        S simplification of the rspace_constraint given the fixed_rspace_nodes
+        states are satisfied
+    rspace_update_primes : pyboolnet primes dictionary
+        The update rules obtained from simplifying under the assumption that the
+        fixed_rspace_nodes are fixed
+    conserved_functions : list of pyboolnet expressions
+        Boolean functions that are constant within every attractor, in pyboolnet
+        update rule format
+    rspace_attractor_candidates : list of str
+        Attractors (lists of statestrings) in the rspace_update_primes that
+        satisfy the reduced_rspace_constraint
+    partial_STG : networkx.DiGraph
+        Subgraph of the state transition graph of the reduced network that
+        contains any and all attractors that do not lie in any of the reduced
+        network&#39;s stable motifs.
+    no_motif_attractors : list of str
+        Complex attractors that do not &#34;lock in&#34; any additional stable motifs,
+        stored as collections of state strings.
+    attractor_dict_list : list of dictionaries
+        Dictionaries corresponding to attractors that are in this reductions, but
+        not in any of its subreductions (if it has any). Each describes the node
+        states in the attractors according to the following
+        1 variable is &#34;ON&#34;
+        0 variable is &#34;OFF&#34;
+        X variable is known to oscillate
+        ? at least one such variable must oscillate
+        ! the attractor may be false; if it is genuine, at least
+          one such variable must oscillate
+    terminal : str
+        One of &#34;yes&#34;, &#34;no&#34;, or &#34;possible&#34;, indicating whether the reduction contains
+        attractors that are not in any of its subreductions.
+    delprimes : pyboolnet prime dictionary
+        Update rules for the system&#39;s deletion projection. Steady states and stable
+        motif activation are preserved. These rules may yield additional, spurious
+        complex attractors.
+    deletion_STG : networkx.DiGraph
+        Portion of the deletion projection&#39;s STG that contains all motif-avoidant
+        attractors.
+    deletion_no_motif_attractors : list of str
+        Motif avoidant attractors of the deletion projection. The number of these is
+        an upper bound on the number of motif avoidant attractors in the reduction.
+    &#34;&#34;&#34;
+
+    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000,MPBN_update=False):
+        if motif_history is None:
+            self.motif_history = []
+        else:
+            self.motif_history = motif_history.copy()
+        self.merged_history_permutations = []
+        self.logically_fixed_nodes = fixed
+        self.reduced_primes = reduced_primes.copy()
+        self.stable_motifs = pyboolnet.trap_spaces.trap_spaces(self.reduced_primes, &#34;max&#34;,max_output=max_stable_motifs)
+        if MPBN_update==False:
+            self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
+            self.time_reverse_stable_motifs = pyboolnet.trap_spaces.trap_spaces(self.time_reverse_primes, &#34;max&#34;,max_output=max_stable_motifs)
+        self.merged_source_motifs=None
+        self.source_independent_motifs=None
+        if self.motif_history == [] and prioritize_source_motifs:
+            if MPBN_update==False:
+                self.merge_source_motifs()
+            else:
+                self.simple_merge_source_motifs(reduced_primes,MPBN_update=MPBN_update)
+
+        # These may or may not get calculated.
+        # Sensible default values are in comments, but we will just use None for now.
+        self.fixed_rspace_nodes=None # {}
+        self.rspace_constraint=None # &#34;&#34;
+        self.reduced_rspace_constraint=None # &#34;&#34;
+        self.rspace_update_primes=None # {}
+        self.conserved_functions=None # [[{}]]
+        self.rspace_attractor_candidates=None # []
+        self.partial_STG=None # nx.DiGraph()
+        self.no_motif_attractors=None # []
+        self.deletion_STG = None
+        self.deletion_no_motif_attractors = None
+        self.attractor_constants = None
+        self.attractor_dict_list=None # []
+        # self.attractor_dict={}
+
+        # skips finding motif avoidant attractors when using MPBN_update
+        if MPBN_update:
+            if len(self.stable_motifs) == 0: # terminal reduction iff no more stable motifs
+                self.terminal = &#34;yes&#34;
+            else:
+                self.terminal = &#34;no&#34;
+            self.attractor_dict_list = self.generate_attr_dict_list(MPBN_update=MPBN_update)
+            return
+
+        self.rspace = sm_rspace.rspace(self.stable_motifs, self.time_reverse_stable_motifs,self.reduced_primes)
+
+        study_possible_oscillation = False
+
+        if not self.merged_source_motifs is None:
+            self.terminal = &#34;no&#34;
+        elif self.rspace == [[{&#39;0&#39;:1}]] and len(self.stable_motifs) &gt; 0: # a stable motif must lock in
+            self.terminal = &#34;no&#34;
+        elif self.rspace == [[{}]] and len(self.stable_motifs) &gt; 0: # could not find 1-node drivers
+            self.terminal = &#34;possible&#34;
+            study_possible_oscillation = True
+        elif len(self.stable_motifs) == 0: # necessarily terminal
+            self.terminal = &#34;yes&#34;
+            if len(self.reduced_primes) &gt; 0: # Terminates in oscillation, else, fixed point
+                study_possible_oscillation = True
+        else: # found 1-node drivers, so we can investigate further
+            self.terminal = &#34;possible&#34; # TODO: implement case-checking based on rspace
+
+            #self.fixed_rspace_nodes =sm_rspace.fixed_rspace_nodes(self.rspace,self.reduced_primes)
+            self.rspace = sm_rspace.reduce_rspace(self.rspace,self.reduced_primes)
+            self.fixed_rspace_nodes = self.rspace[0][0]
+
+            for motif in self.stable_motifs:
+                if motif.items() &lt;= self.fixed_rspace_nodes.items():
+                    self.terminal = &#34;no&#34;
+                    break
+            if self.terminal == &#34;possible&#34;:
+                self.rspace_constraint = sm_format.pretty_print_rspace(self.rspace,simplify=False)
+                #self.reduced_rspace_constraint = sm_rspace.reduce_rspace_string(self.rspace_constraint,self.fixed_rspace_nodes,simplify=False)
+                self.reduced_rspace_constraint=sm_format.pretty_print_rspace(self.rspace[1:],simplify=False)
+                self.rspace_update_primes = reduce_primes(self.fixed_rspace_nodes,self.reduced_primes)[0]
+                #self.test_rspace(search_partial_STGs = search_partial_STGs)
+            study_possible_oscillation = self.terminal == &#34;possible&#34; # value may be changed by test_rspace
+
+        if study_possible_oscillation and max_simulate_size &gt; 0:
+            # Now, we check to see if we can afford to simulate the proper STG
+            # to actually find the attractors. If we can&#39;t, we&#39;ll simulate the
+            # reduction, which will give bounds on the number of motif-free
+            # complex attractors.
+            if self.rspace_update_primes is not None:
+                simulate_size = len(self.rspace_update_primes)
+            else:
+                simulate_size = len(self.reduced_primes)
+
+            if simulate_size &lt; max_simulate_size:
+                self.find_no_motif_attractors()
+                if len(self.no_motif_attractors) == 0:
+                    self.terminal = &#34;no&#34;
+                else:
+                    self.terminal = &#34;yes&#34;
+                    self.conserved_functions = sm_rspace.attractor_space_candidates(self.stable_motifs,
+                                                                         self.time_reverse_stable_motifs)
+            else:
+                #print(&#34;STG is too large to simulate (&#34;+
+                #str(simulate_size)+&#34;/&#34;+str(max_simulate_size)+
+                #&#34;). We will attempt reduction methods. Increase max_simulate_size to force simulation.&#34;)
+                self.delprimes, self.attractor_constants = mediator_reduction(self.reduced_primes)
+                self.delprimes, nc = deletion_reduction(self.delprimes)
+                self.attractor_constants.update(nc)
+
+                # Before building any STGs, let&#39;s see if we&#39;ve already identified
+                # that a stable motif must stabilize based on the reduction.
+                for sm in self.stable_motifs:
+                    sat = True
+                    for k,v in sm.items():
+                        if (k,v) in self.attractor_constants.items():
+                            continue
+                        elif k not in self.delprimes:
+                            continue
+                        sat = False
+                        break
+                    if sat:
+                        self.terminal = &#34;no&#34;
+                        #print(&#34;The reduction indicates that the branch is not terminal. No need to simulate.&#34;)
+                        self.attractor_dict_list = self.generate_attr_dict_list()
+                        return
+                if len(self.delprimes) &lt; max_simulate_size:
+                    #print(&#34;Simulating deletion reduction (&#34;+str(len(self.delprimes))+&#34; nodes)...&#34;)
+                    self.find_deletion_no_motif_attractors(max_stable_motifs=max_stable_motifs)
+                    if len(self.deletion_no_motif_attractors) == 0 and self.terminal != &#34;yes&#34;:
+                        self.terminal = &#34;no&#34;
+                    # else:
+                    #     self.terminal = &#34;possible&#34;
+                else:
+                    print(&#34;The STG is still too large (&#34;+str(len(self.delprimes))+&#34;).&#34;)
+                    print(&#34;Further analysis of this branch is needed.&#34;)
+        self.attractor_dict_list = self.generate_attr_dict_list()
+
+    def merge_source_motifs(self):
+        &#34;&#34;&#34;Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
+        avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
+        merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+        source nodes all stabilize simultaneously.
+
+        We will assume that stable motifs and time reverse stable motifs have already been computed.
+
+        Note that a source node in the forward time system is a source node in the time reverse system as well.
+        This follows from A* = A =&gt; A- = ~(A*(A=~A)) = ~(~A) = A.
+
+        If A* = A or X (i.e., A=1 is a stable motif), then A- = ~(~A | X) = A &amp; ~X, so A=0 is a time-reverse stable motif. A similar
+        argument applies for the A=0 stable motif. Thus, a motif is only a source motif if it is also a time-reverse motif.
+        &#34;&#34;&#34;
+        source_motifs = [x for x in self.stable_motifs if len(x) == 1 and x in self.time_reverse_stable_motifs]
+        if source_motifs == []:
+            return
+        self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
+
+        source_vars = list(set([next(iter(x.keys())) for x in source_motifs])) # a list of source nodes
+
+        self.merged_source_motifs = []
+        for state in it.product([0,1],repeat=len(source_vars)):
+            self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
+
+    def simple_merge_source_motifs(self,primes,MPBN_update=False):
+        &#34;&#34;&#34;Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
+        avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
+        merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+        source nodes all stabilize simultaneously.
+
+        Assumes that stable_motifs have already been computed,
+        but time_reverse_primes and time_reverse_stable_motifs are not.
+
+        To be used in the case of MPBN update.
+
+        Parameters
+        ----------
+        primes : pyboolnet primes dictionary
+            pyboolnet update rules whose source node stable motifs are to be merged.
+
+        MPBN_update : bool
+            Whether MPBN update is used instead of general asynchronous update
+            (see Pauleve et al. 2020)(the default is False).
+
+        Returns
+        -------
+        self.source_independent_motifs : list of dictionaries
+            list of stable motifs that are not source motifs
+            [{&#39;node1&#39;:bool,&#39;node2&#39;:bool, ...}, {&#39;node3&#39;:bool,&#39;node4&#39;:bool, ...}, ...]
+        self.merged_source_motifs : list of dictionaries
+            list of group of source motifs fixed at the same time
+            [{&#39;source_node1&#39;:bool,&#39;source_node2&#39;:bool, ...}, ...]
+
+        &#34;&#34;&#34;
+        assert MPBN_update == True, &#34;This function is for MPBN update only&#34;
+
+        # source nodes will have update rule of the form &#39;A&#39;:[[{&#39;A&#39;:0}],[{&#39;A&#39;:1}]]
+        source_vars = []
+        for x in primes.keys():
+            if primes[x] == [[{x:0}],[{x:1}]]:
+                source_vars.append(x)
+
+        source_motifs = []
+        for x in source_vars:
+            source_motifs.append({x:0})
+            source_motifs.append({x:1})
+
+        if source_motifs == []:
+            return
+
+        self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
+
+        self.merged_source_motifs = []
+        for state in it.product([0,1],repeat=len(source_vars)):
+            self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
+
+    # def test_rspace(self, search_partial_STGs=True):
+    #     STG=pyboolnet.state_transition_graphs.primes2stg(self.rspace_update_primes,&#34;asynchronous&#34;)
+    #     steady_states,complex_attractors=pyboolnet.attractors.compute_attractors_tarjan(STG)
+    #     names = sorted(self.rspace_update_primes)
+    #     attractors = complex_attractors+[[s] for s in steady_states]
+    #     self.build_rspace_attractor_candidates(attractors)
+
+    # def build_rspace_attractor_candidates(self,attractors):
+    #     self.rspace_attractor_candidates = []
+    #     for attractor in attractors:
+    #         possible_rspace_attractor = True
+    #         for state in attractor:
+    #             # state_dict = {** sm_format.statestring2dict(state,names),**self.fixed_rspace_nodes}
+    #             # if pyboolnet.boolean_logic.are_mutually_exclusive(self.rspace_constraint,
+    #             #                                                  sm_format.implicant2bnet(state_dict)):
+    #             if sm_rspace.partial_state_contradicts_rspace(sm_format.statestring2dict(state,names),self.rspace):
+    #                 possible_rspace_attractor = False
+    #                 break
+    #         if possible_rspace_attractor:
+    #             self.rspace_attractor_candidates.append(attractor)
+    #
+    #     if len(self.rspace_attractor_candidates) == 0:
+    #         self.terminal = &#34;no&#34;
+
+    def build_K0(self):
+        &#34;&#34;&#34;Helper function for smart STG building. Builds initial set of nodes
+        that are not part of any motif-avoidant attractor.
+
+        Returns
+        -------
+        set of str
+            Statestrings that do not belong to any motif-avoidant attractor.
+
+        &#34;&#34;&#34;
+        K = set()
+        for sm in self.stable_motifs:
+            fill_vars = [k for k in self.reduced_primes if not k in sm]
+            for fills in it.product([&#39;0&#39;,&#39;1&#39;],repeat = len(fill_vars)):
+                s = &#39;&#39;
+                fi = 0
+                for k in self.reduced_primes:
+                    if k in sm:
+                        s += str(sm[k])
+                    else:
+                        s += fills[fi]
+                        fi += 1
+                K.add(s)
+        return K
+
+    def in_motif(self,ss,names):
+        &#34;&#34;&#34;Tests whether the (partial) state ss is in any stable motifs
+
+        Parameters
+        ----------
+        ss : str
+            Statestring (possibly on a subspace).
+        names : list of str
+            Variable names ordered to correspond to the positions of ss.
+
+        Returns
+        -------
+        bool
+            Whether ss is in any stable motif of the reduced system.
+
+        &#34;&#34;&#34;
+        for sm in self.stable_motifs:
+            smin = True
+            for i,r in enumerate(names):
+                if r in sm and not int(ss[i]) == sm[r]:
+                    smin = False
+            if smin: return True
+        return False
+
+    def build_inspace(self,ss,names, tr_stable_motifs = None):
+        &#34;&#34;&#34;Helper function for smart STG building. List all time reversal stable
+        motifs to which (partial) state ss belongs.
+
+        Parameters
+        ----------
+        ss : str
+            Statestring (possibly on a subspace).
+        names : list of str
+            Variable names ordered to correspond to the positions of ss.
+        tr_stable_motifs : list of partial state dictionaries
+            Time reverse stable motifs. If None, use all time reverse stable
+            motifs in the reduced system (the default is None).
+
+        Returns
+        -------
+        list of partial state dictionaries
+            Time reverse stable motifs that are active in the state ss.
+
+        &#34;&#34;&#34;
+        inspaces = []
+        if tr_stable_motifs is None:
+            tr_stable_motifs = self.time_reverse_stable_motifs
+
+        for ts in tr_stable_motifs:
+            tsin = True
+            for i,r in enumerate(names):
+                if r in ts and not int(ss[i]) == ts[r]:
+                    tsin = False
+            if tsin: inspaces.append(ts)
+        return inspaces
+
+    def build_deletion_STG(self,max_stable_motifs=10000):
+        &#34;&#34;&#34;Build a piece of the STG that is guaranteed to contain all
+        motif-avoidant attractors of the deletion projection. Complex attractors
+        found here may be spurious.
+
+        Parameters
+        ----------
+        max_stable_motifs : int
+            Maximum number of output lines for pyboolnet to process from the
+            AspSolver (the default is 10000).
+
+        &#34;&#34;&#34;
+        names = sorted(self.delprimes)
+        name_ind = {n:i for i,n in enumerate(names)}
+        trprimes = sm_time.time_reverse_primes(self.delprimes)
+        trsms = pyboolnet.trap_spaces.trap_spaces(trprimes,&#34;max&#34;,max_output=max_stable_motifs)
+
+        if self.rspace_update_primes is not None:
+            delrnames = [x for x in sorted(self.rspace_update_primes) if x in self.delprimes]
+            rname_ind = {n:i for i,n in enumerate(names) if n in delrnames}
+            fixed = {k:v for k,v in self.fixed_rspace_nodes.items()}
+        else:
+            rnames = names.copy()
+            rname_ind = name_ind.copy()
+            fixed = {}
+        sim_names = [x for x in names if not x in fixed]
+
+        #K = self.build_K0()
+        K = set()
+        self.deletion_STG = nx.DiGraph()
+
+        inspace_dict = {}
+        t = 0
+        T = 1
+        # note: product order gives s counting up in binary from 00..0 to 11..1
+        for s in it.product([&#39;0&#39;,&#39;1&#39;],repeat=len(sim_names)):
+            sl = [&#39;&#39;]*len(names)
+            j = 0
+            for i in range(len(names)):
+                if names[i] in fixed:
+                    sl[i] = str(fixed[names[i]])
+                else:
+                    sl[i] = s[j]
+                    j += 1
+
+            ss = &#39;&#39;.join(sl)
+
+            if ss in K: continue
+            if self.in_motif(ss,names): continue
+
+            simstate = True
+
+            inspace = self.build_inspace(ss,names,tr_stable_motifs = trsms)
+            inspace_dict[ss] = inspace
+
+            self.deletion_STG.add_node(ss) # might end up removing the node later
+            for i,r in enumerate(names):
+                nri = int(not int(ss[i]))
+                # if any p below is satisfied, we get a change of state
+                # the value of the new r will be equal to nri
+                for p in self.delprimes[r][nri]:
+                    psat = True
+                    for k,v in p.items():
+                        if not int(ss[name_ind[k]]) == v:
+                            psat = False
+                            break
+                    if psat: # state change verified
+                        child_state_list = list(ss)
+                        child_state_list[i] = str(nri)
+                        child_state = &#39;&#39;.join(child_state_list)
+
+                        # Check if changed something that should be fixed or landed in K
+                        # If not, check if we left a TR stable motif
+                        prune = r in fixed or child_state in K
+                        # next we check to see if we&#39;ve left the rspace
+                        # note that we don&#39;t have to check rspace[0], as this
+                        # is handled by checking r in fixed
+                        if not prune:
+                            stdict = sm_format.statestring2dict(child_state,names)
+                            prune = not sm_rspace.partial_state_contradicts_rspace(stdict, self.rspace[1:])
+
+                        # next, we check to see if we left a TR motif
+                        if not prune:
+                            if not child_state in inspace_dict:
+                                inspace_dict[child_state] = self.build_inspace(child_state,names,tr_stable_motifs = trsms)
+                            prune = not inspace_dict[child_state] == inspace
+
+
+                        # By here, prune is TRUE if we left a TR motif or are in K
+                        if prune:
+                            # prune the STG and stop simulating ss
+                            simstate = False
+                            rnodes = list(nx.bfs_tree(self.deletion_STG,ss,reverse=True).nodes())
+                            K.update(rnodes)
+                            self.deletion_STG.remove_nodes_from(rnodes)
+                        else:
+                            self.deletion_STG.add_edge(ss,child_state)
+                        break # we know the ss at r changed, no need to check more primes
+                if not simstate: break # don&#39;t check other vars: already found ss -&gt; K
+
+    def find_deletion_no_motif_attractors(self,max_stable_motifs=10000):
+        &#34;&#34;&#34;Identify motif-avoidant attractors in the deletion projection.
+
+        Parameters
+        ----------
+        max_stable_motifs : int
+            Maximum number of output lines for pyboolnet to process from the
+            AspSolver (the default is 10000).
+
+        &#34;&#34;&#34;
+        if self.deletion_STG is None:
+            self.build_deletion_STG(max_stable_motifs=max_stable_motifs)
+
+        # Note: fixed points of the deletion system are fixed points of the
+        # undeleted system, so we ignore these as they must contain stable motifs
+        if len(list(self.deletion_STG.nodes())) &gt; 0:
+            candidates = [x for x in nx.attracting_components(self.deletion_STG) if len(x) &gt; 1]
+        else:
+            candidates = []
+        self.deletion_no_motif_attractors = []
+
+        # next, we see if any of these activate stable motifs
+        names = sorted(self.delprimes)
+        for att in candidates:
+            no_motif = True
+            for s in att:
+                # The following check stems from the result that a stable motif
+                # is active in an attractor of the original system iff its projection
+                # is active in the projected attractor in the deletion-reduced system
+                st = sm_format.statestring2dict(s,names)
+                st.update(self.attractor_constants)
+                if any(not sm_doi.fixed_excludes_implicant(st,sm) for sm in self.stable_motifs):
+                    no_motif = False
+                    break
+
+            if no_motif:
+                self.deletion_no_motif_attractors.append(att)
+
+    def build_partial_STG(self):
+        &#34;&#34;&#34;Build a piece of the STG that is guaranteed to contain all
+        motif-avoidant attractors of the reduction.
+
+        &#34;&#34;&#34;
+        names = sorted(self.reduced_primes)
+        name_ind = {n:i for i,n in enumerate(names)}
+
+        if self.rspace_update_primes is not None:
+            rnames = sorted(self.rspace_update_primes)
+            rname_ind = {n:i for i,n in enumerate(names) if n in rnames}
+            fixed = self.fixed_rspace_nodes
+        else:
+            rnames = names.copy()
+            rname_ind = name_ind.copy()
+            fixed = {}
+
+        sim_names = [x for x in names if not x in fixed]
+
+
+        #K = self.build_K0()
+        K = set()
+        self.partial_STG = nx.DiGraph()
+
+        inspace_dict = {}
+        t = 0
+        T = 1
+        # note: product order gives s counting up in binary from 00..0 to 11..1
+        for s in it.product([&#39;0&#39;,&#39;1&#39;],repeat=len(sim_names)):
+            sl = [&#39;&#39;]*len(names)
+            j = 0
+            for i in range(len(names)):
+                if names[i] in fixed:
+                    sl[i] = str(fixed[names[i]])
+                else:
+                    sl[i] = s[j]
+                    j += 1
+
+            ss = &#39;&#39;.join(sl)
+
+            if ss in K: continue
+            if self.in_motif(ss,names): continue
+
+            simstate = True
+
+            inspace = self.build_inspace(ss,names)
+            inspace_dict[ss] = inspace
+
+            self.partial_STG.add_node(ss) # might end up removing ss later
+            for i,r in enumerate(names):
+                nri = int(not int(ss[i]))
+                # if any p below is satisfied, we get a change of state
+                # the value of the new r will be equal to nri
+                for p in self.reduced_primes[r][nri]:
+                    psat = True
+                    for k,v in p.items():
+                        if not int(ss[name_ind[k]]) == v:
+                            psat = False
+                            break
+                    if psat: # state change verified
+                        child_state_list = list(ss)
+                        child_state_list[i] = str(nri)
+                        child_state = &#39;&#39;.join(child_state_list)
+
+                        # Check if changed something that should be fixed or landed in K
+                        # If not, check if we left a TR stable motif
+                        prune = r in fixed or child_state in K
+
+                        # next we check to see if we&#39;ve left the rspace
+                        # note that we don&#39;t have to check rspace[0], as this
+                        # is handled by checking r in fixed
+                        if not prune:
+                            stdict = sm_format.statestring2dict(child_state,names)
+                            prune = not sm_rspace.state_in_rspace(stdict, self.rspace[1:])
+
+                        # next, we check to see if we left a TR motif
+                        if not prune:
+                            if not child_state in inspace_dict:
+                                inspace_dict[child_state] = self.build_inspace(child_state,names)
+                            prune = not inspace_dict[child_state] == inspace
+
+
+                        # By here, prune is TRUE if we left a TR motif or are in K
+                        if prune:
+                            # prune the STG and stop simulating ss
+                            simstate = False
+                            rnodes = list(nx.bfs_tree(self.partial_STG,ss,reverse=True).nodes())
+                            K.update(rnodes)
+                            self.partial_STG.remove_nodes_from(rnodes)
+                        else:
+                            self.partial_STG.add_edge(ss,child_state)
+                        break # we know the ss at r changed, no need to check more primes
+                if not simstate: break # don&#39;t check other vars: already found ss -&gt; K
+
+    def find_no_motif_attractors(self):
+        &#34;&#34;&#34;Find attractors of the reduction that are not present in any of its
+        subreductions.
+
+        &#34;&#34;&#34;
+        if self.partial_STG is None:
+            self.build_partial_STG()
+        if len(list(self.partial_STG.nodes())) &gt; 0:
+            self.no_motif_attractors = list(nx.attracting_components(self.partial_STG))
+        else:
+            self.no_motif_attractors = []
+
+    def generate_attr_dict_list(self, MPBN_update=False):
+        &#34;&#34;&#34;Generate a list of attractors that are present in the reduction, but
+        not in any of its subreductions.
+
+        Parameters
+        ----------
+        MPBN_update : bool
+            Whether MPBN update is used instead of general asynchronous update
+            (see Pauleve et al. 2020)(the default is False).
+
+        Returns
+        -------
+        list of dictionaries
+            Dictionaries corresponding to attractors that are in this reductions, but
+            not in any of its subreductions (if it has any). Each describes the node
+            states in the attractors according to the following
+            1 variable is &#34;ON&#34;
+            0 variable is &#34;OFF&#34;
+            X variable is known to oscillate
+            ? at least one such variable must oscillate
+            ! the attractor may be false; if it is genuine, at least
+              one such variable must oscillate
+        &#34;&#34;&#34;
+        attractors_dict={}
+
+        #the reduction is not terminal --&gt; no attractor
+        if self.terminal == &#39;no&#39;:
+            return []#&#39;not terminal reduction&#39; #I should replace this with an empty dict
+
+        nodes_sorted = sorted(list(set(self.logically_fixed_nodes.keys()) | set(self.reduced_primes.keys()))) #steady state
+
+        node_state_dict = self.logically_fixed_nodes.copy()
+        if self.fixed_rspace_nodes is not None:
+            node_state_dict.update(self.fixed_rspace_nodes)
+
+        # Found a steady state (will always be terminal)
+        if len(node_state_dict) == len(nodes_sorted):
+            assert self.terminal == &#39;yes&#39;, &#34;Found non-terminal steady state. This should not be possible!&#34;
+            node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+            return [node_state_dict]
+        #non_fixed_nodes = sorted(list(set(nodes_sorted)-set(node_state_dict.keys())))
+        non_fixed_nodes = [x for x in nodes_sorted if x not in node_state_dict]
+
+        #the reduction is only possibly terminal
+        if self.terminal==&#39;possible&#39;:
+            for n in non_fixed_nodes: #non-stabilized nodes
+                node_state_dict[n] = &#39;!&#39;
+                node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+            return [node_state_dict]
+
+        #the reduction is definitely terminal
+        elif self.terminal==&#39;yes&#39;:
+            #the reduction is terminal, not all nodes are fixed
+            #and it is MPBN update.
+            if MPBN_update == True:
+                for n in non_fixed_nodes:
+                    node_state_dict[n]=&#39;X&#39;
+                node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+                return [node_state_dict]
+
+            #the reduction is terminal, not all nodes are fixed
+            #and there is NO complex attractor mapped out
+            elif self.no_motif_attractors is None:
+                for n in non_fixed_nodes:
+                    node_state_dict[n]=&#39;?&#39;
+                node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+                return [node_state_dict]
+
+            #the reduction is terminal, not all nodes are fixed
+            #there are complex attractors mapped out:
+            attr_list=[]
+            for complex_attractor in self.no_motif_attractors:
+                ca_dict = sm_format.statelist2dict(non_fixed_nodes,complex_attractor)
+                ns = node_state_dict.copy()
+                ns.update(ca_dict)
+                ns = {k:v for k,v in sorted(ns.items())}
+                attr_list.append(ns)
+                # # we check if there are stabilized nodes within the complex attractor
+                # ca=self.find_constants_in_complex_attractor(complex_attractor)
+                # node_state_dict=self.logically_fixed_nodes.copy()
+                # for i in range(len(non_fixed_nodes)): #non-stabilized nodes
+                #     node_state_dict[non_fixed_nodes[i]]=ca[i]
+                #
+                # attr_list.append(node_state_dict)
+            return attr_list
+
+    def find_constants_in_complex_attractor(self,c):
+        &#34;&#34;&#34;Given a set of strings representing the states of a complex attractor the function finds the nodes
+        that are constant in the full complex attractor.
+
+        Parameters
+        ----------
+        c : a set of binary strings
+            Set of statestrings, e.g. set([&#39;000&#39;, &#39;010&#39;, &#39;100&#39;]).
+
+        Returns
+        -------
+        list of str
+            An array consisting of 0s, 1s, and Xs. X represents an oscillating
+            node, and the 0s and 1s represent nodes stabilized to those states.
+
+        &#34;&#34;&#34;
+        import numpy as np
+        ca=np.array([np.fromiter(i, int, count=len(i)) for i in c])
+        attr=np.array([&#39;X&#39; for i in range(len(ca[0]))])
+        sum_a0=ca.sum(axis=0)
+        attr[np.where(sum_a0==0)[0]]=0
+        attr[np.where(sum_a0==len(ca))[0]]=1
+        return attr
+
+    def summary(self,show_original_rules=True,hide_rules=False,show_explicit_permutations=False):
+        &#34;&#34;&#34;Print a summary of the reduction.
+
+        Parameters
+        ----------
+        show_original_rules : bool
+            Show rules of the unreduced system (the default is True)?
+        hide_rules : bool
+            Hide rules of the reduced system (the default is False)?
+        show_explicit_permutations : bool
+            Show motif permutations explicitly, instead of by index (the default is False)?
+
+        &#34;&#34;&#34;
+        print(&#34;Motif History:&#34;,self.motif_history)
+        print()
+        print(&#34;Logically Fixed Nodes:&#34;,self.logically_fixed_nodes)
+        print()
+        if hide_rules:
+            pass
+        elif not self.motif_history == []:
+            print(&#34;Reduced Update Rules:&#34;)
+            sm_format.pretty_print_prime_rules(self.reduced_primes)
+        else:
+            if show_original_rules:
+                print(&#34;Original Update Rules:&#34;)
+                sm_format.pretty_print_prime_rules(self.reduced_primes)
+            else:
+                print(&#34;The update rules are not reduced.&#34;)
+        print()
+        if self.terminal == &#34;no&#34;:
+            if self.merged_source_motifs is None:
+                print(&#34;At least one additional stable motif must stabilize.&#34;)
+                print()
+                print(&#34;Stable motifs:&#34;, self.stable_motifs)
+            else:
+                print(&#34;Source node values are not yet specified for the following nodes:&#34;,
+                       &#39;, &#39;.join(sorted([k for k in self.merged_source_motifs[0]])))
+                print()
+                if self.source_independent_motifs == []:
+                    print(&#34;There are no source-independent stable motifs.&#34;)
+                else:
+                    print(&#34;The following stable motifs exist independently of the source configuration:&#34;)
+                    print(self.source_independent_motifs)
+        elif self.terminal == &#34;yes&#34;:
+            if len(self.reduced_primes) &gt; 0:
+                print(&#34;There is a complex attractor in this reduced system in which no additional stable motifs activate.&#34;)
+                print(&#34;At least some of the following must oscillate in such an attractor:&#34;)
+                print(list(self.reduced_primes.keys()))
+            else:
+                print(&#34;This branch terminates in a steady state.&#34;)
+        elif self.terminal == &#34;possible&#34;:
+            print(&#34;Some or none of these stable motifs may stabilize:&#34;,
+                  self.stable_motifs)
+            print()
+            if not self.fixed_rspace_nodes is None:
+                print(&#34;If no more stable motifs stabilize, these node states must be fixed:&#34;,
+                      self.fixed_rspace_nodes)
+                print()
+                print(&#34;In addition, the following must stabilize to TRUE:&#34;)
+                print(self.reduced_rspace_constraint)
+                print()
+                print(&#34;In this case, the unfixed nodes update according to the following rules:&#34;)
+                sm_format.pretty_print_prime_rules(self.rspace_update_primes)
+
+        if not self.conserved_functions is None:
+            print()
+            if len(self.conserved_functions) &gt; 0:
+                print(&#34;Found the following functions that are constant on attractors in this branch:&#34;)
+                for x in self.conserved_functions:
+                    if len(x) &gt; 0:
+                        sm_format.pretty_print_rspace([x],silent=False)
+                        print()
+            else:
+                print(&#34;Unable to find non-trivial conserved functions for attractors in this branch.&#34;)
+                print()
+            if not self.no_motif_attractors is None:
+                if len(self.no_motif_attractors) &gt; 0:
+                    print(&#34;Found the following complex attractors that do not lock in additional stable motifs:&#34;)
+                    for x in self.no_motif_attractors:
+                        print(x)
+
+        if len(self.merged_history_permutations) &gt; 0:
+            print()
+            print(&#34;This branch contains the following motif_history permutation(s):&#34;)
+            if show_explicit_permutations:
+                for x in self.merged_history_permutations: print([self.motif_history[i] for i in x])
+            else:
+                for x in self.merged_history_permutations: print(x)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="pystablemotifs.reduction.MotifReduction.build_K0"><code class="name flex">
+<span>def <span class="ident">build_K0</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper function for smart STG building. Builds initial set of nodes
+that are not part of any motif-avoidant attractor.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>set</code> of <code>str</code></dt>
+<dd>Statestrings that do not belong to any motif-avoidant attractor.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_K0(self):
+    &#34;&#34;&#34;Helper function for smart STG building. Builds initial set of nodes
+    that are not part of any motif-avoidant attractor.
+
+    Returns
+    -------
+    set of str
+        Statestrings that do not belong to any motif-avoidant attractor.
+
+    &#34;&#34;&#34;
+    K = set()
+    for sm in self.stable_motifs:
+        fill_vars = [k for k in self.reduced_primes if not k in sm]
+        for fills in it.product([&#39;0&#39;,&#39;1&#39;],repeat = len(fill_vars)):
+            s = &#39;&#39;
+            fi = 0
+            for k in self.reduced_primes:
+                if k in sm:
+                    s += str(sm[k])
+                else:
+                    s += fills[fi]
+                    fi += 1
+            K.add(s)
+    return K</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.build_deletion_STG"><code class="name flex">
+<span>def <span class="ident">build_deletion_STG</span></span>(<span>self, max_stable_motifs=10000)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Build a piece of the STG that is guaranteed to contain all
+motif-avoidant attractors of the deletion projection. Complex attractors
+found here may be spurious.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>max_stable_motifs</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of output lines for pyboolnet to process from the
+AspSolver (the default is 10000).</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_deletion_STG(self,max_stable_motifs=10000):
+    &#34;&#34;&#34;Build a piece of the STG that is guaranteed to contain all
+    motif-avoidant attractors of the deletion projection. Complex attractors
+    found here may be spurious.
+
+    Parameters
+    ----------
+    max_stable_motifs : int
+        Maximum number of output lines for pyboolnet to process from the
+        AspSolver (the default is 10000).
+
+    &#34;&#34;&#34;
+    names = sorted(self.delprimes)
+    name_ind = {n:i for i,n in enumerate(names)}
+    trprimes = sm_time.time_reverse_primes(self.delprimes)
+    trsms = pyboolnet.trap_spaces.trap_spaces(trprimes,&#34;max&#34;,max_output=max_stable_motifs)
+
+    if self.rspace_update_primes is not None:
+        delrnames = [x for x in sorted(self.rspace_update_primes) if x in self.delprimes]
+        rname_ind = {n:i for i,n in enumerate(names) if n in delrnames}
+        fixed = {k:v for k,v in self.fixed_rspace_nodes.items()}
+    else:
+        rnames = names.copy()
+        rname_ind = name_ind.copy()
+        fixed = {}
+    sim_names = [x for x in names if not x in fixed]
+
+    #K = self.build_K0()
+    K = set()
+    self.deletion_STG = nx.DiGraph()
+
+    inspace_dict = {}
+    t = 0
+    T = 1
+    # note: product order gives s counting up in binary from 00..0 to 11..1
+    for s in it.product([&#39;0&#39;,&#39;1&#39;],repeat=len(sim_names)):
+        sl = [&#39;&#39;]*len(names)
+        j = 0
+        for i in range(len(names)):
+            if names[i] in fixed:
+                sl[i] = str(fixed[names[i]])
+            else:
+                sl[i] = s[j]
+                j += 1
+
+        ss = &#39;&#39;.join(sl)
+
+        if ss in K: continue
+        if self.in_motif(ss,names): continue
+
+        simstate = True
+
+        inspace = self.build_inspace(ss,names,tr_stable_motifs = trsms)
+        inspace_dict[ss] = inspace
+
+        self.deletion_STG.add_node(ss) # might end up removing the node later
+        for i,r in enumerate(names):
+            nri = int(not int(ss[i]))
+            # if any p below is satisfied, we get a change of state
+            # the value of the new r will be equal to nri
+            for p in self.delprimes[r][nri]:
+                psat = True
+                for k,v in p.items():
+                    if not int(ss[name_ind[k]]) == v:
+                        psat = False
+                        break
+                if psat: # state change verified
+                    child_state_list = list(ss)
+                    child_state_list[i] = str(nri)
+                    child_state = &#39;&#39;.join(child_state_list)
+
+                    # Check if changed something that should be fixed or landed in K
+                    # If not, check if we left a TR stable motif
+                    prune = r in fixed or child_state in K
+                    # next we check to see if we&#39;ve left the rspace
+                    # note that we don&#39;t have to check rspace[0], as this
+                    # is handled by checking r in fixed
+                    if not prune:
+                        stdict = sm_format.statestring2dict(child_state,names)
+                        prune = not sm_rspace.partial_state_contradicts_rspace(stdict, self.rspace[1:])
+
+                    # next, we check to see if we left a TR motif
+                    if not prune:
+                        if not child_state in inspace_dict:
+                            inspace_dict[child_state] = self.build_inspace(child_state,names,tr_stable_motifs = trsms)
+                        prune = not inspace_dict[child_state] == inspace
+
+
+                    # By here, prune is TRUE if we left a TR motif or are in K
+                    if prune:
+                        # prune the STG and stop simulating ss
+                        simstate = False
+                        rnodes = list(nx.bfs_tree(self.deletion_STG,ss,reverse=True).nodes())
+                        K.update(rnodes)
+                        self.deletion_STG.remove_nodes_from(rnodes)
+                    else:
+                        self.deletion_STG.add_edge(ss,child_state)
+                    break # we know the ss at r changed, no need to check more primes
+            if not simstate: break # don&#39;t check other vars: already found ss -&gt; K</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.build_inspace"><code class="name flex">
+<span>def <span class="ident">build_inspace</span></span>(<span>self, ss, names, tr_stable_motifs=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper function for smart STG building. List all time reversal stable
+motifs to which (partial) state ss belongs.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>ss</code></strong> :&ensp;<code>str</code></dt>
+<dd>Statestring (possibly on a subspace).</dd>
+<dt><strong><code>names</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>Variable names ordered to correspond to the positions of ss.</dd>
+<dt><strong><code>tr_stable_motifs</code></strong> :&ensp;<code>list</code> of <code>partial state dictionaries</code></dt>
+<dd>Time reverse stable motifs. If None, use all time reverse stable
+motifs in the reduced system (the default is None).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code> of <code>partial state dictionaries</code></dt>
+<dd>Time reverse stable motifs that are active in the state ss.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_inspace(self,ss,names, tr_stable_motifs = None):
+    &#34;&#34;&#34;Helper function for smart STG building. List all time reversal stable
+    motifs to which (partial) state ss belongs.
+
+    Parameters
+    ----------
+    ss : str
+        Statestring (possibly on a subspace).
+    names : list of str
+        Variable names ordered to correspond to the positions of ss.
+    tr_stable_motifs : list of partial state dictionaries
+        Time reverse stable motifs. If None, use all time reverse stable
+        motifs in the reduced system (the default is None).
+
+    Returns
+    -------
+    list of partial state dictionaries
+        Time reverse stable motifs that are active in the state ss.
+
+    &#34;&#34;&#34;
+    inspaces = []
+    if tr_stable_motifs is None:
+        tr_stable_motifs = self.time_reverse_stable_motifs
+
+    for ts in tr_stable_motifs:
+        tsin = True
+        for i,r in enumerate(names):
+            if r in ts and not int(ss[i]) == ts[r]:
+                tsin = False
+        if tsin: inspaces.append(ts)
+    return inspaces</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.build_partial_STG"><code class="name flex">
+<span>def <span class="ident">build_partial_STG</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Build a piece of the STG that is guaranteed to contain all
+motif-avoidant attractors of the reduction.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_partial_STG(self):
+    &#34;&#34;&#34;Build a piece of the STG that is guaranteed to contain all
+    motif-avoidant attractors of the reduction.
+
+    &#34;&#34;&#34;
+    names = sorted(self.reduced_primes)
+    name_ind = {n:i for i,n in enumerate(names)}
+
+    if self.rspace_update_primes is not None:
+        rnames = sorted(self.rspace_update_primes)
+        rname_ind = {n:i for i,n in enumerate(names) if n in rnames}
+        fixed = self.fixed_rspace_nodes
+    else:
+        rnames = names.copy()
+        rname_ind = name_ind.copy()
+        fixed = {}
+
+    sim_names = [x for x in names if not x in fixed]
+
+
+    #K = self.build_K0()
+    K = set()
+    self.partial_STG = nx.DiGraph()
+
+    inspace_dict = {}
+    t = 0
+    T = 1
+    # note: product order gives s counting up in binary from 00..0 to 11..1
+    for s in it.product([&#39;0&#39;,&#39;1&#39;],repeat=len(sim_names)):
+        sl = [&#39;&#39;]*len(names)
+        j = 0
+        for i in range(len(names)):
+            if names[i] in fixed:
+                sl[i] = str(fixed[names[i]])
+            else:
+                sl[i] = s[j]
+                j += 1
+
+        ss = &#39;&#39;.join(sl)
+
+        if ss in K: continue
+        if self.in_motif(ss,names): continue
+
+        simstate = True
+
+        inspace = self.build_inspace(ss,names)
+        inspace_dict[ss] = inspace
+
+        self.partial_STG.add_node(ss) # might end up removing ss later
+        for i,r in enumerate(names):
+            nri = int(not int(ss[i]))
+            # if any p below is satisfied, we get a change of state
+            # the value of the new r will be equal to nri
+            for p in self.reduced_primes[r][nri]:
+                psat = True
+                for k,v in p.items():
+                    if not int(ss[name_ind[k]]) == v:
+                        psat = False
+                        break
+                if psat: # state change verified
+                    child_state_list = list(ss)
+                    child_state_list[i] = str(nri)
+                    child_state = &#39;&#39;.join(child_state_list)
+
+                    # Check if changed something that should be fixed or landed in K
+                    # If not, check if we left a TR stable motif
+                    prune = r in fixed or child_state in K
+
+                    # next we check to see if we&#39;ve left the rspace
+                    # note that we don&#39;t have to check rspace[0], as this
+                    # is handled by checking r in fixed
+                    if not prune:
+                        stdict = sm_format.statestring2dict(child_state,names)
+                        prune = not sm_rspace.state_in_rspace(stdict, self.rspace[1:])
+
+                    # next, we check to see if we left a TR motif
+                    if not prune:
+                        if not child_state in inspace_dict:
+                            inspace_dict[child_state] = self.build_inspace(child_state,names)
+                        prune = not inspace_dict[child_state] == inspace
+
+
+                    # By here, prune is TRUE if we left a TR motif or are in K
+                    if prune:
+                        # prune the STG and stop simulating ss
+                        simstate = False
+                        rnodes = list(nx.bfs_tree(self.partial_STG,ss,reverse=True).nodes())
+                        K.update(rnodes)
+                        self.partial_STG.remove_nodes_from(rnodes)
+                    else:
+                        self.partial_STG.add_edge(ss,child_state)
+                    break # we know the ss at r changed, no need to check more primes
+            if not simstate: break # don&#39;t check other vars: already found ss -&gt; K</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.find_constants_in_complex_attractor"><code class="name flex">
+<span>def <span class="ident">find_constants_in_complex_attractor</span></span>(<span>self, c)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a set of strings representing the states of a complex attractor the function finds the nodes
+that are constant in the full complex attractor.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>c</code></strong> :&ensp;<code>a set</code> of <code>binary strings</code></dt>
+<dd>Set of statestrings, e.g. set(['000', '010', '100']).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code> of <code>str</code></dt>
+<dd>An array consisting of 0s, 1s, and Xs. X represents an oscillating
+node, and the 0s and 1s represent nodes stabilized to those states.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_constants_in_complex_attractor(self,c):
+    &#34;&#34;&#34;Given a set of strings representing the states of a complex attractor the function finds the nodes
+    that are constant in the full complex attractor.
+
+    Parameters
+    ----------
+    c : a set of binary strings
+        Set of statestrings, e.g. set([&#39;000&#39;, &#39;010&#39;, &#39;100&#39;]).
+
+    Returns
+    -------
+    list of str
+        An array consisting of 0s, 1s, and Xs. X represents an oscillating
+        node, and the 0s and 1s represent nodes stabilized to those states.
+
+    &#34;&#34;&#34;
+    import numpy as np
+    ca=np.array([np.fromiter(i, int, count=len(i)) for i in c])
+    attr=np.array([&#39;X&#39; for i in range(len(ca[0]))])
+    sum_a0=ca.sum(axis=0)
+    attr[np.where(sum_a0==0)[0]]=0
+    attr[np.where(sum_a0==len(ca))[0]]=1
+    return attr</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.find_deletion_no_motif_attractors"><code class="name flex">
+<span>def <span class="ident">find_deletion_no_motif_attractors</span></span>(<span>self, max_stable_motifs=10000)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Identify motif-avoidant attractors in the deletion projection.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>max_stable_motifs</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of output lines for pyboolnet to process from the
+AspSolver (the default is 10000).</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_deletion_no_motif_attractors(self,max_stable_motifs=10000):
+    &#34;&#34;&#34;Identify motif-avoidant attractors in the deletion projection.
+
+    Parameters
+    ----------
+    max_stable_motifs : int
+        Maximum number of output lines for pyboolnet to process from the
+        AspSolver (the default is 10000).
+
+    &#34;&#34;&#34;
+    if self.deletion_STG is None:
+        self.build_deletion_STG(max_stable_motifs=max_stable_motifs)
+
+    # Note: fixed points of the deletion system are fixed points of the
+    # undeleted system, so we ignore these as they must contain stable motifs
+    if len(list(self.deletion_STG.nodes())) &gt; 0:
+        candidates = [x for x in nx.attracting_components(self.deletion_STG) if len(x) &gt; 1]
+    else:
+        candidates = []
+    self.deletion_no_motif_attractors = []
+
+    # next, we see if any of these activate stable motifs
+    names = sorted(self.delprimes)
+    for att in candidates:
+        no_motif = True
+        for s in att:
+            # The following check stems from the result that a stable motif
+            # is active in an attractor of the original system iff its projection
+            # is active in the projected attractor in the deletion-reduced system
+            st = sm_format.statestring2dict(s,names)
+            st.update(self.attractor_constants)
+            if any(not sm_doi.fixed_excludes_implicant(st,sm) for sm in self.stable_motifs):
+                no_motif = False
+                break
+
+        if no_motif:
+            self.deletion_no_motif_attractors.append(att)</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.find_no_motif_attractors"><code class="name flex">
+<span>def <span class="ident">find_no_motif_attractors</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find attractors of the reduction that are not present in any of its
+subreductions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_no_motif_attractors(self):
+    &#34;&#34;&#34;Find attractors of the reduction that are not present in any of its
+    subreductions.
+
+    &#34;&#34;&#34;
+    if self.partial_STG is None:
+        self.build_partial_STG()
+    if len(list(self.partial_STG.nodes())) &gt; 0:
+        self.no_motif_attractors = list(nx.attracting_components(self.partial_STG))
+    else:
+        self.no_motif_attractors = []</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.generate_attr_dict_list"><code class="name flex">
+<span>def <span class="ident">generate_attr_dict_list</span></span>(<span>self, MPBN_update=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate a list of attractors that are present in the reduction, but
+not in any of its subreductions.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>MPBN_update</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether MPBN update is used instead of general asynchronous update
+(see Pauleve et al. 2020)(the default is False).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code> of <code>dictionaries</code></dt>
+<dd>Dictionaries corresponding to attractors that are in this reductions, but
+not in any of its subreductions (if it has any). Each describes the node
+states in the attractors according to the following
+1 variable is "ON"
+0 variable is "OFF"
+X variable is known to oscillate
+? at least one such variable must oscillate
+! the attractor may be false; if it is genuine, at least
+one such variable must oscillate</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_attr_dict_list(self, MPBN_update=False):
+    &#34;&#34;&#34;Generate a list of attractors that are present in the reduction, but
+    not in any of its subreductions.
+
+    Parameters
+    ----------
+    MPBN_update : bool
+        Whether MPBN update is used instead of general asynchronous update
+        (see Pauleve et al. 2020)(the default is False).
+
+    Returns
+    -------
+    list of dictionaries
+        Dictionaries corresponding to attractors that are in this reductions, but
+        not in any of its subreductions (if it has any). Each describes the node
+        states in the attractors according to the following
+        1 variable is &#34;ON&#34;
+        0 variable is &#34;OFF&#34;
+        X variable is known to oscillate
+        ? at least one such variable must oscillate
+        ! the attractor may be false; if it is genuine, at least
+          one such variable must oscillate
+    &#34;&#34;&#34;
+    attractors_dict={}
+
+    #the reduction is not terminal --&gt; no attractor
+    if self.terminal == &#39;no&#39;:
+        return []#&#39;not terminal reduction&#39; #I should replace this with an empty dict
+
+    nodes_sorted = sorted(list(set(self.logically_fixed_nodes.keys()) | set(self.reduced_primes.keys()))) #steady state
+
+    node_state_dict = self.logically_fixed_nodes.copy()
+    if self.fixed_rspace_nodes is not None:
+        node_state_dict.update(self.fixed_rspace_nodes)
+
+    # Found a steady state (will always be terminal)
+    if len(node_state_dict) == len(nodes_sorted):
+        assert self.terminal == &#39;yes&#39;, &#34;Found non-terminal steady state. This should not be possible!&#34;
+        node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+        return [node_state_dict]
+    #non_fixed_nodes = sorted(list(set(nodes_sorted)-set(node_state_dict.keys())))
+    non_fixed_nodes = [x for x in nodes_sorted if x not in node_state_dict]
+
+    #the reduction is only possibly terminal
+    if self.terminal==&#39;possible&#39;:
+        for n in non_fixed_nodes: #non-stabilized nodes
+            node_state_dict[n] = &#39;!&#39;
+            node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+        return [node_state_dict]
+
+    #the reduction is definitely terminal
+    elif self.terminal==&#39;yes&#39;:
+        #the reduction is terminal, not all nodes are fixed
+        #and it is MPBN update.
+        if MPBN_update == True:
+            for n in non_fixed_nodes:
+                node_state_dict[n]=&#39;X&#39;
+            node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+            return [node_state_dict]
+
+        #the reduction is terminal, not all nodes are fixed
+        #and there is NO complex attractor mapped out
+        elif self.no_motif_attractors is None:
+            for n in non_fixed_nodes:
+                node_state_dict[n]=&#39;?&#39;
+            node_state_dict = {k:v for k,v in sorted(node_state_dict.items())}
+            return [node_state_dict]
+
+        #the reduction is terminal, not all nodes are fixed
+        #there are complex attractors mapped out:
+        attr_list=[]
+        for complex_attractor in self.no_motif_attractors:
+            ca_dict = sm_format.statelist2dict(non_fixed_nodes,complex_attractor)
+            ns = node_state_dict.copy()
+            ns.update(ca_dict)
+            ns = {k:v for k,v in sorted(ns.items())}
+            attr_list.append(ns)
+            # # we check if there are stabilized nodes within the complex attractor
+            # ca=self.find_constants_in_complex_attractor(complex_attractor)
+            # node_state_dict=self.logically_fixed_nodes.copy()
+            # for i in range(len(non_fixed_nodes)): #non-stabilized nodes
+            #     node_state_dict[non_fixed_nodes[i]]=ca[i]
+            #
+            # attr_list.append(node_state_dict)
+        return attr_list</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.in_motif"><code class="name flex">
+<span>def <span class="ident">in_motif</span></span>(<span>self, ss, names)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Tests whether the (partial) state ss is in any stable motifs</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>ss</code></strong> :&ensp;<code>str</code></dt>
+<dd>Statestring (possibly on a subspace).</dd>
+<dt><strong><code>names</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>Variable names ordered to correspond to the positions of ss.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>Whether ss is in any stable motif of the reduced system.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def in_motif(self,ss,names):
+    &#34;&#34;&#34;Tests whether the (partial) state ss is in any stable motifs
+
+    Parameters
+    ----------
+    ss : str
+        Statestring (possibly on a subspace).
+    names : list of str
+        Variable names ordered to correspond to the positions of ss.
+
+    Returns
+    -------
+    bool
+        Whether ss is in any stable motif of the reduced system.
+
+    &#34;&#34;&#34;
+    for sm in self.stable_motifs:
+        smin = True
+        for i,r in enumerate(names):
+            if r in sm and not int(ss[i]) == sm[r]:
+                smin = False
+        if smin: return True
+    return False</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.merge_source_motifs"><code class="name flex">
+<span>def <span class="ident">merge_source_motifs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A<em>=A, into combined motifs to
+avoid combinatorial explosion. For example, A</em>=A, B<em>=B, C</em>=C produces six motifs that can stabilize in 8 ways; without
+merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+source nodes all stabilize simultaneously.</p>
+<p>We will assume that stable motifs and time reverse stable motifs have already been computed.</p>
+<p>Note that a source node in the forward time system is a source node in the time reverse system as well.
+This follows from A<em> = A =&gt; A- = ~(A</em>(A=~A)) = ~(~A) = A.</p>
+<p>If A* = A or X (i.e., A=1 is a stable motif), then A- = ~(~A | X) = A &amp; ~X, so A=0 is a time-reverse stable motif. A similar
+argument applies for the A=0 stable motif. Thus, a motif is only a source motif if it is also a time-reverse motif.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def merge_source_motifs(self):
+    &#34;&#34;&#34;Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
+    avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
+    merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+    source nodes all stabilize simultaneously.
+
+    We will assume that stable motifs and time reverse stable motifs have already been computed.
+
+    Note that a source node in the forward time system is a source node in the time reverse system as well.
+    This follows from A* = A =&gt; A- = ~(A*(A=~A)) = ~(~A) = A.
+
+    If A* = A or X (i.e., A=1 is a stable motif), then A- = ~(~A | X) = A &amp; ~X, so A=0 is a time-reverse stable motif. A similar
+    argument applies for the A=0 stable motif. Thus, a motif is only a source motif if it is also a time-reverse motif.
+    &#34;&#34;&#34;
+    source_motifs = [x for x in self.stable_motifs if len(x) == 1 and x in self.time_reverse_stable_motifs]
+    if source_motifs == []:
+        return
+    self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
+
+    source_vars = list(set([next(iter(x.keys())) for x in source_motifs])) # a list of source nodes
+
+    self.merged_source_motifs = []
+    for state in it.product([0,1],repeat=len(source_vars)):
+        self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.simple_merge_source_motifs"><code class="name flex">
+<span>def <span class="ident">simple_merge_source_motifs</span></span>(<span>self, primes, MPBN_update=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A<em>=A, into combined motifs to
+avoid combinatorial explosion. For example, A</em>=A, B<em>=B, C</em>=C produces six motifs that can stabilize in 8 ways; without
+merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+source nodes all stabilize simultaneously.</p>
+<p>Assumes that stable_motifs have already been computed,
+but time_reverse_primes and time_reverse_stable_motifs are not.</p>
+<p>To be used in the case of MPBN update.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>pyboolnet update rules whose source node stable motifs are to be merged.</dd>
+<dt><strong><code>MPBN_update</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether MPBN update is used instead of general asynchronous update
+(see Pauleve et al. 2020)(the default is False).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>self.source_independent_motifs : list</code> of <code>dictionaries</code></dt>
+<dd>list of stable motifs that are not source motifs
+[{'node1':bool,'node2':bool, &hellip;}, {'node3':bool,'node4':bool, &hellip;}, &hellip;]</dd>
+<dt><code>self.merged_source_motifs : list</code> of <code>dictionaries</code></dt>
+<dd>list of group of source motifs fixed at the same time
+[{'source_node1':bool,'source_node2':bool, &hellip;}, &hellip;]</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simple_merge_source_motifs(self,primes,MPBN_update=False):
+    &#34;&#34;&#34;Merges stable motifs (and time-reversal stable motifs) that correspond to source nodes, e.g. A*=A, into combined motifs to
+    avoid combinatorial explosion. For example, A*=A, B*=B, C*=C produces six motifs that can stabilize in 8 ways; without
+    merging, these 8 combinations lead to 8*3!=48 successions because they can be considered in any order. This is silly because
+    source nodes all stabilize simultaneously.
+
+    Assumes that stable_motifs have already been computed,
+    but time_reverse_primes and time_reverse_stable_motifs are not.
+
+    To be used in the case of MPBN update.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        pyboolnet update rules whose source node stable motifs are to be merged.
+
+    MPBN_update : bool
+        Whether MPBN update is used instead of general asynchronous update
+        (see Pauleve et al. 2020)(the default is False).
+
+    Returns
+    -------
+    self.source_independent_motifs : list of dictionaries
+        list of stable motifs that are not source motifs
+        [{&#39;node1&#39;:bool,&#39;node2&#39;:bool, ...}, {&#39;node3&#39;:bool,&#39;node4&#39;:bool, ...}, ...]
+    self.merged_source_motifs : list of dictionaries
+        list of group of source motifs fixed at the same time
+        [{&#39;source_node1&#39;:bool,&#39;source_node2&#39;:bool, ...}, ...]
+
+    &#34;&#34;&#34;
+    assert MPBN_update == True, &#34;This function is for MPBN update only&#34;
+
+    # source nodes will have update rule of the form &#39;A&#39;:[[{&#39;A&#39;:0}],[{&#39;A&#39;:1}]]
+    source_vars = []
+    for x in primes.keys():
+        if primes[x] == [[{x:0}],[{x:1}]]:
+            source_vars.append(x)
+
+    source_motifs = []
+    for x in source_vars:
+        source_motifs.append({x:0})
+        source_motifs.append({x:1})
+
+    if source_motifs == []:
+        return
+
+    self.source_independent_motifs = [x for x in self.stable_motifs if not x in source_motifs]
+
+    self.merged_source_motifs = []
+    for state in it.product([0,1],repeat=len(source_vars)):
+        self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.reduction.MotifReduction.summary"><code class="name flex">
+<span>def <span class="ident">summary</span></span>(<span>self, show_original_rules=True, hide_rules=False, show_explicit_permutations=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Print a summary of the reduction.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>show_original_rules</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Show rules of the unreduced system (the default is True)?</dd>
+<dt><strong><code>hide_rules</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Hide rules of the reduced system (the default is False)?</dd>
+<dt><strong><code>show_explicit_permutations</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Show motif permutations explicitly, instead of by index (the default is False)?</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def summary(self,show_original_rules=True,hide_rules=False,show_explicit_permutations=False):
+    &#34;&#34;&#34;Print a summary of the reduction.
+
+    Parameters
+    ----------
+    show_original_rules : bool
+        Show rules of the unreduced system (the default is True)?
+    hide_rules : bool
+        Hide rules of the reduced system (the default is False)?
+    show_explicit_permutations : bool
+        Show motif permutations explicitly, instead of by index (the default is False)?
+
+    &#34;&#34;&#34;
+    print(&#34;Motif History:&#34;,self.motif_history)
+    print()
+    print(&#34;Logically Fixed Nodes:&#34;,self.logically_fixed_nodes)
+    print()
+    if hide_rules:
+        pass
+    elif not self.motif_history == []:
+        print(&#34;Reduced Update Rules:&#34;)
+        sm_format.pretty_print_prime_rules(self.reduced_primes)
+    else:
+        if show_original_rules:
+            print(&#34;Original Update Rules:&#34;)
+            sm_format.pretty_print_prime_rules(self.reduced_primes)
+        else:
+            print(&#34;The update rules are not reduced.&#34;)
+    print()
+    if self.terminal == &#34;no&#34;:
+        if self.merged_source_motifs is None:
+            print(&#34;At least one additional stable motif must stabilize.&#34;)
+            print()
+            print(&#34;Stable motifs:&#34;, self.stable_motifs)
+        else:
+            print(&#34;Source node values are not yet specified for the following nodes:&#34;,
+                   &#39;, &#39;.join(sorted([k for k in self.merged_source_motifs[0]])))
+            print()
+            if self.source_independent_motifs == []:
+                print(&#34;There are no source-independent stable motifs.&#34;)
+            else:
+                print(&#34;The following stable motifs exist independently of the source configuration:&#34;)
+                print(self.source_independent_motifs)
+    elif self.terminal == &#34;yes&#34;:
+        if len(self.reduced_primes) &gt; 0:
+            print(&#34;There is a complex attractor in this reduced system in which no additional stable motifs activate.&#34;)
+            print(&#34;At least some of the following must oscillate in such an attractor:&#34;)
+            print(list(self.reduced_primes.keys()))
+        else:
+            print(&#34;This branch terminates in a steady state.&#34;)
+    elif self.terminal == &#34;possible&#34;:
+        print(&#34;Some or none of these stable motifs may stabilize:&#34;,
+              self.stable_motifs)
+        print()
+        if not self.fixed_rspace_nodes is None:
+            print(&#34;If no more stable motifs stabilize, these node states must be fixed:&#34;,
+                  self.fixed_rspace_nodes)
+            print()
+            print(&#34;In addition, the following must stabilize to TRUE:&#34;)
+            print(self.reduced_rspace_constraint)
+            print()
+            print(&#34;In this case, the unfixed nodes update according to the following rules:&#34;)
+            sm_format.pretty_print_prime_rules(self.rspace_update_primes)
+
+    if not self.conserved_functions is None:
+        print()
+        if len(self.conserved_functions) &gt; 0:
+            print(&#34;Found the following functions that are constant on attractors in this branch:&#34;)
+            for x in self.conserved_functions:
+                if len(x) &gt; 0:
+                    sm_format.pretty_print_rspace([x],silent=False)
+                    print()
+        else:
+            print(&#34;Unable to find non-trivial conserved functions for attractors in this branch.&#34;)
+            print()
+        if not self.no_motif_attractors is None:
+            if len(self.no_motif_attractors) &gt; 0:
+                print(&#34;Found the following complex attractors that do not lock in additional stable motifs:&#34;)
+                for x in self.no_motif_attractors:
+                    print(x)
+
+    if len(self.merged_history_permutations) &gt; 0:
+        print()
+        print(&#34;This branch contains the following motif_history permutation(s):&#34;)
+        if show_explicit_permutations:
+            for x in self.merged_history_permutations: print([self.motif_history[i] for i in x])
+        else:
+            for x in self.merged_history_permutations: print(x)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pystablemotifs" href="index.html">pystablemotifs</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="pystablemotifs.reduction.delete_node" href="#pystablemotifs.reduction.delete_node">delete_node</a></code></li>
+<li><code><a title="pystablemotifs.reduction.deletion_reduction" href="#pystablemotifs.reduction.deletion_reduction">deletion_reduction</a></code></li>
+<li><code><a title="pystablemotifs.reduction.mediator_reduction" href="#pystablemotifs.reduction.mediator_reduction">mediator_reduction</a></code></li>
+<li><code><a title="pystablemotifs.reduction.reduce_primes" href="#pystablemotifs.reduction.reduce_primes">reduce_primes</a></code></li>
+<li><code><a title="pystablemotifs.reduction.remove_outdag" href="#pystablemotifs.reduction.remove_outdag">remove_outdag</a></code></li>
+<li><code><a title="pystablemotifs.reduction.simplify_primes" href="#pystablemotifs.reduction.simplify_primes">simplify_primes</a></code></li>
+<li><code><a title="pystablemotifs.reduction.simplify_using_expression_and_negation" href="#pystablemotifs.reduction.simplify_using_expression_and_negation">simplify_using_expression_and_negation</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pystablemotifs.reduction.MotifReduction" href="#pystablemotifs.reduction.MotifReduction">MotifReduction</a></code></h4>
+<ul class="">
+<li><code><a title="pystablemotifs.reduction.MotifReduction.build_K0" href="#pystablemotifs.reduction.MotifReduction.build_K0">build_K0</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.build_deletion_STG" href="#pystablemotifs.reduction.MotifReduction.build_deletion_STG">build_deletion_STG</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.build_inspace" href="#pystablemotifs.reduction.MotifReduction.build_inspace">build_inspace</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.build_partial_STG" href="#pystablemotifs.reduction.MotifReduction.build_partial_STG">build_partial_STG</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.find_constants_in_complex_attractor" href="#pystablemotifs.reduction.MotifReduction.find_constants_in_complex_attractor">find_constants_in_complex_attractor</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.find_deletion_no_motif_attractors" href="#pystablemotifs.reduction.MotifReduction.find_deletion_no_motif_attractors">find_deletion_no_motif_attractors</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.find_no_motif_attractors" href="#pystablemotifs.reduction.MotifReduction.find_no_motif_attractors">find_no_motif_attractors</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.generate_attr_dict_list" href="#pystablemotifs.reduction.MotifReduction.generate_attr_dict_list">generate_attr_dict_list</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.in_motif" href="#pystablemotifs.reduction.MotifReduction.in_motif">in_motif</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.merge_source_motifs" href="#pystablemotifs.reduction.MotifReduction.merge_source_motifs">merge_source_motifs</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.simple_merge_source_motifs" href="#pystablemotifs.reduction.MotifReduction.simple_merge_source_motifs">simple_merge_source_motifs</a></code></li>
+<li><code><a title="pystablemotifs.reduction.MotifReduction.summary" href="#pystablemotifs.reduction.MotifReduction.summary">summary</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

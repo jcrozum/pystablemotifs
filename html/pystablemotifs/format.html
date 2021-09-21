@@ -1,0 +1,1464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>pystablemotifs.format API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pystablemotifs.format</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import pyboolnet.prime_implicants
+import pyboolnet.boolean_logic
+from pyboolnet.external.bnet2primes import bnet_text2primes
+import re
+
+# Convert rules from BooleanNet format to pyboolnet format
+def booleannet2bnet(rules):
+    &#34;&#34;&#34;Converts BooleanNet rules to BNet format.
+    e.g., an input of
+    &#34;A*=B or C and not D&#34;
+    returns
+    A,  B | C &amp; !D
+
+    Also replaces ~ with !
+
+    Parameters
+    ----------
+    rules : str
+        BooleanNet formatted rules.
+
+    Returns
+    -------
+    str
+        BNET formatted rules.
+
+    &#34;&#34;&#34;
+    s = re.sub(&#34;\s*\*\s*=\s*&#34;,&#34;,\t&#34;,rules) # replace &#34;=&#34; with &#34;,\t&#34;
+    s = re.sub(&#34;\s+not\s+&#34;,&#34; !&#34;,s, flags=re.IGNORECASE) # not -&gt; !
+    s = re.sub(&#34;\(\s*not\s+&#34;,&#34;(!&#34;,s, flags=re.IGNORECASE) # not -&gt; ! (with parens)
+    s = re.sub(&#34;\s*~\s*&#34;,&#34; !&#34;,s, flags=re.IGNORECASE) # ~ -&gt; !
+    s = re.sub(&#34;\s+and\s+&#34;,&#34; &amp; &#34;,s, flags=re.IGNORECASE) # and -&gt; &amp;
+    s = re.sub(&#34;\s+or\s+&#34;,&#34; | &#34;,s, flags=re.IGNORECASE) # or -&gt; |
+    s = re.sub(&#34;False&#34;,&#34;0&#34;,s, flags=re.IGNORECASE) # False -&gt; 0 (ignore case)
+    s = re.sub(&#34;True&#34;,&#34;1&#34;,s, flags=re.IGNORECASE) # True -&gt; 1 (ignore case)
+    return s
+
+# Convert rules from CellCollective format to pyboolnet format
+def cellcollective2bnet(rules):
+    &#34;&#34;&#34;Converts CellCollective rules to BNet format.
+    e.g., an input of
+    &#34;A = B OR C AND NOT D&#34;
+    returns
+    A,  B | C &amp; !D
+
+    Also replaces ~ with !
+
+    Parameters
+    ----------
+    rules : str
+        CellCollective formatted rules.
+
+    Returns
+    -------
+    str
+        BNET formatted rules.
+
+    &#34;&#34;&#34;
+    s = re.sub(&#34;\s*=\s*&#34;,&#34;,\t&#34;,rules) # replace &#34;=&#34; with &#34;,\t&#34;
+    s = re.sub(&#34;\s+not\s+&#34;,&#34; !&#34;,s, flags=re.IGNORECASE) # not -&gt; ! (ignore case)
+    s = re.sub(&#34;\(\s*not\s+&#34;,&#34;(!&#34;,s, flags=re.IGNORECASE) # not -&gt; ! (with parens)
+    s = re.sub(&#34;\s*~\s*&#34;,&#34; !&#34;,s) # ~ -&gt; !
+    s = re.sub(&#34;\s+and\s+&#34;,&#34; &amp; &#34;,s, flags=re.IGNORECASE) # and -&gt; &amp;
+    s = re.sub(&#34;\s+or\s+&#34;,&#34; | &#34;,s, flags=re.IGNORECASE) # or -&gt; |
+    s = re.sub(&#34;False&#34;,&#34;0&#34;,s, flags=re.IGNORECASE) # False -&gt; 0 (ignore case)
+    s = re.sub(&#34;True&#34;,&#34;1&#34;,s, flags=re.IGNORECASE) # True -&gt; 1 (ignore case)
+    return s
+def bnet2sympy(rule):
+    &#34;&#34;&#34;Converts a BNet string expression to a sympy string expression.
+
+    Parameters
+    ----------
+    rule : str
+        Boolean expression in BNET format.
+
+    Returns
+    -------
+    str
+        Expression in sympy format.
+
+    &#34;&#34;&#34;
+
+    crule = re.sub(&#34;!&#34;,&#34;~&#34;,rule)
+    crule = re.sub(&#34;[\b\(]1[\b\)]&#34;,&#34;(x | ~x)&#34;,crule)
+    crule = re.sub(&#34;[\b\(]0[\b\)]&#34;,&#34;(x &amp; ~x)&#34;,crule)
+    crule = re.sub(&#34;True&#34;,&#34;(x | ~x)&#34;,crule)
+    crule = re.sub(&#34;False&#34;,&#34;(x &amp; ~x)&#34;,crule)
+
+    return crule
+
+def sympy2bnet(rule):
+    &#34;&#34;&#34;Converts a sympy string expression to a BNET string expression.
+
+    Parameters
+    ----------
+    rule : str
+        Boolean expression in sympy format.
+
+    Returns
+    -------
+    str
+        Expression in BNET format.
+
+    &#34;&#34;&#34;
+    crule = re.sub(&#34;~&#34;,&#34;!&#34;,rule)
+    crule = re.sub(&#34;True&#34;,&#34;1&#34;,crule)
+    crule = re.sub(&#34;False&#34;,&#34;0&#34;,crule)
+    return crule
+
+def create_primes(rules,remove_constants = False):
+    &#34;&#34;&#34;Convert a BooleanNet or BNET string into a pyboolnet primes dictionary.
+
+    Parameters
+    ----------
+    rules : str
+        BooleanNet or BNET formatted rules. Hybrid formats are accepted as well.
+        For the CellCollective format, use import_primes to read rules from the
+        relevant files.
+    remove_constants : bool
+        Whether or not to remove and percolate constant input values (the default
+        is False).
+
+    Returns
+    -------
+    pyboolnet primes dictionary
+        Update rules in pyboolnet format.
+
+    &#34;&#34;&#34;
+    primes = bnet_text2primes(booleannet2bnet(rules))
+    if remove_constants:
+        pyboolnet.prime_implicants.percolation(primes,True)
+    return primes
+
+def remove_comment_lines(stream, comment_char=&#34;#&#34;):
+    &#34;&#34;&#34;Removes commented out lines from stream, e.g., those starting with &#39;#&#39;.
+
+    Parameters
+    ----------
+    stream : iterable of str
+        Lines from which comments should be excluded.
+    comment_char : str
+        Lines beginning with this character will be excluded.
+
+    Returns
+    -------
+    list of str
+        Lines that do not begin with comment_char.
+
+    &#34;&#34;&#34;
+    lines = list(stream)
+    lines = filter(lambda x: not x.startswith(comment_char), lines)
+    rules = &#34;&#34;.join(lines)
+    return rules
+
+def import_primes(fname, format=&#39;BooleanNet&#39;, remove_constants=False):
+    &#34;&#34;&#34;Import boolean rules from file and return pyboolnet formatted primes list.
+
+    Parameters
+    ----------
+    fname : str
+        Path to (plaintext) file containing Boolean rules in format specified
+        by the &#39;format&#39; option.
+        Path to Boolean Expressions folder in case of CellCollective format.
+    format : str
+         Boolean rule format; options are &#39;BooleanNet&#39; or &#39;BNet&#39; or &#39;CellCollective&#39;
+         (the default is &#39;BooleanNet&#39;).
+    remove_constants : bool
+         If True, variables that are constant are removed and their influence is
+         percolated. Otherwise, they remain and we consider initial conditions
+         in opposition to their values (the default is False).
+
+    Returns
+    -------
+    pyboolnet primes dictionary
+        Update rules in pyboolnet format.
+
+    &#34;&#34;&#34;
+
+    if format == &#39;CellCollective&#39;:
+        rules1 = remove_comment_lines(open(fname + &#39;/expr/expressions.ALL.txt&#39;))
+        external = remove_comment_lines(open(fname + &#39;/expr/external_components.ALL.txt&#39;))
+        # In the case of CellCollective format, external components are given
+        # rules of the form &#34;A = A&#34;
+        lines = external.splitlines()
+        for i in range(len(lines)):
+            lines[i] = lines[i] + &#39; = &#39; + lines[i]
+        rules2 = &#34;\n&#34;.join(lines)
+        rules = rules1 + &#34;\n&#34; + rules2
+        rules = cellcollective2bnet(rules)
+
+    else:
+        rules = remove_comment_lines(open(fname))
+        if format == &#39;BooleanNet&#39;:
+            rules = booleannet2bnet(rules)
+        elif format == &#39;BNet&#39;:
+            rules = rules
+        else:
+            raise ValueError(&#39;Unrecognized format&#39;,format)
+
+    primes = bnet_text2primes(rules)
+    if remove_constants:
+        pyboolnet.prime_implicants.percolation(primes,True)
+    return primes
+
+
+def _bnetDNF2list(bnet):
+    &#34;&#34;&#34;Converts a BNet string expression to a list of prime implicant dictionaries.
+    Requires that the input be in disjunctive normal form, but this is not checked
+    explicitly. This is used as a helper function during algebraic simplification.
+
+    Parameters
+    ----------
+    bnet : str
+        BNET formatted expression in disjunctive normal form.
+
+    Returns
+    -------
+    list of partial state dictionaries
+        Variable states specified by each dictionary are to be thought of as &#34;AND&#34;-
+        connected, and the dictionaries as &#34;OR&#34;-connected.
+
+    &#34;&#34;&#34;
+
+    if bnet == &#34;0&#34;:
+        return []
+    elif bnet == &#34;1&#34;:
+        return [{}]
+
+    bnetList = []
+    bnet_trim = re.sub(&#34;[\s\(\)]*&#34;,&#34;&#34;,bnet) # remove all whitespace and parens
+    LL = [x.split(&#39;&amp;&#39;) for x in bnet_trim.split(&#39;|&#39;)]
+
+    for L in LL:
+        Ldict = {}
+        contradiction = False
+        for literal in L:
+            if literal[0]==&#34;!&#34;:
+                n = literal[1:]
+                s = 0
+            else:
+                n = literal
+                s = 1
+            if n not in Ldict:
+                Ldict[n] = s
+            elif Ldict[n] != s:
+                contradiction = True
+                break
+        if not contradiction:
+            bnetList.append(Ldict)
+    return bnetList
+
+def _build_rule_using_bnet_dnfs(expr0,expr1):
+    &#34;&#34;&#34;Converts a BNet string expression (expr1) and its negation (expr0) to
+    a pyboolnet rule list. Note that this function does not test for consistency
+    between expr0 and expr1. This is used as a helper function during network reduction.
+
+    Parameters
+    ----------
+    expr0 : str
+        Rule, in BNET format, for the &#34;OFF&#34; state of a variable.
+    expr1 : str
+        Rule, in BNET format, for the &#34;ON&#34; state of a variable.
+
+    Returns
+    -------
+    pyboolnet rule list
+        The complementary expressions as they would appear in a pyboolnet primes
+        dictionary for a variable whose update rule is given by expr1.
+
+    &#34;&#34;&#34;
+    return [_bnetDNF2list(expr0),_bnetDNF2list(expr1)]
+
+def statelist2dict(names,statestrings):
+    &#34;&#34;&#34;Converts a collection of statestrings to a dictionary.
+
+    Parameters
+    ----------
+    names : list of str
+        An ordered list of variable names; (alphabetical order is pyboolnet&#39;s
+        default, e.g. sorted(primes)).
+    c : iterable of str
+        Each element should be a binary string, with each position corresponding
+        to the variable name at the same position in names.
+
+    Returns
+    -------
+    dictionary
+        Dictionary summarizing c. If a node takes the same value in every state,
+        the corresponding dictionary value matches its fixed value; otherwise,
+        the dictionary value is &#39;X&#39;.
+
+    &#34;&#34;&#34;
+    d = {}
+    for i,n in enumerate(names):
+        for cs in statestrings:
+            if n not in d:
+                d[n] = cs[i]
+                continue
+            if cs[i] != d[n]:
+                d[n] = &#39;X&#39;
+                break
+    return d
+
+def statestring2dict(statestring,names):
+    &#34;&#34;&#34;Converts a state string, which specifies a node in an STG, to the
+    corresponding dictionary representation.
+
+    Parameters
+    ----------
+    statestring : str
+        A binary string, e.g., &#39;01101&#39;.
+    names : list of str
+        An ordered list of variable names; (alphabetical order is pyboolnet&#39;s
+        default, e.g. sorted(primes)).
+
+    Returns
+    -------
+    dictionary
+        The keys are the elements of names and the values are the corresponding
+        value in statestring.
+
+    &#34;&#34;&#34;
+    sd = {}
+    for i,c in enumerate(statestring):
+        sd[names[i]]=int(c)
+    return sd
+
+def statedict2str(statedict):
+    &#34;&#34;&#34;Converts a state dictionary to a statestring using alphabetical sorting.
+
+    Parameters
+    ----------
+    statedict : partial state dictionary
+        State to convert to a binary string representation.
+
+    Returns
+    -------
+    str
+        A binary string, with each position corresponding
+        to the variable name at the same position in the alphabetized keys in
+        statedict.
+
+    &#34;&#34;&#34;
+    return &#39;&#39;.join([str(statedict[x]) for x in sorted(statedict)])
+
+def implicant2bnet(partial_state):
+    &#34;&#34;&#34;Converts a partial state dictionary to a BNet string
+    e.g., {&#39;A&#39;:1,&#39;B&#39;:0} returns &#39;A &amp; !B&#39;
+
+    Parameters
+    ----------
+    partial_state : partial state dictionary
+        Partial state to convert.
+
+    Returns
+    -------
+    str
+        BNET representation of the partial state.
+
+    &#34;&#34;&#34;
+    return &#39; &amp; &#39;.join([&#34;!&#34;+k for k in partial_state if not partial_state[k]]+[k for k in partial_state if partial_state[k]])
+
+def rule2bnet(rule):
+    &#34;&#34;&#34;Converts a pyboolnet prime rule into a BNet string.
+    e.g., [{&#39;A&#39;:1,&#39;B&#39;:0},{&#39;C&#39;:0}] returns &#39;A &amp; !B | !C&#39;
+
+    Parameters
+    ----------
+    rule : list of pyboolnet partial states
+        Update rule to convert.
+
+    Returns
+    -------
+    str
+        BNET representation of Boolean expression.
+
+    &#34;&#34;&#34;
+    # There are two special cases:
+    # [] is identically 0
+    # [{}] is identically 1
+    if rule == []: return &#39;0&#39;
+    elif rule == [{}]: return &#39;1&#39;
+    else: return &#39; | &#39;.join([implicant2bnet(imp) for imp in rule])
+
+def primes2bnet(primes):
+    &#34;&#34;&#34;A simpler version of pyboolnet&#39;s file_exchange.primes2bnet function with
+    fewer options and less organized output. Should handle prime rules with
+    tautologies better than the pyboolnet version though.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules to convert.
+
+    Returns
+    -------
+    str
+        BNET representation of update rules.
+
+    &#34;&#34;&#34;
+    lines = []
+    width = max([len(x) for x in primes]) + 3
+
+    for name in primes:
+        if primes[name][0] == [] or primes[name][1] == [{}]:
+            expression = &#39;1&#39;
+        elif primes[name][1] == [] or primes[name][0] == [{}]:
+            expression = &#39;0&#39;
+        else:
+            expression = &#39; | &#39;.join([&#39;&amp;&#39;.join([x if term[x]==1 else &#39;!&#39;+x for x in term]) for term in primes[name][1]  ])
+
+        lines+= [(name+&#39;,&#39;).ljust(width)+expression]
+    lines+=[&#39;&#39;]
+
+    return &#34;\n&#34;.join(lines)
+
+def primes2booleannet(primes, header=&#34;&#34;):
+    &#34;&#34;&#34;Convert a pyboolnet primes dictionary to a BooleanNet string reperesentation.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules to convert.
+    header : str
+        Text to include at the beginning of the file, e.g., comment lines. For
+        example, the legacy Java version of StableMotifs requires rules files to
+        begin with the line &#34;#BOOLEAN RULES&#34;.
+
+    Returns
+    -------
+    str
+        BooleanNet representation of update rules.
+
+    &#34;&#34;&#34;
+    lines = []
+    width = max([len(x) for x in primes]) + 3
+
+    for name in primes:
+        if primes[name][0] == [] or primes[name][1] == [{}]:
+            expression = &#39;1&#39;
+        elif primes[name][1] == [] or primes[name][0] == [{}]:
+            expression = &#39;0&#39;
+        else:
+            expression = &#39; or &#39;.join([&#39; and &#39;.join([x if term[x]==1 else &#39;not &#39;+x for x in term]) for term in primes[name][1]  ])
+
+        lines+= [(name+&#39;*=&#39;).ljust(width)+expression]
+    lines+=[&#39;&#39;]
+
+    return header + &#34;\n&#34;.join(lines)
+
+def pretty_print_primes(primes):
+    &#34;&#34;&#34;Prints pyboolnet a prime dictionary in a more readable format. Prints both
+    state updates (1 and 0).
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules to print.
+
+    &#34;&#34;&#34;
+    for k,v in primes.items():
+        for p in v[0]: print(p,&#34;=&gt; !&#34;+k)
+        for p in v[1]: print(p,&#34;=&gt;  &#34;+k)
+
+def pretty_print_prime_rules(primes):
+    &#34;&#34;&#34;Prints pyboolnet a prime dictionary as Boolean rules
+    The output format is of the form:
+    A* = B &amp; C | !D, for example.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules to print.
+
+    &#34;&#34;&#34;
+
+    if primes is None:
+        return &#34;&#34;
+
+    for k,v in primes.items():
+        s = k + &#34;* = &#34;
+        sl = []
+        for c in v[1]:
+            sll = []
+            for kk,vv in c.items():
+                if vv: sli = kk
+                else: sli = &#39;!&#39;+kk
+                sll.append(sli)
+            if len(sll) &gt; 0:
+                sl.append(&#39; &amp; &#39;.join(sll))
+        if len(sl) &gt; 0:
+            s += &#39; | &#39;.join(sl)
+        if v[1]==[]:
+            s = k + &#34;* = 0&#34;
+        if v[1]==[{}]:
+            s = k + &#34;* = 1&#34;
+        print(s)
+
+def pretty_print_rspace(L,simplify=True,silent=True):
+    &#34;&#34;&#34;Produces string representation of the Boolean rule describing the input
+    rspace L (see restrict_space.rspace).
+
+    Parameters
+    ----------
+    L : rspace list
+        Restrict space list (see restrict_space.rspace for details).
+    simplify : bool
+        Whether to simplify the rule (the default is True).
+    silent : bool
+        Whether to supress output of the rule (the default is True).
+
+    Returns
+    -------
+    str
+        BNET expression that is true in and only in the rspace specified by L.
+
+    &#34;&#34;&#34;
+    L_trim = [x for x in L if x != [{}]]
+    u = []
+    for x in L_trim:
+        t = []
+        for y in x:
+            s = []
+            for k,v in y.items():
+                if v: s.append(k)
+                else: s.append(&#39;!&#39;+k)
+            t.append(&#39; &amp; &#39;.join(s))
+        if len(t) &gt; 0: u.append(&#39;( &#39;+&#39; | &#39;.join(t)+&#39; )&#39;)
+    s=&#39; &amp; &#39;.join(u)
+    if simplify:
+        s = pyboolnet.boolean_logic.minimize_espresso(s)
+    if not silent:
+        print(s)
+
+    return s</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pystablemotifs.format.bnet2sympy"><code class="name flex">
+<span>def <span class="ident">bnet2sympy</span></span>(<span>rule)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts a BNet string expression to a sympy string expression.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>rule</code></strong> :&ensp;<code>str</code></dt>
+<dd>Boolean expression in BNET format.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>Expression in sympy format.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bnet2sympy(rule):
+    &#34;&#34;&#34;Converts a BNet string expression to a sympy string expression.
+
+    Parameters
+    ----------
+    rule : str
+        Boolean expression in BNET format.
+
+    Returns
+    -------
+    str
+        Expression in sympy format.
+
+    &#34;&#34;&#34;
+
+    crule = re.sub(&#34;!&#34;,&#34;~&#34;,rule)
+    crule = re.sub(&#34;[\b\(]1[\b\)]&#34;,&#34;(x | ~x)&#34;,crule)
+    crule = re.sub(&#34;[\b\(]0[\b\)]&#34;,&#34;(x &amp; ~x)&#34;,crule)
+    crule = re.sub(&#34;True&#34;,&#34;(x | ~x)&#34;,crule)
+    crule = re.sub(&#34;False&#34;,&#34;(x &amp; ~x)&#34;,crule)
+
+    return crule</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.booleannet2bnet"><code class="name flex">
+<span>def <span class="ident">booleannet2bnet</span></span>(<span>rules)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts BooleanNet rules to BNet format.
+e.g., an input of
+"A*=B or C and not D"
+returns
+A,
+B | C &amp; !D</p>
+<p>Also replaces ~ with !</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>rules</code></strong> :&ensp;<code>str</code></dt>
+<dd>BooleanNet formatted rules.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>BNET formatted rules.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def booleannet2bnet(rules):
+    &#34;&#34;&#34;Converts BooleanNet rules to BNet format.
+    e.g., an input of
+    &#34;A*=B or C and not D&#34;
+    returns
+    A,  B | C &amp; !D
+
+    Also replaces ~ with !
+
+    Parameters
+    ----------
+    rules : str
+        BooleanNet formatted rules.
+
+    Returns
+    -------
+    str
+        BNET formatted rules.
+
+    &#34;&#34;&#34;
+    s = re.sub(&#34;\s*\*\s*=\s*&#34;,&#34;,\t&#34;,rules) # replace &#34;=&#34; with &#34;,\t&#34;
+    s = re.sub(&#34;\s+not\s+&#34;,&#34; !&#34;,s, flags=re.IGNORECASE) # not -&gt; !
+    s = re.sub(&#34;\(\s*not\s+&#34;,&#34;(!&#34;,s, flags=re.IGNORECASE) # not -&gt; ! (with parens)
+    s = re.sub(&#34;\s*~\s*&#34;,&#34; !&#34;,s, flags=re.IGNORECASE) # ~ -&gt; !
+    s = re.sub(&#34;\s+and\s+&#34;,&#34; &amp; &#34;,s, flags=re.IGNORECASE) # and -&gt; &amp;
+    s = re.sub(&#34;\s+or\s+&#34;,&#34; | &#34;,s, flags=re.IGNORECASE) # or -&gt; |
+    s = re.sub(&#34;False&#34;,&#34;0&#34;,s, flags=re.IGNORECASE) # False -&gt; 0 (ignore case)
+    s = re.sub(&#34;True&#34;,&#34;1&#34;,s, flags=re.IGNORECASE) # True -&gt; 1 (ignore case)
+    return s</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.cellcollective2bnet"><code class="name flex">
+<span>def <span class="ident">cellcollective2bnet</span></span>(<span>rules)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts CellCollective rules to BNet format.
+e.g., an input of
+"A = B OR C AND NOT D"
+returns
+A,
+B | C &amp; !D</p>
+<p>Also replaces ~ with !</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>rules</code></strong> :&ensp;<code>str</code></dt>
+<dd>CellCollective formatted rules.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>BNET formatted rules.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cellcollective2bnet(rules):
+    &#34;&#34;&#34;Converts CellCollective rules to BNet format.
+    e.g., an input of
+    &#34;A = B OR C AND NOT D&#34;
+    returns
+    A,  B | C &amp; !D
+
+    Also replaces ~ with !
+
+    Parameters
+    ----------
+    rules : str
+        CellCollective formatted rules.
+
+    Returns
+    -------
+    str
+        BNET formatted rules.
+
+    &#34;&#34;&#34;
+    s = re.sub(&#34;\s*=\s*&#34;,&#34;,\t&#34;,rules) # replace &#34;=&#34; with &#34;,\t&#34;
+    s = re.sub(&#34;\s+not\s+&#34;,&#34; !&#34;,s, flags=re.IGNORECASE) # not -&gt; ! (ignore case)
+    s = re.sub(&#34;\(\s*not\s+&#34;,&#34;(!&#34;,s, flags=re.IGNORECASE) # not -&gt; ! (with parens)
+    s = re.sub(&#34;\s*~\s*&#34;,&#34; !&#34;,s) # ~ -&gt; !
+    s = re.sub(&#34;\s+and\s+&#34;,&#34; &amp; &#34;,s, flags=re.IGNORECASE) # and -&gt; &amp;
+    s = re.sub(&#34;\s+or\s+&#34;,&#34; | &#34;,s, flags=re.IGNORECASE) # or -&gt; |
+    s = re.sub(&#34;False&#34;,&#34;0&#34;,s, flags=re.IGNORECASE) # False -&gt; 0 (ignore case)
+    s = re.sub(&#34;True&#34;,&#34;1&#34;,s, flags=re.IGNORECASE) # True -&gt; 1 (ignore case)
+    return s</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.create_primes"><code class="name flex">
+<span>def <span class="ident">create_primes</span></span>(<span>rules, remove_constants=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert a BooleanNet or BNET string into a pyboolnet primes dictionary.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>rules</code></strong> :&ensp;<code>str</code></dt>
+<dd>BooleanNet or BNET formatted rules. Hybrid formats are accepted as well.
+For the CellCollective format, use import_primes to read rules from the
+relevant files.</dd>
+<dt><strong><code>remove_constants</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether or not to remove and percolate constant input values (the default
+is False).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules in pyboolnet format.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_primes(rules,remove_constants = False):
+    &#34;&#34;&#34;Convert a BooleanNet or BNET string into a pyboolnet primes dictionary.
+
+    Parameters
+    ----------
+    rules : str
+        BooleanNet or BNET formatted rules. Hybrid formats are accepted as well.
+        For the CellCollective format, use import_primes to read rules from the
+        relevant files.
+    remove_constants : bool
+        Whether or not to remove and percolate constant input values (the default
+        is False).
+
+    Returns
+    -------
+    pyboolnet primes dictionary
+        Update rules in pyboolnet format.
+
+    &#34;&#34;&#34;
+    primes = bnet_text2primes(booleannet2bnet(rules))
+    if remove_constants:
+        pyboolnet.prime_implicants.percolation(primes,True)
+    return primes</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.implicant2bnet"><code class="name flex">
+<span>def <span class="ident">implicant2bnet</span></span>(<span>partial_state)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts a partial state dictionary to a BNet string
+e.g., {'A':1,'B':0} returns 'A &amp; !B'</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>partial_state</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>Partial state to convert.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>BNET representation of the partial state.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def implicant2bnet(partial_state):
+    &#34;&#34;&#34;Converts a partial state dictionary to a BNet string
+    e.g., {&#39;A&#39;:1,&#39;B&#39;:0} returns &#39;A &amp; !B&#39;
+
+    Parameters
+    ----------
+    partial_state : partial state dictionary
+        Partial state to convert.
+
+    Returns
+    -------
+    str
+        BNET representation of the partial state.
+
+    &#34;&#34;&#34;
+    return &#39; &amp; &#39;.join([&#34;!&#34;+k for k in partial_state if not partial_state[k]]+[k for k in partial_state if partial_state[k]])</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.import_primes"><code class="name flex">
+<span>def <span class="ident">import_primes</span></span>(<span>fname, format='BooleanNet', remove_constants=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Import boolean rules from file and return pyboolnet formatted primes list.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>fname</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path to (plaintext) file containing Boolean rules in format specified
+by the 'format' option.
+Path to Boolean Expressions folder in case of CellCollective format.</dd>
+<dt><strong><code>format</code></strong> :&ensp;<code>str</code></dt>
+<dd>Boolean rule format; options are 'BooleanNet' or 'BNet' or 'CellCollective'
+(the default is 'BooleanNet').</dd>
+<dt><strong><code>remove_constants</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, variables that are constant are removed and their influence is
+percolated. Otherwise, they remain and we consider initial conditions
+in opposition to their values (the default is False).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules in pyboolnet format.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_primes(fname, format=&#39;BooleanNet&#39;, remove_constants=False):
+    &#34;&#34;&#34;Import boolean rules from file and return pyboolnet formatted primes list.
+
+    Parameters
+    ----------
+    fname : str
+        Path to (plaintext) file containing Boolean rules in format specified
+        by the &#39;format&#39; option.
+        Path to Boolean Expressions folder in case of CellCollective format.
+    format : str
+         Boolean rule format; options are &#39;BooleanNet&#39; or &#39;BNet&#39; or &#39;CellCollective&#39;
+         (the default is &#39;BooleanNet&#39;).
+    remove_constants : bool
+         If True, variables that are constant are removed and their influence is
+         percolated. Otherwise, they remain and we consider initial conditions
+         in opposition to their values (the default is False).
+
+    Returns
+    -------
+    pyboolnet primes dictionary
+        Update rules in pyboolnet format.
+
+    &#34;&#34;&#34;
+
+    if format == &#39;CellCollective&#39;:
+        rules1 = remove_comment_lines(open(fname + &#39;/expr/expressions.ALL.txt&#39;))
+        external = remove_comment_lines(open(fname + &#39;/expr/external_components.ALL.txt&#39;))
+        # In the case of CellCollective format, external components are given
+        # rules of the form &#34;A = A&#34;
+        lines = external.splitlines()
+        for i in range(len(lines)):
+            lines[i] = lines[i] + &#39; = &#39; + lines[i]
+        rules2 = &#34;\n&#34;.join(lines)
+        rules = rules1 + &#34;\n&#34; + rules2
+        rules = cellcollective2bnet(rules)
+
+    else:
+        rules = remove_comment_lines(open(fname))
+        if format == &#39;BooleanNet&#39;:
+            rules = booleannet2bnet(rules)
+        elif format == &#39;BNet&#39;:
+            rules = rules
+        else:
+            raise ValueError(&#39;Unrecognized format&#39;,format)
+
+    primes = bnet_text2primes(rules)
+    if remove_constants:
+        pyboolnet.prime_implicants.percolation(primes,True)
+    return primes</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.pretty_print_prime_rules"><code class="name flex">
+<span>def <span class="ident">pretty_print_prime_rules</span></span>(<span>primes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints pyboolnet a prime dictionary as Boolean rules
+The output format is of the form:
+A* = B &amp; C | !D, for example.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules to print.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pretty_print_prime_rules(primes):
+    &#34;&#34;&#34;Prints pyboolnet a prime dictionary as Boolean rules
+    The output format is of the form:
+    A* = B &amp; C | !D, for example.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules to print.
+
+    &#34;&#34;&#34;
+
+    if primes is None:
+        return &#34;&#34;
+
+    for k,v in primes.items():
+        s = k + &#34;* = &#34;
+        sl = []
+        for c in v[1]:
+            sll = []
+            for kk,vv in c.items():
+                if vv: sli = kk
+                else: sli = &#39;!&#39;+kk
+                sll.append(sli)
+            if len(sll) &gt; 0:
+                sl.append(&#39; &amp; &#39;.join(sll))
+        if len(sl) &gt; 0:
+            s += &#39; | &#39;.join(sl)
+        if v[1]==[]:
+            s = k + &#34;* = 0&#34;
+        if v[1]==[{}]:
+            s = k + &#34;* = 1&#34;
+        print(s)</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.pretty_print_primes"><code class="name flex">
+<span>def <span class="ident">pretty_print_primes</span></span>(<span>primes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints pyboolnet a prime dictionary in a more readable format. Prints both
+state updates (1 and 0).</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules to print.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pretty_print_primes(primes):
+    &#34;&#34;&#34;Prints pyboolnet a prime dictionary in a more readable format. Prints both
+    state updates (1 and 0).
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules to print.
+
+    &#34;&#34;&#34;
+    for k,v in primes.items():
+        for p in v[0]: print(p,&#34;=&gt; !&#34;+k)
+        for p in v[1]: print(p,&#34;=&gt;  &#34;+k)</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.pretty_print_rspace"><code class="name flex">
+<span>def <span class="ident">pretty_print_rspace</span></span>(<span>L, simplify=True, silent=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Produces string representation of the Boolean rule describing the input
+rspace L (see restrict_space.rspace).</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>L</code></strong> :&ensp;<code>rspace list</code></dt>
+<dd>Restrict space list (see restrict_space.rspace for details).</dd>
+<dt><strong><code>simplify</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to simplify the rule (the default is True).</dd>
+<dt><strong><code>silent</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to supress output of the rule (the default is True).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>BNET expression that is true in and only in the rspace specified by L.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pretty_print_rspace(L,simplify=True,silent=True):
+    &#34;&#34;&#34;Produces string representation of the Boolean rule describing the input
+    rspace L (see restrict_space.rspace).
+
+    Parameters
+    ----------
+    L : rspace list
+        Restrict space list (see restrict_space.rspace for details).
+    simplify : bool
+        Whether to simplify the rule (the default is True).
+    silent : bool
+        Whether to supress output of the rule (the default is True).
+
+    Returns
+    -------
+    str
+        BNET expression that is true in and only in the rspace specified by L.
+
+    &#34;&#34;&#34;
+    L_trim = [x for x in L if x != [{}]]
+    u = []
+    for x in L_trim:
+        t = []
+        for y in x:
+            s = []
+            for k,v in y.items():
+                if v: s.append(k)
+                else: s.append(&#39;!&#39;+k)
+            t.append(&#39; &amp; &#39;.join(s))
+        if len(t) &gt; 0: u.append(&#39;( &#39;+&#39; | &#39;.join(t)+&#39; )&#39;)
+    s=&#39; &amp; &#39;.join(u)
+    if simplify:
+        s = pyboolnet.boolean_logic.minimize_espresso(s)
+    if not silent:
+        print(s)
+
+    return s</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.primes2bnet"><code class="name flex">
+<span>def <span class="ident">primes2bnet</span></span>(<span>primes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A simpler version of pyboolnet's file_exchange.primes2bnet function with
+fewer options and less organized output. Should handle prime rules with
+tautologies better than the pyboolnet version though.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules to convert.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>BNET representation of update rules.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def primes2bnet(primes):
+    &#34;&#34;&#34;A simpler version of pyboolnet&#39;s file_exchange.primes2bnet function with
+    fewer options and less organized output. Should handle prime rules with
+    tautologies better than the pyboolnet version though.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules to convert.
+
+    Returns
+    -------
+    str
+        BNET representation of update rules.
+
+    &#34;&#34;&#34;
+    lines = []
+    width = max([len(x) for x in primes]) + 3
+
+    for name in primes:
+        if primes[name][0] == [] or primes[name][1] == [{}]:
+            expression = &#39;1&#39;
+        elif primes[name][1] == [] or primes[name][0] == [{}]:
+            expression = &#39;0&#39;
+        else:
+            expression = &#39; | &#39;.join([&#39;&amp;&#39;.join([x if term[x]==1 else &#39;!&#39;+x for x in term]) for term in primes[name][1]  ])
+
+        lines+= [(name+&#39;,&#39;).ljust(width)+expression]
+    lines+=[&#39;&#39;]
+
+    return &#34;\n&#34;.join(lines)</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.primes2booleannet"><code class="name flex">
+<span>def <span class="ident">primes2booleannet</span></span>(<span>primes, header='')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert a pyboolnet primes dictionary to a BooleanNet string reperesentation.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
+<dd>Update rules to convert.</dd>
+<dt><strong><code>header</code></strong> :&ensp;<code>str</code></dt>
+<dd>Text to include at the beginning of the file, e.g., comment lines. For
+example, the legacy Java version of StableMotifs requires rules files to
+begin with the line "#BOOLEAN RULES".</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>BooleanNet representation of update rules.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def primes2booleannet(primes, header=&#34;&#34;):
+    &#34;&#34;&#34;Convert a pyboolnet primes dictionary to a BooleanNet string reperesentation.
+
+    Parameters
+    ----------
+    primes : pyboolnet primes dictionary
+        Update rules to convert.
+    header : str
+        Text to include at the beginning of the file, e.g., comment lines. For
+        example, the legacy Java version of StableMotifs requires rules files to
+        begin with the line &#34;#BOOLEAN RULES&#34;.
+
+    Returns
+    -------
+    str
+        BooleanNet representation of update rules.
+
+    &#34;&#34;&#34;
+    lines = []
+    width = max([len(x) for x in primes]) + 3
+
+    for name in primes:
+        if primes[name][0] == [] or primes[name][1] == [{}]:
+            expression = &#39;1&#39;
+        elif primes[name][1] == [] or primes[name][0] == [{}]:
+            expression = &#39;0&#39;
+        else:
+            expression = &#39; or &#39;.join([&#39; and &#39;.join([x if term[x]==1 else &#39;not &#39;+x for x in term]) for term in primes[name][1]  ])
+
+        lines+= [(name+&#39;*=&#39;).ljust(width)+expression]
+    lines+=[&#39;&#39;]
+
+    return header + &#34;\n&#34;.join(lines)</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.remove_comment_lines"><code class="name flex">
+<span>def <span class="ident">remove_comment_lines</span></span>(<span>stream, comment_char='#')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Removes commented out lines from stream, e.g., those starting with '#'.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>stream</code></strong> :&ensp;<code>iterable</code> of <code>str</code></dt>
+<dd>Lines from which comments should be excluded.</dd>
+<dt><strong><code>comment_char</code></strong> :&ensp;<code>str</code></dt>
+<dd>Lines beginning with this character will be excluded.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code> of <code>str</code></dt>
+<dd>Lines that do not begin with comment_char.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_comment_lines(stream, comment_char=&#34;#&#34;):
+    &#34;&#34;&#34;Removes commented out lines from stream, e.g., those starting with &#39;#&#39;.
+
+    Parameters
+    ----------
+    stream : iterable of str
+        Lines from which comments should be excluded.
+    comment_char : str
+        Lines beginning with this character will be excluded.
+
+    Returns
+    -------
+    list of str
+        Lines that do not begin with comment_char.
+
+    &#34;&#34;&#34;
+    lines = list(stream)
+    lines = filter(lambda x: not x.startswith(comment_char), lines)
+    rules = &#34;&#34;.join(lines)
+    return rules</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.rule2bnet"><code class="name flex">
+<span>def <span class="ident">rule2bnet</span></span>(<span>rule)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts a pyboolnet prime rule into a BNet string.
+e.g., [{'A':1,'B':0},{'C':0}] returns 'A &amp; !B | !C'</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>rule</code></strong> :&ensp;<code>list</code> of <code>pyboolnet partial states</code></dt>
+<dd>Update rule to convert.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>BNET representation of Boolean expression.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rule2bnet(rule):
+    &#34;&#34;&#34;Converts a pyboolnet prime rule into a BNet string.
+    e.g., [{&#39;A&#39;:1,&#39;B&#39;:0},{&#39;C&#39;:0}] returns &#39;A &amp; !B | !C&#39;
+
+    Parameters
+    ----------
+    rule : list of pyboolnet partial states
+        Update rule to convert.
+
+    Returns
+    -------
+    str
+        BNET representation of Boolean expression.
+
+    &#34;&#34;&#34;
+    # There are two special cases:
+    # [] is identically 0
+    # [{}] is identically 1
+    if rule == []: return &#39;0&#39;
+    elif rule == [{}]: return &#39;1&#39;
+    else: return &#39; | &#39;.join([implicant2bnet(imp) for imp in rule])</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.statedict2str"><code class="name flex">
+<span>def <span class="ident">statedict2str</span></span>(<span>statedict)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts a state dictionary to a statestring using alphabetical sorting.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>statedict</code></strong> :&ensp;<code>partial state dictionary</code></dt>
+<dd>State to convert to a binary string representation.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>A binary string, with each position corresponding
+to the variable name at the same position in the alphabetized keys in
+statedict.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def statedict2str(statedict):
+    &#34;&#34;&#34;Converts a state dictionary to a statestring using alphabetical sorting.
+
+    Parameters
+    ----------
+    statedict : partial state dictionary
+        State to convert to a binary string representation.
+
+    Returns
+    -------
+    str
+        A binary string, with each position corresponding
+        to the variable name at the same position in the alphabetized keys in
+        statedict.
+
+    &#34;&#34;&#34;
+    return &#39;&#39;.join([str(statedict[x]) for x in sorted(statedict)])</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.statelist2dict"><code class="name flex">
+<span>def <span class="ident">statelist2dict</span></span>(<span>names, statestrings)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts a collection of statestrings to a dictionary.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>names</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>An ordered list of variable names; (alphabetical order is pyboolnet's
+default, e.g. sorted(primes)).</dd>
+<dt><strong><code>c</code></strong> :&ensp;<code>iterable</code> of <code>str</code></dt>
+<dd>Each element should be a binary string, with each position corresponding
+to the variable name at the same position in names.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dictionary</code></dt>
+<dd>Dictionary summarizing c. If a node takes the same value in every state,
+the corresponding dictionary value matches its fixed value; otherwise,
+the dictionary value is 'X'.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def statelist2dict(names,statestrings):
+    &#34;&#34;&#34;Converts a collection of statestrings to a dictionary.
+
+    Parameters
+    ----------
+    names : list of str
+        An ordered list of variable names; (alphabetical order is pyboolnet&#39;s
+        default, e.g. sorted(primes)).
+    c : iterable of str
+        Each element should be a binary string, with each position corresponding
+        to the variable name at the same position in names.
+
+    Returns
+    -------
+    dictionary
+        Dictionary summarizing c. If a node takes the same value in every state,
+        the corresponding dictionary value matches its fixed value; otherwise,
+        the dictionary value is &#39;X&#39;.
+
+    &#34;&#34;&#34;
+    d = {}
+    for i,n in enumerate(names):
+        for cs in statestrings:
+            if n not in d:
+                d[n] = cs[i]
+                continue
+            if cs[i] != d[n]:
+                d[n] = &#39;X&#39;
+                break
+    return d</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.statestring2dict"><code class="name flex">
+<span>def <span class="ident">statestring2dict</span></span>(<span>statestring, names)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts a state string, which specifies a node in an STG, to the
+corresponding dictionary representation.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>statestring</code></strong> :&ensp;<code>str</code></dt>
+<dd>A binary string, e.g., '01101'.</dd>
+<dt><strong><code>names</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>An ordered list of variable names; (alphabetical order is pyboolnet's
+default, e.g. sorted(primes)).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dictionary</code></dt>
+<dd>The keys are the elements of names and the values are the corresponding
+value in statestring.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def statestring2dict(statestring,names):
+    &#34;&#34;&#34;Converts a state string, which specifies a node in an STG, to the
+    corresponding dictionary representation.
+
+    Parameters
+    ----------
+    statestring : str
+        A binary string, e.g., &#39;01101&#39;.
+    names : list of str
+        An ordered list of variable names; (alphabetical order is pyboolnet&#39;s
+        default, e.g. sorted(primes)).
+
+    Returns
+    -------
+    dictionary
+        The keys are the elements of names and the values are the corresponding
+        value in statestring.
+
+    &#34;&#34;&#34;
+    sd = {}
+    for i,c in enumerate(statestring):
+        sd[names[i]]=int(c)
+    return sd</code></pre>
+</details>
+</dd>
+<dt id="pystablemotifs.format.sympy2bnet"><code class="name flex">
+<span>def <span class="ident">sympy2bnet</span></span>(<span>rule)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts a sympy string expression to a BNET string expression.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>rule</code></strong> :&ensp;<code>str</code></dt>
+<dd>Boolean expression in sympy format.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>Expression in BNET format.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sympy2bnet(rule):
+    &#34;&#34;&#34;Converts a sympy string expression to a BNET string expression.
+
+    Parameters
+    ----------
+    rule : str
+        Boolean expression in sympy format.
+
+    Returns
+    -------
+    str
+        Expression in BNET format.
+
+    &#34;&#34;&#34;
+    crule = re.sub(&#34;~&#34;,&#34;!&#34;,rule)
+    crule = re.sub(&#34;True&#34;,&#34;1&#34;,crule)
+    crule = re.sub(&#34;False&#34;,&#34;0&#34;,crule)
+    return crule</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pystablemotifs" href="index.html">pystablemotifs</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="pystablemotifs.format.bnet2sympy" href="#pystablemotifs.format.bnet2sympy">bnet2sympy</a></code></li>
+<li><code><a title="pystablemotifs.format.booleannet2bnet" href="#pystablemotifs.format.booleannet2bnet">booleannet2bnet</a></code></li>
+<li><code><a title="pystablemotifs.format.cellcollective2bnet" href="#pystablemotifs.format.cellcollective2bnet">cellcollective2bnet</a></code></li>
+<li><code><a title="pystablemotifs.format.create_primes" href="#pystablemotifs.format.create_primes">create_primes</a></code></li>
+<li><code><a title="pystablemotifs.format.implicant2bnet" href="#pystablemotifs.format.implicant2bnet">implicant2bnet</a></code></li>
+<li><code><a title="pystablemotifs.format.import_primes" href="#pystablemotifs.format.import_primes">import_primes</a></code></li>
+<li><code><a title="pystablemotifs.format.pretty_print_prime_rules" href="#pystablemotifs.format.pretty_print_prime_rules">pretty_print_prime_rules</a></code></li>
+<li><code><a title="pystablemotifs.format.pretty_print_primes" href="#pystablemotifs.format.pretty_print_primes">pretty_print_primes</a></code></li>
+<li><code><a title="pystablemotifs.format.pretty_print_rspace" href="#pystablemotifs.format.pretty_print_rspace">pretty_print_rspace</a></code></li>
+<li><code><a title="pystablemotifs.format.primes2bnet" href="#pystablemotifs.format.primes2bnet">primes2bnet</a></code></li>
+<li><code><a title="pystablemotifs.format.primes2booleannet" href="#pystablemotifs.format.primes2booleannet">primes2booleannet</a></code></li>
+<li><code><a title="pystablemotifs.format.remove_comment_lines" href="#pystablemotifs.format.remove_comment_lines">remove_comment_lines</a></code></li>
+<li><code><a title="pystablemotifs.format.rule2bnet" href="#pystablemotifs.format.rule2bnet">rule2bnet</a></code></li>
+<li><code><a title="pystablemotifs.format.statedict2str" href="#pystablemotifs.format.statedict2str">statedict2str</a></code></li>
+<li><code><a title="pystablemotifs.format.statelist2dict" href="#pystablemotifs.format.statelist2dict">statelist2dict</a></code></li>
+<li><code><a title="pystablemotifs.format.statestring2dict" href="#pystablemotifs.format.statestring2dict">statestring2dict</a></code></li>
+<li><code><a title="pystablemotifs.format.sympy2bnet" href="#pystablemotifs.format.sympy2bnet">sympy2bnet</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
