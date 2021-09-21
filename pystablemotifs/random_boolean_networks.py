@@ -28,12 +28,12 @@ class RandomBooleanNetworks:
         BooleanNet (str) conversion of node_rules_binary_dictionary values.
     node_rules_string : str
         BooleanNet representation of update rules.
-    random_Boolean_type : str
+    random_boolean_type : str
         Descrpition of generative process. Currently only "Kauffman NK" is
         implemented.
     N : int
         Number of nodes in the Boolean network.
-    random_Boolean_Network_parameters : list
+    random_boolean_Network_parameters : list
         For Kauffman NK generation -
             [K,p], where K is the in-degree and p is the bias. K is a positive
             integer less than or equal to N, and p is a float between 0 and 1
@@ -52,23 +52,23 @@ class RandomBooleanNetworks:
         self.node_rules_decimal_dictionary = {}
         self.node_rules_string_dictionary = {}
         self.node_rules_string = ""
-        self.random_Boolean_type = ""
+        self.random_boolean_type = ""
         self.N=0
-        self.random_Boolean_Network_parameters= []
+        self.random_boolean_Network_parameters= []
         self.random_seed = None
         self.filename = None
 
-    def Random_Boolean_Network(self,random_Boolean_type,N,rbn_parameters,seed=None,filename=None):
+    def random_boolean_network(self,random_boolean_type,N,rbn_parameters,seed=None,filename=None):
         """Construct network using specified generative process.
 
         Parameters
         ----------
-        random_Boolean_type : str
+        random_boolean_type : str
             Descrpition of generative process. Currently only "Kauffman NK" is
             implemented.
         N : int
             Number of nodes in the Boolean network.
-        random_Boolean_Network_parameters : list
+        random_boolean_Network_parameters : list
             For Kauffman NK generation -
                 [K,p], where K is the in-degree and p is the bias. K is a positive
                 integer less than or equal to N, and p is a float between 0 and 1
@@ -79,15 +79,15 @@ class RandomBooleanNetworks:
             Path to file where network data are stored. If None, no files are written.
 
         """
-        self.random_Boolean_type = random_Boolean_type
-        self.random_Boolean_Network_parameters= rbn_parameters
+        self.random_boolean_type = random_boolean_type
+        self.random_boolean_Network_parameters= rbn_parameters
         self.N=N
         if seed is not None:
             rd.seed(seed)
         self.node_names=["n"+str(i) for i in range(N)]
 
-        if(random_Boolean_type=="Kauffman NK"):
-            K,p=self.random_Boolean_Network_parameters
+        if(random_boolean_type=="Kauffman NK"):
+            K,p=self.random_boolean_Network_parameters
             self.node_inputs_dictionary={node_name:rd.sample(self.node_names,K) for node_name in self.node_names}
             self.node_rules_binary_dictionary={node_name:
                                          (rd.choices([1,0],weights=[p,1-p],k=np.power(2,len(node_input_list))),
@@ -99,9 +99,9 @@ class RandomBooleanNetworks:
                                       (int("".join([str(i) for i in node_rule_input_list[0]]),2),
                                        node_rule_input_list[1])
                                       for node_name,node_rule_input_list in self.node_rules_binary_dictionary.items()}
-                write_Boolean_network_decimal(self.node_rules_decimal_dictionary,self.filename)
+                write_boolean_network_decimal(self.node_rules_decimal_dictionary,self.filename)
 
-    def Random_Boolean_Network_Rules(self):
+    def random_boolean_network_Rules(self):
         """Generate various conversions of the node_rules_binary_dictionary
         attribute.
 
@@ -112,7 +112,7 @@ class RandomBooleanNetworks:
              self.node_rules_string=self.node_rules_string+n+" *= "+f+"\n"
         return(self.node_rules_string)
 
-def write_Boolean_network_decimal(node_rules_decimal_dictionary,filename):
+def write_boolean_network_decimal(node_rules_decimal_dictionary,filename):
     """Write the decimal format of the Boolean rules to file.
 
     Parameters
@@ -126,7 +126,7 @@ def write_Boolean_network_decimal(node_rules_decimal_dictionary,filename):
     df_boolean_model=pd.DataFrame.from_dict(node_rules_decimal_dictionary,orient='index')
     df_boolean_model.to_csv(filename, header=False)
 
-def read_Boolean_network_decimal(filename):
+def read_boolean_network_decimal(filename):
     """Imports rules from csv in decimal format.
 
     Parameters
@@ -245,7 +245,7 @@ def String_Rules_From_Binary(node_rules_binary_dictionary):
                                   for node_name,node_rule_input_list in node_rules_binary_dictionary.items()}
     return(node_rules_string_dictionary)
 
-def Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=1000,write_Boolean_network=False):
+def random_boolean_network_ensemble_kauffman(N,K,p,N_ensemble,seed=1000,write_boolean_network=False):
     """Generate a sample from the Kauffman NK RBN ensemble.
 
     Parameters
@@ -260,7 +260,7 @@ def Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=1000,write_Bo
         Number of networks to generate.
     seed : int
         Random seed for generating the RBN ensemble (the default is 1000).
-    write_Boolean_network : bool
+    write_boolean_network : bool
         Whether to write each network in the ensemble as a CSV file in a new
         directory (the default is False).
 
@@ -269,13 +269,13 @@ def Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=1000,write_Bo
     RBN_ensemble_rules : list of str
         Each string are the Boolea rules of an ensemble in booleannet format.
         Each element in RBN_ensemble_rules can be used as an input for the
-        Format.booleannet2bnet function.
+        format.booleannet2bnet function.
 
     """
     rd.seed(seed)
-    random_Boolean_type = "Kauffman NK"
+    random_boolean_type = "Kauffman NK"
     RBN_ensemble_rules=[]
-    if(write_Boolean_network):
+    if(write_boolean_network):
         directory = "RBN"+"_N-"+str(N)+"_K-"+str(K)+"_p-"+str(p)+"_"+ datetime.now().strftime('%Y%m-%d%H-%M%S-') + str(uuid4())
         try:
             os.makedirs(directory)
@@ -284,16 +284,16 @@ def Random_Boolean_Network_Ensemble_Kauffman(N,K,p,N_ensemble,seed=1000,write_Bo
             print ('Error: Creating directory ' +  directory)
             pass
     for n in range(N_ensemble):
-        if(write_Boolean_network):
+        if(write_boolean_network):
             filename="RBN"+"_N-"+str(N)+"_K-"+str(K)+"_p-"+str(p)+"_Nensemble-"+str(n)+".csv"
             rbn=RandomBooleanNetworks()
-            rbn.Random_Boolean_Network(random_Boolean_type,N,rbn_parameters=[K,p],filename=os.path.join(directory, filename))
-            rules=rbn.Random_Boolean_Network_Rules()
+            rbn.random_boolean_network(random_boolean_type,N,rbn_parameters=[K,p],filename=os.path.join(directory, filename))
+            rules=rbn.random_boolean_network_Rules()
             RBN_ensemble_rules.append(rules)
         else:
             rbn=RandomBooleanNetworks()
-            rbn.Random_Boolean_Network(random_Boolean_type,N,rbn_parameters=[K,p])
-            rules=rbn.Random_Boolean_Network_Rules()
+            rbn.random_boolean_network(random_boolean_type,N,rbn_parameters=[K,p])
+            rules=rbn.random_boolean_network_Rules()
             RBN_ensemble_rules.append(rules)
     return(RBN_ensemble_rules)
 

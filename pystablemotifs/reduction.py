@@ -1,32 +1,36 @@
-import PyBoolNet
+import pyboolnet.trap_spaces
+import pyboolnet.prime_implicants
+import pyboolnet.interaction_graphs
+import pyboolnet.digraphs
+from pyboolnet.external.bnet2primes import bnet_text2primes
 import itertools as it
 import networkx as nx
 import re
 import sympy
 
-import PyStableMotifs.TimeReversal as sm_time
-import PyStableMotifs.RestrictSpace as sm_rspace
-import PyStableMotifs.Format as sm_format
-import PyStableMotifs.DomainOfInfluence as sm_doi
+import pystablemotifs.time_reversal as sm_time
+import pystablemotifs.restrict_space as sm_rspace
+import pystablemotifs.format as sm_format
+import pystablemotifs.drivers as sm_doi
 
 def simplify_primes(primes):
-    """Simplifies PyBoolNet primes (e.g., A | A & B becomes A)
+    """Simplifies pyboolnet primes (e.g., A | A & B becomes A)
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Rules to simplify.
 
     Returns
     -------
-    PyBoolNet primes dictionary
+    pyboolnet primes dictionary
         Simplified rules.
 
     """
 
     # reimport to force simplification
     if len(primes) > 0:
-        return sm_format.longbnet2primes(sm_format.primes2bnet(primes))
+        return bnet_text2primes(sm_format.primes2bnet(primes))
     else:
         return primes
 
@@ -37,19 +41,19 @@ def reduce_primes(fixed,primes):
     ----------
     fixed : partial state dictionary
         Node states to be held fixed.
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules.
 
     Returns
     -------
-    reduced_primes : PyBoolNet primes dictionary
+    reduced_primes : pyboolnet primes dictionary
         Simplified update rules
     percolated_states : partial state dictionary
         Fixed node states (including inputs) that were simplified and removed.
 
     """
-    reduced_primes = PyBoolNet.PrimeImplicants.create_constants(primes,fixed,Copy=True)
-    percolated_states = PyBoolNet.PrimeImplicants._percolation(reduced_primes,True)
+    reduced_primes = pyboolnet.prime_implicants.create_constants(primes,fixed,copy=True)
+    percolated_states = pyboolnet.prime_implicants.percolation(reduced_primes,True)
     percolated_states.update(fixed)
 
 
@@ -64,14 +68,14 @@ def delete_node(primes, node):
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules.
     node : str
         Name of the node to delete.
 
     Returns
     -------
-    new_primes : PyBoolNet primes dictionary
+    new_primes : pyboolnet primes dictionary
         The reduced primes.
     constants : partial state dictionary
         Node states that became logically fixed during simplification.
@@ -92,7 +96,7 @@ def delete_node(primes, node):
 
 
     # uncomment for additional (and hopefully unnecessary), but slow safety checks.
-    #G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
+    #G = pyboolnet.interaction_graphs.primes2igraph(primes)
     #assert not G.has_edge(node,node), ' '.join(["Node",str(node),"has a self-loop and cannot be deleted."])
 
     assert not node in succ, ' '.join(["Node",str(node),"has a self-loop and cannot be deleted."])
@@ -112,12 +116,12 @@ def delete_node(primes, node):
         crule1 = simplify_using_expression_and_negation(node,expr0,expr1,crule1)
         crule0 = sm_format.rule2bnet(primes[child][0])
         crule0 = simplify_using_expression_and_negation(node,expr0,expr1,crule0)
-        new_primes[child] = sm_format.build_rule_using_bnetDNFs(crule0,crule1)
+        new_primes[child] = sm_format._build_rule_using_bnet_dnfs(crule0,crule1)
 
-        nc = PyBoolNet.PrimeImplicants._percolation(new_primes,False)
+        nc = pyboolnet.prime_implicants.percolation(new_primes,False)
         constants.update(nc)
 
-    nc = PyBoolNet.PrimeImplicants._percolation(new_primes,True)
+    nc = pyboolnet.prime_implicants.percolation(new_primes,True)
     constants.update(nc)
     new_primes = simplify_primes(new_primes)
     return new_primes, constants
@@ -158,12 +162,12 @@ def remove_outdag(primes):
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules.
 
     Returns
     -------
-    reduced : PyBoolNet primes dictionary
+    reduced : pyboolnet primes dictionary
         The reduced primes.
     constants : partial state dictionary
         Node states that became logically fixed during reduction.
@@ -171,8 +175,8 @@ def remove_outdag(primes):
     """
     if len(primes) == 0:
         return primes, {}
-    G = PyBoolNet.InteractionGraphs.primes2igraph(primes)
-    od = PyBoolNet.InteractionGraphs.find_outdag(G)
+    G = pyboolnet.interaction_graphs.primes2igraph(primes)
+    od = pyboolnet.digraphs.find_outdag(G)
     reduced = primes.copy()
     constants = {}
     for node in od:
@@ -188,7 +192,7 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules.
     max_in_degree : int or float
         Will not try to delete nodes with in-degree larger than this. Deleting
@@ -197,7 +201,7 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
 
     Returns
     -------
-    reduced : PyBoolNet primes dictionary
+    reduced : pyboolnet primes dictionary
         The reduced primes.
     constants : partial state dictionary
         Node states that became logically fixed during reduction.
@@ -205,7 +209,7 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
     """
 
     reduced, constants = remove_outdag(primes)
-    G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
+    G = pyboolnet.interaction_graphs.primes2igraph(reduced)
     cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
 
     change = True
@@ -219,7 +223,7 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
                 reduced, nc = delete_node(reduced, node)
                 constants.update(nc)
                 if len(reduced) > 0:
-                    G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
+                    G = pyboolnet.interaction_graphs.primes2igraph(reduced)
                 else:
                     G = nx.DiGraph()
                 change = True
@@ -228,8 +232,8 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
                 break
         cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
 
-        PyBoolNet.PrimeImplicants.create_constants(reduced,constants)
-        nc = PyBoolNet.PrimeImplicants._percolation(reduced,True)
+        pyboolnet.prime_implicants.create_constants(reduced,constants)
+        nc = pyboolnet.prime_implicants.percolation(reduced,True)
         constants.update(nc)
     return reduced, constants
 
@@ -241,12 +245,12 @@ def mediator_reduction(primes):
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules.
 
     Returns
     -------
-    reduced : PyBoolNet primes dictionary
+    reduced : pyboolnet primes dictionary
         The reduced primes.
     constants : partial state dictionary
         Node states that became logically fixed during reduction.
@@ -255,7 +259,7 @@ def mediator_reduction(primes):
     return primes, {}
     reduced, constants = remove_outdag(primes)
     cur_order = sorted(reduced)
-    G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
+    G = pyboolnet.interaction_graphs.primes2igraph(reduced)
     candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
 
     for node in candidates:
@@ -264,7 +268,7 @@ def mediator_reduction(primes):
         if not w in G.successors(u) and not w in G.predecessors(u):
             reduced, nc = delete_node(reduced, node)
             constants.update(nc)
-            G = PyBoolNet.InteractionGraphs.primes2igraph(reduced)
+            G = pyboolnet.interaction_graphs.primes2igraph(reduced)
             candidates = [v for v in reduced if G.in_degree(v) == G.out_degree(v) == 1 and not G.has_edge(v,v)]
 
     return reduced, constants
@@ -281,7 +285,7 @@ class MotifReduction:
     fixed : partial state dictionary
         Nodes values that have been fixed and reduced by stable motifs and their
         logical domain of influence.
-    reduced_primes : PyBoolNet primes dictionary
+    reduced_primes : pyboolnet primes dictionary
         Update rules for the reduced network.
     max_simulate_size : int
         Maximum number of variables for which to brute-force build a state
@@ -289,7 +293,7 @@ class MotifReduction:
     prioritize_source_motifs : bool
         Whether source nodes should be considered first (the default is True).
     max_stable_motifs : int
-        Maximum number of output lines for PyBoolNet to process from the
+        Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
     MPBN_update : bool
         Whether MPBN update is used instead of general asynchronous update
@@ -302,7 +306,7 @@ class MotifReduction:
     logically_fixed_nodes : partial state dictionary
         Nodes values that have been fixed and reduced by stable motifs and their
         logical domain of influence.
-    time_reverse_primes : PyBoolNet primes dictionary
+    time_reverse_primes : pyboolnet primes dictionary
         Update rules of the time reversed reduced system.
     stable_motifs : list of partial state dictionaries
         Stable motifs of the reduced system.
@@ -319,10 +323,10 @@ class MotifReduction:
     rspace : rspace list
         The rspace, or "restrict space" of the reduced network, describing a
         necessary condition for the system to avoid activating additional
-        stable motifs (see RestrictSpace.py for further details).
+        stable motifs (see restrict_space.py for further details).
     motif_history : list of partial state dictionaries
         Stable motifs that can lock in to give the reduced network (in order)
-    reduced_primes : PyBoolNet primes dictionary
+    reduced_primes : pyboolnet primes dictionary
         Update rules for the reduced network.
     fixed_rspace_nodes : partial state dictionary
         Nodes values that are fixed in the rspace.
@@ -331,11 +335,11 @@ class MotifReduction:
     reduced_rspace_constraint : str
         S simplification of the rspace_constraint given the fixed_rspace_nodes
         states are satisfied
-    rspace_update_primes : PyBoolNet primes dictionary
+    rspace_update_primes : pyboolnet primes dictionary
         The update rules obtained from simplifying under the assumption that the
         fixed_rspace_nodes are fixed
-    conserved_functions : list of PyBoolNet expressions
-        Boolean functions that are constant within every attractor, in PyBoolNet
+    conserved_functions : list of pyboolnet expressions
+        Boolean functions that are constant within every attractor, in pyboolnet
         update rule format
     rspace_attractor_candidates : list of str
         Attractors (lists of statestrings) in the rspace_update_primes that
@@ -360,7 +364,7 @@ class MotifReduction:
     terminal : str
         One of "yes", "no", or "possible", indicating whether the reduction contains
         attractors that are not in any of its subreductions.
-    delprimes : PyBoolNet prime dictionary
+    delprimes : pyboolnet prime dictionary
         Update rules for the system's deletion projection. Steady states and stable
         motif activation are preserved. These rules may yield additional, spurious
         complex attractors.
@@ -380,10 +384,10 @@ class MotifReduction:
         self.merged_history_permutations = []
         self.logically_fixed_nodes = fixed
         self.reduced_primes = reduced_primes.copy()
-        self.stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.reduced_primes, "max",MaxOutput=max_stable_motifs)
+        self.stable_motifs = pyboolnet.trap_spaces.trap_spaces(self.reduced_primes, "max",max_output=max_stable_motifs)
         if MPBN_update==False:
             self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
-            self.time_reverse_stable_motifs = PyBoolNet.AspSolver.trap_spaces(self.time_reverse_primes, "max",MaxOutput=max_stable_motifs)
+            self.time_reverse_stable_motifs = pyboolnet.trap_spaces.trap_spaces(self.time_reverse_primes, "max",max_output=max_stable_motifs)
         self.merged_source_motifs=None
         self.source_independent_motifs=None
         if self.motif_history == [] and prioritize_source_motifs:
@@ -543,8 +547,8 @@ class MotifReduction:
 
         Parameters
         ----------
-        primes : PyBoolNet primes dictionary
-            PyBoolNet update rules whose source node stable motifs are to be merged.
+        primes : pyboolnet primes dictionary
+            pyboolnet update rules whose source node stable motifs are to be merged.
 
         MPBN_update : bool
             Whether MPBN update is used instead of general asynchronous update
@@ -583,8 +587,8 @@ class MotifReduction:
             self.merged_source_motifs.append({v:x for v,x in zip(source_vars,state)})
 
     # def test_rspace(self, search_partial_STGs=True):
-    #     STG=PyBoolNet.StateTransitionGraphs.primes2stg(self.rspace_update_primes,"asynchronous")
-    #     steady_states,complex_attractors=PyBoolNet.Attractors.compute_attractors_tarjan(STG)
+    #     STG=pyboolnet.state_transition_graphs.primes2stg(self.rspace_update_primes,"asynchronous")
+    #     steady_states,complex_attractors=pyboolnet.attractors.compute_attractors_tarjan(STG)
     #     names = sorted(self.rspace_update_primes)
     #     attractors = complex_attractors+[[s] for s in steady_states]
     #     self.build_rspace_attractor_candidates(attractors)
@@ -595,7 +599,7 @@ class MotifReduction:
     #         possible_rspace_attractor = True
     #         for state in attractor:
     #             # state_dict = {** sm_format.statestring2dict(state,names),**self.fixed_rspace_nodes}
-    #             # if PyBoolNet.BooleanLogic.are_mutually_exclusive(self.rspace_constraint,
+    #             # if pyboolnet.boolean_logic.are_mutually_exclusive(self.rspace_constraint,
     #             #                                                  sm_format.implicant2bnet(state_dict)):
     #             if sm_rspace.partial_state_contradicts_rspace(sm_format.statestring2dict(state,names),self.rspace):
     #                 possible_rspace_attractor = False
@@ -695,14 +699,14 @@ class MotifReduction:
         Parameters
         ----------
         max_stable_motifs : int
-            Maximum number of output lines for PyBoolNet to process from the
+            Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
 
         """
         names = sorted(self.delprimes)
         name_ind = {n:i for i,n in enumerate(names)}
         trprimes = sm_time.time_reverse_primes(self.delprimes)
-        trsms = PyBoolNet.AspSolver.trap_spaces(trprimes,"max",MaxOutput=max_stable_motifs)
+        trsms = pyboolnet.trap_spaces.trap_spaces(trprimes,"max",max_output=max_stable_motifs)
 
         if self.rspace_update_primes is not None:
             delrnames = [x for x in sorted(self.rspace_update_primes) if x in self.delprimes]
@@ -793,7 +797,7 @@ class MotifReduction:
         Parameters
         ----------
         max_stable_motifs : int
-            Maximum number of output lines for PyBoolNet to process from the
+            Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
 
         """

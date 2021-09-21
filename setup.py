@@ -1,17 +1,17 @@
 from setuptools import setup
 
 setup(
-    name="PyStableMotifs",
-    version='2.1.0',
+    name="pystablemotifs",
+    version='3.0.0',
     author="Jordan Rozum",
     author_email="jcr52@psu.edu",
     description="Python package for analyzing Boolean Netowrk",
-    url="https://github.com/jcrozum/PyStableMotifs",
+    url="https://github.com/jcrozum/pystablemotifs",
     license='MIT',
     python_requires='>=3.5',
-    packages=['PyStableMotifs'],
+    packages=['pystablemotifs'],
     install_requires=[
-    "PyBoolNet @ git+https://github.com/hklarner/PyBoolNet@2.3.0",
+    "pyboolnet @ git+https://github.com/hklarner/pyboolnet@3.0.2",
     "networkx >= 2.4.0",
     "sympy >= 1.5.1",
     "pandas >= 1.0.0",

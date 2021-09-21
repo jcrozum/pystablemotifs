@@ -1,8 +1,4 @@
-#Simplest model (with variable changes) where all three variables oscillate
-#and two attractors exist
+# Simplest model where all three variables oscillate and two attractors exist (the trap space is not univocal)
 A*=(not A and not B and not C) or (not A and B and C) or (A and not B and C) or (A and B and not C)
 B*=(not A and not B and not C) or (not A and B and C) or (A and not B and C) or (A and B and not C)
 C*=(not A and not B and not C) or (not A and B and C) or (A and not B and C) or (A and B and not C)
-
-
-

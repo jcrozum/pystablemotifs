@@ -1,8 +1,5 @@
-#Two oscillating attractors (one in all 4 variables, one in 3 variables) and a fixed point
+# Two oscillating attractors (one in all 4 variables, one in 3 variables) and a fixed point
 A*=(not A and not B and not C) or (not A and B and C) or (A and not B and C) or (A and B and not C) or (A and B and C and D)
 B*=(not A and not B and not C) or (not A and B and C) or (A and not B and C) or (A and B and not C) or (A and B and C and D)
 C*=(not A and not B and not C) or (not A and B and C) or (A and not B and C) or (A and B and not C) or (A and B and C and D)
 D*=(not A and not B and not C and not D) or (A and B and C and D)
-
-
-

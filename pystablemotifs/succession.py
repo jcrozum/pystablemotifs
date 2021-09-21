@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 
 from copy import deepcopy
 
-import PyStableMotifs.Reduction as sm_reduction
-import PyStableMotifs.Format as sm_format
-import PyStableMotifs.DomainOfInfluence as sm_doi
+import pystablemotifs.reduction as sm_reduction
+import pystablemotifs.format as sm_format
+import pystablemotifs.drivers as sm_doi
 
 class SuccessionDiagram:
     """Class describing the succession diagram of a Boolean system. See, e.g.,
@@ -16,7 +16,7 @@ class SuccessionDiagram:
     Attributes
     ----------
     motif_reduction_dict : dictionary
-        MotifReduction-valued dictionary with integer (index) keys (see Reduction.py).
+        MotifReduction-valued dictionary with integer (index) keys (see reduction.py).
     digraph : networkx.DiGraph
         Topological structure of hte succession diagram. Nodes are integers that
         align with the enteries of motif_reduction_dict.
@@ -217,7 +217,7 @@ class SuccessionDiagram:
     def reduction_drivers(self,target_index,method='internal',max_drivers=None,GRASP_iterations=None):
         """Find control strategies that lead to the reduced network specified by
         the target index. Several control strategies are implemented. See
-        Succession.SuccessionDiagram.reprogram_to_trap_spaces for a detailed
+        succession.SuccessionDiagram.reprogram_to_trap_spaces for a detailed
         description of control methods available. Generally, this method should
         not be used directly. Instead, use reprogram_to_trap_spaces.
 
@@ -227,7 +227,7 @@ class SuccessionDiagram:
             Index of the target reduced network.
         method : str
             One of 'internal', 'minimal', or 'GRASP'. See
-            Succession.SuccessionDiagram.reprogram_to_trap_spaces for details.
+            succession.SuccessionDiagram.reprogram_to_trap_spaces for details.
         max_drivers : int
             Maximum number of driver nodes to consider (not used in GRASP methods).
             If none, the upper limit is given by the number of free variables
@@ -241,7 +241,7 @@ class SuccessionDiagram:
         -------
         list
             Control strategies found; interpretation depends on method selected
-            See Succession.SuccessionDiagram.reprogram_to_trap_spaces for details.
+            See succession.SuccessionDiagram.reprogram_to_trap_spaces for details.
 
         """
         methods = ['internal','minimal','GRASP']
@@ -304,7 +304,7 @@ class SuccessionDiagram:
             methods. If none, the number of iterations is chosen based on the
             network size (the default is None).
         GRASP_score_override : function
-            Optional heuristic score function override (see DomainOfInfluence.GRASP
+            Optional heuristic score function override (see drivers.GRASP
             for details). Only used in GRASP methods (the default is None).
 
         Returns
@@ -459,7 +459,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
 
     Parameters
     ----------
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rules.
     fixed : partial state dictionary
         Used only for recursion. Specifies nodes to be fixed in the next reduced
@@ -482,7 +482,7 @@ def build_succession_diagram(primes, fixed=None, motif_history=None, diagram=Non
     prioritize_source_motifs : bool
         Whether source nodes should be considered first (the default is True).
     max_stable_motifs : int
-        Maximum number of output lines for PyBoolNet to process from the
+        Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
     MPBN_update : bool
         Whether MBPN update is used instead of general asynchronous update

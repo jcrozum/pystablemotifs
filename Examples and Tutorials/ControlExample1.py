@@ -1,16 +1,15 @@
-import PyBoolNet
-import PyStableMotifs as sm
+import pystablemotifs as sm
 import networkx as nx
 from timeit import default_timer
 print("Loading network . . .")
-primes = sm.Format.import_primes('./models/controlExample1.txt')
+primes = sm.format.import_primes('./models/controlExample1.txt')
 print("Network loaded.")
 print()
 print("RULES")
-sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
+sm.format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
 
 print("Producing and exporting expanded network . . .")
-EN = sm.Export.expanded_network(primes)
+EN = sm.export.expanded_network(primes)
 nx.write_graphml(EN,"EN_ControlExample1.graphml")
 print("done.")
 
@@ -25,15 +24,15 @@ ar.summary()
 
 print()
 print("Exporting Succession Diagram")
-SD=sm.Export.networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=True)
-sm.Export.save_to_graphml(SD,"SD_ControlExample1")
+SD=sm.export.networkx_succession_diagram_reduced_network_based(ar,include_attractors_in_diagram=True)
+sm.export.save_to_graphml(SD,"SD_ControlExample1")
 print()
 
 target = {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 1, 'F': 0, 'G': 0}
 
 print("Brute-force search for knockout/knockins that achieve",target,". . .")
 start=default_timer()
-koki = sm.DomainOfInfluence.knock_to_partial_state(target,primes,max_drivers=2)
+koki = sm.drivers.knock_to_partial_state(target,primes,max_drivers=2)
 end=default_timer()
 print("Time running brute-force search method:",end-start)
 print("Sets found:")
@@ -42,7 +41,7 @@ for x in koki: print(x)
 print()
 print("GRASP search for knockout/knockins that achieve",target,". . .")
 start=default_timer()
-sols = sm.DomainOfInfluence.GRASP(target,primes,2000)
+sols = sm.drivers.GRASP(target,primes,2000)
 end=default_timer()
 print("Time running GRASP search method:",end-start)
 print("Control sets that fix",target)

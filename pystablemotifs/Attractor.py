@@ -1,4 +1,4 @@
-import PyStableMotifs.Reduction as sm_reduction
+import pystablemotifs.reduction as sm_reduction
 
 
 class Attractor:
@@ -7,7 +7,7 @@ class Attractor:
 
     Parameters
     ----------
-    reduction : Reduction.MotifReduction
+    reduction : reduction.MotifReduction
         Motif reduction to use as the representative (see attributes).
     reduction_attractor_id : int
         Reduction id to use for the representative (see attributes)
@@ -17,14 +17,14 @@ class Attractor:
     logically_fixed_nodes : partial state dictionary
         The nodes that are fixed by percolation on the expanded network (i.e.,
         not by up-stream oscillations)
-    representative : Reduction.MotifReduction, int tuple
-        Entry 0 is a maximally reduced Reduction.MotifReduction object that
+    representative : reduction.MotifReduction, int tuple
+        Entry 0 is a maximally reduced reduction.MotifReduction object that
         contains the attractor. In general, other such objects conain the
         attractor, but they will correspond to equivalent reduced networks.
         Entry 1 is a unique identifier number (integer) for the attractor within
         the reduced network; this is necessary in cases when a fully reduced n
         etwork contains multiple (complex) attractors.
-    reductions : list of Reduction.MotifReduction
+    reductions : list of reduction.MotifReduction
         Maximally reduced MotifReductions that contain the attractor.
     attractor_dict : dictionary
         a dictionary describing the node states in the attractor according to
@@ -43,7 +43,7 @@ class Attractor:
         Node states that are fixed in the attractor, but that are not fixed by
         percolation in the expanded network. These states are instead fixed by
         up-stream oscillation.
-    reduced_primes : PyBoolNet primes dictionary
+    reduced_primes : pyboolnet primes dictionary
         Update rules for the maximally reduced network that contains the attractor.
     n_unfixed : int
         Number of nodes that are not logically fixed.
@@ -113,7 +113,7 @@ class Attractor:
 
         Parameters
         ----------
-        reduction : Reduction.MotifReduction
+        reduction : reduction.MotifReduction
             Motif reduction that also contains the attractor.
 
         """

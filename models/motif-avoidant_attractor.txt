@@ -1,6 +1,4 @@
-#
-# Describe model here
-#
+# A simple model with a motif-avoidant attractor.
 xA*= not xA and not xB or xC
 xB*= not xA and not xB or xC
 xC*= xA and xB

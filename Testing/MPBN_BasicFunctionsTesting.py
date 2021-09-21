@@ -1,14 +1,16 @@
-import PyBoolNet
-import PyStableMotifs as sm
+import pyboolnet.trap_spaces
+import pystablemotifs as sm
 import networkx as nx
+
 print("Loading network . . .")
-primes = sm.Format.import_primes('./models/test2.txt')
+model = 'test1'
+primes = sm.format.import_primes('./models/'+model+'.txt')
 print("Network loaded.")
 print()
 print("RULES")
-sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
+sm.format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
 
-stable_motifs = PyBoolNet.AspSolver.trap_spaces(primes, "max",MaxOutput=10000)
+stable_motifs = pyboolnet.trap_spaces.trap_spaces(primes, "min",max_output=10000)
 print(stable_motifs)
 
 import time
@@ -16,7 +18,7 @@ start_time = time.time()
 
 print()
 print("Analyzing network . . .")
-ar = sm.AttractorRepertoire.from_primes(primes,max_simulate_size=7)
+ar = sm.AttractorRepertoire.from_primes(primes,max_simulate_size=20)
 print("Analysis complete.")
 print()
 ar.summary()
@@ -26,7 +28,7 @@ start_time = time.time()
 
 print()
 print("Analyzing network (MPBN) . . .")
-ax = sm.AttractorRepertoire.from_primes(primes,max_simulate_size=7,MPBN_update=True)
+ax = sm.AttractorRepertoire.from_primes(primes,max_simulate_size=20,MPBN_update=True)
 print("Analysis complete.")
 print()
 ax.summary()
@@ -35,9 +37,9 @@ print("--- %s seconds for MPBN ---" % (time.time() - start_time))
 
 #
 # print("Time reversal:")
-# tr = sm.TimeReversal.time_reverse_primes(primes)
+# tr = sm.time_reversal.time_reverse_primes(primes)
 #
-# sm.Format.pretty_print_prime_rules(tr)
+# sm.format.pretty_print_prime_rules(tr)
 #
 # print("\nTR Stable Notifs:")
 #
@@ -45,7 +47,7 @@ print("--- %s seconds for MPBN ---" % (time.time() - start_time))
 #     print(x)
 #
 # print("Producing and exporting STG . . .")
-# G=PyBoolNet.StateTransitionGraphs.primes2stg(primes,'asynchronous')
+# G=pyboolnet.state_transition_graphs.primes2stg(primes,'asynchronous')
 # H=nx.DiGraph()
 # for u,v in G.edges():
 #     H.add_edge(u,v)
@@ -55,8 +57,8 @@ print("--- %s seconds for MPBN ---" % (time.time() - start_time))
 # print("done.")
 #
 # print("Producing and exporting expanded network . . .")
-# K = sm.Export.expanded_network(primes)
-# KTR = sm.Export.expanded_network(sm.TimeReversal.time_reverse_primes(primes))
+# K = sm.export.expanded_network(primes)
+# KTR = sm.export.expanded_network(sm.time_reversal.time_reverse_primes(primes))
 # nx.write_graphml(K,"EN_PhaseSwitch.graphml")
 # nx.write_graphml(KTR,"EN_PhaseSwitch_TR.graphml")
 # print("done.")

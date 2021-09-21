@@ -1,7 +1,8 @@
-#Two oscillating attractors (one in all 4 variables, one in 3 variables) and a fixed point in the xA,xB,xC,xD layer
-#xE,xF,xG layer is downstream of xA,xB,xC,xD layer, and reduces to Jordan's favorite example unless xA,xB,xC,xD is at its fixed point
-#The result should be 5 attractors: 4 complex attractors (2 oscillations of top layer x oscillation + fixed point of lower layer)
-#and 1 steady state (fixed point of top and bottom layer)
+# Two oscillating attractors (one in all 4 variables, one in 3 variables) and a fixed point in the xA,xB,xC,xD layer
+# xE,xF,xG layer is downstream of xA,xB,xC,xD layer, and reduces to the motif-avoidant_attractor.txt example unless
+# xA,xB,xC,xD is at its fixed point.
+# The result should be 5 attractors: 4 complex attractors (2 oscillations of top layer x oscillation + fixed point of lower layer)
+# and 1 steady state (fixed point of top and bottom layer)
 xA*=(not xA and not xB and not xC) or (not xA and xB and xC) or (xA and not xB and xC) or (xA and xB and not xC) or (xA and xB and xC and xD)
 xB*=(not xA and not xB and not xC) or (not xA and xB and xC) or (xA and not xB and xC) or (xA and xB and not xC) or (xA and xB and xC and xD)
 xC*=(not xA and not xB and not xC) or (not xA and xB and xC) or (xA and not xB and xC) or (xA and xB and not xC) or (xA and xB and xC and xD)

@@ -1,8 +1,8 @@
-import PyBoolNet
+import pyboolnet.boolean_logic
 import re
 
-from PyStableMotifs.DomainOfInfluence import single_drivers, logical_domain_of_influence
-import PyStableMotifs.DomainOfInfluence as sm_doi
+from pystablemotifs.drivers import single_drivers, logical_domain_of_influence
+import pystablemotifs.drivers as sm_doi
 
 def attractor_space_candidates(maxts,trmaxts):
     """Merge the maximum trap spaces maxts and time-reverse maximum trap spaces
@@ -19,7 +19,7 @@ def attractor_space_candidates(maxts,trmaxts):
     Returns
     -------
     rspace list
-        Restrict space list (see RestrictSpace.rspace for details).
+        Restrict space list (see restrict_space.rspace for details).
 
     """
 
@@ -35,7 +35,7 @@ def state_in_rspace(state,L):
     state : partial state dictionary
         State, or partial state to test.
     L : rspace list
-        Restrict space list (see RestrictSpace.rspace for details).
+        Restrict space list (see restrict_space.rspace for details).
 
     Returns
     -------
@@ -61,7 +61,7 @@ def partial_state_contradicts_rspace(state,L):
     state : partial state dictionary
         State, or partial state to test.
     L : rspace list
-        Restrict space list (see RestrictSpace.rspace for details).
+        Restrict space list (see restrict_space.rspace for details).
 
     Returns
     -------
@@ -87,14 +87,14 @@ def reduce_rspace(L,primes):
     Parameters
     ----------
     L : rspace list
-        Restrict space list (see RestrictSpace.rspace for details).
-    primes : PyBoolNet primes dictionary
+        Restrict space list (see restrict_space.rspace for details).
+    primes : pyboolnet primes dictionary
         Update rule for the system.
 
     Returns
     -------
     L2 : rspace list
-        Reduced restrict space list (see RestrictSpace.rspace for details).
+        Reduced restrict space list (see restrict_space.rspace for details).
 
     """
     fixed = fixed_rspace_nodes(L,primes)
@@ -137,7 +137,7 @@ def rspace(maxts,trmaxts,primes):
         Stable motifs, i.e., maximum trap spaces for the system.
     trmaxts : list of partial state dictionaries
         Stable motifs, i.e., maximum trap spaces for the time-reversed system.
-    primes : PyBoolNet primes dictionary
+    primes : pyboolnet primes dictionary
         Update rule for the system.
 
     Returns
@@ -200,8 +200,8 @@ def fixed_rspace_nodes(L,primes):
     Parameters
     ----------
     L : rspace list
-        Restrict space list (see RestrictSpace.rspace for details).
-    primes : PyBoolNet primes dictionary
+        Restrict space list (see restrict_space.rspace for details).
+    primes : pyboolnet primes dictionary
         Update rule for the system.
 
     Returns
@@ -250,5 +250,5 @@ def reduce_rspace_string(s,fd,simplify=True):
     for k,v in fd.items():
         s2 = re.sub(rf"\b{k}\b",str(v),s2)
     if simplify:
-        s2 = PyBoolNet.BooleanLogic.minimize_espresso(s2)
+        s2 = pyboolnet.boolean_logic.minimize_espresso(s2)
     return s2

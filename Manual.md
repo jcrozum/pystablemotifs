@@ -1,6 +1,6 @@
 ---
 description: |
-    API documentation for modules: PyStableMotifs, PyStableMotifs.Attractor, PyStableMotifs.AttractorRepertoire, PyStableMotifs.DomainOfInfluence, PyStableMotifs.Export, PyStableMotifs.Format, PyStableMotifs.RandomBooleanNetworks, PyStableMotifs.Reduction, PyStableMotifs.RestrictSpace, PyStableMotifs.Succession, PyStableMotifs.TimeReversal.
+    API documentation for modules: pystablemotifs, pystablemotifs.Attractor, pystablemotifs.AttractorRepertoire, pystablemotifs.drivers, pystablemotifs.export, pystablemotifs.format, pystablemotifs.random_boolean_networks, pystablemotifs.reduction, pystablemotifs.restrict_space, pystablemotifs.succession, pystablemotifs.time_reversal.
 
 lang: en
 
@@ -14,7 +14,7 @@ links-as-notes: true
 
 
     
-# Module `PyStableMotifs` {#PyStableMotifs}
+# Module `pystablemotifs` {#id}
 
 
 
@@ -22,16 +22,16 @@ links-as-notes: true
     
 ## Sub-modules
 
-* [PyStableMotifs.Attractor](#PyStableMotifs.Attractor)
-* [PyStableMotifs.AttractorRepertoire](#PyStableMotifs.AttractorRepertoire)
-* [PyStableMotifs.DomainOfInfluence](#PyStableMotifs.DomainOfInfluence)
-* [PyStableMotifs.Export](#PyStableMotifs.Export)
-* [PyStableMotifs.Format](#PyStableMotifs.Format)
-* [PyStableMotifs.RandomBooleanNetworks](#PyStableMotifs.RandomBooleanNetworks)
-* [PyStableMotifs.Reduction](#PyStableMotifs.Reduction)
-* [PyStableMotifs.RestrictSpace](#PyStableMotifs.RestrictSpace)
-* [PyStableMotifs.Succession](#PyStableMotifs.Succession)
-* [PyStableMotifs.TimeReversal](#PyStableMotifs.TimeReversal)
+* [pystablemotifs.Attractor](#pystablemotifs.Attractor)
+* [pystablemotifs.AttractorRepertoire](#pystablemotifs.AttractorRepertoire)
+* [pystablemotifs.drivers](#pystablemotifs.drivers)
+* [pystablemotifs.export](#pystablemotifs.export)
+* [pystablemotifs.format](#pystablemotifs.format)
+* [pystablemotifs.random_boolean_networks](#pystablemotifs.random_boolean_networks)
+* [pystablemotifs.reduction](#pystablemotifs.reduction)
+* [pystablemotifs.restrict_space](#pystablemotifs.restrict_space)
+* [pystablemotifs.succession](#pystablemotifs.succession)
+* [pystablemotifs.time_reversal](#pystablemotifs.time_reversal)
 
 
 
@@ -39,7 +39,7 @@ links-as-notes: true
 
 
     
-# Module `PyStableMotifs.Attractor` {#PyStableMotifs.Attractor}
+# Module `pystablemotifs.Attractor` {#id}
 
 
 
@@ -52,7 +52,7 @@ links-as-notes: true
 
 
     
-### Class `Attractor` {#PyStableMotifs.Attractor.Attractor}
+### Class `Attractor` {#id}
 
 
 
@@ -68,7 +68,7 @@ the AttractorRepertoire class.
 
 #### Parameters
 
-**```reduction```** :&ensp;<code>Reduction.MotifReduction</code>
+**```reduction```** :&ensp;<code>reduction.MotifReduction</code>
 :   Motif reduction to use as the representative (see attributes).
 
 
@@ -82,8 +82,8 @@ the AttractorRepertoire class.
     not by up-stream oscillations)
 
 
-**```representative```** :&ensp;<code>Reduction.MotifReduction, int tuple</code>
-:   Entry 0 is a maximally reduced Reduction.MotifReduction object that
+**```representative```** :&ensp;<code>reduction.MotifReduction, int tuple</code>
+:   Entry 0 is a maximally reduced reduction.MotifReduction object that
     contains the attractor. In general, other such objects conain the
     attractor, but they will correspond to equivalent reduced networks.
     Entry 1 is a unique identifier number (integer) for the attractor within
@@ -91,7 +91,7 @@ the AttractorRepertoire class.
     etwork contains multiple (complex) attractors.
 
 
-**```reductions```** :&ensp;<code>list</code> of <code>Reduction.MotifReduction</code>
+**```reductions```** :&ensp;<code>list</code> of <code>reduction.MotifReduction</code>
 :   Maximally reduced MotifReductions that contain the attractor.
 
 
@@ -120,7 +120,7 @@ the AttractorRepertoire class.
     up-stream oscillation.
 
 
-**```reduced_primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```reduced_primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules for the maximally reduced network that contains the attractor.
 
 
@@ -157,7 +157,7 @@ the AttractorRepertoire class.
 
 
     
-##### Method `add_reduction` {#PyStableMotifs.Attractor.Attractor.add_reduction}
+##### Method `add_reduction` {#id}
 
 
 
@@ -172,7 +172,7 @@ Add a reduction to the attractor. Does not check for compatibility.
 
 ###### Parameters
 
-**```reduction```** :&ensp;<code>Reduction.MotifReduction</code>
+**```reduction```** :&ensp;<code>reduction.MotifReduction</code>
 :   Motif reduction that also contains the attractor.
 
 
@@ -180,7 +180,7 @@ Add a reduction to the attractor. Does not check for compatibility.
 
 
     
-# Module `PyStableMotifs.AttractorRepertoire` {#PyStableMotifs.AttractorRepertoire}
+# Module `pystablemotifs.AttractorRepertoire` {#id}
 
 
 
@@ -193,7 +193,7 @@ Add a reduction to the attractor. Does not check for compatibility.
 
 
     
-### Class `AttractorRepertoire` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire}
+### Class `AttractorRepertoire` {#id}
 
 
 
@@ -206,7 +206,7 @@ either from_primes or from_succession_diagram.
 
 #### Attributes
 
-**```succession_diagram```** :&ensp;<code>Succession.SuccessionDiagram</code>
+**```succession_diagram```** :&ensp;<code>succession.SuccessionDiagram</code>
 :   Succession diagram summarizing the stable motif structure of the model.
 
 
@@ -230,7 +230,7 @@ either from_primes or from_succession_diagram.
 :   An upper bound on the number of attractors in the model.
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   The model rules.
 
 
@@ -269,7 +269,7 @@ either from_primes or from_succession_diagram.
 
 
     
-##### `Method from_primes` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire.from_primes}
+##### `Method from_primes` {#id}
 
 
 
@@ -282,12 +282,12 @@ either from_primes or from_succession_diagram.
 >     )
 
 
-Build the succession diagram and attractor repertoire from PyBoolNet
+Build the succession diagram and attractor repertoire from pyboolnet
 formatted update rules rules.
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   The model rules.
 
 
@@ -297,7 +297,7 @@ formatted update rules rules.
 
 
 **```max_stable_motifs```** :&ensp;<code>int</code>
-:   Maximum number of output lines for PyBoolNet to process from the
+:   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
 
 
@@ -308,13 +308,13 @@ formatted update rules rules.
 
 ###### Returns
 
-<code>[AttractorRepertoire](#PyStableMotifs.AttractorRepertoire.AttractorRepertoire "PyStableMotifs.AttractorRepertoire.AttractorRepertoire")</code>
+<code>[AttractorRepertoire](#pystablemotifs.AttractorRepertoire.AttractorRepertoire "pystablemotifs.AttractorRepertoire.AttractorRepertoire")</code>
 :   AttractorRepertoire object for the input primes.
 
 
 
     
-##### `Method from_succession_diagram` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire.from_succession_diagram}
+##### `Method from_succession_diagram` {#id}
 
 
 
@@ -329,12 +329,12 @@ precomputed succession diagram.
 
 ###### Parameters
 
-**```succession_diagram```** :&ensp;<code>Succession.SuccessionDiagram</code>
+**```succession_diagram```** :&ensp;<code>succession.SuccessionDiagram</code>
 :   Succession diagram summarizing the stable motif structure of the model.
 
 ###### Returns
 
-<code>[AttractorRepertoire](#PyStableMotifs.AttractorRepertoire.AttractorRepertoire "PyStableMotifs.AttractorRepertoire.AttractorRepertoire")</code>
+<code>[AttractorRepertoire](#pystablemotifs.AttractorRepertoire.AttractorRepertoire "pystablemotifs.AttractorRepertoire.AttractorRepertoire")</code>
 :   AttractorRepertoire object for the input succession diagram.
 
 
@@ -345,7 +345,7 @@ precomputed succession diagram.
 
 
     
-##### Method `analyze_system` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire.analyze_system}
+##### Method `analyze_system` {#id}
 
 
 
@@ -363,7 +363,7 @@ Build and process the succession diagram for the model.
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   The model rules.
 
 
@@ -373,7 +373,7 @@ Build and process the succession diagram for the model.
 
 
 **```max_stable_motifs```** :&ensp;<code>int</code>
-:   Maximum number of output lines for PyBoolNet to process from the
+:   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
 
 
@@ -384,7 +384,119 @@ Build and process the succession diagram for the model.
 
 
     
-##### Method `simplify_diagram` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire.simplify_diagram}
+##### Method `reprogram_to_trap_spaces` {#id}
+
+
+
+
+>     def reprogram_to_trap_spaces(
+>         self,
+>         logically_fixed,
+>         target_method='history',
+>         driver_method='internal',
+>         max_drivers=None,
+>         GRASP_iterations=None,
+>         GRASP_score_override=None
+>     )
+
+
+Find driver sets that lead to fixing the node states specified.
+
+###### Parameters
+
+**```logically_fixed```** :&ensp;<code>partial state dictionary</code>
+:   Targeted fixed nodes.
+
+
+**```target_method```** :&ensp;<code>str</code>
+:   Either 'history' or 'merge'; see Notes below for details.
+
+
+**```driver_method```** :&ensp;<code>str</code>
+:   Either 'internal', 'minimal', or 'GRASP' see Notes below for details.
+
+
+**```max_drivers```** :&ensp;<code>int</code>
+:   Maximum number of driver nodes to consider (not used in GRASP methods).
+    If none, the upper limit is given by the number of free variables
+    (the default is None).
+
+
+**```GRASP_iterations```** :&ensp;<code>int</code>
+:   Number of times to construct GRASP driver sets; only used in GRASP
+    methods. If none, the number of iterations is chosen based on the
+    network size (the default is None).
+
+
+**```GRASP_score_override```** :&ensp;<code>function</code>
+:   Optional heuristic score function override (see drivers.GRASP
+    for details). Only used in GRASP methods (the default is None).
+
+###### Returns
+
+<code>list</code>
+:   Control strategies found; interpretation depends on method selected
+    See Notes below for details.
+
+###### Notes
+
+The various combinations of target_method and driver_method options result
+in different control strategies, which are outlined below.
+
+target_method = history, driver_method = internal:
+Finds all shortest stable motif histories that result in the target node states
+being logically fixed. Each stable motif is searched for internal driver nodes.
+The resulting internal drivers are combined into a single  control set. The
+return value consists of all such control sets for all  stable motif histories.
+Each control set eventually becomes self-sustaining.
+
+target_method = history, driver_method = minimal:
+Similar to the history method, except the search for stable motif drivers
+includes external driver nodes for the motif and does not extend to driver sets
+of larger size once one driver set has been found for a motif. Because the
+search includes external driver nodes, special care must be taken in interpreting
+the effect of the drivers, as their influence may impact the effect of motifs
+stabilizing. Thus, the control is only guaranteed to work if the interventions
+are temporary and implemented in the order specified by the motif history.
+
+For this reason, the output consists of lists of ordered interventions.
+Each element of the return value is a list of lists of dictionaries. Each
+element of the return value represents a control strategy. To implement such
+a strategy, select a dictionary from the first element of the strategy and
+fix the node states it specifies until their influence has propagated through
+the system. Then repeat this process iteratively for each element of the strategy
+list, in order. For example, if
+nonredundant_drivers = [ [[{'xD':1,'xE=1'}]], [[{'xA':1},{'xB':1}],[{'xC':1}]] ]
+then there are two control strategies available:
+1) fix xD=xE=1 temporarily and
+2) first fix either xA=1 or xB=1 temporarily, then fix xC=1 temporarily.
+
+target_method = history, driver_method = GRASP:
+The same as history, minimal, except external driver nodes are searched for
+using the GRASP algorithm using GRASP_iterations iterations.
+
+target_method = merge, driver_method = internal:
+Finds all shortest stable motif histories that result in the target node states
+being logically fixed. All node states in the motifs in the history are merged
+into a stable module dictionary. This is then searched for internal driver
+nodes. Each element of the return value is a dictionary corresponding to a
+control set. Each control set eventually becomes self-sustaining.
+
+target_method = merge, driver_method = minimal:
+Similar to the merge method, except the search for drivers is conducted over
+all nodes, not just those internal to the merged stable module. Furthermore,
+the search is truncated when a control set is found such that the search does
+not proceed to driver sets larger than the smallest found. Each element of
+the return value is a dictionary corresponding to a control set. The control
+sets are only guaranteed to result in activation of the target if they are
+temporary interventions.
+
+target_method = merge, driver_method = GRASP:
+The same as merge, minimal, except external driver nodes are searched for
+using the GRASP algorithm using GRASP_iterations iterations.
+
+    
+##### Method `simplify_diagram` {#id}
 
 
 
@@ -432,7 +544,7 @@ which are described in the class documentation.
 
 
     
-##### Method `summary` {#PyStableMotifs.AttractorRepertoire.AttractorRepertoire.summary}
+##### Method `summary` {#id}
 
 
 
@@ -447,7 +559,7 @@ Prints a summary of the attractors to standard output.
 
 
     
-# Module `PyStableMotifs.DomainOfInfluence` {#PyStableMotifs.DomainOfInfluence}
+# Module `pystablemotifs.drivers` {#id}
 
 
 
@@ -459,7 +571,7 @@ Prints a summary of the attractors to standard output.
 
 
     
-### Function `GRASP` {#PyStableMotifs.DomainOfInfluence.GRASP}
+### Function `GRASP` {#id}
 
 
 
@@ -469,7 +581,7 @@ Prints a summary of the attractors to standard output.
 >         primes,
 >         GRASP_iterations,
 >         forbidden=None,
->         GRASP_scores=<function GRASP_default_scores>
+>         GRASP_scores=<function _GRASP_default_scores>
 >     )
 
 
@@ -478,10 +590,10 @@ Search for drivers of target in primes using the method of Yang et al. 2018.
 ###### Parameters
 
 **```target```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines target fixed node states.
+:   pyboolnet implicant that defines target fixed node states.
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 
@@ -494,7 +606,7 @@ Search for drivers of target in primes using the method of Yang et al. 2018.
 
 
 **```GRASP_scores```** :&ensp;<code>function</code>
-:   Function to score candiates (the default is GRASP_default_scores; see
+:   Function to score candiates (the default is _GRASP_default_scores; see
     that function for required inputs and outputs of the scoring function).
 
 ###### Returns
@@ -506,45 +618,7 @@ Search for drivers of target in primes using the method of Yang et al. 2018.
 
 
     
-### Function `GRASP_default_scores` {#PyStableMotifs.DomainOfInfluence.GRASP_default_scores}
-
-
-
-
->     def GRASP_default_scores(
->         target,
->         primes,
->         candidates
->     )
-
-
-Helper function for GRASP driver search. Scores candidate driver nodes.
-
-###### Parameters
-
-**```target```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines target fixed node states.
-
-
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
-:   Update rules.
-
-
-**```candidates```** :&ensp;<code>list</code> of <code>partial state dictionaries</code>
-:   List of variable states that can potentially lead to the target.
-
-###### Returns
-
-**```scores```** :&ensp;<code>list</code> of <code>ints</code>
-:   Logical domain of influence sizes for individual node states. If the
-    node leads to a contradiction, the score will become the negative of the
-    largest LDOI size. Scores are ordered in the same order as the
-    candidates list.
-
-
-
-    
-### Function `all_drivers_of_size` {#PyStableMotifs.DomainOfInfluence.all_drivers_of_size}
+### Function `all_drivers_of_size` {#id}
 
 
 
@@ -567,10 +641,10 @@ Short summary.
 
 
 **```target```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines target fixed node states.
+:   pyboolnet implicant that defines target fixed node states.
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 
@@ -591,52 +665,7 @@ Short summary.
 
 
     
-### Function `construct_GRASP_solution` {#PyStableMotifs.DomainOfInfluence.construct_GRASP_solution}
-
-
-
-
->     def construct_GRASP_solution(
->         target,
->         primes,
->         candidates,
->         scores
->     )
-
-
-Helper funciton for GRASP driver search. Constructs individual driver set
-using the GRASP search method.
-
-###### Parameters
-
-**```target```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines target fixed node states.
-
-
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
-:   Update rules.
-
-
-**```candidates```** :&ensp;<code>list</code> of <code>partial state dictionaries</code>
-:   List of variable states that can potentially lead to the target.
-
-
-**```scores```** :&ensp;<code>list</code> of <code>ints</code>
-:   Logical domain of influence sizes for individual node states. If the
-    node leads to a contradiction, the score will become the negative of the
-    largest LDOI size. Scores are ordered in the same order as the
-    candidates list.
-
-###### Returns
-
-<code>partial state dictionary</code>
-:   A partial state that contains the target in its LDOI. If no such partial
-    state is found, returns an empty dictionary instead.
-
-
-
-    
-### Function `domain_of_influence` {#PyStableMotifs.DomainOfInfluence.domain_of_influence}
+### Function `domain_of_influence` {#id}
 
 
 
@@ -653,13 +682,14 @@ using the GRASP search method.
 
 
 Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
+
 ###### Parameters
 
 **```partial_state```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines fixed nodes (seed set).
+:   pyboolnet implicant that defines fixed nodes (seed set).
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 
@@ -677,7 +707,7 @@ Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
 
 
 **```max_stable_motifs```** :&ensp;<code>int</code>
-:   Maximum number of output lines for PyBoolNet to process from the
+:   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
 
 
@@ -687,6 +717,10 @@ Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
 
 ###### Returns
 
+**```data```** :&ensp;<code>namedtuple</code>
+:   A namedtuple that contains the entries listed below.
+
+
 **```implied```** :&ensp;<code>partial state dictionary</code>
 :   Nodes that are certain to be in the domain of influence.
 
@@ -695,21 +729,21 @@ Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
 :   The contradiction boundary.
 
 
-**```unknown```** :&ensp;<code>partial state dictionary</code>
+**```possibly_implied```** :&ensp;<code>partial state dictionary</code>
 :   Nodes that are possibly in the domain of influence.
 
 
-**```unknown_contra```** :&ensp;<code>partial state dictionary</code>
+**```possibly_contradicted```** :&ensp;<code>partial state dictionary</code>
 :   Nodes that are possibly in the contradiction boundary.
 
 
-**```ar```** :&ensp;<code>AttractorRepertoire</code>
+**```attractor_repertoire```** :&ensp;<code>AttractorRepertoire</code>
 :   The class that stores information about attractors.
 
 
 
     
-### Function `fixed_excludes_implicant` {#PyStableMotifs.DomainOfInfluence.fixed_excludes_implicant}
+### Function `fixed_excludes_implicant` {#id}
 
 
 
@@ -741,7 +775,7 @@ contradicts the implicant.
 
 
     
-### Function `fixed_implies_implicant` {#PyStableMotifs.DomainOfInfluence.fixed_implies_implicant}
+### Function `fixed_implies_implicant` {#id}
 
 
 
@@ -773,43 +807,7 @@ the implicant.
 
 
     
-### Function `initial_GRASP_candidates` {#PyStableMotifs.DomainOfInfluence.initial_GRASP_candidates}
-
-
-
-
->     def initial_GRASP_candidates(
->         target,
->         primes,
->         forbidden
->     )
-
-
-Helper function for GRASP driver search. Constructs initial candidates
-for driver nodes.
-
-###### Parameters
-
-**```target```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines target fixed node states.
-
-
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
-:   Update rules.
-
-
-**```forbidden```** :&ensp;<code>set</code> of <code>str variable names</code>
-:   Variables to be considered uncontrollable (the default is None).
-
-###### Returns
-
-**```candidates```** :&ensp;<code>list</code> of <code>partial state dictionaries</code>
-:   List of variable states that can potentially lead to the target.
-
-
-
-    
-### Function `internal_drivers` {#PyStableMotifs.DomainOfInfluence.internal_drivers}
+### Function `internal_drivers` {#id}
 
 
 
@@ -826,10 +824,10 @@ Find internal (logical) driver nodes of target through brute-force.
 ###### Parameters
 
 **```target```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines target fixed node states.
+:   pyboolnet implicant that defines target fixed node states.
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 
@@ -847,7 +845,7 @@ Find internal (logical) driver nodes of target through brute-force.
 
 
     
-### Function `knock_to_partial_state` {#PyStableMotifs.DomainOfInfluence.knock_to_partial_state}
+### Function `knock_to_partial_state` {#id}
 
 
 
@@ -867,10 +865,10 @@ nodes in the forbidden list.
 ###### Parameters
 
 **```target```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines target fixed node states.
+:   pyboolnet implicant that defines target fixed node states.
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 
@@ -896,43 +894,7 @@ nodes in the forbidden list.
 
 
     
-### Function `local_GRASP_reduction` {#PyStableMotifs.DomainOfInfluence.local_GRASP_reduction}
-
-
-
-
->     def local_GRASP_reduction(
->         solution,
->         target,
->         primes
->     )
-
-
-A helper funciton for GRASP driver search. Reduces valid solutions to
-attempt to remove redundancies.
-
-###### Parameters
-
-**```solution```** :&ensp;<code>partial state dictionary</code>
-:   Solution to be reduced; must contain the target in its LDOI.
-
-
-**```target```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines target fixed node states.
-
-
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
-:   Update rules.
-
-###### Returns
-
-<code>partial state dictionary</code>
-:   Reduced solution that also contains target in its LDOI.
-
-
-
-    
-### Function `logical_domain_of_influence` {#PyStableMotifs.DomainOfInfluence.logical_domain_of_influence}
+### Function `logical_domain_of_influence` {#id}
 
 
 
@@ -945,15 +907,17 @@ attempt to remove redundancies.
 >     )
 
 
-Computes the logical domain of influence (LDOI) (see Yang et al. 2018)
+Computes the logical domain of influence (LDOI) (see Yang et al. 2018).
+In general, the LDOI is a subset of the full domain of influence (DOI), but it
+is much more easily (and quickly) computed.
 
 ###### Parameters
 
 **```partial_state```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines fixed nodes.
+:   pyboolnet implicant that defines fixed nodes.
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 
@@ -976,7 +940,7 @@ Computes the logical domain of influence (LDOI) (see Yang et al. 2018)
 
 
     
-### Function `minimal_drivers` {#PyStableMotifs.DomainOfInfluence.minimal_drivers}
+### Function `minimal_drivers` {#id}
 
 
 
@@ -995,10 +959,10 @@ nodes.
 ###### Parameters
 
 **```target```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines target fixed node states.
+:   pyboolnet implicant that defines target fixed node states.
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 
@@ -1016,7 +980,7 @@ nodes.
 
 
     
-### Function `single_drivers` {#PyStableMotifs.DomainOfInfluence.single_drivers}
+### Function `single_drivers` {#id}
 
 
 
@@ -1033,10 +997,10 @@ by primes.
 ###### Parameters
 
 **```target```** :&ensp;<code>partial state dictionary</code>
-:   PyBoolNet implicant that defines target fixed node states.
+:   pyboolnet implicant that defines target fixed node states.
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 ###### Returns
@@ -1051,7 +1015,7 @@ by primes.
 
 
     
-# Module `PyStableMotifs.Export` {#PyStableMotifs.Export}
+# Module `pystablemotifs.export` {#id}
 
 
 
@@ -1063,7 +1027,7 @@ by primes.
 
 
     
-### Function `attractor_dataframe` {#PyStableMotifs.Export.attractor_dataframe}
+### Function `attractor_dataframe` {#id}
 
 
 
@@ -1089,7 +1053,7 @@ pandas).
 
 
     
-### Function `expanded_network` {#PyStableMotifs.Export.expanded_network}
+### Function `expanded_network` {#id}
 
 
 
@@ -1104,7 +1068,7 @@ Produce the expanded network for given input update rules.
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   The update rules for which to construct the expanded network.
 
 
@@ -1122,33 +1086,7 @@ Produce the expanded network for given input update rules.
 
 
     
-### Function `format_reduction_label` {#PyStableMotifs.Export.format_reduction_label}
-
-
-
-
->     def format_reduction_label(
->         s
->     )
-
-
-Helper function to make graph labels more readable. Removes single quotes
-and square brackets from the input string.
-
-###### Parameters
-
-**```s```** :&ensp;<code>str</code>
-:   Input label.
-
-###### Returns
-
-<code>str</code>
-:   Label with characters ', [, and ] removed.
-
-
-
-    
-### Function `networkx_succession_diagram` {#PyStableMotifs.Export.networkx_succession_diagram}
+### Function `networkx_succession_diagram` {#id}
 
 
 
@@ -1162,7 +1100,7 @@ and square brackets from the input string.
 
 Label the succesion diagram and (optionally) attractors of the input attractor
 repertoire according to the conventions of Rozum et al. (2021). This is an
-alias for the function Export.networkx_succession_diagram_reduced_network_based.
+alias for the function export.networkx_succession_diagram_reduced_network_based.
 
 ###### Parameters
 
@@ -1189,7 +1127,7 @@ alias for the function Export.networkx_succession_diagram_reduced_network_based.
 
 
     
-### Function `networkx_succession_diagram_motif_based` {#PyStableMotifs.Export.networkx_succession_diagram_motif_based}
+### Function `networkx_succession_diagram_motif_based` {#id}
 
 
 
@@ -1223,7 +1161,7 @@ defined in Rozum et al. (2021). Does not support compression.
 
 
     
-### Function `networkx_succession_diagram_reduced_network_based` {#PyStableMotifs.Export.networkx_succession_diagram_reduced_network_based}
+### Function `networkx_succession_diagram_reduced_network_based` {#id}
 
 
 
@@ -1263,7 +1201,7 @@ repertoire according to the conventions of Rozum et al. (2021).
 
 
     
-### Function `plot_nx_succession_diagram` {#PyStableMotifs.Export.plot_nx_succession_diagram}
+### Function `plot_nx_succession_diagram` {#id}
 
 
 
@@ -1289,7 +1227,7 @@ over plot appearance, it is recommended to plot g directly.
 
 **```G```** :&ensp;<code>networkx.DiGraph</code>
 :   Labeled succession diagram, e.g., as is output from
-    Export.networkx_succession_diagram_reduced_network_based().
+    export.networkx_succession_diagram_reduced_network_based().
 
 
 **```fig_dimensions```** :&ensp;<code>(int,int)</code>
@@ -1342,7 +1280,7 @@ over plot appearance, it is recommended to plot g directly.
 
 
     
-### Function `save_to_graphml` {#PyStableMotifs.Export.save_to_graphml}
+### Function `save_to_graphml` {#id}
 
 
 
@@ -1370,7 +1308,7 @@ Export a labeled succesion diagram to graphml format.
 
 
     
-# Module `PyStableMotifs.Format` {#PyStableMotifs.Format}
+# Module `pystablemotifs.format` {#id}
 
 
 
@@ -1382,7 +1320,7 @@ Export a labeled succesion diagram to graphml format.
 
 
     
-### Function `bnet2sympy` {#PyStableMotifs.Format.bnet2sympy}
+### Function `bnet2sympy` {#id}
 
 
 
@@ -1407,35 +1345,7 @@ Converts a BNet string expression to a sympy string expression.
 
 
     
-### Function `bnetDNF2list` {#PyStableMotifs.Format.bnetDNF2list}
-
-
-
-
->     def bnetDNF2list(
->         bnet
->     )
-
-
-Converts a BNet string expression to a list of prime implicant dictionaries.
-Requires that the input be in disjunctive normal form, but this is not checked
-explicitly.
-
-###### Parameters
-
-**```bnet```** :&ensp;<code>str</code>
-:   BNET formatted expression in disjunctive normal form.
-
-###### Returns
-
-<code>list</code> of <code>partial state dictionaries</code>
-:   Variable states specified by each dictionary are to be thought of as "AND"-
-    connected, and the dictionaries as "OR"-connected.
-
-
-
-    
-### Function `booleannet2bnet` {#PyStableMotifs.Format.booleannet2bnet}
+### Function `booleannet2bnet` {#id}
 
 
 
@@ -1466,40 +1376,7 @@ Also replaces ~ with !
 
 
     
-### Function `build_rule_using_bnetDNFs` {#PyStableMotifs.Format.build_rule_using_bnetDNFs}
-
-
-
-
->     def build_rule_using_bnetDNFs(
->         expr0,
->         expr1
->     )
-
-
-Converts a BNet string expression (expr1) and its negation (expr0) to
-a PyBoolNet rule list. Note that this function does not test for consistency
-between expr0 and expr1.
-
-###### Parameters
-
-**```expr0```** :&ensp;<code>str</code>
-:   Rule, in BNET format, for the "OFF" state of a variable.
-
-
-**```expr1```** :&ensp;<code>str</code>
-:   Rule, in BNET format, for the "ON" state of a variable.
-
-###### Returns
-
-<code>PyBoolNet rule list</code>
-:   The complementary expressions as they would appear in a PyBoolNet primes
-    dictionary for a variable whose update rule is given by expr1.
-
-
-
-    
-### Function `cellcollective2bnet` {#PyStableMotifs.Format.cellcollective2bnet}
+### Function `cellcollective2bnet` {#id}
 
 
 
@@ -1530,7 +1407,7 @@ Also replaces ~ with !
 
 
     
-### Function `create_primes` {#PyStableMotifs.Format.create_primes}
+### Function `create_primes` {#id}
 
 
 
@@ -1541,12 +1418,14 @@ Also replaces ~ with !
 >     )
 
 
-Convert a BooleanNet or BNET string into a PyBoolNet primes dictionary.
+Convert a BooleanNet or BNET string into a pyboolnet primes dictionary.
 
 ###### Parameters
 
 **```rules```** :&ensp;<code>str</code>
 :   BooleanNet or BNET formatted rules. Hybrid formats are accepted as well.
+    For the CellCollective format, use import_primes to read rules from the
+    relevant files.
 
 
 **```remove_constants```** :&ensp;<code>bool</code>
@@ -1555,13 +1434,13 @@ Convert a BooleanNet or BNET string into a PyBoolNet primes dictionary.
 
 ###### Returns
 
-<code>PyBoolNet primes dictionary</code>
-:   Update rules in PyBoolNet format.
+<code>pyboolnet primes dictionary</code>
+:   Update rules in pyboolnet format.
 
 
 
     
-### Function `implicant2bnet` {#PyStableMotifs.Format.implicant2bnet}
+### Function `implicant2bnet` {#id}
 
 
 
@@ -1587,7 +1466,7 @@ e.g., {'A':1,'B':0} returns 'A & !B'
 
 
     
-### Function `import_primes` {#PyStableMotifs.Format.import_primes}
+### Function `import_primes` {#id}
 
 
 
@@ -1599,7 +1478,7 @@ e.g., {'A':1,'B':0} returns 'A & !B'
 >     )
 
 
-Import boolean rules from file and return PyBoolNet formatted primes list.
+Import boolean rules from file and return pyboolnet formatted primes list.
 
 ###### Parameters
 
@@ -1621,46 +1500,13 @@ Import boolean rules from file and return PyBoolNet formatted primes list.
 
 ###### Returns
 
-<code>PyBoolNet primes dictionary</code>
-:   Update rules in PyBoolNet format.
+<code>pyboolnet primes dictionary</code>
+:   Update rules in pyboolnet format.
 
 
 
     
-### Function `longbnet2primes` {#PyStableMotifs.Format.longbnet2primes}
-
-
-
-
->     def longbnet2primes(
->         BNET,
->         remove_constants=False
->     )
-
-
-A modified version of PyBoolNet's bnet2primes that does not do path-checking,
-as this can cause errors if the bnet rules are very long. Assumes BNET is a
-bnet string, not a file.
-
-###### Parameters
-
-**```BNET```** :&ensp;<code>str</code>
-:   BNET formatted rules to convert.
-
-
-**```remove_constants```** :&ensp;<code>bool</code>
-:   Whether or not to remove and percolate constant input values (the default
-    is False).
-
-###### Returns
-
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
-:   Update rules in PyBoolNet format.
-
-
-
-    
-### Function `pretty_print_prime_rules` {#PyStableMotifs.Format.pretty_print_prime_rules}
+### Function `pretty_print_prime_rules` {#id}
 
 
 
@@ -1670,19 +1516,19 @@ bnet string, not a file.
 >     )
 
 
-Prints PyBoolNet a prime dictionary as Boolean rules
+Prints pyboolnet a prime dictionary as Boolean rules
 The output format is of the form:
 A* = B & C | !D, for example.
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules to print.
 
 
 
     
-### Function `pretty_print_primes` {#PyStableMotifs.Format.pretty_print_primes}
+### Function `pretty_print_primes` {#id}
 
 
 
@@ -1692,18 +1538,18 @@ A* = B & C | !D, for example.
 >     )
 
 
-Prints PyBoolNet a prime dictionary in a more readable format. Prints both
+Prints pyboolnet a prime dictionary in a more readable format. Prints both
 state updates (1 and 0).
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules to print.
 
 
 
     
-### Function `pretty_print_rspace` {#PyStableMotifs.Format.pretty_print_rspace}
+### Function `pretty_print_rspace` {#id}
 
 
 
@@ -1716,12 +1562,12 @@ state updates (1 and 0).
 
 
 Produces string representation of the Boolean rule describing the input
-rspace L (see RestrictSpace.rspace).
+rspace L (see restrict_space.rspace).
 
 ###### Parameters
 
 **```L```** :&ensp;<code>rspace list</code>
-:   Restrict space list (see RestrictSpace.rspace for details).
+:   Restrict space list (see restrict_space.rspace for details).
 
 
 **```simplify```** :&ensp;<code>bool</code>
@@ -1739,7 +1585,7 @@ rspace L (see RestrictSpace.rspace).
 
 
     
-### Function `primes2bnet` {#PyStableMotifs.Format.primes2bnet}
+### Function `primes2bnet` {#id}
 
 
 
@@ -1749,13 +1595,13 @@ rspace L (see RestrictSpace.rspace).
 >     )
 
 
-A simpler version of PyBoolNet's FileExchange.primes2bnet function with
+A simpler version of pyboolnet's file_exchange.primes2bnet function with
 fewer options and less organized output. Should handle prime rules with
-tautologies better than the PyBoolNet version though.
+tautologies better than the pyboolnet version though.
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules to convert.
 
 ###### Returns
@@ -1766,7 +1612,7 @@ tautologies better than the PyBoolNet version though.
 
 
     
-### Function `primes2booleannet` {#PyStableMotifs.Format.primes2booleannet}
+### Function `primes2booleannet` {#id}
 
 
 
@@ -1777,11 +1623,11 @@ tautologies better than the PyBoolNet version though.
 >     )
 
 
-Convert a PyBoolNet primes dictionary to a BooleanNet string reperesentation.
+Convert a pyboolnet primes dictionary to a BooleanNet string reperesentation.
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules to convert.
 
 
@@ -1798,7 +1644,7 @@ Convert a PyBoolNet primes dictionary to a BooleanNet string reperesentation.
 
 
     
-### Function `remove_comment_lines` {#PyStableMotifs.Format.remove_comment_lines}
+### Function `remove_comment_lines` {#id}
 
 
 
@@ -1828,7 +1674,7 @@ Removes commented out lines from stream, e.g., those starting with '#'.
 
 
     
-### Function `rule2bnet` {#PyStableMotifs.Format.rule2bnet}
+### Function `rule2bnet` {#id}
 
 
 
@@ -1838,12 +1684,12 @@ Removes commented out lines from stream, e.g., those starting with '#'.
 >     )
 
 
-Converts a PyBoolNet prime rule into a BNet string.
+Converts a pyboolnet prime rule into a BNet string.
 e.g., [{'A':1,'B':0},{'C':0}] returns 'A & !B | !C'
 
 ###### Parameters
 
-**```rule```** :&ensp;<code>list</code> of <code>PyBoolNet partial states</code>
+**```rule```** :&ensp;<code>list</code> of <code>pyboolnet partial states</code>
 :   Update rule to convert.
 
 ###### Returns
@@ -1854,7 +1700,7 @@ e.g., [{'A':1,'B':0},{'C':0}] returns 'A & !B | !C'
 
 
     
-### Function `statedict2str` {#PyStableMotifs.Format.statedict2str}
+### Function `statedict2str` {#id}
 
 
 
@@ -1881,7 +1727,7 @@ Converts a state dictionary to a statestring using alphabetical sorting.
 
 
     
-### Function `statelist2dict` {#PyStableMotifs.Format.statelist2dict}
+### Function `statelist2dict` {#id}
 
 
 
@@ -1897,7 +1743,7 @@ Converts a collection of statestrings to a dictionary.
 ###### Parameters
 
 **```names```** :&ensp;<code>list</code> of <code>str</code>
-:   An ordered list of variable names; (alphabetical order is PyBoolNet's
+:   An ordered list of variable names; (alphabetical order is pyboolnet's
     default, e.g. sorted(primes)).
 
 
@@ -1915,7 +1761,7 @@ Converts a collection of statestrings to a dictionary.
 
 
     
-### Function `statestring2dict` {#PyStableMotifs.Format.statestring2dict}
+### Function `statestring2dict` {#id}
 
 
 
@@ -1936,7 +1782,7 @@ corresponding dictionary representation.
 
 
 **```names```** :&ensp;<code>list</code> of <code>str</code>
-:   An ordered list of variable names; (alphabetical order is PyBoolNet's
+:   An ordered list of variable names; (alphabetical order is pyboolnet's
     default, e.g. sorted(primes)).
 
 ###### Returns
@@ -1948,7 +1794,7 @@ corresponding dictionary representation.
 
 
     
-### Function `sympy2bnet` {#PyStableMotifs.Format.sympy2bnet}
+### Function `sympy2bnet` {#id}
 
 
 
@@ -1976,7 +1822,7 @@ Converts a sympy string expression to a BNET string expression.
 
 
     
-# Module `PyStableMotifs.RandomBooleanNetworks` {#PyStableMotifs.RandomBooleanNetworks}
+# Module `pystablemotifs.random_boolean_networks` {#id}
 
 
 
@@ -1988,7 +1834,7 @@ Converts a sympy string expression to a BNET string expression.
 
 
     
-### Function `Binary_Rule_From_Decimal` {#PyStableMotifs.RandomBooleanNetworks.Binary_Rule_From_Decimal}
+### Function `Binary_Rule_From_Decimal` {#id}
 
 
 
@@ -2018,7 +1864,7 @@ Convert single decimal rule to its binary form.
 
 
     
-### Function `Binary_Rules_From_Decimal` {#PyStableMotifs.RandomBooleanNetworks.Binary_Rules_From_Decimal}
+### Function `Binary_Rules_From_Decimal` {#id}
 
 
 
@@ -2043,60 +1889,7 @@ Construct Binary format rules from decimal format rules.
 
 
     
-### Function `Random_Boolean_Network_Ensemble_Kauffman` {#PyStableMotifs.RandomBooleanNetworks.Random_Boolean_Network_Ensemble_Kauffman}
-
-
-
-
->     def Random_Boolean_Network_Ensemble_Kauffman(
->         N,
->         K,
->         p,
->         N_ensemble,
->         seed=1000,
->         write_Boolean_network=False
->     )
-
-
-Generate a sample from the Kauffman NK RBN ensemble.
-
-###### Parameters
-
-**```N```** :&ensp;<code>int</code>
-:   Number of nodes of RBN.
-
-
-**```K```** :&ensp;<code>int</code>
-:   Number of inputs of each node in the RBN.
-
-
-**```p```** :&ensp;<code>float</code>
-:   Probability that each entry in each truth table output column is equal to 1.
-
-
-**```N_ensemble```** :&ensp;<code>int</code>
-:   Number of networks to generate.
-
-
-**```seed```** :&ensp;<code>int</code>
-:   Random seed for generating the RBN ensemble (the default is 1000).
-
-
-**```write_Boolean_network```** :&ensp;<code>bool</code>
-:   Whether to write each network in the ensemble as a CSV file in a new
-    directory (the default is False).
-
-###### Returns
-
-**```RBN_ensemble_rules```** :&ensp;<code>list</code> of <code>str</code>
-:   Each string are the Boolea rules of an ensemble in booleannet format.
-    Each element in RBN_ensemble_rules can be used as an input for the
-    Format.booleannet2bnet function.
-
-
-
-    
-### Function `String_Rule_From_Binary` {#PyStableMotifs.RandomBooleanNetworks.String_Rule_From_Binary}
+### Function `String_Rule_From_Binary` {#id}
 
 
 
@@ -2126,7 +1919,7 @@ Convert binary rule to BooleanNet format.
 
 
     
-### Function `String_Rules_From_Binary` {#PyStableMotifs.RandomBooleanNetworks.String_Rules_From_Binary}
+### Function `String_Rules_From_Binary` {#id}
 
 
 
@@ -2151,7 +1944,7 @@ Convert from binary dictionary rule format to BooleanNet format.
 
 
     
-### Function `get_criticality_K_Kauffman` {#PyStableMotifs.RandomBooleanNetworks.get_criticality_K_Kauffman}
+### Function `get_criticality_K_Kauffman` {#id}
 
 
 
@@ -2176,7 +1969,7 @@ The Kauffman RBN is at criticality when K = 2/(p(1-p)).
 
 
     
-### Function `get_criticality_p_Kauffman` {#PyStableMotifs.RandomBooleanNetworks.get_criticality_p_Kauffman}
+### Function `get_criticality_p_Kauffman` {#id}
 
 
 
@@ -2201,12 +1994,65 @@ The Kauffman RBN is at criticality when K = 2/(p(1-p)).
 
 
     
-### Function `read_Boolean_network_decimal` {#PyStableMotifs.RandomBooleanNetworks.read_Boolean_network_decimal}
+### Function `random_boolean_network_ensemble_kauffman` {#id}
 
 
 
 
->     def read_Boolean_network_decimal(
+>     def random_boolean_network_ensemble_kauffman(
+>         N,
+>         K,
+>         p,
+>         N_ensemble,
+>         seed=1000,
+>         write_boolean_network=False
+>     )
+
+
+Generate a sample from the Kauffman NK RBN ensemble.
+
+###### Parameters
+
+**```N```** :&ensp;<code>int</code>
+:   Number of nodes of RBN.
+
+
+**```K```** :&ensp;<code>int</code>
+:   Number of inputs of each node in the RBN.
+
+
+**```p```** :&ensp;<code>float</code>
+:   Probability that each entry in each truth table output column is equal to 1.
+
+
+**```N_ensemble```** :&ensp;<code>int</code>
+:   Number of networks to generate.
+
+
+**```seed```** :&ensp;<code>int</code>
+:   Random seed for generating the RBN ensemble (the default is 1000).
+
+
+**```write_boolean_network```** :&ensp;<code>bool</code>
+:   Whether to write each network in the ensemble as a CSV file in a new
+    directory (the default is False).
+
+###### Returns
+
+**```RBN_ensemble_rules```** :&ensp;<code>list</code> of <code>str</code>
+:   Each string are the Boolea rules of an ensemble in booleannet format.
+    Each element in RBN_ensemble_rules can be used as an input for the
+    format.booleannet2bnet function.
+
+
+
+    
+### Function `read_boolean_network_decimal` {#id}
+
+
+
+
+>     def read_boolean_network_decimal(
 >         filename
 >     )
 
@@ -2226,12 +2072,12 @@ Imports rules from csv in decimal format.
 
 
     
-### Function `write_Boolean_network_decimal` {#PyStableMotifs.RandomBooleanNetworks.write_Boolean_network_decimal}
+### Function `write_boolean_network_decimal` {#id}
 
 
 
 
->     def write_Boolean_network_decimal(
+>     def write_boolean_network_decimal(
 >         node_rules_decimal_dictionary,
 >         filename
 >     )
@@ -2256,7 +2102,7 @@ Write the decimal format of the Boolean rules to file.
 
 
     
-### Class `RandomBooleanNetworks` {#PyStableMotifs.RandomBooleanNetworks.RandomBooleanNetworks}
+### Class `RandomBooleanNetworks` {#id}
 
 
 
@@ -2298,7 +2144,7 @@ generate ensembles of RBN by generating multiple RandomBooleanNetworks objects.
 :   BooleanNet representation of update rules.
 
 
-**```random_Boolean_type```** :&ensp;<code>str</code>
+**```random_boolean_type```** :&ensp;<code>str</code>
 :   Descrpition of generative process. Currently only "Kauffman NK" is
     implemented.
 
@@ -2307,7 +2153,7 @@ generate ensembles of RBN by generating multiple RandomBooleanNetworks objects.
 :   Number of nodes in the Boolean network.
 
 
-**```random_Boolean_Network_parameters```** :&ensp;<code>list</code>
+**```random_boolean_Network_parameters```** :&ensp;<code>list</code>
 :   For Kauffman NK generation -
         [K,p], where K is the in-degree and p is the bias. K is a positive
         integer less than or equal to N, and p is a float between 0 and 1
@@ -2334,14 +2180,14 @@ generate ensembles of RBN by generating multiple RandomBooleanNetworks objects.
 
 
     
-##### Method `Random_Boolean_Network` {#PyStableMotifs.RandomBooleanNetworks.RandomBooleanNetworks.Random_Boolean_Network}
+##### Method `random_boolean_network` {#id}
 
 
 
 
->     def Random_Boolean_Network(
+>     def random_boolean_network(
 >         self,
->         random_Boolean_type,
+>         random_boolean_type,
 >         N,
 >         rbn_parameters,
 >         seed=None,
@@ -2353,7 +2199,7 @@ Construct network using specified generative process.
 
 ###### Parameters
 
-**```random_Boolean_type```** :&ensp;<code>str</code>
+**```random_boolean_type```** :&ensp;<code>str</code>
 :   Descrpition of generative process. Currently only "Kauffman NK" is
     implemented.
 
@@ -2362,7 +2208,7 @@ Construct network using specified generative process.
 :   Number of nodes in the Boolean network.
 
 
-**```random_Boolean_Network_parameters```** :&ensp;<code>list</code>
+**```random_boolean_Network_parameters```** :&ensp;<code>list</code>
 :   For Kauffman NK generation -
         [K,p], where K is the in-degree and p is the bias. K is a positive
         integer less than or equal to N, and p is a float between 0 and 1
@@ -2379,12 +2225,12 @@ Construct network using specified generative process.
 
 
     
-##### Method `Random_Boolean_Network_Rules` {#PyStableMotifs.RandomBooleanNetworks.RandomBooleanNetworks.Random_Boolean_Network_Rules}
+##### Method `random_boolean_network_Rules` {#id}
 
 
 
 
->     def Random_Boolean_Network_Rules(
+>     def random_boolean_network_Rules(
 >         self
 >     )
 
@@ -2395,7 +2241,7 @@ attribute.
 
 
     
-# Module `PyStableMotifs.Reduction` {#PyStableMotifs.Reduction}
+# Module `pystablemotifs.reduction` {#id}
 
 
 
@@ -2407,7 +2253,7 @@ attribute.
 
 
     
-### Function `delete_node` {#PyStableMotifs.Reduction.delete_node}
+### Function `delete_node` {#id}
 
 
 
@@ -2426,7 +2272,7 @@ deletion.
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 
@@ -2435,7 +2281,7 @@ deletion.
 
 ###### Returns
 
-**```new_primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```new_primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   The reduced primes.
 
 
@@ -2445,7 +2291,7 @@ deletion.
 
 
     
-### Function `deletion_reduction` {#PyStableMotifs.Reduction.deletion_reduction}
+### Function `deletion_reduction` {#id}
 
 
 
@@ -2462,7 +2308,7 @@ removal. Deletion proceeds until all remaining nodes have self-loops.
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 
@@ -2473,7 +2319,7 @@ removal. Deletion proceeds until all remaining nodes have self-loops.
 
 ###### Returns
 
-**```reduced```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```reduced```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   The reduced primes.
 
 
@@ -2483,7 +2329,7 @@ removal. Deletion proceeds until all remaining nodes have self-loops.
 
 
     
-### Function `mediator_reduction` {#PyStableMotifs.Reduction.mediator_reduction}
+### Function `mediator_reduction` {#id}
 
 
 
@@ -2500,12 +2346,12 @@ restrictive version of the deletion reduction method of Veliz-Cuba (2011).
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 ###### Returns
 
-**```reduced```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```reduced```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   The reduced primes.
 
 
@@ -2515,7 +2361,7 @@ restrictive version of the deletion reduction method of Veliz-Cuba (2011).
 
 
     
-### Function `reduce_primes` {#PyStableMotifs.Reduction.reduce_primes}
+### Function `reduce_primes` {#id}
 
 
 
@@ -2534,12 +2380,12 @@ Simplifies boolean rules when some nodes are held fixed
 :   Node states to be held fixed.
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 ###### Returns
 
-**```reduced_primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```reduced_primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Simplified update rules
 
 
@@ -2549,7 +2395,7 @@ Simplifies boolean rules when some nodes are held fixed
 
 
     
-### Function `remove_outdag` {#PyStableMotifs.Reduction.remove_outdag}
+### Function `remove_outdag` {#id}
 
 
 
@@ -2564,12 +2410,12 @@ part of the network does not influence the attractor repertoire.
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 ###### Returns
 
-**```reduced```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```reduced```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   The reduced primes.
 
 
@@ -2579,7 +2425,7 @@ part of the network does not influence the attractor repertoire.
 
 
     
-### Function `simplify_primes` {#PyStableMotifs.Reduction.simplify_primes}
+### Function `simplify_primes` {#id}
 
 
 
@@ -2589,22 +2435,22 @@ part of the network does not influence the attractor repertoire.
 >     )
 
 
-Simplifies PyBoolNet primes (e.g., A | A & B becomes A)
+Simplifies pyboolnet primes (e.g., A | A & B becomes A)
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Rules to simplify.
 
 ###### Returns
 
-<code>PyBoolNet primes dictionary</code>
+<code>pyboolnet primes dictionary</code>
 :   Simplified rules.
 
 
 
     
-### Function `simplify_using_expression_and_negation` {#PyStableMotifs.Reduction.simplify_using_expression_and_negation}
+### Function `simplify_using_expression_and_negation` {#id}
 
 
 
@@ -2650,7 +2496,7 @@ node = expr1 = !expr0 (does not check that expr1=!expr0)
 
 
     
-### Class `MotifReduction` {#PyStableMotifs.Reduction.MotifReduction}
+### Class `MotifReduction` {#id}
 
 
 
@@ -2680,7 +2526,7 @@ during the stable motif succession diagram construction algorithm.
     logical domain of influence.
 
 
-**```reduced_primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```reduced_primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules for the reduced network.
 
 
@@ -2694,7 +2540,7 @@ during the stable motif succession diagram construction algorithm.
 
 
 **```max_stable_motifs```** :&ensp;<code>int</code>
-:   Maximum number of output lines for PyBoolNet to process from the
+:   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
 
 
@@ -2713,7 +2559,7 @@ during the stable motif succession diagram construction algorithm.
     logical domain of influence.
 
 
-**```time_reverse_primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```time_reverse_primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules of the time reversed reduced system.
 
 
@@ -2742,14 +2588,14 @@ during the stable motif succession diagram construction algorithm.
 **```rspace```** :&ensp;<code>rspace list</code>
 :   The rspace, or "restrict space" of the reduced network, describing a
     necessary condition for the system to avoid activating additional
-    stable motifs (see RestrictSpace.py for further details).
+    stable motifs (see restrict_space.py for further details).
 
 
 **```motif_history```** :&ensp;<code>list</code> of <code>partial state dictionaries</code>
 :   Stable motifs that can lock in to give the reduced network (in order)
 
 
-**```reduced_primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```reduced_primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules for the reduced network.
 
 
@@ -2766,13 +2612,13 @@ during the stable motif succession diagram construction algorithm.
     states are satisfied
 
 
-**```rspace_update_primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```rspace_update_primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   The update rules obtained from simplifying under the assumption that the
     fixed_rspace_nodes are fixed
 
 
-**```conserved_functions```** :&ensp;<code>list</code> of <code>PyBoolNet expressions</code>
-:   Boolean functions that are constant within every attractor, in PyBoolNet
+**```conserved_functions```** :&ensp;<code>list</code> of <code>pyboolnet expressions</code>
+:   Boolean functions that are constant within every attractor, in pyboolnet
     update rule format
 
 
@@ -2809,7 +2655,7 @@ during the stable motif succession diagram construction algorithm.
     attractors that are not in any of its subreductions.
 
 
-**```delprimes```** :&ensp;<code>PyBoolNet prime dictionary</code>
+**```delprimes```** :&ensp;<code>pyboolnet prime dictionary</code>
 :   Update rules for the system's deletion projection. Steady states and stable
     motif activation are preserved. These rules may yield additional, spurious
     complex attractors.
@@ -2837,7 +2683,7 @@ during the stable motif succession diagram construction algorithm.
 
 
     
-##### Method `build_K0` {#PyStableMotifs.Reduction.MotifReduction.build_K0}
+##### Method `build_K0` {#id}
 
 
 
@@ -2858,7 +2704,7 @@ that are not part of any motif-avoidant attractor.
 
 
     
-##### Method `build_deletion_STG` {#PyStableMotifs.Reduction.MotifReduction.build_deletion_STG}
+##### Method `build_deletion_STG` {#id}
 
 
 
@@ -2876,13 +2722,13 @@ found here may be spurious.
 ###### Parameters
 
 **```max_stable_motifs```** :&ensp;<code>int</code>
-:   Maximum number of output lines for PyBoolNet to process from the
+:   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
 
 
 
     
-##### Method `build_inspace` {#PyStableMotifs.Reduction.MotifReduction.build_inspace}
+##### Method `build_inspace` {#id}
 
 
 
@@ -2920,7 +2766,7 @@ motifs to which (partial) state ss belongs.
 
 
     
-##### Method `build_partial_STG` {#PyStableMotifs.Reduction.MotifReduction.build_partial_STG}
+##### Method `build_partial_STG` {#id}
 
 
 
@@ -2934,7 +2780,7 @@ Build a piece of the STG that is guaranteed to contain all
 motif-avoidant attractors of the reduction.
 
     
-##### Method `find_constants_in_complex_attractor` {#PyStableMotifs.Reduction.MotifReduction.find_constants_in_complex_attractor}
+##### Method `find_constants_in_complex_attractor` {#id}
 
 
 
@@ -2962,7 +2808,7 @@ that are constant in the full complex attractor.
 
 
     
-##### Method `find_deletion_no_motif_attractors` {#PyStableMotifs.Reduction.MotifReduction.find_deletion_no_motif_attractors}
+##### Method `find_deletion_no_motif_attractors` {#id}
 
 
 
@@ -2978,13 +2824,13 @@ Identify motif-avoidant attractors in the deletion projection.
 ###### Parameters
 
 **```max_stable_motifs```** :&ensp;<code>int</code>
-:   Maximum number of output lines for PyBoolNet to process from the
+:   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
 
 
 
     
-##### Method `find_no_motif_attractors` {#PyStableMotifs.Reduction.MotifReduction.find_no_motif_attractors}
+##### Method `find_no_motif_attractors` {#id}
 
 
 
@@ -2998,7 +2844,7 @@ Find attractors of the reduction that are not present in any of its
 subreductions.
 
     
-##### Method `generate_attr_dict_list` {#PyStableMotifs.Reduction.MotifReduction.generate_attr_dict_list}
+##### Method `generate_attr_dict_list` {#id}
 
 
 
@@ -3034,7 +2880,7 @@ not in any of its subreductions.
 
 
     
-##### Method `in_motif` {#PyStableMotifs.Reduction.MotifReduction.in_motif}
+##### Method `in_motif` {#id}
 
 
 
@@ -3065,7 +2911,7 @@ Tests whether the (partial) state ss is in any stable motifs
 
 
     
-##### Method `merge_source_motifs` {#PyStableMotifs.Reduction.MotifReduction.merge_source_motifs}
+##### Method `merge_source_motifs` {#id}
 
 
 
@@ -3089,7 +2935,7 @@ If A* = A or X (i.e., A=1 is a stable motif), then A- = ~(~A | X) = A & ~X, so A
 argument applies for the A=0 stable motif. Thus, a motif is only a source motif if it is also a time-reverse motif.
 
     
-##### Method `simple_merge_source_motifs` {#PyStableMotifs.Reduction.MotifReduction.simple_merge_source_motifs}
+##### Method `simple_merge_source_motifs` {#id}
 
 
 
@@ -3113,8 +2959,8 @@ To be used in the case of MPBN update.
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
-:   PyBoolNet update rules whose source node stable motifs are to be merged.
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
+:   pyboolnet update rules whose source node stable motifs are to be merged.
 
 
 **```MPBN_update```** :&ensp;<code>bool</code>
@@ -3135,7 +2981,7 @@ To be used in the case of MPBN update.
 
 
     
-##### Method `summary` {#PyStableMotifs.Reduction.MotifReduction.summary}
+##### Method `summary` {#id}
 
 
 
@@ -3168,7 +3014,7 @@ Print a summary of the reduction.
 
 
     
-# Module `PyStableMotifs.RestrictSpace` {#PyStableMotifs.RestrictSpace}
+# Module `pystablemotifs.restrict_space` {#id}
 
 
 
@@ -3180,7 +3026,7 @@ Print a summary of the reduction.
 
 
     
-### Function `attractor_space_candidates` {#PyStableMotifs.RestrictSpace.attractor_space_candidates}
+### Function `attractor_space_candidates` {#id}
 
 
 
@@ -3206,13 +3052,13 @@ function of these is also conserved in attractors.
 
 ###### Returns
 
-<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
-:   Restrict space list (see RestrictSpace.rspace for details).
+<code>[rspace()](#pystablemotifs.restrict\_space.rspace "pystablemotifs.restrict\_space.rspace") list</code>
+:   Restrict space list (see restrict_space.rspace for details).
 
 
 
     
-### Function `fixed_rspace_nodes` {#PyStableMotifs.RestrictSpace.fixed_rspace_nodes}
+### Function `fixed_rspace_nodes` {#id}
 
 
 
@@ -3229,11 +3075,11 @@ constraint L to be satisfied in the system given by primes.
 
 ###### Parameters
 
-**```L```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
-:   Restrict space list (see RestrictSpace.rspace for details).
+**```L```** :&ensp;<code>[rspace()](#pystablemotifs.restrict\_space.rspace "pystablemotifs.restrict\_space.rspace") list</code>
+:   Restrict space list (see restrict_space.rspace for details).
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rule for the system.
 
 ###### Returns
@@ -3245,7 +3091,7 @@ constraint L to be satisfied in the system given by primes.
 
 
     
-### Function `partial_state_contradicts_rspace` {#PyStableMotifs.RestrictSpace.partial_state_contradicts_rspace}
+### Function `partial_state_contradicts_rspace` {#id}
 
 
 
@@ -3264,8 +3110,8 @@ Tests to see if state lies entirely outside the rspace L.
 :   State, or partial state to test.
 
 
-**```L```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
-:   Restrict space list (see RestrictSpace.rspace for details).
+**```L```** :&ensp;<code>[rspace()](#pystablemotifs.restrict\_space.rspace "pystablemotifs.restrict\_space.rspace") list</code>
+:   Restrict space list (see restrict_space.rspace for details).
 
 ###### Returns
 
@@ -3275,7 +3121,7 @@ Tests to see if state lies entirely outside the rspace L.
 
 
     
-### Function `reduce_rspace` {#PyStableMotifs.RestrictSpace.reduce_rspace}
+### Function `reduce_rspace` {#id}
 
 
 
@@ -3292,22 +3138,22 @@ specify these trivially fixed nodes (i.e., they are factored on the left).
 
 ###### Parameters
 
-**```L```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
-:   Restrict space list (see RestrictSpace.rspace for details).
+**```L```** :&ensp;<code>[rspace()](#pystablemotifs.restrict\_space.rspace "pystablemotifs.restrict\_space.rspace") list</code>
+:   Restrict space list (see restrict_space.rspace for details).
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rule for the system.
 
 ###### Returns
 
-**```L2```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
-:   Reduced restrict space list (see RestrictSpace.rspace for details).
+**```L2```** :&ensp;<code>[rspace()](#pystablemotifs.restrict\_space.rspace "pystablemotifs.restrict\_space.rspace") list</code>
+:   Reduced restrict space list (see restrict_space.rspace for details).
 
 
 
     
-### Function `reduce_rspace_string` {#PyStableMotifs.RestrictSpace.reduce_rspace_string}
+### Function `reduce_rspace_string` {#id}
 
 
 
@@ -3342,7 +3188,7 @@ Replaces variables in the string s with the fixed values given by the dictionary
 
 
     
-### Function `rspace` {#PyStableMotifs.RestrictSpace.rspace}
+### Function `rspace` {#id}
 
 
 
@@ -3385,18 +3231,18 @@ should be read as L = (!A&B | !C) & (!B & D | A)
 :   Stable motifs, i.e., maximum trap spaces for the time-reversed system.
 
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rule for the system.
 
 ###### Returns
 
-**```L```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
+**```L```** :&ensp;<code>[rspace()](#pystablemotifs.restrict\_space.rspace "pystablemotifs.restrict\_space.rspace") list</code>
 :   Description of rspace in list form (see summary above for details).
 
 
 
     
-### Function `state_in_rspace` {#PyStableMotifs.RestrictSpace.state_in_rspace}
+### Function `state_in_rspace` {#id}
 
 
 
@@ -3415,8 +3261,8 @@ Tests to see if state is in the rspace L.
 :   State, or partial state to test.
 
 
-**```L```** :&ensp;<code>[rspace()](#PyStableMotifs.RestrictSpace.rspace "PyStableMotifs.RestrictSpace.rspace") list</code>
-:   Restrict space list (see RestrictSpace.rspace for details).
+**```L```** :&ensp;<code>[rspace()](#pystablemotifs.restrict\_space.rspace "pystablemotifs.restrict\_space.rspace") list</code>
+:   Restrict space list (see restrict_space.rspace for details).
 
 ###### Returns
 
@@ -3429,7 +3275,7 @@ Tests to see if state is in the rspace L.
 
 
     
-# Module `PyStableMotifs.Succession` {#PyStableMotifs.Succession}
+# Module `pystablemotifs.succession` {#id}
 
 
 
@@ -3441,7 +3287,7 @@ Tests to see if state is in the rspace L.
 
 
     
-### Function `build_succession_diagram` {#PyStableMotifs.Succession.build_succession_diagram}
+### Function `build_succession_diagram` {#id}
 
 
 
@@ -3465,7 +3311,7 @@ class (using, e.g., AttractorRepertoire.from_primes).
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet primes dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet primes dictionary</code>
 :   Update rules.
 
 
@@ -3479,7 +3325,7 @@ class (using, e.g., AttractorRepertoire.from_primes).
     network to be added to the diagram.
 
 
-**```diagram```** :&ensp;<code>[SuccessionDiagram](#PyStableMotifs.Succession.SuccessionDiagram "PyStableMotifs.Succession.SuccessionDiagram")</code>
+**```diagram```** :&ensp;<code>[SuccessionDiagram](#pystablemotifs.succession.SuccessionDiagram "pystablemotifs.succession.SuccessionDiagram")</code>
 :   Used only for recursion. The SuccessionDiagram object that is under
     construction.
 
@@ -3502,7 +3348,7 @@ class (using, e.g., AttractorRepertoire.from_primes).
 
 
 **```max_stable_motifs```** :&ensp;<code>int</code>
-:   Maximum number of output lines for PyBoolNet to process from the
+:   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
 
 
@@ -3512,7 +3358,7 @@ class (using, e.g., AttractorRepertoire.from_primes).
 
 ###### Returns
 
-<code>[SuccessionDiagram](#PyStableMotifs.Succession.SuccessionDiagram "PyStableMotifs.Succession.SuccessionDiagram")</code>
+<code>[SuccessionDiagram](#pystablemotifs.succession.SuccessionDiagram "pystablemotifs.succession.SuccessionDiagram")</code>
 :   The succession diagram for the input update rules.
 
 
@@ -3523,7 +3369,7 @@ class (using, e.g., AttractorRepertoire.from_primes).
 
 
     
-### Class `SuccessionDiagram` {#PyStableMotifs.Succession.SuccessionDiagram}
+### Class `SuccessionDiagram` {#id}
 
 
 
@@ -3537,7 +3383,7 @@ Zanudo and Albert (2015) or Rozum et al. (2021).
 #### Attributes
 
 **```motif_reduction_dict```** :&ensp;<code>dictionary</code>
-:   MotifReduction-valued dictionary with integer (index) keys (see Reduction.py).
+:   MotifReduction-valued dictionary with integer (index) keys (see reduction.py).
 
 
 **```digraph```** :&ensp;<code>networkx.DiGraph</code>
@@ -3557,7 +3403,7 @@ Zanudo and Albert (2015) or Rozum et al. (2021).
 
 
     
-##### Method `add_motif_permutation` {#PyStableMotifs.Succession.SuccessionDiagram.add_motif_permutation}
+##### Method `add_motif_permutation` {#id}
 
 
 
@@ -3584,7 +3430,7 @@ MotifReduction object.
 
 
     
-##### Method `add_motif_reduction` {#PyStableMotifs.Succession.SuccessionDiagram.add_motif_reduction}
+##### Method `add_motif_reduction` {#id}
 
 
 
@@ -3607,7 +3453,7 @@ into the correct place in the diagram.
 
 
     
-##### Method `find_equivalent_reduction` {#PyStableMotifs.Succession.SuccessionDiagram.find_equivalent_reduction}
+##### Method `find_equivalent_reduction` {#id}
 
 
 
@@ -3636,7 +3482,7 @@ specified by fixed, if such an object exists (returns None otherwise).
 
 
     
-##### Method `find_motif_permutation` {#PyStableMotifs.Succession.SuccessionDiagram.find_motif_permutation}
+##### Method `find_motif_permutation` {#id}
 
 
 
@@ -3671,7 +3517,7 @@ reduction's index and the permutation that maps between the two histories.
 
 
     
-##### Method `get_motifs` {#PyStableMotifs.Succession.SuccessionDiagram.get_motifs}
+##### Method `get_motifs` {#id}
 
 
 
@@ -3694,7 +3540,7 @@ motifs and conditionally stable motifs (see, e.g., Deritei et al. 2019).
 
 
     
-##### Method `reduction_drivers` {#PyStableMotifs.Succession.SuccessionDiagram.reduction_drivers}
+##### Method `reduction_drivers` {#id}
 
 
 
@@ -3710,7 +3556,7 @@ motifs and conditionally stable motifs (see, e.g., Deritei et al. 2019).
 
 Find control strategies that lead to the reduced network specified by
 the target index. Several control strategies are implemented. See
-Succession.SuccessionDiagram.reprogram_to_trap_spaces for a detailed
+succession.SuccessionDiagram.reprogram_to_trap_spaces for a detailed
 description of control methods available. Generally, this method should
 not be used directly. Instead, use reprogram_to_trap_spaces.
 
@@ -3722,7 +3568,7 @@ not be used directly. Instead, use reprogram_to_trap_spaces.
 
 **```method```** :&ensp;<code>str</code>
 :   One of 'internal', 'minimal', or 'GRASP'. See
-    Succession.SuccessionDiagram.reprogram_to_trap_spaces for details.
+    succession.SuccessionDiagram.reprogram_to_trap_spaces for details.
 
 
 **```max_drivers```** :&ensp;<code>int</code>
@@ -3740,12 +3586,12 @@ not be used directly. Instead, use reprogram_to_trap_spaces.
 
 <code>list</code>
 :   Control strategies found; interpretation depends on method selected
-    See Succession.SuccessionDiagram.reprogram_to_trap_spaces for details.
+    See succession.SuccessionDiagram.reprogram_to_trap_spaces for details.
 
 
 
     
-##### Method `reductions_indices_with_states` {#PyStableMotifs.Succession.SuccessionDiagram.reductions_indices_with_states}
+##### Method `reductions_indices_with_states` {#id}
 
 
 
@@ -3779,7 +3625,7 @@ logically fixed.
 
 
     
-##### Method `reprogram_to_trap_spaces` {#PyStableMotifs.Succession.SuccessionDiagram.reprogram_to_trap_spaces}
+##### Method `reprogram_to_trap_spaces` {#id}
 
 
 
@@ -3824,7 +3670,7 @@ Find driver sets that lead to fixing the node states specified.
 
 
 **```GRASP_score_override```** :&ensp;<code>function</code>
-:   Optional heuristic score function override (see DomainOfInfluence.GRASP
+:   Optional heuristic score function override (see drivers.GRASP
     for details). Only used in GRASP methods (the default is None).
 
 ###### Returns
@@ -3893,7 +3739,7 @@ using the GRASP algorithm using GRASP_iterations iterations.
 
 
     
-# Module `PyStableMotifs.TimeReversal` {#PyStableMotifs.TimeReversal}
+# Module `pystablemotifs.time_reversal` {#id}
 
 
 
@@ -3905,7 +3751,7 @@ using the GRASP algorithm using GRASP_iterations iterations.
 
 
     
-### Function `time_reverse_primes` {#PyStableMotifs.TimeReversal.time_reverse_primes}
+### Function `time_reverse_primes` {#id}
 
 
 
@@ -3920,12 +3766,12 @@ The time reverse system has the same STG as the input system, but with each edge
 
 ###### Parameters
 
-**```primes```** :&ensp;<code>PyBoolNet prime dictionary</code>
+**```primes```** :&ensp;<code>pyboolnet prime dictionary</code>
 :   System update rules.
 
 ###### Returns
 
-**```trprimes```** :&ensp;<code>PyBoolNet prime dictionary</code>
+**```trprimes```** :&ensp;<code>pyboolnet prime dictionary</code>
 :   Time-reversed system update rules.
 
 
@@ -3933,4 +3779,4 @@ The time reverse system has the same STG as the input system, but with each edge
 
 
 -----
-Generated by *pdoc* 0.9.1 (<https://pdoc3.github.io>).
+Generated by *pdoc* 0.10.0 (<https://pdoc3.github.io>).

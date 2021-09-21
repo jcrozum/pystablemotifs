@@ -1,5 +1,6 @@
-import PyStableMotifs as sm
-import PyBoolNet as pbn
+import pystablemotifs as sm
+import pyboolnet.prime_implicants
+from pyboolnet.external.bnet2primes import bnet_text2primes
 
 import atexit
 import os
@@ -13,7 +14,7 @@ from timeit import default_timer
 # The old Java version of StableMotifs relies on Nashorn, which is removed from recent
 # Java versions. As a result, we need to specify a path to an old version of Java.
 java_path = "C:\\Users\\jcroz\\Documents\\Work\\StableMotifsJavaVersion\\OLDJAVA\\bin\\java.exe"
-jar_path = "C:\\Users\\jcroz\\Documents\\Work\\StableMotifsJavaVersion\\dist\\PyStableMotifs.jar"
+jar_path = "C:\\Users\\jcroz\\Documents\\Work\\StableMotifsJavaVersion\\dist\\pystablemotifs.jar"
 
 
 def JavaMotifTimes(filepath,verbose=False):
@@ -46,11 +47,11 @@ def JavaMotifTimes(filepath,verbose=False):
     return (atime,ctime)
 
 def CompareTimes(filepath,display=True):
-    p=sm.Format.import_primes(filepath,remove_constants=False)
+    p=sm.format.import_primes(filepath,remove_constants=False)
     a2013,c2013 = JavaMotifTimes(filepath)
 
     start=default_timer()
-    pbn.PrimeImplicants.percolate_and_remove_constants(p) # modifies p in-place
+    pyboolnet.prime_implicants.percolate_and_remove_constants(p) # modifies p in-place
     ar = sm.AttractorRepertoire.from_primes(p,max_simulate_size=0) # max_simulate_size = 0 ensures equivalence with Java method
     end=default_timer()
     a2021 = end-start
@@ -74,14 +75,14 @@ N_ensemble=10
 seed = 0
 rbn_fnames = []
 for N in Ns:
-    rbns=sm.RandomBooleanNetworks.Random_Boolean_Network_Ensemble_Kauffman(N,K,bias,N_ensemble,seed=seed)
+    rbns=sm.random_boolean_networks.random_boolean_network_ensemble_kauffman(N,K,bias,N_ensemble,seed=seed)
     for i,rbn in enumerate(rbns):
-        rbn_bnet = sm.Format.booleannet2bnet(rbn)
-        p = sm.Format.longbnet2primes(rbn_bnet,remove_constants=False)
+        rbn_bnet = sm.format.booleannet2bnet(rbn)
+        p = bnet_text2primes(rbn_bnet)
         fname = "../models/Control Benchmarks/RBNs_seed="+str(seed)+"/"+str(N)+"_"+str(i)+".txt"
         rbn_fnames.append(fname)
         f = open(fname,"w")
-        f.write(sm.Format.primes2booleannet(p,header="#BOOLEAN RULES\n"))
+        f.write(sm.format.primes2booleannet(p,header="#BOOLEAN RULES\n"))
         f.close()
 
 f = open("../models/Control Benchmarks/RBNs_seed="+str(seed)+"/timings.csv","w")

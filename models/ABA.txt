@@ -1,0 +1,58 @@
+# Parul Maheshwari et al. (2020) A Guard Cell Abscisic Acid (ABA) Network Model That Captures the Stomatal Resting State
+# Supplementary Table S3
+# Deleted self loops from Microtubule_Depolymerization, MPK9_12, CPK3_21, Vacuolar_Acidification
+# ROP11 kept off, CPK6_23 kept on.
+
+# Format
+# / in node names were replaced by _
+# space in node names were replaced by _
+# + in node names were deleted
+# α in node names were replaced by alpha
+# δ in node names were replaced by delta
+
+ABI1* = not PA and not RCARs and not ROS and pHc
+ABI2* = not RCARs and not ROS and not PA
+Actin_Reorganization* = not AtRAC1
+AnionEM* = SLAC1 or (QUAC1 and SLAH3)
+AtRAC1* = not ABA or ABI1
+CIS* = InsP3_6 or cADPR
+CPK3_21* = Ca2c
+Ca2c* = (CaIM or CIS) and not Ca2_ATPase
+CaIM* = Actin_Reorganization or GHR1
+Ca2_ATPase* = Ca2c
+Closure* = Microtubule_Depolymerization and H2O_Efflux
+DAG* = PLC
+Depolarization* = (AnionEM or Ca2c or KEV) and (not H_ATPase or not K_Efflux)
+GHR1* = not ABI2 and ROS
+H2O_Efflux* = AnionEM and OST1 and K_Efflux and not Malate
+HAB1* = not RCARs and not ROS
+H_ATPase* = not pHc and not Ca2c and not ROS
+InsP3_6* = PLC
+KEV* = Vacuolar_Acidification or Ca2c
+KOUT* = (not NO or not ROS or pHc) and Depolarization
+K_Efflux* = KEV and KOUT
+MPK9_12* = Ca2c
+Malate* = PEPC and not ABA and not AnionEM
+Microtubule_Depolymerization* = TCTP
+NIA1_2* = ROS
+NO* = NIA1_2
+cGMP* = NO
+OST1* = (not ABI1 and not HAB1) or (not PP2CA and not ABI2) or (not ABI1 and not ABI2) or (not HAB1 and not PP2CA) or (not HAB1 and not ABI2) or (not ABI1 and not PP2CA)
+PA* = PLDdelta or PLDalpha or DAG
+PEPC* = not ABA
+V-PPase* = ABA
+PLC* = Ca2c
+PLDalpha* = S1P and Ca2c
+PLDdelta* = NO or ROS
+PP2CA* = not RCARs and not ROS
+QUAC1* = OST1 and Ca2c
+ROS* = pHc and not ABI1 and OST1 and S1P and PA
+RCARs* = ABA
+SLAC1* = MPK9_12 and OST1 and GHR1 and not ABI1 and not PP2CA and not ABI2 and pHc
+SLAH3* = CPK3_21 and not ABI1
+S1P* = PA or ABA
+TCTP* = Ca2c
+V-ATPase* = Ca2c
+Vacuolar_Acidification* = V-PPase
+cADPR* = cGMP and ROS and NO
+pHc* = ((OST1 and not ABI2 and not ABI1) or Ca2c) and Vacuolar_Acidification

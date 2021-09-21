@@ -1,15 +1,14 @@
-import PyBoolNet
-import PyStableMotifs as sm
+import pystablemotifs as sm
 import sys
 from timeit import default_timer
 
 # import and format rules
-primes = sm.Format.import_primes(sys.argv[1],remove_constants=True)
+primes = sm.format.import_primes(sys.argv[1],remove_constants=True)
 
 # print rules after reduction
-sm.Format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
+sm.format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
 
-diag = sm.Succession.build_succession_diagram(primes)
+diag = sm.succession.build_succession_diagram(primes)
 diag.summary()
 
 diag.attractor_candidate_summary()
@@ -46,7 +45,7 @@ else:
 
 print("Brute-force search for knockout/knockins that achieve",reprogramming_target,". . .")
 start=default_timer()
-koki = sm.DomainOfInfluence.knock_to_partial_state(reprogramming_target,primes,max_drivers=2)
+koki = sm.drivers.knock_to_partial_state(reprogramming_target,primes,max_drivers=2)
 end=default_timer()
 print("Time running brute-force search method:",end-start)
 print("Sets found:")

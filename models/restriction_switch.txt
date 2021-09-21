@@ -1,0 +1,8 @@
+#BOOLEAN RULES
+CyclinD1 *= (Myc and E2F1) or (CyclinD1 and (Myc or E2F1))
+CyclinE *= E2F1 and (not pRB) and (not p27Kip1)
+E2F1 *= (not pRB) and (E2F1 or Myc)
+Myc *= E2F1
+p27Kip1 *= not (CyclinD1 or CyclinE)
+pRB *= (not CyclinD1) and ((not CyclinE) or p27Kip1)
+

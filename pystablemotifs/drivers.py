@@ -1,8 +1,9 @@
-import PyBoolNet
-import PyStableMotifs as sm
+import pyboolnet.prime_implicants
+import pystablemotifs as sm
 import copy
 import itertools as it
 import random
+from collections import namedtuple
 
 def fixed_implies_implicant(fixed,implicant):
     """Returns True if and only if the (possibly partial) state "fixed" implies
@@ -60,13 +61,15 @@ def fixed_excludes_implicant(fixed,implicant):
     return not rval
 
 def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None):
-    """Computes the logical domain of influence (LDOI) (see Yang et al. 2018)
+    """Computes the logical domain of influence (LDOI) (see Yang et al. 2018).
+    In general, the LDOI is a subset of the full domain of influence (DOI), but it
+    is much more easily (and quickly) computed.
 
     Parameters
     ----------
     partial_state : partial state dictionary
-        PyBoolNet implicant that defines fixed nodes.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines fixed nodes.
+    primes : pyboolnet primes dictionary
         Update rules.
     implied_hint : partial state dictionary
          Known subset of the LDOI; used during optimization.
@@ -119,14 +122,15 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
         if not states_added or len(primes_to_search) == 0: break
     return implied, contradicted
 
-def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
-    """
-    Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
+def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,
+    max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    """Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
+
     Parameters
     ----------
     partial_state : partial state dictionary
-        PyBoolNet implicant that defines fixed nodes (seed set).
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines fixed nodes (seed set).
+    primes : pyboolnet primes dictionary
         Update rules.
     implied_hint : partial state dictionary
         Known subset of the DOI; used during optimization.
@@ -136,22 +140,24 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
         Maximum number of variables for which to brute-force build a state
         transition graph (the default is 20).
     max_stable_motifs : int
-        Maximum number of output lines for PyBoolNet to process from the
+        Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
     MPBN_update : bool
         Whether MBPN update is used instead of general asynchronous update
         (see Pauleve et al. 2020)(the default is False).
     Returns
     -------
+    data : namedtuple
+        A namedtuple that contains the entries listed below.
     implied : partial state dictionary
         Nodes that are certain to be in the domain of influence.
     contradicted : partial state dictionary
         The contradiction boundary.
-    unknown : partial state dictionary
+    possibly_implied : partial state dictionary
         Nodes that are possibly in the domain of influence.
-    unknown_contra : partial state dictionary
+    possibly_contradicted : partial state dictionary
         Nodes that are possibly in the contradiction boundary.
-    ar : AttractorRepertoire
+    attractor_repertoire : AttractorRepertoire
         The class that stores information about attractors.
     """
     # optional optimization values
@@ -176,7 +182,7 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     contradicted.update(LDOI_contra)
 
     # reducing the primes by the LDOI
-    primes_to_search, ps = sm.Reduction.reduce_primes(fixed,primes_to_search)
+    primes_to_search, ps = sm.reduction.reduce_primes(fixed,primes_to_search)
 
     # Adding the seed nodes that are not in the LDOI as sinks in the reduced network
     sink_nodes = {}
@@ -188,44 +194,58 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     rules_to_add = {}
     for node in sink_nodes:
         rules_to_add[node] = copy.deepcopy(primes[node])
-        PyBoolNet.PrimeImplicants._substitute(rules_to_add,node,fixed)
+        pyboolnet.prime_implicants._substitute(rules_to_add,node,fixed)
     primes_to_search.update(rules_to_add)
-    primes_to_search = sm.Reduction.simplify_primes(primes_to_search)
+    primes_to_search = sm.reduction.simplify_primes(primes_to_search)
 
-    # Finding the attractor repertoire of this modified network
-    ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+    # Finding the attractors of this modified network
+    if MPBN_update == True:
+        attractor_dict_list = pyboolnet.trap_spaces.trap_spaces(primes_to_search, "min", max_output=10000)
+        sorted_attractor_dict_list = []
+        for attractor in attractor_dict_list:
+            for node in primes_to_search:
+                if node not in attractor:
+                    attractor[node] = 'X'
+            sorted_attractor_dict_list.append(dict(sorted(attractor.items())))
+        ar = sorted_attractor_dict_list
+    else:
+        ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,
+            max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        attractor_dict_list = []
+        for attractor in ar.attractors:
+            attractor_dict_list.append(attractor.attractor_dict)
 
     # Determining which node values are shared by all attractors in the reduction
-    if ar.fewest_attractors == 0:   # there is no attractor
+    if len(attractor_dict_list) == 0:   # there is no attractor
         print("Unable to properly count attractors.")
         return
 
-    att = ar.attractors[0]  # there is at least one attractor.
-    for node in att.attractor_dict:
+    att = attractor_dict_list[0]  # there is at least one attractor.
+    for node in att:
         value = None
         value_implied = None
         value_unknown = None
         if node in LDOI:    # if the node is in the LDOI, it is in the DOI.
-            implied[node] = att.attractor_dict[node]
+            implied[node] = att[node]
             continue    # this node is in the DOI. Move on to the next.
-        elif att.attractor_dict[node] == 'X':
+        elif att[node] == 'X':
             continue    # this node is not in the DOI. Move on to the next.
-        elif att.attractor_dict[node] == '?' or att.attractor_dict[node] == '!':
+        elif att[node] == '?' or att[node] == '!':
             value_unknown = True
         else:   # in case the node has a Boolean value
-            value = att.attractor_dict[node]
+            value = att[node]
 
-        for other in ar.attractors: # check the other attractors
-            if node in other.attractor_dict:
-                if other.attractor_dict[node] == 'X':
+        for other in attractor_dict_list: # check the other attractors
+            if node in other:
+                if other[node] == 'X':
                     value_implied = False
                     break
-                elif other.attractor_dict[node] == '?' or other.attractor_dict[node] == '!':
+                elif other[node] == '?' or other[node] == '!':
                     value_unknown = True
                 else:   # the node in the other attractor has a Boolean value.
                     if value == None:
-                        value = other.attractor_dict[node]
-                    elif int(value) == int(other.attractor_dict[node]):
+                        value = other[node]
+                    elif int(value) == int(other[node]):
                         continue
                     else:
                         value_implied = False
@@ -253,7 +273,12 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
             if sink_nodes[node] != unknown[node]:
                 unknown_contra[node] = unknown[node]
 
-    return dict(sorted(implied.items())), dict(sorted(contradicted.items())), dict(sorted(unknown.items())), dict(sorted(unknown_contra.items())), ar
+    doi_data = namedtuple('doi_data',
+        'implied contradicted possibly_implied possibly_contradicted attractor_repertoire')
+    data = doi_data(dict(sorted(implied.items())), dict(sorted(contradicted.items())),
+        dict(sorted(unknown.items())), dict(sorted(unknown_contra.items())), ar)
+
+    return data
 
 def single_drivers(target,primes):
     """Finds all 1-node (logical) drivers of target under the rules given
@@ -262,8 +287,8 @@ def single_drivers(target,primes):
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
 
     Returns
@@ -290,8 +315,8 @@ def all_drivers_of_size(driver_set_size,target, primes, external_search_vars=Non
     driver_set_size : int
         The number of driver nodes to try to find.
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     external_search_vars : set of str variable names
         Node set not in target to consider as potential drivers. If None,
@@ -351,8 +376,8 @@ def internal_drivers(target,primes,max_drivers=None):
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     max_drivers : int
         Maximum size of driver set to consider. If None, is set to the size of
@@ -388,8 +413,8 @@ def minimal_drivers(target,primes,max_drivers=None):
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     max_drivers : int
         Maximum size of driver set to consider. If None, is set to the size of
@@ -426,8 +451,8 @@ def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None,forbidde
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     min_drivers : int
         Minimum size of driver set to consider. (the default is 1).
@@ -470,15 +495,20 @@ def knock_to_partial_state(target,primes,min_drivers=1,max_drivers=None,forbidde
         n += 1
     return knocked_nodes
 
-def initial_GRASP_candidates(target,primes,forbidden):
+################################################################################
+# Below are Greedy Random Adaptive Search Program (GRASP) methods.
+# These were developed in Yang et al. 2018.
+################################################################################
+
+def _initial_GRASP_candidates(target,primes,forbidden):
     """Helper function for GRASP driver search. Constructs initial candidates
     for driver nodes.
 
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     forbidden : set of str variable names
         Variables to be considered uncontrollable (the default is None).
@@ -498,14 +528,14 @@ def initial_GRASP_candidates(target,primes,forbidden):
         candidates += [{k:st} for k in candidate_vars]
     return candidates
 
-def GRASP_default_scores(target,primes,candidates):
+def _GRASP_default_scores(target,primes,candidates):
     """Helper function for GRASP driver search. Scores candidate driver nodes.
 
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     candidates : list of partial state dictionaries
         List of variable states that can potentially lead to the target.
@@ -539,15 +569,15 @@ def GRASP_default_scores(target,primes,candidates):
 
     return scores
 
-def construct_GRASP_solution(target,primes,candidates,scores):
+def _construct_GRASP_solution(target,primes,candidates,scores):
     """Helper funciton for GRASP driver search. Constructs individual driver set
     using the GRASP search method.
 
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     candidates : list of partial state dictionaries
         List of variable states that can potentially lead to the target.
@@ -597,7 +627,7 @@ def construct_GRASP_solution(target,primes,candidates,scores):
 
     return {}
 
-def local_GRASP_reduction(solution,target,primes):
+def _local_GRASP_reduction(solution,target,primes):
     """A helper funciton for GRASP driver search. Reduces valid solutions to
     attempt to remove redundancies.
 
@@ -606,8 +636,8 @@ def local_GRASP_reduction(solution,target,primes):
     solution : partial state dictionary
         Solution to be reduced; must contain the target in its LDOI.
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
 
     Returns
@@ -631,21 +661,21 @@ def local_GRASP_reduction(solution,target,primes):
 
     return old_solution
 
-def GRASP(target, primes, GRASP_iterations, forbidden=None, GRASP_scores=GRASP_default_scores):
+def GRASP(target, primes, GRASP_iterations, forbidden=None, GRASP_scores=_GRASP_default_scores):
     """Search for drivers of target in primes using the method of Yang et al. 2018.
 
     Parameters
     ----------
     target : partial state dictionary
-        PyBoolNet implicant that defines target fixed node states.
-    primes : PyBoolNet primes dictionary
+        pyboolnet implicant that defines target fixed node states.
+    primes : pyboolnet primes dictionary
         Update rules.
     GRASP_iterations : int
         The number of times to run the GRASP method.
     forbidden : set of str variable names
         Variables to be considered uncontrollable (the default is None).
     GRASP_scores : function
-        Function to score candiates (the default is GRASP_default_scores; see
+        Function to score candiates (the default is _GRASP_default_scores; see
         that function for required inputs and outputs of the scoring function).
 
     Returns
@@ -656,11 +686,11 @@ def GRASP(target, primes, GRASP_iterations, forbidden=None, GRASP_scores=GRASP_d
 
     """
     solutions = []
-    candidates = initial_GRASP_candidates(target,primes,forbidden)
+    candidates = _initial_GRASP_candidates(target,primes,forbidden)
     scores = GRASP_scores(target,primes,candidates)
     for iter in range(GRASP_iterations):
-        solution_big = construct_GRASP_solution(target,primes,candidates,scores)
-        solution = local_GRASP_reduction(solution_big,target,primes)
+        solution_big = _construct_GRASP_solution(target,primes,candidates,scores)
+        solution = _local_GRASP_reduction(solution_big,target,primes)
         if not solution is None and len(solution) > 0 and not solution in solutions:
             solutions.append(solution)
 
