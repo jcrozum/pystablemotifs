@@ -53,6 +53,6 @@ SLAH3* = CPK3_21 and not ABI1
 S1P* = PA or ABA
 TCTP* = Ca2c
 V-ATPase* = Ca2c
-Vacuolar_Acidification* = V-PPase
+Vacuolar_Acidification* = V-PPase or V-ATPase
 cADPR* = cGMP and ROS and NO
 pHc* = ((OST1 and not ABI2 and not ABI1) or Ca2c) and Vacuolar_Acidification
