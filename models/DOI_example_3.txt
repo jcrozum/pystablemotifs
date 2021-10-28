@@ -1,6 +1,5 @@
 # This example shows a conjecture that
-# if X is not included in LDOI(B) intercept LDOI(~B)
-# and X is included in LDOI(A,B) intercept LDOI(A,~B)
+# if X is included in LDOI(A,B) intercept LDOI(A,~B)
 # then X is included in DOI(A)
 
 A* = A
