@@ -1,0 +1,6 @@
+# This example shows that even if DOI(A) U A and DOI(B) U B are consistent,
+# DOI(A) is not included in DOI(A,B)
+
+A* = not A
+B* = A and C
+C* = not B or C

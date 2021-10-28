@@ -1,0 +1,20 @@
+# This is a counterexample to a conjecture that
+# if X is included in LDOI(A,B) intercept LDOI(A,~B)
+# then X is included in DOI(A)
+
+# Also note that reducing the rules for X by substituting the rule of C will not
+# preserve the original behavior of the network
+
+A* = A
+B* = not B
+C* = B
+X* = A and B or A and not C
+
+# LDOI(A,B) intercept LDOI(A,~B) = {X}
+# DOI(A) = empty
+# X will oscillate when A is fixed
+
+# When reduced, the rules are
+# A* = A
+# B* = not B
+# X* = A and B or A and not B = A
