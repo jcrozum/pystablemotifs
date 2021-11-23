@@ -22,8 +22,8 @@ If you install from PyPI, you will need to install pyboolnet separately (instruc
 See the basic usage example below, or the Tutorial.ipynb notebook for basic instructions. For advanced usage instructions, see Manual.pdf or contact the developers directly.
 
 # Requirements
-pyboolnet (v3.0.2+) https://github.com/hklarner/pyboolnet
-(note: pyboolnet requires pyeda, which can be difficult to install in Windows;
+pyboolnet (v3.0.x; ***support for the upcoming v3.1.x release is coming soon***) https://github.com/hklarner/pyboolnet
+<br>(note: pyboolnet requires pyeda, which can be difficult to install in Windows;
     it is recommended to obtain a pyeda Windows wheel from https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyeda)
 
 Networkx (v2.4+) https://github.com/networkx/networkx/
