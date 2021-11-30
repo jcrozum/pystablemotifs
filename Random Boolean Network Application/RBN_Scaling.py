@@ -27,7 +27,7 @@ def primify_rbn(rbn_ensemble_rules):
     for i,x in enumerate(rbn_ensemble_rules):
         rules = sm.format.booleannet2bnet(x)
         primes = bnet_text2primes(rules)
-        pyboolnet.prime_implicants.percolation(primes,True)
+        pyboolnet.prime_implicants.percolate(primes, remove_constants=True, copy=False)  
         primes, constants = sm.reduction.remove_outdag(primes)
         prime_dict[i] = primes
     return prime_dict

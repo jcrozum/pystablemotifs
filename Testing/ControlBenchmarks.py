@@ -51,7 +51,7 @@ def CompareTimes(filepath,display=True):
     a2013,c2013 = JavaMotifTimes(filepath)
 
     start=default_timer()
-    pyboolnet.prime_implicants.percolate_and_remove_constants(p) # modifies p in-place
+    pyboolnet.prime_implicants.percolate(p, remove_constants=True, copy=False)  
     ar = sm.AttractorRepertoire.from_primes(p,max_simulate_size=0) # max_simulate_size = 0 ensures equivalence with Java method
     end=default_timer()
     a2021 = end-start
