@@ -4,11 +4,17 @@ Includes stable motif reduction with oscillation checking for attractor identifi
 
 The attractor identification algorithm is described in detail in
 
-> J. C.  Rozum,  J. Gómez  Tejeda  Zañudo,  X. Gan,  D. Deritei,  R. Albert,  Parity  and  time reversal  elucidate  both  decision-making  in  empirical  models  and  attractor  scaling  in  critical  Boolean networks. Sci. Adv. 7 , eabf8124 (2021),
+> Rozum JC,  Gómez  Tejeda  Zañudo J, Gan X, Deritei D, Albert R. Parity and time reversal elucidate both decision-making in empirical models and attractor scaling in  critical Boolean networks. Sci. Adv. 7, eabf8124 (2021),
 
-which is freely available here: https://advances.sciencemag.org/content/7/29/eabf8124.
+which is freely available here: https://doi.org/10.1126/sciadv.abf8124.
 
-A manuscript detailing the various control algorithms is in preparation. In the meantime, please see the documentation or contact the maintainers of this repository for details about these methods.
+Descriptions of the various control methods, along with additional benchmarks, are provided in
+
+> Rozum JC, Deritei D, Park KH, Gómez  Tejeda  Zañudo J, Albert R. pystablemotifs: Python library for attractor identification and control in Boolean networks. Bioinformatics, btab825 (2021),
+
+which can be accessed here: https://doi.org/10.1093/bioinformatics/btab825.
+
+See also the tutorials and examples for an overview of the various methods.
 
 # Installation
 Install with pip from GitHub (***recommended***):
