@@ -15,10 +15,13 @@ class Primes:
     """
 
     def __init__(self):
+        self.probabilities = {}
+        # {"node1": [prob1, ...], ...}
         self.rules = {}
-        # {"Node1": [ [relative probability, [[{},{}],[{},{}]]] , [relative probability, [[{},{}],[{},{}]]] ], "Node2": []}
+        # {"node1": [rule1, ...] , ...}, rule1 in the form [[{}, ...],[{}, ...]]
         self.collapsed_rules = {}
-        # {"Node1": [[{},{}],[{}]]}
+        # {"Node1": rule, ...}
+        self.collapsed_bnet = ""
 
     def import_rules(self, fname, format='BooleanNet', remove_constants=False):
         """Import boolean rules from file and return modified pyboolnet formatted primes list.
@@ -45,23 +48,20 @@ class Primes:
         """
         primes = sm.format.import_primes(fname, format='BooleanNet', remove_constants=False)
 
+        probabilities = {}
         rules = {}
 
         for node in primes:
             if "$" in node:
                 x = node.partition("$")
                 if x[0] not in rules:
-                    rule = []
-                    rule_1 = []
-                    rule_1.append(int(x[2]))
-                    rule_1.append(primes[node])
-                    rule.append(rule_1)
-                    rules[x[0]] = rule
+                    probabilities[x[0]] = []
+                    probabilities[x[0]].append(int(x[2]))
+                    rules[x[0]] = []
+                    rules[x[0]].append(primes[node])
                 else:
-                    rule_2 = []
-                    rule_2.append(int(x[2]))
-                    rule_2.append(primes[node])
-                    rules[x[0]].append(rule_2)
+                    probabilities[x[0]].append(int(x[2]))
+                    rules[x[0]].append(primes[node])
             else:
                 continue
 
@@ -70,16 +70,16 @@ class Primes:
                 if node in rules:
                     continue
                 else:
-                    rule = []
-                    rule_1 = [1]
-                    rule_1.append(primes[node])
-                    rule.append(rule_1)
-                    rules[node] = rule
+                    probabilities[node] = []
+                    probabilities[node].append(1)
+                    rules[node] = []
+                    rules[node].append(primes[node])
             else:
                 continue
 
+        self.probabilities = probabilities
         self.rules = rules
-        self.collapsed_rules = self._get_collapsed_rules_from_rules(rules)
+        self._get_collapsed_rules_from_rules(rules)
 
     def _get_collapsed_rules_from_rules(self, rules):
         """make GAU rules out of pbn rules
@@ -89,14 +89,14 @@ class Primes:
         for node in rules:
             collapsed_bnet += node + ", !" + node + " & ( "
             for i in range(len(rules[node])):
-                collapsed_bnet += "(" + sm.format.rule2bnet(rules[node][i][1][1]) + ")"
+                collapsed_bnet += "(" + sm.format.rule2bnet(rules[node][i][1]) + ")"
                 if i == len(rules[node]) - 1:
                     break
                 else:
                     collapsed_bnet += " | "
             collapsed_bnet += " ) | ( "
             for i in range(len(rules[node])):
-                collapsed_bnet += "(" + sm.format.rule2bnet(rules[node][i][1][1]) + ")"
+                collapsed_bnet += "(" + sm.format.rule2bnet(rules[node][i][1]) + ")"
                 if i == len(rules[node]) - 1:
                     break
                 else:
@@ -104,4 +104,6 @@ class Primes:
             collapsed_bnet += " )\n"
 
         collapsed_rules = bnet_text2primes(collapsed_bnet)
-        return collapsed_rules
+
+        self.collapsed_bnet = collapsed_bnet
+        self.collapsed_rules = collapsed_rules
