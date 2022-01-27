@@ -53,27 +53,44 @@ class Primes:
 
         for node in primes:
             if "$" in node:
-                x = node.partition("$")
-                if x[0] not in rules:
-                    probabilities[x[0]] = []
-                    probabilities[x[0]].append(int(x[2]))
-                    rules[x[0]] = []
-                    rules[x[0]].append(primes[node])
+                x = node.split("$")
+                # if the rule has a name
+                if len(x) == 3:
+                    # if this node is encountered for the first time
+                    if x[0] not in rules:
+                        probabilities[x[0]] = {}
+                        probabilities[x[0]][x[2]] = int(x[1])
+                        rules[x[0]] = {}
+                        rules[x[0]][x[2]] = primes[node]
+                    # if this node was encountered before
+                    else:
+                        probabilities[x[0]][x[2]] = int(x[1])
+                        rules[x[0]][x[2]] = primes[node]
+                # if the rule does not have a name
                 else:
-                    probabilities[x[0]].append(int(x[2]))
-                    rules[x[0]].append(primes[node])
+                    if x[0] not in rules:
+                        probabilities[x[0]] = {}
+                        probabilities[x[0]]["rule1"] = int(x[1])
+                        rules[x[0]] = {}
+                        rules[x[0]]["rule1"] = primes[node]
+                    else:
+                        rule_name = "rule" + str(len(probabilities[x[0]]) + 1)
+                        probabilities[x[0]][rule_name] = int(x[1])
+                        rules[x[0]][rule_name] = primes[node]
             else:
                 continue
 
         for node in primes:
             if "$" not in node:
                 if node in rules:
+                    # primes cannot consider A, A$1, A$2 the same, and will store rules for A separately as a source node.
+                    # need to avoid adding rules of A as a source node if there are pbn rules for A.
                     continue
                 else:
-                    probabilities[node] = []
-                    probabilities[node].append(1)
-                    rules[node] = []
-                    rules[node].append(primes[node])
+                    probabilities[node] = {}
+                    probabilities[node]["rule1"] = 1
+                    rules[node] = {}
+                    rules[node]["rule1"] = primes[node]
             else:
                 continue
 
@@ -88,19 +105,15 @@ class Primes:
         collapsed_bnet = ""
         for node in rules:
             collapsed_bnet += node + ", !" + node + " & ( "
-            for i in range(len(rules[node])):
-                collapsed_bnet += "(" + sm.format.rule2bnet(rules[node][i][1]) + ")"
-                if i == len(rules[node]) - 1:
-                    break
-                else:
-                    collapsed_bnet += " | "
+            for rule in rules[node]:
+                collapsed_bnet += "(" + sm.format.rule2bnet(rules[node][rule][1]) + ")"
+                collapsed_bnet += " | "
+            collapsed_bnet = collapsed_bnet.removesuffix(" | ")
             collapsed_bnet += " ) | ( "
-            for i in range(len(rules[node])):
-                collapsed_bnet += "(" + sm.format.rule2bnet(rules[node][i][1]) + ")"
-                if i == len(rules[node]) - 1:
-                    break
-                else:
-                    collapsed_bnet += " & "
+            for rule in rules[node]:
+                collapsed_bnet += "(" + sm.format.rule2bnet(rules[node][rule][1]) + ")"
+                collapsed_bnet += " & "
+            collapsed_bnet = collapsed_bnet.removesuffix(" & ")
             collapsed_bnet += " )\n"
 
         collapsed_rules = bnet_text2primes(collapsed_bnet)
