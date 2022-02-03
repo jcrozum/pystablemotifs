@@ -237,7 +237,7 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
                 break
         cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
 
-        pyboolnet.prime_implicants.percolate(reduced, add_constants=constants, remove_constants=False, copy=False)        
+        pyboolnet.prime_implicants.percolate(reduced, add_constants=constants, remove_constants=False, copy=False)
         constants.update(pyboolnet.prime_implicants.find_constants(reduced))
         pyboolnet.prime_implicants.remove_all_constants(reduced, copy=False)
     return reduced, constants
@@ -389,10 +389,10 @@ class MotifReduction:
         self.merged_history_permutations = []
         self.logically_fixed_nodes = fixed
         self.reduced_primes = reduced_primes.copy()
-        self.stable_motifs = pyboolnet.trap_spaces.trap_spaces(self.reduced_primes, "max",max_output=max_stable_motifs)
+        self.stable_motifs = pyboolnet.trap_spaces.compute_trap_spaces(self.reduced_primes, "max",max_output=max_stable_motifs)
         if MPBN_update==False:
             self.time_reverse_primes =sm_time.time_reverse_primes(self.reduced_primes)
-            self.time_reverse_stable_motifs = pyboolnet.trap_spaces.trap_spaces(self.time_reverse_primes, "max",max_output=max_stable_motifs)
+            self.time_reverse_stable_motifs = pyboolnet.trap_spaces.compute_trap_spaces(self.time_reverse_primes, "max",max_output=max_stable_motifs)
         self.merged_source_motifs=None
         self.source_independent_motifs=None
         if self.motif_history == [] and prioritize_source_motifs:
@@ -711,7 +711,7 @@ class MotifReduction:
         names = sorted(self.delprimes)
         name_ind = {n:i for i,n in enumerate(names)}
         trprimes = sm_time.time_reverse_primes(self.delprimes)
-        trsms = pyboolnet.trap_spaces.trap_spaces(trprimes,"max",max_output=max_stable_motifs)
+        trsms = pyboolnet.trap_spaces.compute_trap_spaces(trprimes,"max",max_output=max_stable_motifs)
 
         if self.rspace_update_primes is not None:
             delrnames = [x for x in sorted(self.rspace_update_primes) if x in self.delprimes]

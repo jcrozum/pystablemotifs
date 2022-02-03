@@ -10,7 +10,7 @@ print()
 print("RULES")
 sm.format.pretty_print_prime_rules({k:primes[k] for k in sorted(primes)})
 
-stable_motifs = pyboolnet.trap_spaces.trap_spaces(primes, "min",max_output=10000)
+stable_motifs = pyboolnet.trap_spaces.compute_trap_spaces(primes, "min",max_output=10000)
 print(stable_motifs)
 
 import time
