@@ -200,7 +200,7 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
 
     # Finding the attractors of this modified network
     if MPBN_update == True:
-        attractor_dict_list = pyboolnet.trap_spaces.trap_spaces(primes_to_search, "min", max_output=10000)
+        attractor_dict_list = pyboolnet.trap_spaces.compute_trap_spaces(primes_to_search, "min", max_output=10000)
         sorted_attractor_dict_list = []
         for attractor in attractor_dict_list:
             for node in primes_to_search:
