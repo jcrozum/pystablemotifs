@@ -52,11 +52,7 @@ def reduce_primes(fixed,primes):
         Fixed node states (including inputs) that were simplified and removed.
 
     """
-    #reduced_primes = pyboolnet.prime_implicants.create_constants(primes,fixed,copy=True)
-    #percolated_states = pyboolnet.prime_implicants.percolation(reduced_primes,True)
-    #percolated_states.update(fixed)
-
-    reduced_primes = pyboolnet.prime_implicants.percolate(primes, add_constants=fixed, remove_constants=True, copy=True)
+    reduced_primes = pyboolnet.prime_implicants.percolate(primes, add_constants=fixed, remove_constants=False, copy=True)
     percolated_states = pyboolnet.prime_implicants.find_constants(reduced_primes)
     pyboolnet.prime_implicants.remove_all_constants(reduced_primes, copy=False) # remove constants in place
 
@@ -123,7 +119,7 @@ def delete_node(primes, node):
 
         pyboolnet.prime_implicants.percolate(new_primes, remove_constants=False, copy=False)
         constants.update(pyboolnet.prime_implicants.find_constants(new_primes))
-        pyboolnet.prime_implicants.remove_all_constants(new_primes, copy=False)
+        #pyboolnet.prime_implicants.remove_all_constants(new_primes, copy=False)
 
     pyboolnet.prime_implicants.percolate(new_primes, remove_constants=False, copy=False)
     constants.update(pyboolnet.prime_implicants.find_constants(new_primes))
