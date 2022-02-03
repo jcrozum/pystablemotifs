@@ -22,4 +22,4 @@ from pystablemotifs.Attractor import Attractor
 from pystablemotifs.AttractorRepertoire import AttractorRepertoire
 from pystablemotifs import export
 
-__version__ = '2.1.0'
+__version__ = '3.0.3'
