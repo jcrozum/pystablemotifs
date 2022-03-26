@@ -60,7 +60,7 @@ class AttractorRepertoire:
         self.relevant_nodes = None
 
     @classmethod
-    def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,max_in_degree=float('inf'),MPBN_update=False):
         """Build the succession diagram and attractor repertoire from pyboolnet
         formatted update rules rules.
 
@@ -74,6 +74,11 @@ class AttractorRepertoire:
         max_stable_motifs : int
             Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
+        max_in_degree : int or float
+            Will not try to delete nodes that will result an increase in the
+            in-degree of the downstream node so that it has in-degree larger than this.
+            Deleting nodes with large in-degree can be computationally expensive (the default
+            is float('inf')).
         MPBN_update : bool
             Whether MBPN update is used instead of general asynchronous update
             (see L Pauleve, J Kolcak, T Chatain, S Haar, "Reconciling qualitative, abstract, and scalable modeling of biological networks." Nat. Com. vol. 11, no. 4256 (2020))
@@ -87,7 +92,7 @@ class AttractorRepertoire:
         """
         x = cls()
         x.primes = primes
-        x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         x.simplify_diagram([], merge_equivalent_reductions = False)
         return x
 
@@ -159,7 +164,7 @@ class AttractorRepertoire:
                     # ludicrously conservative upper bound; assumes STG is all 2-cycles
                     self.most_attractors += 2**(attractor.n_unfixed - 1)
 
-    def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000,max_in_degree=float('inf'),MPBN_update=False):
         """Build and process the succession diagram for the model.
 
         Parameters
@@ -172,12 +177,17 @@ class AttractorRepertoire:
         max_stable_motifs : int
             Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
+        max_in_degree : int or float
+            Will not try to delete nodes that will result an increase in the
+            in-degree of the downstream node so that it has in-degree larger than this.
+            Deleting nodes with large in-degree can be computationally expensive (the default
+            is float('inf')).
         MPBN_update : bool
             Whether MBPN update is used instead of general asynchronous update
             (see Pauleve et al. 2020)(the default is False).
 
         """
-        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         self._get_attractors_from_succession_diagram()
         self._count_attractors()
 

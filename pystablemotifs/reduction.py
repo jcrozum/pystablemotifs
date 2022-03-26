@@ -196,8 +196,9 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
     primes : pyboolnet primes dictionary
         Update rules.
     max_in_degree : int or float
-        Will not try to delete nodes with in-degree larger than this. Deleting
-        nodes with large in-degree can be computationally expensive (the default
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
         is float('inf')).
 
     Returns
@@ -218,9 +219,22 @@ def deletion_reduction(primes, max_in_degree = float('inf')):
         change = False
         for node in cur_order:
             retry_node = True
-            if not node in reduced or G.in_degree(node) > max_in_degree:
+            if not node in reduced:
                 continue
-            elif not any(node in p for p in reduced[node][1]):
+            stop = False
+            if not max_in_degree == float('inf') and G.in_degree(node) > 1:
+                ups_nodes = set(G.predecessors(node))
+                dns_nodes = list(G.successors(node))
+                for dns in dns_nodes:
+                    regulators = set(G.predecessors(dns))
+                    new_regulators = regulators | ups_nodes
+                    n = len(new_regulators)
+                    if n > len(regulators) and n > max_in_degree:
+                        stop = True
+                        break
+            if stop:
+                continue
+            if not any(node in p for p in reduced[node][1]):
                 reduced, nc = delete_node(reduced, node)
                 constants.update(nc)
                 if len(reduced) > 0:
@@ -296,6 +310,11 @@ class MotifReduction:
     max_stable_motifs : int
         Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
+    max_in_degree : int or float
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
+        is float('inf')).
     MPBN_update : bool
         Whether MPBN update is used instead of general asynchronous update
         (see Pauleve et al. 2020)(the default is False).
@@ -377,7 +396,7 @@ class MotifReduction:
         an upper bound on the number of motif avoidant attractors in the reduction.
     """
 
-    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000,MPBN_update=False):
+    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000,max_in_degree=float('inf'),MPBN_update=False):
         if motif_history is None:
             self.motif_history = []
         else:
@@ -479,7 +498,7 @@ class MotifReduction:
                 #str(simulate_size)+"/"+str(max_simulate_size)+
                 #"). We will attempt reduction methods. Increase max_simulate_size to force simulation.")
                 self.delprimes, self.attractor_constants = mediator_reduction(self.reduced_primes)
-                self.delprimes, nc = deletion_reduction(self.delprimes)
+                self.delprimes, nc = deletion_reduction(self.delprimes, max_in_degree=max_in_degree)
                 self.attractor_constants.update(nc)
 
                 # Before building any STGs, let's see if we've already identified
