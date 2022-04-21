@@ -60,7 +60,7 @@ class AttractorRepertoire:
         self.relevant_nodes = None
 
     @classmethod
-    def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,max_in_degree=float('inf'),MPBN_update=False):
+    def from_primes(cls,primes,max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float('inf'),MPBN_update=False):
         """Build the succession diagram and attractor repertoire from pyboolnet
         formatted update rules rules.
 
@@ -71,6 +71,9 @@ class AttractorRepertoire:
         max_simulate_size : int
             Maximum number of variables for which to brute-force build a state
             transition graph (the default is 20).
+        max_simulate_size_vc : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph for the vc-reduced space (the default is the same as max_simulate_size).
         max_stable_motifs : int
             Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
@@ -92,7 +95,7 @@ class AttractorRepertoire:
         """
         x = cls()
         x.primes = primes
-        x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
+        x.analyze_system(primes,max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         x.simplify_diagram([], merge_equivalent_reductions = False)
         return x
 
@@ -164,7 +167,7 @@ class AttractorRepertoire:
                     # ludicrously conservative upper bound; assumes STG is all 2-cycles
                     self.most_attractors += 2**(attractor.n_unfixed - 1)
 
-    def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000,max_in_degree=float('inf'),MPBN_update=False):
+    def analyze_system(self,primes,max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float('inf'),MPBN_update=False):
         """Build and process the succession diagram for the model.
 
         Parameters
@@ -174,6 +177,9 @@ class AttractorRepertoire:
         max_simulate_size : int
             Maximum number of variables for which to brute-force build a state
             transition graph (the default is 20).
+        max_simulate_size_vc : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph for the vc-reduced space (the default is the same as max_simulate_size).
         max_stable_motifs : int
             Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
@@ -187,7 +193,7 @@ class AttractorRepertoire:
             (see Pauleve et al. 2020)(the default is False).
 
         """
-        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
+        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         self._get_attractors_from_succession_diagram()
         self._count_attractors()
 

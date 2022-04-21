@@ -305,6 +305,9 @@ class MotifReduction:
     max_simulate_size : int
         Maximum number of variables for which to brute-force build a state
         transition graph (the default is 20).
+    max_simulate_size_vc : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph for the vc-reduced space (the default is the same as max_simulate_size).
     prioritize_source_motifs : bool
         Whether source nodes should be considered first (the default is True).
     max_stable_motifs : int
@@ -396,7 +399,10 @@ class MotifReduction:
         an upper bound on the number of motif avoidant attractors in the reduction.
     """
 
-    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000,max_in_degree=float('inf'),MPBN_update=False):
+    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,max_simulate_size_vc=None,prioritize_source_motifs=True,max_stable_motifs=10000,max_in_degree=float('inf'),MPBN_update=False):
+        if max_simulate_size_vc == None:
+            max_simulate_size_vc = max_simulate_size
+
         if motif_history is None:
             self.motif_history = []
         else:
@@ -517,7 +523,7 @@ class MotifReduction:
                         #print("The reduction indicates that the branch is not terminal. No need to simulate.")
                         self.attractor_dict_list = self.generate_attr_dict_list()
                         return
-                if len(self.delprimes) < max_simulate_size:
+                if len(self.delprimes) < max_simulate_size_vc:
                     #print("Simulating deletion reduction ("+str(len(self.delprimes))+" nodes)...")
                     self.find_deletion_no_motif_attractors(max_stable_motifs=max_stable_motifs)
                     if len(self.deletion_no_motif_attractors) == 0 and self.terminal != "yes":
