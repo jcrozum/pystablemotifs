@@ -194,7 +194,7 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     rules_to_add = {}
     for node in sink_nodes:
         rules_to_add[node] = copy.deepcopy(primes[node])
-        pyboolnet.prime_implicants._substitute(rules_to_add,node,fixed)
+        pyboolnet.prime_implicants.update_primes(rules_to_add,node,fixed)
     primes_to_search.update(rules_to_add)
     primes_to_search = sm.reduction.simplify_primes(primes_to_search)
 
