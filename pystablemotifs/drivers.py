@@ -123,7 +123,7 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
     return implied, contradicted
 
 def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,
-    max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float('inf'),MPBN_update=False):
     """Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
 
     Parameters
@@ -139,9 +139,17 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     max_simulate_size : int
         Maximum number of variables for which to brute-force build a state
         transition graph (the default is 20).
+    max_simulate_size_vc : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph for the vc-reduced space (the default is the same as max_simulate_size).
     max_stable_motifs : int
         Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
+    max_in_degree : int or float
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
+        is float('inf')).
     MPBN_update : bool
         Whether MBPN update is used instead of general asynchronous update
         (see Pauleve et al. 2020)(the default is False).
@@ -209,8 +217,9 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
             sorted_attractor_dict_list.append(dict(sorted(attractor.items())))
         ar = sorted_attractor_dict_list
     else:
-        ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,
-            max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        ar = sm.AttractorRepertoire.from_primes(primes_to_search,
+            max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,
+            max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         attractor_dict_list = []
         for attractor in ar.attractors:
             attractor_dict_list.append(attractor.attractor_dict)
