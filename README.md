@@ -29,8 +29,9 @@ See the basic usage example below, or the Tutorial.ipynb notebook for basic inst
 
 # Requirements
 pyboolnet (v3.0.9+) https://github.com/hklarner/pyboolnet
-<br>(note: pyboolnet requires pyeda, which can be difficult to install in Windows;
-    it is recommended to obtain a pyeda Windows wheel from https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyeda)
+<br>Note 1: pyboolnet requires pyeda, which can be difficult to install in Windows;
+    it is recommended to obtain a pyeda Windows wheel from https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyeda
+<br>Note 2: pyboolnet also requires clasp and gringo to be installed separately on Linux systems
 
 Networkx (v2.4+) https://github.com/networkx/networkx/
 
