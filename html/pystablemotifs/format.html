@@ -155,7 +155,7 @@ def create_primes(rules,remove_constants = False):
     &#34;&#34;&#34;
     primes = bnet_text2primes(booleannet2bnet(rules))
     if remove_constants:
-        pyboolnet.prime_implicants.percolation(primes,True)
+        pyboolnet.prime_implicants.percolate(primes,remove_constants=True,copy=False)
     return primes
 
 def remove_comment_lines(stream, comment_char=&#34;#&#34;):
@@ -226,7 +226,7 @@ def import_primes(fname, format=&#39;BooleanNet&#39;, remove_constants=False):
 
     primes = bnet_text2primes(rules)
     if remove_constants:
-        pyboolnet.prime_implicants.percolation(primes,True)
+        pyboolnet.prime_implicants.percolate(primes,remove_constants=True,copy=False)
     return primes
 
 
@@ -769,7 +769,7 @@ is False).</dd>
     &#34;&#34;&#34;
     primes = bnet_text2primes(booleannet2bnet(rules))
     if remove_constants:
-        pyboolnet.prime_implicants.percolation(primes,True)
+        pyboolnet.prime_implicants.percolate(primes,remove_constants=True,copy=False)
     return primes</code></pre>
 </details>
 </dd>
@@ -886,7 +886,7 @@ in opposition to their values (the default is False).</dd>
 
     primes = bnet_text2primes(rules)
     if remove_constants:
-        pyboolnet.prime_implicants.percolation(primes,True)
+        pyboolnet.prime_implicants.percolate(primes,remove_constants=True,copy=False)
     return primes</code></pre>
 </details>
 </dd>

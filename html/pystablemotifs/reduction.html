@@ -80,10 +80,9 @@ def reduce_primes(fixed,primes):
         Fixed node states (including inputs) that were simplified and removed.
 
     &#34;&#34;&#34;
-    reduced_primes = pyboolnet.prime_implicants.create_constants(primes,fixed,copy=True)
-    percolated_states = pyboolnet.prime_implicants.percolation(reduced_primes,True)
-    percolated_states.update(fixed)
-
+    reduced_primes = pyboolnet.prime_implicants.percolate(primes, add_constants=fixed, remove_constants=False, copy=True)
+    percolated_states = pyboolnet.prime_implicants.find_constants(reduced_primes)
+    pyboolnet.prime_implicants.remove_all_constants(reduced_primes, copy=False) # remove constants in place
 
     return simplify_primes(reduced_primes), percolated_states
 
@@ -146,11 +145,13 @@ def delete_node(primes, node):
         crule0 = simplify_using_expression_and_negation(node,expr0,expr1,crule0)
         new_primes[child] = sm_format._build_rule_using_bnet_dnfs(crule0,crule1)
 
-        nc = pyboolnet.prime_implicants.percolation(new_primes,False)
-        constants.update(nc)
+        pyboolnet.prime_implicants.percolate(new_primes, remove_constants=False, copy=False)
+        constants.update(pyboolnet.prime_implicants.find_constants(new_primes))
+        #pyboolnet.prime_implicants.remove_all_constants(new_primes, copy=False)
 
-    nc = pyboolnet.prime_implicants.percolation(new_primes,True)
-    constants.update(nc)
+    pyboolnet.prime_implicants.percolate(new_primes, remove_constants=False, copy=False)
+    constants.update(pyboolnet.prime_implicants.find_constants(new_primes))
+    pyboolnet.prime_implicants.remove_all_constants(new_primes, copy=False)
     new_primes = simplify_primes(new_primes)
     return new_primes, constants
 
@@ -223,8 +224,9 @@ def deletion_reduction(primes, max_in_degree = float(&#39;inf&#39;)):
     primes : pyboolnet primes dictionary
         Update rules.
     max_in_degree : int or float
-        Will not try to delete nodes with in-degree larger than this. Deleting
-        nodes with large in-degree can be computationally expensive (the default
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
         is float(&#39;inf&#39;)).
 
     Returns
@@ -245,9 +247,22 @@ def deletion_reduction(primes, max_in_degree = float(&#39;inf&#39;)):
         change = False
         for node in cur_order:
             retry_node = True
-            if not node in reduced or G.in_degree(node) &gt; max_in_degree:
+            if not node in reduced:
                 continue
-            elif not any(node in p for p in reduced[node][1]):
+            stop = False
+            if not max_in_degree == float(&#39;inf&#39;) and G.in_degree(node) &gt; 1:
+                ups_nodes = set(G.predecessors(node))
+                dns_nodes = list(G.successors(node))
+                for dns in dns_nodes:
+                    regulators = set(G.predecessors(dns))
+                    new_regulators = regulators | ups_nodes
+                    n = len(new_regulators)
+                    if n &gt; len(regulators) and n &gt; max_in_degree:
+                        stop = True
+                        break
+            if stop:
+                continue
+            if not any(node in p for p in reduced[node][1]):
                 reduced, nc = delete_node(reduced, node)
                 constants.update(nc)
                 if len(reduced) &gt; 0:
@@ -260,9 +275,9 @@ def deletion_reduction(primes, max_in_degree = float(&#39;inf&#39;)):
                 break
         cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
 
-        pyboolnet.prime_implicants.create_constants(reduced,constants)
-        nc = pyboolnet.prime_implicants.percolation(reduced,True)
-        constants.update(nc)
+        pyboolnet.prime_implicants.percolate(reduced, add_constants=constants, remove_constants=False, copy=False)
+        constants.update(pyboolnet.prime_implicants.find_constants(reduced))
+        pyboolnet.prime_implicants.remove_all_constants(reduced, copy=False)
     return reduced, constants
 
 def mediator_reduction(primes):
@@ -318,11 +333,19 @@ class MotifReduction:
     max_simulate_size : int
         Maximum number of variables for which to brute-force build a state
         transition graph (the default is 20).
+    max_simulate_size_vc : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph for the vc-reduced space (the default is the same as max_simulate_size).
     prioritize_source_motifs : bool
         Whether source nodes should be considered first (the default is True).
     max_stable_motifs : int
         Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
+    max_in_degree : int or float
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
+        is float(&#39;inf&#39;)).
     MPBN_update : bool
         Whether MPBN update is used instead of general asynchronous update
         (see Pauleve et al. 2020)(the default is False).
@@ -404,7 +427,10 @@ class MotifReduction:
         an upper bound on the number of motif avoidant attractors in the reduction.
     &#34;&#34;&#34;
 
-    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000,MPBN_update=False):
+    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,max_simulate_size_vc=None,prioritize_source_motifs=True,max_stable_motifs=10000,max_in_degree=float(&#39;inf&#39;),MPBN_update=False):
+        if max_simulate_size_vc == None:
+            max_simulate_size_vc = max_simulate_size
+
         if motif_history is None:
             self.motif_history = []
         else:
@@ -506,7 +532,7 @@ class MotifReduction:
                 #str(simulate_size)+&#34;/&#34;+str(max_simulate_size)+
                 #&#34;). We will attempt reduction methods. Increase max_simulate_size to force simulation.&#34;)
                 self.delprimes, self.attractor_constants = mediator_reduction(self.reduced_primes)
-                self.delprimes, nc = deletion_reduction(self.delprimes)
+                self.delprimes, nc = deletion_reduction(self.delprimes, max_in_degree=max_in_degree)
                 self.attractor_constants.update(nc)
 
                 # Before building any STGs, let&#39;s see if we&#39;ve already identified
@@ -525,7 +551,7 @@ class MotifReduction:
                         #print(&#34;The reduction indicates that the branch is not terminal. No need to simulate.&#34;)
                         self.attractor_dict_list = self.generate_attr_dict_list()
                         return
-                if len(self.delprimes) &lt; max_simulate_size:
+                if len(self.delprimes) &lt; max_simulate_size_vc:
                     #print(&#34;Simulating deletion reduction (&#34;+str(len(self.delprimes))+&#34; nodes)...&#34;)
                     self.find_deletion_no_motif_attractors(max_stable_motifs=max_stable_motifs)
                     if len(self.deletion_no_motif_attractors) == 0 and self.terminal != &#34;yes&#34;:
@@ -1256,11 +1282,13 @@ deletion.</p>
         crule0 = simplify_using_expression_and_negation(node,expr0,expr1,crule0)
         new_primes[child] = sm_format._build_rule_using_bnet_dnfs(crule0,crule1)
 
-        nc = pyboolnet.prime_implicants.percolation(new_primes,False)
-        constants.update(nc)
+        pyboolnet.prime_implicants.percolate(new_primes, remove_constants=False, copy=False)
+        constants.update(pyboolnet.prime_implicants.find_constants(new_primes))
+        #pyboolnet.prime_implicants.remove_all_constants(new_primes, copy=False)
 
-    nc = pyboolnet.prime_implicants.percolation(new_primes,True)
-    constants.update(nc)
+    pyboolnet.prime_implicants.percolate(new_primes, remove_constants=False, copy=False)
+    constants.update(pyboolnet.prime_implicants.find_constants(new_primes))
+    pyboolnet.prime_implicants.remove_all_constants(new_primes, copy=False)
     new_primes = simplify_primes(new_primes)
     return new_primes, constants</code></pre>
 </details>
@@ -1277,8 +1305,9 @@ removal. Deletion proceeds until all remaining nodes have self-loops.</p>
 <dt><strong><code>primes</code></strong> :&ensp;<code>pyboolnet primes dictionary</code></dt>
 <dd>Update rules.</dd>
 <dt><strong><code>max_in_degree</code></strong> :&ensp;<code>int</code> or <code>float</code></dt>
-<dd>Will not try to delete nodes with in-degree larger than this. Deleting
-nodes with large in-degree can be computationally expensive (the default
+<dd>Will not try to delete nodes that will result an increase in the
+in-degree of the downstream node so that it has in-degree larger than this.
+Deleting nodes with large in-degree can be computationally expensive (the default
 is float('inf')).</dd>
 </dl>
 <h2 id="returns">Returns</h2>
@@ -1302,8 +1331,9 @@ is float('inf')).</dd>
     primes : pyboolnet primes dictionary
         Update rules.
     max_in_degree : int or float
-        Will not try to delete nodes with in-degree larger than this. Deleting
-        nodes with large in-degree can be computationally expensive (the default
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
         is float(&#39;inf&#39;)).
 
     Returns
@@ -1324,9 +1354,22 @@ is float('inf')).</dd>
         change = False
         for node in cur_order:
             retry_node = True
-            if not node in reduced or G.in_degree(node) &gt; max_in_degree:
+            if not node in reduced:
                 continue
-            elif not any(node in p for p in reduced[node][1]):
+            stop = False
+            if not max_in_degree == float(&#39;inf&#39;) and G.in_degree(node) &gt; 1:
+                ups_nodes = set(G.predecessors(node))
+                dns_nodes = list(G.successors(node))
+                for dns in dns_nodes:
+                    regulators = set(G.predecessors(dns))
+                    new_regulators = regulators | ups_nodes
+                    n = len(new_regulators)
+                    if n &gt; len(regulators) and n &gt; max_in_degree:
+                        stop = True
+                        break
+            if stop:
+                continue
+            if not any(node in p for p in reduced[node][1]):
                 reduced, nc = delete_node(reduced, node)
                 constants.update(nc)
                 if len(reduced) &gt; 0:
@@ -1339,9 +1382,9 @@ is float('inf')).</dd>
                 break
         cur_order = sorted(reduced,key=lambda x: G.in_degree(x))
 
-        pyboolnet.prime_implicants.create_constants(reduced,constants)
-        nc = pyboolnet.prime_implicants.percolation(reduced,True)
-        constants.update(nc)
+        pyboolnet.prime_implicants.percolate(reduced, add_constants=constants, remove_constants=False, copy=False)
+        constants.update(pyboolnet.prime_implicants.find_constants(reduced))
+        pyboolnet.prime_implicants.remove_all_constants(reduced, copy=False)
     return reduced, constants</code></pre>
 </details>
 </dd>
@@ -1447,10 +1490,9 @@ restrictive version of the deletion reduction method of Veliz-Cuba (2011).</p>
         Fixed node states (including inputs) that were simplified and removed.
 
     &#34;&#34;&#34;
-    reduced_primes = pyboolnet.prime_implicants.create_constants(primes,fixed,copy=True)
-    percolated_states = pyboolnet.prime_implicants.percolation(reduced_primes,True)
-    percolated_states.update(fixed)
-
+    reduced_primes = pyboolnet.prime_implicants.percolate(primes, add_constants=fixed, remove_constants=False, copy=True)
+    percolated_states = pyboolnet.prime_implicants.find_constants(reduced_primes)
+    pyboolnet.prime_implicants.remove_all_constants(reduced_primes, copy=False) # remove constants in place
 
     return simplify_primes(reduced_primes), percolated_states</code></pre>
 </details>
@@ -1612,7 +1654,7 @@ node = expr1 = !expr0 (does not check that expr1=!expr0)</p>
 <dl>
 <dt id="pystablemotifs.reduction.MotifReduction"><code class="flex name class">
 <span>class <span class="ident">MotifReduction</span></span>
-<span>(</span><span>motif_history, fixed, reduced_primes, max_simulate_size=20, prioritize_source_motifs=True, max_stable_motifs=10000, MPBN_update=False)</span>
+<span>(</span><span>motif_history, fixed, reduced_primes, max_simulate_size=20, max_simulate_size_vc=None, prioritize_source_motifs=True, max_stable_motifs=10000, max_in_degree=inf, MPBN_update=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class to generate and store data about a network reduction that arises
@@ -1629,11 +1671,19 @@ logical domain of influence.</dd>
 <dt><strong><code>max_simulate_size</code></strong> :&ensp;<code>int</code></dt>
 <dd>Maximum number of variables for which to brute-force build a state
 transition graph (the default is 20).</dd>
+<dt><strong><code>max_simulate_size_vc</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of variables for which to brute-force build a state
+transition graph for the vc-reduced space (the default is the same as max_simulate_size).</dd>
 <dt><strong><code>prioritize_source_motifs</code></strong> :&ensp;<code>bool</code></dt>
 <dd>Whether source nodes should be considered first (the default is True).</dd>
 <dt><strong><code>max_stable_motifs</code></strong> :&ensp;<code>int</code></dt>
 <dd>Maximum number of output lines for pyboolnet to process from the
 AspSolver (the default is 10000).</dd>
+<dt><strong><code>max_in_degree</code></strong> :&ensp;<code>int</code> or <code>float</code></dt>
+<dd>Will not try to delete nodes that will result an increase in the
+in-degree of the downstream node so that it has in-degree larger than this.
+Deleting nodes with large in-degree can be computationally expensive (the default
+is float('inf')).</dd>
 <dt><strong><code>MPBN_update</code></strong> :&ensp;<code>bool</code></dt>
 <dd>Whether MPBN update is used instead of general asynchronous update
 (see Pauleve et al. 2020)(the default is False).</dd>
@@ -1734,11 +1784,19 @@ an upper bound on the number of motif avoidant attractors in the reduction.</dd>
     max_simulate_size : int
         Maximum number of variables for which to brute-force build a state
         transition graph (the default is 20).
+    max_simulate_size_vc : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph for the vc-reduced space (the default is the same as max_simulate_size).
     prioritize_source_motifs : bool
         Whether source nodes should be considered first (the default is True).
     max_stable_motifs : int
         Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
+    max_in_degree : int or float
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
+        is float(&#39;inf&#39;)).
     MPBN_update : bool
         Whether MPBN update is used instead of general asynchronous update
         (see Pauleve et al. 2020)(the default is False).
@@ -1820,7 +1878,10 @@ an upper bound on the number of motif avoidant attractors in the reduction.</dd>
         an upper bound on the number of motif avoidant attractors in the reduction.
     &#34;&#34;&#34;
 
-    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,prioritize_source_motifs=True,max_stable_motifs=10000,MPBN_update=False):
+    def __init__(self,motif_history,fixed,reduced_primes,max_simulate_size=20,max_simulate_size_vc=None,prioritize_source_motifs=True,max_stable_motifs=10000,max_in_degree=float(&#39;inf&#39;),MPBN_update=False):
+        if max_simulate_size_vc == None:
+            max_simulate_size_vc = max_simulate_size
+
         if motif_history is None:
             self.motif_history = []
         else:
@@ -1922,7 +1983,7 @@ an upper bound on the number of motif avoidant attractors in the reduction.</dd>
                 #str(simulate_size)+&#34;/&#34;+str(max_simulate_size)+
                 #&#34;). We will attempt reduction methods. Increase max_simulate_size to force simulation.&#34;)
                 self.delprimes, self.attractor_constants = mediator_reduction(self.reduced_primes)
-                self.delprimes, nc = deletion_reduction(self.delprimes)
+                self.delprimes, nc = deletion_reduction(self.delprimes, max_in_degree=max_in_degree)
                 self.attractor_constants.update(nc)
 
                 # Before building any STGs, let&#39;s see if we&#39;ve already identified
@@ -1941,7 +2002,7 @@ an upper bound on the number of motif avoidant attractors in the reduction.</dd>
                         #print(&#34;The reduction indicates that the branch is not terminal. No need to simulate.&#34;)
                         self.attractor_dict_list = self.generate_attr_dict_list()
                         return
-                if len(self.delprimes) &lt; max_simulate_size:
+                if len(self.delprimes) &lt; max_simulate_size_vc:
                     #print(&#34;Simulating deletion reduction (&#34;+str(len(self.delprimes))+&#34; nodes)...&#34;)
                     self.find_deletion_no_motif_attractors(max_stable_motifs=max_stable_motifs)
                     if len(self.deletion_no_motif_attractors) == 0 and self.terminal != &#34;yes&#34;:

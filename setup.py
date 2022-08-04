@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="pystablemotifs",
-    version='3.0.3',
+    version='3.0.4',
     author="Jordan Rozum",
     author_email="jcr52@psu.edu",
     description="Python package for analyzing Boolean Netowrk",

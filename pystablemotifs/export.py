@@ -354,7 +354,10 @@ def attractor_dataframe(ar):
     import pandas as pd
     df=pd.DataFrame()
     for a in ar.attractors:
-        df=df.append(a.attractor_dict,ignore_index=True).astype(int, errors='ignore').astype(str)
+        df=pd.concat([df,pd.DataFrame(a.attractor_dict.values()).T],
+                    ignore_index=True,axis=0,join='outer'
+                    ).astype(int, errors='ignore').astype(str)
+    df.columns=a.attractor_dict.keys()
 
     return df
 

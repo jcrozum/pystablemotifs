@@ -151,7 +151,7 @@ def logical_domain_of_influence(partial_state,primes,implied_hint=None,contradic
     return implied, contradicted
 
 def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,
-    max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float(&#39;inf&#39;),MPBN_update=False):
     &#34;&#34;&#34;Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
 
     Parameters
@@ -167,9 +167,17 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     max_simulate_size : int
         Maximum number of variables for which to brute-force build a state
         transition graph (the default is 20).
+    max_simulate_size_vc : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph for the vc-reduced space (the default is the same as max_simulate_size).
     max_stable_motifs : int
         Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
+    max_in_degree : int or float
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
+        is float(&#39;inf&#39;)).
     MPBN_update : bool
         Whether MBPN update is used instead of general asynchronous update
         (see Pauleve et al. 2020)(the default is False).
@@ -222,7 +230,7 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
     rules_to_add = {}
     for node in sink_nodes:
         rules_to_add[node] = copy.deepcopy(primes[node])
-        pyboolnet.prime_implicants._substitute(rules_to_add,node,fixed)
+        pyboolnet.prime_implicants.update_primes(rules_to_add,node,fixed)
     primes_to_search.update(rules_to_add)
     primes_to_search = sm.reduction.simplify_primes(primes_to_search)
 
@@ -237,8 +245,9 @@ def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint
             sorted_attractor_dict_list.append(dict(sorted(attractor.items())))
         ar = sorted_attractor_dict_list
     else:
-        ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,
-            max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        ar = sm.AttractorRepertoire.from_primes(primes_to_search,
+            max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,
+            max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         attractor_dict_list = []
         for attractor in ar.attractors:
             attractor_dict_list.append(attractor.attractor_dict)
@@ -331,12 +340,12 @@ def single_drivers(target,primes):
         for val in [0,1]:
             ds = {k:val}
             ldoi,contra = logical_domain_of_influence(ds,primes)
-            if all([kk in ldoi for kk in target]):
+            if all([kk in ldoi.items() for kk in target.items()]):
                 drivers.append(ds)
     return drivers
 
 def all_drivers_of_size(driver_set_size,target, primes, external_search_vars=None,internal_search_vars=None):
-    &#34;&#34;&#34;Short summary.
+    &#34;&#34;&#34;Finds all (logical) driver sets up to a specified size that drive the target.
 
     Parameters
     ----------
@@ -801,7 +810,7 @@ the target.</dd>
 <span>def <span class="ident">all_drivers_of_size</span></span>(<span>driver_set_size, target, primes, external_search_vars=None, internal_search_vars=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Short summary.</p>
+<div class="desc"><p>Finds all (logical) driver sets up to a specified size that drive the target.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>driver_set_size</code></strong> :&ensp;<code>int</code></dt>
@@ -827,7 +836,7 @@ nodes in partial state (the default is None).</dd>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def all_drivers_of_size(driver_set_size,target, primes, external_search_vars=None,internal_search_vars=None):
-    &#34;&#34;&#34;Short summary.
+    &#34;&#34;&#34;Finds all (logical) driver sets up to a specified size that drive the target.
 
     Parameters
     ----------
@@ -891,7 +900,7 @@ nodes in partial state (the default is None).</dd>
 </details>
 </dd>
 <dt id="pystablemotifs.drivers.domain_of_influence"><code class="name flex">
-<span>def <span class="ident">domain_of_influence</span></span>(<span>partial_state, primes, implied_hint=None, contradicted_hint=None, max_simulate_size=20, max_stable_motifs=10000, MPBN_update=False)</span>
+<span>def <span class="ident">domain_of_influence</span></span>(<span>partial_state, primes, implied_hint=None, contradicted_hint=None, max_simulate_size=20, max_simulate_size_vc=None, max_stable_motifs=10000, max_in_degree=inf, MPBN_update=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)</p>
@@ -908,9 +917,17 @@ nodes in partial state (the default is None).</dd>
 <dt><strong><code>max_simulate_size</code></strong> :&ensp;<code>int</code></dt>
 <dd>Maximum number of variables for which to brute-force build a state
 transition graph (the default is 20).</dd>
+<dt><strong><code>max_simulate_size_vc</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of variables for which to brute-force build a state
+transition graph for the vc-reduced space (the default is the same as max_simulate_size).</dd>
 <dt><strong><code>max_stable_motifs</code></strong> :&ensp;<code>int</code></dt>
 <dd>Maximum number of output lines for pyboolnet to process from the
 AspSolver (the default is 10000).</dd>
+<dt><strong><code>max_in_degree</code></strong> :&ensp;<code>int</code> or <code>float</code></dt>
+<dd>Will not try to delete nodes that will result an increase in the
+in-degree of the downstream node so that it has in-degree larger than this.
+Deleting nodes with large in-degree can be computationally expensive (the default
+is float('inf')).</dd>
 <dt><strong><code>MPBN_update</code></strong> :&ensp;<code>bool</code></dt>
 <dd>Whether MBPN update is used instead of general asynchronous update
 (see Pauleve et al. 2020)(the default is False).</dd>
@@ -935,7 +952,7 @@ AspSolver (the default is 10000).</dd>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def domain_of_influence(partial_state,primes,implied_hint=None,contradicted_hint=None,
-    max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float(&#39;inf&#39;),MPBN_update=False):
     &#34;&#34;&#34;Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
 
     Parameters
@@ -951,9 +968,17 @@ AspSolver (the default is 10000).</dd>
     max_simulate_size : int
         Maximum number of variables for which to brute-force build a state
         transition graph (the default is 20).
+    max_simulate_size_vc : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph for the vc-reduced space (the default is the same as max_simulate_size).
     max_stable_motifs : int
         Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
+    max_in_degree : int or float
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
+        is float(&#39;inf&#39;)).
     MPBN_update : bool
         Whether MBPN update is used instead of general asynchronous update
         (see Pauleve et al. 2020)(the default is False).
@@ -1006,7 +1031,7 @@ AspSolver (the default is 10000).</dd>
     rules_to_add = {}
     for node in sink_nodes:
         rules_to_add[node] = copy.deepcopy(primes[node])
-        pyboolnet.prime_implicants._substitute(rules_to_add,node,fixed)
+        pyboolnet.prime_implicants.update_primes(rules_to_add,node,fixed)
     primes_to_search.update(rules_to_add)
     primes_to_search = sm.reduction.simplify_primes(primes_to_search)
 
@@ -1021,8 +1046,9 @@ AspSolver (the default is 10000).</dd>
             sorted_attractor_dict_list.append(dict(sorted(attractor.items())))
         ar = sorted_attractor_dict_list
     else:
-        ar = sm.AttractorRepertoire.from_primes(primes_to_search,max_simulate_size=max_simulate_size,
-            max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        ar = sm.AttractorRepertoire.from_primes(primes_to_search,
+            max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,
+            max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         attractor_dict_list = []
         for attractor in ar.attractors:
             attractor_dict_list.append(attractor.attractor_dict)
@@ -1546,7 +1572,7 @@ in its logical domain of influence.</dd>
         for val in [0,1]:
             ds = {k:val}
             ldoi,contra = logical_domain_of_influence(ds,primes)
-            if all([kk in ldoi for kk in target]):
+            if all([kk in ldoi.items() for kk in target.items()]):
                 drivers.append(ds)
     return drivers</code></pre>
 </details>
