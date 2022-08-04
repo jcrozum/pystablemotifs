@@ -6,7 +6,7 @@ except ImportError as e:
     print("""
 pyboolnet can be installed via
 pip install git+https://github.com/hklarner/pyboolnet
-or, for a specific version, via
+or, for a specific version, via, e.g.,
 pip install git+https://github.com/hklarner/pyboolnet@3.0.5
 """)
     raise
@@ -22,4 +22,4 @@ from pystablemotifs.Attractor import Attractor
 from pystablemotifs.AttractorRepertoire import AttractorRepertoire
 from pystablemotifs import export
 
-__version__ = '3.0.3'
+__version__ = '3.0.4'
