@@ -277,7 +277,9 @@ either from_primes or from_succession_diagram.
 >     def from_primes(
 >         primes,
 >         max_simulate_size=20,
+>         max_simulate_size_vc=None,
 >         max_stable_motifs=10000,
+>         max_in_degree=inf,
 >         MPBN_update=False
 >     )
 
@@ -296,9 +298,21 @@ formatted update rules rules.
     transition graph (the default is 20).
 
 
+**```max_simulate_size_vc```** :&ensp;<code>int</code>
+:   Maximum number of variables for which to brute-force build a state
+    transition graph for the vc-reduced space (the default is the same as max_simulate_size).
+
+
 **```max_stable_motifs```** :&ensp;<code>int</code>
 :   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
+
+
+**```max_in_degree```** :&ensp;<code>int</code> or <code>float</code>
+:   Will not try to delete nodes that will result an increase in the
+    in-degree of the downstream node so that it has in-degree larger than this.
+    Deleting nodes with large in-degree can be computationally expensive (the default
+    is float('inf')).
 
 
 **```MPBN_update```** :&ensp;<code>bool</code>
@@ -354,7 +368,9 @@ precomputed succession diagram.
 >         self,
 >         primes,
 >         max_simulate_size=20,
+>         max_simulate_size_vc=None,
 >         max_stable_motifs=10000,
+>         max_in_degree=inf,
 >         MPBN_update=False
 >     )
 
@@ -372,9 +388,21 @@ Build and process the succession diagram for the model.
     transition graph (the default is 20).
 
 
+**```max_simulate_size_vc```** :&ensp;<code>int</code>
+:   Maximum number of variables for which to brute-force build a state
+    transition graph for the vc-reduced space (the default is the same as max_simulate_size).
+
+
 **```max_stable_motifs```** :&ensp;<code>int</code>
 :   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
+
+
+**```max_in_degree```** :&ensp;<code>int</code> or <code>float</code>
+:   Will not try to delete nodes that will result an increase in the
+    in-degree of the downstream node so that it has in-degree larger than this.
+    Deleting nodes with large in-degree can be computationally expensive (the default
+    is float('inf')).
 
 
 **```MPBN_update```** :&ensp;<code>bool</code>
@@ -632,7 +660,7 @@ Search for drivers of target in primes using the method of Yang et al. 2018.
 >     )
 
 
-Short summary.
+Finds all (logical) driver sets up to a specified size that drive the target.
 
 ###### Parameters
 
@@ -676,7 +704,9 @@ Short summary.
 >         implied_hint=None,
 >         contradicted_hint=None,
 >         max_simulate_size=20,
+>         max_simulate_size_vc=None,
 >         max_stable_motifs=10000,
+>         max_in_degree=inf,
 >         MPBN_update=False
 >     )
 
@@ -706,9 +736,21 @@ Computes the domain of influence (DOI) of the seed set. (see Yang et al. 2018)
     transition graph (the default is 20).
 
 
+**```max_simulate_size_vc```** :&ensp;<code>int</code>
+:   Maximum number of variables for which to brute-force build a state
+    transition graph for the vc-reduced space (the default is the same as max_simulate_size).
+
+
 **```max_stable_motifs```** :&ensp;<code>int</code>
 :   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
+
+
+**```max_in_degree```** :&ensp;<code>int</code> or <code>float</code>
+:   Will not try to delete nodes that will result an increase in the
+    in-degree of the downstream node so that it has in-degree larger than this.
+    Deleting nodes with large in-degree can be computationally expensive (the default
+    is float('inf')).
 
 
 **```MPBN_update```** :&ensp;<code>bool</code>
@@ -2313,8 +2355,9 @@ removal. Deletion proceeds until all remaining nodes have self-loops.
 
 
 **```max_in_degree```** :&ensp;<code>int</code> or <code>float</code>
-:   Will not try to delete nodes with in-degree larger than this. Deleting
-    nodes with large in-degree can be computationally expensive (the default
+:   Will not try to delete nodes that will result an increase in the
+    in-degree of the downstream node so that it has in-degree larger than this.
+    Deleting nodes with large in-degree can be computationally expensive (the default
     is float('inf')).
 
 ###### Returns
@@ -2506,8 +2549,10 @@ node = expr1 = !expr0 (does not check that expr1=!expr0)
 >         fixed,
 >         reduced_primes,
 >         max_simulate_size=20,
+>         max_simulate_size_vc=None,
 >         prioritize_source_motifs=True,
 >         max_stable_motifs=10000,
+>         max_in_degree=inf,
 >         MPBN_update=False
 >     )
 
@@ -2535,6 +2580,11 @@ during the stable motif succession diagram construction algorithm.
     transition graph (the default is 20).
 
 
+**```max_simulate_size_vc```** :&ensp;<code>int</code>
+:   Maximum number of variables for which to brute-force build a state
+    transition graph for the vc-reduced space (the default is the same as max_simulate_size).
+
+
 **```prioritize_source_motifs```** :&ensp;<code>bool</code>
 :   Whether source nodes should be considered first (the default is True).
 
@@ -2542,6 +2592,13 @@ during the stable motif succession diagram construction algorithm.
 **```max_stable_motifs```** :&ensp;<code>int</code>
 :   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
+
+
+**```max_in_degree```** :&ensp;<code>int</code> or <code>float</code>
+:   Will not try to delete nodes that will result an increase in the
+    in-degree of the downstream node so that it has in-degree larger than this.
+    Deleting nodes with large in-degree can be computationally expensive (the default
+    is float('inf')).
 
 
 **```MPBN_update```** :&ensp;<code>bool</code>
@@ -3299,8 +3356,10 @@ Tests to see if state is in the rspace L.
 >         diagram=None,
 >         merge_equivalent_motifs=True,
 >         max_simulate_size=20,
+>         max_simulate_size_vc=None,
 >         prioritize_source_motifs=True,
 >         max_stable_motifs=10000,
+>         max_in_degree=inf,
 >         MPBN_update=False
 >     )
 
@@ -3343,6 +3402,11 @@ class (using, e.g., AttractorRepertoire.from_primes).
     transition graph (the default is 20).
 
 
+**```max_simulate_size_vc```** :&ensp;<code>int</code>
+:   Maximum number of variables for which to brute-force build a state
+    transition graph for the vc-reduced space (the default is the same as max_simulate_size).
+
+
 **```prioritize_source_motifs```** :&ensp;<code>bool</code>
 :   Whether source nodes should be considered first (the default is True).
 
@@ -3350,6 +3414,13 @@ class (using, e.g., AttractorRepertoire.from_primes).
 **```max_stable_motifs```** :&ensp;<code>int</code>
 :   Maximum number of output lines for pyboolnet to process from the
     AspSolver (the default is 10000).
+
+
+**```max_in_degree```** :&ensp;<code>int</code> or <code>float</code>
+:   Will not try to delete nodes that will result an increase in the
+    in-degree of the downstream node so that it has in-degree larger than this.
+    Deleting nodes with large in-degree can be computationally expensive (the default
+    is float('inf')).
 
 
 **```MPBN_update```** :&ensp;<code>bool</code>

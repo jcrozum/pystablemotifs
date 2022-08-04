@@ -88,7 +88,7 @@ class AttractorRepertoire:
         self.relevant_nodes = None
 
     @classmethod
-    def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    def from_primes(cls,primes,max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float(&#39;inf&#39;),MPBN_update=False):
         &#34;&#34;&#34;Build the succession diagram and attractor repertoire from pyboolnet
         formatted update rules rules.
 
@@ -99,9 +99,17 @@ class AttractorRepertoire:
         max_simulate_size : int
             Maximum number of variables for which to brute-force build a state
             transition graph (the default is 20).
+        max_simulate_size_vc : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph for the vc-reduced space (the default is the same as max_simulate_size).
         max_stable_motifs : int
             Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
+        max_in_degree : int or float
+            Will not try to delete nodes that will result an increase in the
+            in-degree of the downstream node so that it has in-degree larger than this.
+            Deleting nodes with large in-degree can be computationally expensive (the default
+            is float(&#39;inf&#39;)).
         MPBN_update : bool
             Whether MBPN update is used instead of general asynchronous update
             (see L Pauleve, J Kolcak, T Chatain, S Haar, &#34;Reconciling qualitative, abstract, and scalable modeling of biological networks.&#34; Nat. Com. vol. 11, no. 4256 (2020))
@@ -115,7 +123,7 @@ class AttractorRepertoire:
         &#34;&#34;&#34;
         x = cls()
         x.primes = primes
-        x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        x.analyze_system(primes,max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         x.simplify_diagram([], merge_equivalent_reductions = False)
         return x
 
@@ -187,7 +195,7 @@ class AttractorRepertoire:
                     # ludicrously conservative upper bound; assumes STG is all 2-cycles
                     self.most_attractors += 2**(attractor.n_unfixed - 1)
 
-    def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    def analyze_system(self,primes,max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float(&#39;inf&#39;),MPBN_update=False):
         &#34;&#34;&#34;Build and process the succession diagram for the model.
 
         Parameters
@@ -197,15 +205,23 @@ class AttractorRepertoire:
         max_simulate_size : int
             Maximum number of variables for which to brute-force build a state
             transition graph (the default is 20).
+        max_simulate_size_vc : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph for the vc-reduced space (the default is the same as max_simulate_size).
         max_stable_motifs : int
             Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
+        max_in_degree : int or float
+            Will not try to delete nodes that will result an increase in the
+            in-degree of the downstream node so that it has in-degree larger than this.
+            Deleting nodes with large in-degree can be computationally expensive (the default
+            is float(&#39;inf&#39;)).
         MPBN_update : bool
             Whether MBPN update is used instead of general asynchronous update
             (see Pauleve et al. 2020)(the default is False).
 
         &#34;&#34;&#34;
-        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         self._get_attractors_from_succession_diagram()
         self._count_attractors()
 
@@ -516,7 +532,7 @@ attractors will not be merged.</dd>
         self.relevant_nodes = None
 
     @classmethod
-    def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    def from_primes(cls,primes,max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float(&#39;inf&#39;),MPBN_update=False):
         &#34;&#34;&#34;Build the succession diagram and attractor repertoire from pyboolnet
         formatted update rules rules.
 
@@ -527,9 +543,17 @@ attractors will not be merged.</dd>
         max_simulate_size : int
             Maximum number of variables for which to brute-force build a state
             transition graph (the default is 20).
+        max_simulate_size_vc : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph for the vc-reduced space (the default is the same as max_simulate_size).
         max_stable_motifs : int
             Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
+        max_in_degree : int or float
+            Will not try to delete nodes that will result an increase in the
+            in-degree of the downstream node so that it has in-degree larger than this.
+            Deleting nodes with large in-degree can be computationally expensive (the default
+            is float(&#39;inf&#39;)).
         MPBN_update : bool
             Whether MBPN update is used instead of general asynchronous update
             (see L Pauleve, J Kolcak, T Chatain, S Haar, &#34;Reconciling qualitative, abstract, and scalable modeling of biological networks.&#34; Nat. Com. vol. 11, no. 4256 (2020))
@@ -543,7 +567,7 @@ attractors will not be merged.</dd>
         &#34;&#34;&#34;
         x = cls()
         x.primes = primes
-        x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        x.analyze_system(primes,max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         x.simplify_diagram([], merge_equivalent_reductions = False)
         return x
 
@@ -615,7 +639,7 @@ attractors will not be merged.</dd>
                     # ludicrously conservative upper bound; assumes STG is all 2-cycles
                     self.most_attractors += 2**(attractor.n_unfixed - 1)
 
-    def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+    def analyze_system(self,primes,max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float(&#39;inf&#39;),MPBN_update=False):
         &#34;&#34;&#34;Build and process the succession diagram for the model.
 
         Parameters
@@ -625,15 +649,23 @@ attractors will not be merged.</dd>
         max_simulate_size : int
             Maximum number of variables for which to brute-force build a state
             transition graph (the default is 20).
+        max_simulate_size_vc : int
+            Maximum number of variables for which to brute-force build a state
+            transition graph for the vc-reduced space (the default is the same as max_simulate_size).
         max_stable_motifs : int
             Maximum number of output lines for pyboolnet to process from the
             AspSolver (the default is 10000).
+        max_in_degree : int or float
+            Will not try to delete nodes that will result an increase in the
+            in-degree of the downstream node so that it has in-degree larger than this.
+            Deleting nodes with large in-degree can be computationally expensive (the default
+            is float(&#39;inf&#39;)).
         MPBN_update : bool
             Whether MBPN update is used instead of general asynchronous update
             (see Pauleve et al. 2020)(the default is False).
 
         &#34;&#34;&#34;
-        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+        self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
         self._get_attractors_from_succession_diagram()
         self._count_attractors()
 
@@ -834,7 +866,7 @@ attractors will not be merged.</dd>
 <h3>Static methods</h3>
 <dl>
 <dt id="pystablemotifs.AttractorRepertoire.AttractorRepertoire.from_primes"><code class="name flex">
-<span>def <span class="ident">from_primes</span></span>(<span>primes, max_simulate_size=20, max_stable_motifs=10000, MPBN_update=False)</span>
+<span>def <span class="ident">from_primes</span></span>(<span>primes, max_simulate_size=20, max_simulate_size_vc=None, max_stable_motifs=10000, max_in_degree=inf, MPBN_update=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Build the succession diagram and attractor repertoire from pyboolnet
@@ -846,9 +878,17 @@ formatted update rules rules.</p>
 <dt><strong><code>max_simulate_size</code></strong> :&ensp;<code>int</code></dt>
 <dd>Maximum number of variables for which to brute-force build a state
 transition graph (the default is 20).</dd>
+<dt><strong><code>max_simulate_size_vc</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of variables for which to brute-force build a state
+transition graph for the vc-reduced space (the default is the same as max_simulate_size).</dd>
 <dt><strong><code>max_stable_motifs</code></strong> :&ensp;<code>int</code></dt>
 <dd>Maximum number of output lines for pyboolnet to process from the
 AspSolver (the default is 10000).</dd>
+<dt><strong><code>max_in_degree</code></strong> :&ensp;<code>int</code> or <code>float</code></dt>
+<dd>Will not try to delete nodes that will result an increase in the
+in-degree of the downstream node so that it has in-degree larger than this.
+Deleting nodes with large in-degree can be computationally expensive (the default
+is float('inf')).</dd>
 <dt><strong><code>MPBN_update</code></strong> :&ensp;<code>bool</code></dt>
 <dd>Whether MBPN update is used instead of general asynchronous update
 (see L Pauleve, J Kolcak, T Chatain, S Haar, "Reconciling qualitative, abstract, and scalable modeling of biological networks." Nat. Com. vol. 11, no. 4256 (2020))
@@ -864,7 +904,7 @@ AspSolver (the default is 10000).</dd>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@classmethod
-def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+def from_primes(cls,primes,max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float(&#39;inf&#39;),MPBN_update=False):
     &#34;&#34;&#34;Build the succession diagram and attractor repertoire from pyboolnet
     formatted update rules rules.
 
@@ -875,9 +915,17 @@ def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_upd
     max_simulate_size : int
         Maximum number of variables for which to brute-force build a state
         transition graph (the default is 20).
+    max_simulate_size_vc : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph for the vc-reduced space (the default is the same as max_simulate_size).
     max_stable_motifs : int
         Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
+    max_in_degree : int or float
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
+        is float(&#39;inf&#39;)).
     MPBN_update : bool
         Whether MBPN update is used instead of general asynchronous update
         (see L Pauleve, J Kolcak, T Chatain, S Haar, &#34;Reconciling qualitative, abstract, and scalable modeling of biological networks.&#34; Nat. Com. vol. 11, no. 4256 (2020))
@@ -891,7 +939,7 @@ def from_primes(cls,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_upd
     &#34;&#34;&#34;
     x = cls()
     x.primes = primes
-    x.analyze_system(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+    x.analyze_system(primes,max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
     x.simplify_diagram([], merge_equivalent_reductions = False)
     return x</code></pre>
 </details>
@@ -945,7 +993,7 @@ def from_succession_diagram(cls,succession_diagram):
 <h3>Methods</h3>
 <dl>
 <dt id="pystablemotifs.AttractorRepertoire.AttractorRepertoire.analyze_system"><code class="name flex">
-<span>def <span class="ident">analyze_system</span></span>(<span>self, primes, max_simulate_size=20, max_stable_motifs=10000, MPBN_update=False)</span>
+<span>def <span class="ident">analyze_system</span></span>(<span>self, primes, max_simulate_size=20, max_simulate_size_vc=None, max_stable_motifs=10000, max_in_degree=inf, MPBN_update=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Build and process the succession diagram for the model.</p>
@@ -956,9 +1004,17 @@ def from_succession_diagram(cls,succession_diagram):
 <dt><strong><code>max_simulate_size</code></strong> :&ensp;<code>int</code></dt>
 <dd>Maximum number of variables for which to brute-force build a state
 transition graph (the default is 20).</dd>
+<dt><strong><code>max_simulate_size_vc</code></strong> :&ensp;<code>int</code></dt>
+<dd>Maximum number of variables for which to brute-force build a state
+transition graph for the vc-reduced space (the default is the same as max_simulate_size).</dd>
 <dt><strong><code>max_stable_motifs</code></strong> :&ensp;<code>int</code></dt>
 <dd>Maximum number of output lines for pyboolnet to process from the
 AspSolver (the default is 10000).</dd>
+<dt><strong><code>max_in_degree</code></strong> :&ensp;<code>int</code> or <code>float</code></dt>
+<dd>Will not try to delete nodes that will result an increase in the
+in-degree of the downstream node so that it has in-degree larger than this.
+Deleting nodes with large in-degree can be computationally expensive (the default
+is float('inf')).</dd>
 <dt><strong><code>MPBN_update</code></strong> :&ensp;<code>bool</code></dt>
 <dd>Whether MBPN update is used instead of general asynchronous update
 (see Pauleve et al. 2020)(the default is False).</dd>
@@ -967,7 +1023,7 @@ AspSolver (the default is 10000).</dd>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def analyze_system(self,primes,max_simulate_size=20,max_stable_motifs=10000,MPBN_update=False):
+<pre><code class="python">def analyze_system(self,primes,max_simulate_size=20,max_simulate_size_vc=None,max_stable_motifs=10000,max_in_degree=float(&#39;inf&#39;),MPBN_update=False):
     &#34;&#34;&#34;Build and process the succession diagram for the model.
 
     Parameters
@@ -977,15 +1033,23 @@ AspSolver (the default is 10000).</dd>
     max_simulate_size : int
         Maximum number of variables for which to brute-force build a state
         transition graph (the default is 20).
+    max_simulate_size_vc : int
+        Maximum number of variables for which to brute-force build a state
+        transition graph for the vc-reduced space (the default is the same as max_simulate_size).
     max_stable_motifs : int
         Maximum number of output lines for pyboolnet to process from the
         AspSolver (the default is 10000).
+    max_in_degree : int or float
+        Will not try to delete nodes that will result an increase in the
+        in-degree of the downstream node so that it has in-degree larger than this.
+        Deleting nodes with large in-degree can be computationally expensive (the default
+        is float(&#39;inf&#39;)).
     MPBN_update : bool
         Whether MBPN update is used instead of general asynchronous update
         (see Pauleve et al. 2020)(the default is False).
 
     &#34;&#34;&#34;
-    self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_stable_motifs=max_stable_motifs,MPBN_update=MPBN_update)
+    self.succession_diagram = sm_succession.build_succession_diagram(primes,max_simulate_size=max_simulate_size,max_simulate_size_vc=max_simulate_size_vc,max_stable_motifs=max_stable_motifs,max_in_degree=max_in_degree,MPBN_update=MPBN_update)
     self._get_attractors_from_succession_diagram()
     self._count_attractors()</code></pre>
 </details>
