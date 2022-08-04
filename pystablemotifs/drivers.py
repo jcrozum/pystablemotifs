@@ -312,12 +312,12 @@ def single_drivers(target,primes):
         for val in [0,1]:
             ds = {k:val}
             ldoi,contra = logical_domain_of_influence(ds,primes)
-            if all([kk in ldoi for kk in target]):
+            if all([kk in ldoi.items() for kk in target.items()]):
                 drivers.append(ds)
     return drivers
 
 def all_drivers_of_size(driver_set_size,target, primes, external_search_vars=None,internal_search_vars=None):
-    """Short summary.
+    """Finds all (logical) driver sets up to a specified size that drive the target.
 
     Parameters
     ----------
