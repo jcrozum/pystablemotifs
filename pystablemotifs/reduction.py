@@ -1033,7 +1033,7 @@ class MotifReduction:
             #there are complex attractors mapped out:
             attr_list=[]
             for complex_attractor in self.no_motif_attractors:
-                ca_dict = sm_format.statelist2dict(non_fixed_nodes,complex_attractor)
+                ca_dict = sm_format.statelist2dict(sorted(self.reduced_primes),complex_attractor)
                 ns = node_state_dict.copy()
                 ns.update(ca_dict)
                 ns = {k:v for k,v in sorted(ns.items())}
